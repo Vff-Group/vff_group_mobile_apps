@@ -1,0 +1,54 @@
+{
+  "project_info": {
+    "project_number": "711189707453",
+    "project_id": "vff-group-b185c",
+    "storage_bucket": "vff-group-b185c.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:711189707453:android:d9df1c9a43057bb40b55d4",
+        "android_client_info": {
+          "package_name": "com.vffgroup.vffgroup"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "711189707453-c2d0pv6qrf8ujkom20h068qggp4cd603.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.vffgroup.vffgroup",
+            "certificate_hash": "a2895e9f3fda8ecb2a25dd93cbbec7cc9dd81f88"
+          }
+        },
+        {
+          "client_id": "711189707453-877vt941atk8lk3q4adtn8ojibqkl8n5.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAiF4DzKdOcMR3uI8-QQtS-DAtCLclmr3M"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "711189707453-877vt941atk8lk3q4adtn8ojibqkl8n5.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "711189707453-ghi036r3bt1fo5iia7hb3hto3ud5kmsr.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.vffgroup.vffgroup"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
