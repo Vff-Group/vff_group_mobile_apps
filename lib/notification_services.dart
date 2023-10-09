@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:vff_group/pages/login.dart';
 import 'package:vff_group/routings/route_names.dart';
+import 'package:vff_group/utils/SharedPreferencesUtils.dart';
 
 class NotificationServices {
   FirebaseMessaging messaging = FirebaseMessaging.instance;
@@ -25,66 +26,59 @@ class NotificationServices {
     await _flutterLocalNotificationsPlugin.initialize(initializationSetting,
         onDidReceiveNotificationResponse: (payload) {
       handleMessage(context, message);
-        });
+    });
   }
-
 
   void firebaseInit(BuildContext context) {
     FirebaseMessaging.onMessage.listen((message) {
       print(message.notification!.title.toString());
       print(message.notification!.body.toString());
       print(message.data.toString());
-      if(Platform.isIOS){
+      if (Platform.isIOS) {
         foregroundMessage();
       }
-      if(Platform.isAndroid){
+      if (Platform.isAndroid) {
         initLocalNotifications(context, message);
         showNotification(message);
-      }else{
+      } else {
         showNotification(message);
       }
-
     });
   }
 
   @pragma("vm:entry-point")
   Future<void> showNotification(RemoteMessage message) async {
-
     AndroidNotificationChannel channel = AndroidNotificationChannel(
         Random.secure().nextInt(100000).toString(),
         "High Importance Notifications",
         importance: Importance.max);
 
-    AndroidNotificationDetails androidNotificationDetails = AndroidNotificationDetails(
-        channel.id.toString(),
-        channel.name.toString(),
-        channelDescription: 'this is channel description',
-        importance: Importance.high,
-        priority: Priority.high,
-        ticker: 'ticker'
-    );
-    
-    const DarwinNotificationDetails darwinNotificationDetails = DarwinNotificationDetails(
+    AndroidNotificationDetails androidNotificationDetails =
+        AndroidNotificationDetails(
+            channel.id.toString(), channel.name.toString(),
+            channelDescription: 'this is channel description',
+            importance: Importance.high,
+            priority: Priority.high,
+            ticker: 'ticker');
+
+    const DarwinNotificationDetails darwinNotificationDetails =
+        DarwinNotificationDetails(
       presentSound: true,
       presentBadge: true,
       presentAlert: true,
     );
 
     NotificationDetails notificationDetails = NotificationDetails(
-        android: androidNotificationDetails,
-        iOS: darwinNotificationDetails
-    );
+        android: androidNotificationDetails, iOS: darwinNotificationDetails);
 
-
-    Future.delayed(Duration.zero, (){
-          _flutterLocalNotificationsPlugin.show(
-              0,
-              message.notification!.title.toString(),
-              message.notification!.body.toString(),
-              notificationDetails);
-        });
+    Future.delayed(Duration.zero, () {
+      _flutterLocalNotificationsPlugin.show(
+          0,
+          message.notification!.title.toString(),
+          message.notification!.body.toString(),
+          notificationDetails);
+    });
   }
-
 
   Future<void> requestNotificationPermissions() async {
     NotificationSettings settings = await messaging.requestPermission(
@@ -93,7 +87,7 @@ class NotificationServices {
         badge: true,
         carPlay: true,
         criticalAlert: true,
-        provisional: true,
+        provisional: false,
         sound: true);
 
     if (settings.authorizationStatus == AuthorizationStatus.authorized) {
@@ -109,22 +103,26 @@ class NotificationServices {
 
   Future<String> getDeviceToken() async {
     String? token = await messaging.getToken();
+
     return token!;
   }
 
-  void isTokenRefreshed() async {
+  var deviceToken = "";
+  Future<bool> isTokenRefreshed() async {
+    var isChanged = false;
     messaging.onTokenRefresh.listen((event) {
       event.toString();
       print('Firebase Token Refreshed');
-      getDeviceToken();
+      isChanged = true;
     });
+    return isChanged;
   }
 
-  Future<void> setupInteractMessage(BuildContext context)async{
-
+  Future<void> setupInteractMessage(BuildContext context) async {
     //When app is killed/Terminated
-    RemoteMessage? initialMessage = await FirebaseMessaging.instance.getInitialMessage();
-    if(initialMessage != null){
+    RemoteMessage? initialMessage =
+        await FirebaseMessaging.instance.getInitialMessage();
+    if (initialMessage != null) {
       handleMessage(context, initialMessage);
     }
 
@@ -134,18 +132,22 @@ class NotificationServices {
     });
   }
 
-  Future foregroundMessage()async{
-    await FirebaseMessaging.instance.setForegroundNotificationPresentationOptions(
+  Future foregroundMessage() async {
+    await FirebaseMessaging.instance
+        .setForegroundNotificationPresentationOptions(
       alert: true,
       badge: true,
       sound: true,
     );
   }
 
-  void handleMessage(BuildContext context,RemoteMessage message){
-  if(message.data['type'] == 'chat'){
-    Navigator.pushNamed(context, LoginRoute);
-    //Navigator.push(context, MaterialPageRoute(builder: (context)=>LoginScreen()));
-  }
+  void handleMessage(BuildContext context, RemoteMessage message) {
+    if (message.data['intent'] == 'DMainRoute') {
+      var orderid = message.data['orderid'];
+      print('Notification OrderID::$orderid');
+      SharedPreferenceUtils.save_val('norder_id', orderid);
+      Navigator.pushReplacementNamed(context, DMainRoute);
+      //Navigator.push(context, MaterialPageRoute(builder: (context)=>LoginScreen()));
+    }
   }
 }

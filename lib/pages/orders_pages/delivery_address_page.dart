@@ -119,6 +119,7 @@ class _DeliveryAddressPageState extends State<DeliveryAddressPage> {
     });
     try {
       final prefs = await SharedPreferences.getInstance();
+      var customerid = prefs.getString('customerid');
       var usrid = prefs.getString('usrid');
 
       var url = glb.endPoint;
@@ -129,7 +130,8 @@ class _DeliveryAddressPageState extends State<DeliveryAddressPage> {
       dictMap['cityName'] = cityName;
       dictMap['zipCode'] = zipCode;
       dictMap['landMark'] = landMark;
-      dictMap['customerId'] = usrid;
+      dictMap['customerId'] = customerid;
+      dictMap['customerUsrid'] = usrid;
       dictMap['clat'] = latitude;
       dictMap['clng'] = longitude;
       dictMap['pktType'] = "4";

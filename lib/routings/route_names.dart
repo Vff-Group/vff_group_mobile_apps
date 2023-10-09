@@ -14,3 +14,6 @@ const String PlaceOrderRoute = "place_order";
 const String DeliveryAddressRoute = "delivery_address";
 const String MainCategoryDetailsRoute = "main_category_details";
 
+// Delivery_boy Routes
+const String DeliveryLoginRoute = "delivery_login";
+const String DMainRoute = "delivery_welcome";

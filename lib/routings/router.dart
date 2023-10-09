@@ -1,5 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:vff_group/delivery_boy_app/pages/main_pages/bottom_page_main.dart';
+import 'package:vff_group/delivery_boy_app/pages/main_pages/delivery_login.dart';
 import 'package:vff_group/pages/categories/dry_clean_home.dart';
 import 'package:vff_group/pages/categories/wash_fold_home.dart';
 import 'package:vff_group/pages/categories/wash_iron_home.dart';
@@ -43,6 +45,12 @@ Route<dynamic> generateRoute(RouteSettings settings) {
       return _getPageRoute(const DeliveryAddressPage());
     case AllServicesRoute:
       return _getPageRoute(const AllServicesPage());
+    case DMainRoute:
+      return _getPageRoute(const BottomBarDeliveryBoy(pageDIndex: 0,));
+
+// Delivery Boy Routes
+    case DeliveryLoginRoute:
+      return _getPageRoute(const DeliveryLoginScreen());
 
     default:
       return _getPageRoute(const SplashScreen());

@@ -14,8 +14,9 @@ import 'package:location/location.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 
-String endPoint = "http://62.72.57.222:8085/";
-String account_created_date = "";
+String endPoint = "http://62.72.57.222:3000/";//8085
+String account_created_date = "",orderid="";
+
 void showSnackBar(BuildContext context, String alertTxt, String text) {
   Get.snackbar(alertTxt, text, snackPosition: SnackPosition.TOP);
 }
@@ -25,7 +26,7 @@ String upload_url = "http://164.52.210.25:3335/upload";
 String mainCategoryID = "",mainCategoryName = "",usrid = "";
 String profileImage = "";
 SharedPreferences? prefs;
-int pageIndex = 0;
+int pageIndex = 0,pageDIndex = 0;
 List strToLst(String str) {
   var split = str.toString().split(",");
   return split;

@@ -65,7 +65,7 @@ class _HomePageState extends State<HomePage> {
       showLoading = true,
       showSuccessGif = false,
       showDefaultPickup = true;
-
+  var deviceToken = "";
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   @override
   void initState() {
@@ -75,15 +75,21 @@ class _HomePageState extends State<HomePage> {
     notificationServices.foregroundMessage();
     notificationServices.firebaseInit(context);
     notificationServices.setupInteractMessage(context);
-    // notificationServices.isTokenRefreshed();
-    notificationServices.getDeviceToken().then((value) => {
-          SharedPreferenceUtils.save_val('notificationToken', value),
-          print('DeviceToken:$value')
-        });
+    var isChanged = notificationServices.isTokenRefreshed();
+    print('is FCM Token Changed:$isChanged');
+    if (isChanged == true) {
+      notificationServices.getDeviceToken().then((value) => {
+            deviceToken = value.toString().replaceAll(':', '__colon__'),
+            SharedPreferenceUtils.save_val('notificationToken', deviceToken),
+            updateDeviceToken(),
+            print('DeviceToken:$value')
+          });
+    }
 
     //Checking Location permission
-getDefaultData();
+    getDefaultData();
     _getCurrentPosition();
+
     allCategoryAsync();
   }
 
@@ -191,24 +197,78 @@ getDefaultData();
     }
   }
 
+  Future updateDeviceToken() async {
+    glb.prefs = await SharedPreferences.getInstance();
+
+    var usrid = glb.prefs?.getString('usrid');
+    if (deviceToken.isEmpty) {
+      print('DeviceToken is Empty');
+      return;
+    }
+    try {
+      var url = glb.endPoint;
+      final Map dictMap = {};
+
+      dictMap['usrid'] = usrid;
+      dictMap['deviceToken'] = deviceToken;
+      dictMap['pktType'] = "5";
+      dictMap['token'] = "vff";
+      dictMap['uid'] = "-1";
+
+      final response = await http.post(Uri.parse(url),
+          headers: <String, String>{
+            "Accept": "application/json",
+            'Content-Type': 'application/json; charset=UTF-8',
+          },
+          body: jsonEncode(dictMap));
+
+      if (response.statusCode == 200) {
+        var res = response.body;
+        if (res.contains("ErrorCode#2")) {
+          glb.showSnackBar(context, 'Error', 'No Categories Found');
+          return;
+        } else if (res.contains("ErrorCode#8")) {
+          glb.showSnackBar(context, 'Error', 'Something Went Wrong');
+          return;
+        } else {
+          print('Device TOken Updated Successfully');
+        }
+      }
+    } catch (e) {
+      if (kDebugMode) {
+        print(e);
+      }
+      glb.handleErrors(e, context);
+    }
+  }
+
   void getDefaultData() async {
-  glb.prefs = await SharedPreferences.getInstance();
+    glb.prefs = await SharedPreferences.getInstance();
 
-  var profile = glb.prefs?.getString('profile_img');
-  var usrname = glb.prefs?.getString('usrname');
+    var profile = glb.prefs?.getString('profile_img');
+    var usrname = glb.prefs?.getString('usrname');
+    var notificationToken = glb.prefs?.getString('notificationToken');
+    if (notificationServices == null || notificationToken!.isEmpty) {
+      notificationServices.getDeviceToken().then((value) => {
+            deviceToken = value.toString().replaceAll(':', '__colon__'),
+            SharedPreferenceUtils.save_val('notificationToken', deviceToken),
+            updateDeviceToken(),
+            print('DeviceToken:$value')
+          });
+    }
 
-  if (usrname != null && usrname.isNotEmpty) {
-    setState(() {
-      userName = usrname;
-    });
+    if (usrname != null && usrname.isNotEmpty) {
+      setState(() {
+        userName = usrname;
+      });
+    }
+
+    if (profile != null && profile.isNotEmpty) {
+      setState(() {
+        profile_img = profile;
+      });
+    }
   }
-
-  if (profile != null && profile.isNotEmpty) {
-    setState(() {
-      profile_img = profile;
-    });
-  }
-}
 
   //Position? _currentPosition;
 
@@ -291,7 +351,9 @@ getDefaultData();
     return Padding(
       padding: const EdgeInsets.only(bottom: 8.0),
       child: FloatingActionButton(
-        onPressed: () {},
+        onPressed: () {
+          goToDeliveryBoyPage();
+        },
         backgroundColor: Colors.pink,
         heroTag: "btn2",
         tooltip: 'Delivery Boy',
@@ -318,553 +380,567 @@ getDefaultData();
   @override
   Widget build(BuildContext context) {
     double width = MediaQuery.of(context).size.width;
-    return SafeArea(
-      child: Scaffold(
-        key: _scaffoldKey,
-        backgroundColor: AppColors.backColor,
-        body: CustomScrollView(
-          slivers: [
-            SliverToBoxAdapter(
-              child: Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                     _NavBar(profileImg: profile_img,),
-                    SizedBox(
-                      height: width * 0.05,
-                    ),
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text('Explore Offers',
-                            style: ralewayStyle.copyWith(
-                                fontSize: 20.0,
-                                color: Colors.black,
-                                fontWeight: FontWeight.bold,
-                                letterSpacing: 1)),
-                        Padding(
-                          padding: const EdgeInsets.only(top: 5.0),
-                          child: Text('Laundry Made Simple with VFF',
+    return GestureDetector(
+      onTap: () {
+        FocusManager.instance.primaryFocus?.unfocus();
+      },
+      child: SafeArea(
+        child: Scaffold(
+          key: _scaffoldKey,
+          backgroundColor: AppColors.backColor,
+          body: CustomScrollView(
+            slivers: [
+              SliverToBoxAdapter(
+                child: Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      _NavBar(
+                        profileImg: profile_img,
+                      ),
+                      SizedBox(
+                        height: width * 0.05,
+                      ),
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text('Explore Offers',
                               style: ralewayStyle.copyWith(
-                                  fontSize: 12.0,
-                                  color: AppColors.textColor,
-                                  fontWeight: FontWeight.normal,
+                                  fontSize: 20.0,
+                                  color: Colors.black,
+                                  fontWeight: FontWeight.bold,
                                   letterSpacing: 1)),
-                        ),
-                        SizedBox(
-                          height: width * 0.05,
-                        ),
-                        _SliderLayout(width: width),
-                        SizedBox(
-                          height: width * 0.01,
-                        ),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            Text('Services',
+                          Padding(
+                            padding: const EdgeInsets.only(top: 5.0),
+                            child: Text('Laundry Made Simple with VFF',
                                 style: ralewayStyle.copyWith(
-                                    fontSize: 20.0,
-                                    color: Colors.black,
-                                    fontWeight: FontWeight.bold,
+                                    fontSize: 12.0,
+                                    color: AppColors.textColor,
+                                    fontWeight: FontWeight.normal,
                                     letterSpacing: 1)),
-                            InkWell(
-                              onTap: () {
-                                Navigator.pushNamed(context, AllServicesRoute);
-                              },
-                              child: Text('See all',
+                          ),
+                          SizedBox(
+                            height: width * 0.05,
+                          ),
+                          _SliderLayout(width: width),
+                          SizedBox(
+                            height: width * 0.01,
+                          ),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              Text('Services',
                                   style: ralewayStyle.copyWith(
-                                      fontSize: 12.0,
-                                      color: AppColors.textColor,
+                                      fontSize: 20.0,
+                                      color: Colors.black,
                                       fontWeight: FontWeight.bold,
                                       letterSpacing: 1)),
-                            ),
-                          ],
-                        ),
-                        SizedBox(
-                          height: width * 0.02,
-                        ),
-                        showLoading
-                            ? const LinearProgressIndicator()
-                            : SizedBox(
-                                height: 140,
-                                child: ListView.builder(
-                                    scrollDirection: Axis.horizontal,
-                                    itemCount: categoryModel.length,
-                                    itemBuilder: (context, index) {
-                                      // Generate a random gradient for each item
-                                      //LinearGradient randomGradient = generateRandomGradient();
-                                      Color randomColor =
-                                          glb.generateRandomColorWithOpacity();
-                                      return Padding(
-                                        padding: const EdgeInsets.all(8.0),
-                                        child: Material(
-                                          color: Colors.transparent,
-                                          child: InkWell(
-                                            onTap: () {
-                                              Navigator.pushNamed(context,
-                                                  DeliveryAddressRoute);
-                                            },
-                                            borderRadius:
-                                                BorderRadius.circular(12.0),
-                                            child: Ink(
-                                              width: width - 120,
-                                              decoration: BoxDecoration(
-                                                color: AppColors.whiteColor,
-                                                borderRadius:
-                                                    BorderRadius.circular(12.0),
-                                                boxShadow: [
-                                                  BoxShadow(
-                                                    color: Colors.white
-                                                        .withOpacity(
-                                                            0.2), // Shadow color
-                                                    spreadRadius:
-                                                        1, // Spread radius
-                                                    blurRadius:
-                                                        5, // Blur radius
-                                                    offset: const Offset(0,
-                                                        1), // Offset to control shadow position
-                                                  ),
-                                                ],
-                                              ),
-                                              child: Column(
-                                                mainAxisAlignment:
-                                                    MainAxisAlignment.center,
-                                                children: [
-                                                  Padding(
-                                                    padding:
-                                                        const EdgeInsets.all(
-                                                            8.0),
-                                                    child: Row(
-                                                      crossAxisAlignment:
-                                                          CrossAxisAlignment
-                                                              .center,
-                                                      children: [
-                                                        Container(
-                                                            width: 60.0,
-                                                            height: 60.0,
-                                                            decoration:
-                                                                BoxDecoration(
-                                                              borderRadius:
-                                                                  BorderRadius
-                                                                      .circular(
-                                                                          50.0),
-                                                              color:
-                                                                  randomColor,
-                                                            ),
-                                                            child: ClipRRect(
+                              InkWell(
+                                onTap: () {
+                                  Navigator.pushNamed(
+                                      context, AllServicesRoute);
+                                },
+                                child: Text('See all',
+                                    style: ralewayStyle.copyWith(
+                                        fontSize: 12.0,
+                                        color: AppColors.textColor,
+                                        fontWeight: FontWeight.bold,
+                                        letterSpacing: 1)),
+                              ),
+                            ],
+                          ),
+                          SizedBox(
+                            height: width * 0.02,
+                          ),
+                          showLoading
+                              ? const LinearProgressIndicator()
+                              : SizedBox(
+                                  height: 140,
+                                  child: ListView.builder(
+                                      scrollDirection: Axis.horizontal,
+                                      itemCount: categoryModel.length,
+                                      itemBuilder: (context, index) {
+                                        // Generate a random gradient for each item
+                                        //LinearGradient randomGradient = generateRandomGradient();
+                                        Color randomColor = glb
+                                            .generateRandomColorWithOpacity();
+                                        return Padding(
+                                          padding: const EdgeInsets.all(8.0),
+                                          child: Material(
+                                            color: Colors.transparent,
+                                            child: InkWell(
+                                              onTap: () {
+                                                Navigator.pushNamed(context,
+                                                    DeliveryAddressRoute);
+                                              },
+                                              borderRadius:
+                                                  BorderRadius.circular(12.0),
+                                              child: Ink(
+                                                width: width - 120,
+                                                decoration: BoxDecoration(
+                                                  color: AppColors.whiteColor,
+                                                  borderRadius:
+                                                      BorderRadius.circular(
+                                                          12.0),
+                                                  boxShadow: [
+                                                    BoxShadow(
+                                                      color: Colors.white
+                                                          .withOpacity(
+                                                              0.2), // Shadow color
+                                                      spreadRadius:
+                                                          1, // Spread radius
+                                                      blurRadius:
+                                                          5, // Blur radius
+                                                      offset: const Offset(0,
+                                                          1), // Offset to control shadow position
+                                                    ),
+                                                  ],
+                                                ),
+                                                child: Column(
+                                                  mainAxisAlignment:
+                                                      MainAxisAlignment.center,
+                                                  children: [
+                                                    Padding(
+                                                      padding:
+                                                          const EdgeInsets.all(
+                                                              8.0),
+                                                      child: Row(
+                                                        crossAxisAlignment:
+                                                            CrossAxisAlignment
+                                                                .center,
+                                                        children: [
+                                                          Container(
+                                                              width: 60.0,
+                                                              height: 60.0,
+                                                              decoration:
+                                                                  BoxDecoration(
                                                                 borderRadius:
                                                                     BorderRadius
                                                                         .circular(
                                                                             50.0),
-                                                                child: Image.network(
-                                                                    categoryModel[
-                                                                            index]
-                                                                        .categoryBGUrl))),
-                                                        Padding(
-                                                          padding:
-                                                              const EdgeInsets
-                                                                  .only(
-                                                                  right: 8.0,
-                                                                  left: 8.0),
-                                                          child: Column(
-                                                            crossAxisAlignment:
-                                                                CrossAxisAlignment
-                                                                    .start,
-                                                            children: [
-                                                              Text(
-                                                                  categoryModel[
-                                                                          index]
-                                                                      .categoryName,
-                                                                  style: ralewayStyle.copyWith(
-                                                                      fontSize:
-                                                                          16.0,
-                                                                      color: Colors
-                                                                          .black,
-                                                                      fontWeight:
-                                                                          FontWeight
-                                                                              .bold,
-                                                                      letterSpacing:
-                                                                          1)),
-                                                              Padding(
-                                                                padding:
-                                                                    const EdgeInsets
-                                                                        .only(
-                                                                        top:
-                                                                            8.0),
-                                                                child: Text(
-                                                                    'Min ${categoryModel[index].minHours}Hours',
+                                                                color:
+                                                                    randomColor,
+                                                              ),
+                                                              child: ClipRRect(
+                                                                  borderRadius:
+                                                                      BorderRadius
+                                                                          .circular(
+                                                                              50.0),
+                                                                  child: Image.network(
+                                                                      categoryModel[
+                                                                              index]
+                                                                          .categoryBGUrl))),
+                                                          Padding(
+                                                            padding:
+                                                                const EdgeInsets
+                                                                    .only(
+                                                                    right: 8.0,
+                                                                    left: 8.0),
+                                                            child: Column(
+                                                              crossAxisAlignment:
+                                                                  CrossAxisAlignment
+                                                                      .start,
+                                                              children: [
+                                                                Text(categoryModel[index].categoryName,
                                                                     style: ralewayStyle.copyWith(
                                                                         fontSize:
-                                                                            10.0,
-                                                                        color: AppColors
-                                                                            .textColor,
+                                                                            16.0,
+                                                                        color: Colors
+                                                                            .black,
                                                                         fontWeight:
                                                                             FontWeight
                                                                                 .bold,
                                                                         letterSpacing:
                                                                             1)),
-                                                              ),
-                                                            ],
-                                                          ),
-                                                        ),
-                                                      ],
-                                                    ),
-                                                  ),
-                                                  Padding(
-                                                    padding: const EdgeInsets
-                                                        .symmetric(
-                                                        horizontal: 8.0,
-                                                        vertical: 4.0),
-                                                    child: Container(
-                                                      width: width,
-                                                      height: 1,
-                                                      decoration: BoxDecoration(
-                                                          borderRadius:
-                                                              BorderRadius
-                                                                  .circular(
-                                                                      12.0),
-                                                          color: AppColors
-                                                              .greyColor
-                                                              .withOpacity(
-                                                                  0.5)),
-                                                    ),
-                                                  ),
-                                                  Row(
-                                                    mainAxisAlignment:
-                                                        MainAxisAlignment
-                                                            .spaceAround,
-                                                    children: [
-                                                      Column(
-                                                        children: [
-                                                          Text('Regular Price',
-                                                              style: ralewayStyle.copyWith(
-                                                                  fontSize: 8.0,
-                                                                  color: Colors
-                                                                      .black,
-                                                                  fontWeight:
-                                                                      FontWeight
-                                                                          .bold,
-                                                                  letterSpacing:
-                                                                      1)),
-                                                          Text(
-                                                              '${categoryModel[index].regularPrice}/${categoryModel[index].regularPriceType}',
-                                                              style: ralewayStyle.copyWith(
-                                                                  fontSize:
-                                                                      12.0,
-                                                                  color: Colors
-                                                                      .deepOrange,
-                                                                  fontWeight:
-                                                                      FontWeight
-                                                                          .bold,
-                                                                  letterSpacing:
-                                                                      1)),
-                                                        ],
-                                                      ),
-                                                      Container(
-                                                        width: 1,
-                                                        height: 15,
-                                                        decoration:
-                                                            BoxDecoration(
-                                                          borderRadius:
-                                                              BorderRadius
-                                                                  .circular(
-                                                                      12.0),
-                                                          color: Colors.grey,
-                                                        ),
-                                                      ),
-                                                      Column(
-                                                        children: [
-                                                          Text('Express Price',
-                                                              style: ralewayStyle.copyWith(
-                                                                  fontSize: 8.0,
-                                                                  color: Colors
-                                                                      .black,
-                                                                  fontWeight:
-                                                                      FontWeight
-                                                                          .bold,
-                                                                  letterSpacing:
-                                                                      1)),
-                                                          Text(
-                                                              '${categoryModel[index].expressPrice}/${categoryModel[index].expressPriceType}',
-                                                              style: ralewayStyle.copyWith(
-                                                                  fontSize:
-                                                                      12.0,
-                                                                  color: Colors
-                                                                      .deepPurple,
-                                                                  fontWeight:
-                                                                      FontWeight
-                                                                          .bold,
-                                                                  letterSpacing:
-                                                                      1)),
-                                                        ],
-                                                      ),
-                                                      Container(
-                                                        width: 1,
-                                                        height: 15,
-                                                        decoration:
-                                                            BoxDecoration(
-                                                          borderRadius:
-                                                              BorderRadius
-                                                                  .circular(
-                                                                      12.0),
-                                                          color: Colors.grey,
-                                                        ),
-                                                      ),
-                                                      Column(
-                                                        children: [
-                                                          Text('Offer Price',
-                                                              style: ralewayStyle.copyWith(
-                                                                  fontSize: 8.0,
-                                                                  color: Colors
-                                                                      .black,
-                                                                  fontWeight:
-                                                                      FontWeight
-                                                                          .bold,
-                                                                  letterSpacing:
-                                                                      1)),
-                                                          Text(
-                                                              '${categoryModel[index].offerPrice}/${categoryModel[index].offerPriceType}',
-                                                              style: ralewayStyle.copyWith(
-                                                                  fontSize:
-                                                                      12.0,
-                                                                  color: Colors
-                                                                      .blue,
-                                                                  fontWeight:
-                                                                      FontWeight
-                                                                          .bold,
-                                                                  letterSpacing:
-                                                                      1)),
-                                                        ],
-                                                      ),
-                                                    ],
-                                                  ),
-                                                ],
-                                              ),
-                                            ),
-                                          ),
-                                        ),
-                                      );
-                                    }),
-                              ),
-                        SizedBox(
-                          height: width * 0.05,
-                        ),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            Text(activeOrdersText,
-                                style: ralewayStyle.copyWith(
-                                    fontSize: 20.0,
-                                    color: Colors.black,
-                                    fontWeight: FontWeight.bold,
-                                    letterSpacing: 1)),
-                            InkWell(
-                              onTap: () {
-                                Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                        builder: (context) =>
-                                            const BottomBarScreen(
-                                                pageIndex: 2)));
-                                //widget.changeTabBar();
-                                // Provider.of<TabProvider>(context, listen: false).changeTab(1);
-                                //Navigator.pushNamed(context, OrderTabRoute);
-                              },
-                              child: Text('Previous',
-                                  style: ralewayStyle.copyWith(
-                                      fontSize: 12.0,
-                                      color: AppColors.textColor,
-                                      fontWeight: FontWeight.bold,
-                                      letterSpacing: 1)),
-                            ),
-                          ],
-                        ),
-                        SizedBox(
-                          height: width * 0.02,
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.all(26.0),
-                          child: Center(
-                            child: Text(
-                              'No Orders',
-                              style: ralewayStyle.copyWith(
-                                  fontSize: 16.0,
-                                  fontWeight: FontWeight.bold,
-                                  color: AppColors.titleTxtColor),
-                            ),
-                          ),
-                        ),
-                        Visibility(
-                          visible: false,
-                          child: SizedBox(
-                            height: 300,
-                            child: ListView.builder(
-                                scrollDirection: Axis.vertical,
-                                itemCount: 2,
-                                itemBuilder: (context, index) {
-                                  // Generate a random gradient for each item
-                                  //LinearGradient randomGradient = generateRandomGradient();
-                                  return Padding(
-                                    padding: const EdgeInsets.all(8.0),
-                                    child: Material(
-                                      color: Colors.transparent,
-                                      child: InkWell(
-                                        onTap: () {
-                                          //Send to Order detail Screen
-                                          //  CupertinoPageRoute(builder: (context) => OrderDetailsPage());
-                                          Navigator.pushNamed(
-                                              context, OrderDetailsRoute);
-                                          // Navigator.push(
-                                          //   context,
-                                          //   CupertinoPageRoute(
-                                          //       builder: (context) =>
-                                          //           OrderDetailsPage()),
-                                          // );
-                                        },
-                                        borderRadius:
-                                            BorderRadius.circular(12.0),
-                                        child: Ink(
-                                          decoration: BoxDecoration(
-                                            color: AppColors.whiteColor,
-                                            borderRadius:
-                                                BorderRadius.circular(12.0),
-                                            boxShadow: [
-                                              BoxShadow(
-                                                color: Colors.white.withOpacity(
-                                                    0.2), // Shadow color
-                                                spreadRadius:
-                                                    1, // Spread radius
-                                                blurRadius: 5, // Blur radius
-                                                offset: const Offset(0,
-                                                    1), // Offset to control shadow position
-                                              ),
-                                            ],
-                                          ),
-                                          child: Column(
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.center,
-                                            children: [
-                                              Padding(
-                                                padding:
-                                                    const EdgeInsets.all(8.0),
-                                                child: Row(
-                                                  crossAxisAlignment:
-                                                      CrossAxisAlignment.center,
-                                                  children: [
-                                                    Container(
-                                                        width: 60.0,
-                                                        height: 60.0,
-                                                        decoration:
-                                                            BoxDecoration(
-                                                          borderRadius:
-                                                              BorderRadius
-                                                                  .circular(
-                                                                      50.0),
-                                                          color: AppColors
-                                                              .whiteColor,
-                                                        ),
-                                                        child: Stack(
-                                                          children: [
-                                                            Align(
-                                                                alignment:
-                                                                    Alignment
-                                                                        .center,
-                                                                child: Image.asset(
-                                                                    'assets/images/delivery.gif')),
-                                                            const SizedBox(
-                                                                width: 60.0,
-                                                                height: 60.0,
-                                                                child:
-                                                                    CircularProgressIndicator(
-                                                                  color: AppColors
-                                                                      .blueColor,
-                                                                  value: 0.6,
-                                                                ))
-                                                          ],
-                                                        )),
-                                                    Padding(
-                                                      padding:
-                                                          const EdgeInsets.only(
-                                                              left: 20.0),
-                                                      child: Column(
-                                                        crossAxisAlignment:
-                                                            CrossAxisAlignment
-                                                                .start,
-                                                        children: [
-                                                          SizedBox(
-                                                            child: Text(
-                                                              'Order ID: #346782134768768687',
-                                                              style: nunitoStyle.copyWith(
-                                                                  fontSize:
-                                                                      14.0,
-                                                                  color: Colors
-                                                                      .black,
-                                                                  fontWeight:
-                                                                      FontWeight
-                                                                          .bold,
-                                                                  letterSpacing:
-                                                                      1),
-                                                              overflow:
-                                                                  TextOverflow
-                                                                      .ellipsis,
-                                                              softWrap: true,
+                                                                Padding(
+                                                                  padding:
+                                                                      const EdgeInsets
+                                                                          .only(
+                                                                          top:
+                                                                              8.0),
+                                                                  child: Text(
+                                                                      'Min ${categoryModel[index].minHours}Hours',
+                                                                      style: ralewayStyle.copyWith(
+                                                                          fontSize:
+                                                                              10.0,
+                                                                          color: AppColors
+                                                                              .textColor,
+                                                                          fontWeight: FontWeight
+                                                                              .bold,
+                                                                          letterSpacing:
+                                                                              1)),
+                                                                ),
+                                                              ],
                                                             ),
                                                           ),
-                                                          Padding(
-                                                            padding:
-                                                                const EdgeInsets
-                                                                    .only(
-                                                                    top: 8.0),
-                                                            child: Text(
-                                                                'Order Confirmed',
+                                                        ],
+                                                      ),
+                                                    ),
+                                                    Padding(
+                                                      padding: const EdgeInsets
+                                                          .symmetric(
+                                                          horizontal: 8.0,
+                                                          vertical: 4.0),
+                                                      child: Container(
+                                                        width: width,
+                                                        height: 1,
+                                                        decoration: BoxDecoration(
+                                                            borderRadius:
+                                                                BorderRadius
+                                                                    .circular(
+                                                                        12.0),
+                                                            color: AppColors
+                                                                .greyColor
+                                                                .withOpacity(
+                                                                    0.5)),
+                                                      ),
+                                                    ),
+                                                    Row(
+                                                      mainAxisAlignment:
+                                                          MainAxisAlignment
+                                                              .spaceAround,
+                                                      children: [
+                                                        Column(
+                                                          children: [
+                                                            Text(
+                                                                'Regular Price',
                                                                 style: ralewayStyle.copyWith(
                                                                     fontSize:
-                                                                        12.0,
-                                                                    color: AppColors
-                                                                        .blueColor,
+                                                                        8.0,
+                                                                    color: Colors
+                                                                        .black,
                                                                     fontWeight:
                                                                         FontWeight
                                                                             .bold,
                                                                     letterSpacing:
                                                                         1)),
+                                                            Text(
+                                                                '${categoryModel[index].regularPrice}/${categoryModel[index].regularPriceType}',
+                                                                style: ralewayStyle.copyWith(
+                                                                    fontSize:
+                                                                        12.0,
+                                                                    color: Colors
+                                                                        .deepOrange,
+                                                                    fontWeight:
+                                                                        FontWeight
+                                                                            .bold,
+                                                                    letterSpacing:
+                                                                        1)),
+                                                          ],
+                                                        ),
+                                                        Container(
+                                                          width: 1,
+                                                          height: 15,
+                                                          decoration:
+                                                              BoxDecoration(
+                                                            borderRadius:
+                                                                BorderRadius
+                                                                    .circular(
+                                                                        12.0),
+                                                            color: Colors.grey,
                                                           ),
-                                                        ],
-                                                      ),
+                                                        ),
+                                                        Column(
+                                                          children: [
+                                                            Text(
+                                                                'Express Price',
+                                                                style: ralewayStyle.copyWith(
+                                                                    fontSize:
+                                                                        8.0,
+                                                                    color: Colors
+                                                                        .black,
+                                                                    fontWeight:
+                                                                        FontWeight
+                                                                            .bold,
+                                                                    letterSpacing:
+                                                                        1)),
+                                                            Text(
+                                                                '${categoryModel[index].expressPrice}/${categoryModel[index].expressPriceType}',
+                                                                style: ralewayStyle.copyWith(
+                                                                    fontSize:
+                                                                        12.0,
+                                                                    color: Colors
+                                                                        .deepPurple,
+                                                                    fontWeight:
+                                                                        FontWeight
+                                                                            .bold,
+                                                                    letterSpacing:
+                                                                        1)),
+                                                          ],
+                                                        ),
+                                                        Container(
+                                                          width: 1,
+                                                          height: 15,
+                                                          decoration:
+                                                              BoxDecoration(
+                                                            borderRadius:
+                                                                BorderRadius
+                                                                    .circular(
+                                                                        12.0),
+                                                            color: Colors.grey,
+                                                          ),
+                                                        ),
+                                                        Column(
+                                                          children: [
+                                                            Text('Offer Price',
+                                                                style: ralewayStyle.copyWith(
+                                                                    fontSize:
+                                                                        8.0,
+                                                                    color: Colors
+                                                                        .black,
+                                                                    fontWeight:
+                                                                        FontWeight
+                                                                            .bold,
+                                                                    letterSpacing:
+                                                                        1)),
+                                                            Text(
+                                                                '${categoryModel[index].offerPrice}/${categoryModel[index].offerPriceType}',
+                                                                style: ralewayStyle.copyWith(
+                                                                    fontSize:
+                                                                        12.0,
+                                                                    color: Colors
+                                                                        .blue,
+                                                                    fontWeight:
+                                                                        FontWeight
+                                                                            .bold,
+                                                                    letterSpacing:
+                                                                        1)),
+                                                          ],
+                                                        ),
+                                                      ],
                                                     ),
                                                   ],
                                                 ),
-                                              )
-                                            ],
+                                              ),
+                                            ),
+                                          ),
+                                        );
+                                      }),
+                                ),
+                          SizedBox(
+                            height: width * 0.05,
+                          ),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              Text(activeOrdersText,
+                                  style: ralewayStyle.copyWith(
+                                      fontSize: 20.0,
+                                      color: Colors.black,
+                                      fontWeight: FontWeight.bold,
+                                      letterSpacing: 1)),
+                              InkWell(
+                                onTap: () {
+                                  Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (context) =>
+                                              const BottomBarScreen(
+                                                  pageIndex: 2)));
+                                  //widget.changeTabBar();
+                                  // Provider.of<TabProvider>(context, listen: false).changeTab(1);
+                                  //Navigator.pushNamed(context, OrderTabRoute);
+                                },
+                                child: Text('Previous',
+                                    style: ralewayStyle.copyWith(
+                                        fontSize: 12.0,
+                                        color: AppColors.textColor,
+                                        fontWeight: FontWeight.bold,
+                                        letterSpacing: 1)),
+                              ),
+                            ],
+                          ),
+                          SizedBox(
+                            height: width * 0.02,
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.all(26.0),
+                            child: Center(
+                              child: Text(
+                                'No Orders',
+                                style: ralewayStyle.copyWith(
+                                    fontSize: 16.0,
+                                    fontWeight: FontWeight.bold,
+                                    color: AppColors.titleTxtColor),
+                              ),
+                            ),
+                          ),
+                          Visibility(
+                            visible: false,
+                            child: SizedBox(
+                              height: 300,
+                              child: ListView.builder(
+                                  scrollDirection: Axis.vertical,
+                                  itemCount: 2,
+                                  itemBuilder: (context, index) {
+                                    // Generate a random gradient for each item
+                                    //LinearGradient randomGradient = generateRandomGradient();
+                                    return Padding(
+                                      padding: const EdgeInsets.all(8.0),
+                                      child: Material(
+                                        color: Colors.transparent,
+                                        child: InkWell(
+                                          onTap: () {
+                                            //Send to Order detail Screen
+                                            //  CupertinoPageRoute(builder: (context) => OrderDetailsPage());
+                                            Navigator.pushNamed(
+                                                context, OrderDetailsRoute);
+                                            // Navigator.push(
+                                            //   context,
+                                            //   CupertinoPageRoute(
+                                            //       builder: (context) =>
+                                            //           OrderDetailsPage()),
+                                            // );
+                                          },
+                                          borderRadius:
+                                              BorderRadius.circular(12.0),
+                                          child: Ink(
+                                            decoration: BoxDecoration(
+                                              color: AppColors.whiteColor,
+                                              borderRadius:
+                                                  BorderRadius.circular(12.0),
+                                              boxShadow: [
+                                                BoxShadow(
+                                                  color: Colors.white
+                                                      .withOpacity(
+                                                          0.2), // Shadow color
+                                                  spreadRadius:
+                                                      1, // Spread radius
+                                                  blurRadius: 5, // Blur radius
+                                                  offset: const Offset(0,
+                                                      1), // Offset to control shadow position
+                                                ),
+                                              ],
+                                            ),
+                                            child: Column(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment.center,
+                                              children: [
+                                                Padding(
+                                                  padding:
+                                                      const EdgeInsets.all(8.0),
+                                                  child: Row(
+                                                    crossAxisAlignment:
+                                                        CrossAxisAlignment
+                                                            .center,
+                                                    children: [
+                                                      Container(
+                                                          width: 60.0,
+                                                          height: 60.0,
+                                                          decoration:
+                                                              BoxDecoration(
+                                                            borderRadius:
+                                                                BorderRadius
+                                                                    .circular(
+                                                                        50.0),
+                                                            color: AppColors
+                                                                .whiteColor,
+                                                          ),
+                                                          child: Stack(
+                                                            children: [
+                                                              Align(
+                                                                  alignment:
+                                                                      Alignment
+                                                                          .center,
+                                                                  child: Image
+                                                                      .asset(
+                                                                          'assets/images/delivery.gif')),
+                                                              const SizedBox(
+                                                                  width: 60.0,
+                                                                  height: 60.0,
+                                                                  child:
+                                                                      CircularProgressIndicator(
+                                                                    color: AppColors
+                                                                        .blueColor,
+                                                                    value: 0.6,
+                                                                  ))
+                                                            ],
+                                                          )),
+                                                      Padding(
+                                                        padding:
+                                                            const EdgeInsets
+                                                                .only(
+                                                                left: 20.0),
+                                                        child: Column(
+                                                          crossAxisAlignment:
+                                                              CrossAxisAlignment
+                                                                  .start,
+                                                          children: [
+                                                            SizedBox(
+                                                              child: Text(
+                                                                'Order ID: #346782134768768687',
+                                                                style: nunitoStyle.copyWith(
+                                                                    fontSize:
+                                                                        14.0,
+                                                                    color: Colors
+                                                                        .black,
+                                                                    fontWeight:
+                                                                        FontWeight
+                                                                            .bold,
+                                                                    letterSpacing:
+                                                                        1),
+                                                                overflow:
+                                                                    TextOverflow
+                                                                        .ellipsis,
+                                                                softWrap: true,
+                                                              ),
+                                                            ),
+                                                            Padding(
+                                                              padding:
+                                                                  const EdgeInsets
+                                                                      .only(
+                                                                      top: 8.0),
+                                                              child: Text(
+                                                                  'Order Confirmed',
+                                                                  style: ralewayStyle.copyWith(
+                                                                      fontSize:
+                                                                          12.0,
+                                                                      color: AppColors
+                                                                          .blueColor,
+                                                                      fontWeight:
+                                                                          FontWeight
+                                                                              .bold,
+                                                                      letterSpacing:
+                                                                          1)),
+                                                            ),
+                                                          ],
+                                                        ),
+                                                      ),
+                                                    ],
+                                                  ),
+                                                )
+                                              ],
+                                            ),
                                           ),
                                         ),
                                       ),
-                                    ),
-                                  );
-                                }),
+                                    );
+                                  }),
+                            ),
                           ),
-                        ),
-                      ],
-                    ),
-                  ],
+                        ],
+                      ),
+                    ],
+                  ),
                 ),
-              ),
-            )
-          ],
-        ),
-        floatingActionButton: SlideFromLeftAnimation(
-          delay: 1.2,
-          child: AnimatedFloatingActionButton(
-              //Fab list
-              fabButtons: <Widget>[float1(), float2(), float3()],
-              key: key,
-              colorStartAnimation: Colors.blue,
-              colorEndAnimation: Colors.red,
-              animatedIconData: AnimatedIcons.list_view //To principal button
-              ),
+              )
+            ],
+          ),
+          floatingActionButton: SlideFromLeftAnimation(
+            delay: 1.2,
+            child: AnimatedFloatingActionButton(
+                //Fab list
+                fabButtons: <Widget>[float1(), float2(), float3()],
+                key: key,
+                colorStartAnimation: Colors.blue,
+                colorEndAnimation: Colors.red,
+                animatedIconData: AnimatedIcons.list_view //To principal button
+                ),
+          ),
         ),
       ),
     );
@@ -874,6 +950,17 @@ getDefaultData();
     // NOTICE: Manage Advanced Drawer state through the Controller.
     // _advancedDrawerController.value = AdvancedDrawerValue.visible();
     _advancedDrawerController.showDrawer();
+  }
+
+  Future goToDeliveryBoyPage() async {
+    glb.prefs = await SharedPreferences.getInstance();
+
+    var dusrid = glb.prefs?.getString('dusrid');
+    if (dusrid != null) {
+      Navigator.pushReplacementNamed(context, DMainRoute);
+    } else {
+      Navigator.pushNamed(context, DeliveryLoginRoute);
+    }
   }
 }
 
@@ -1082,14 +1169,15 @@ class _NavBar extends StatelessWidget {
               innerAnimationSeconds: 10,
               outerAnimationSeconds: 10,
               child: Container(
-                decoration: BoxDecoration(
-                    shape: BoxShape.circle, color: Colors.grey[200]),
-                child:  profileImg.isEmpty == false ? CircleAvatar(
-                  radius: 25.0,
-                  backgroundImage: NetworkImage(profileImg) ,
-                  backgroundColor: Colors.transparent,
-                ) : Icon(Icons.person)
-              ),
+                  decoration: BoxDecoration(
+                      shape: BoxShape.circle, color: Colors.grey[200]),
+                  child: profileImg.isEmpty == false
+                      ? CircleAvatar(
+                          radius: 25.0,
+                          backgroundImage: NetworkImage(profileImg),
+                          backgroundColor: Colors.transparent,
+                        )
+                      : Icon(Icons.person)),
             ),
           ],
         )
@@ -1276,88 +1364,6 @@ class Main_Category_Layout extends StatelessWidget {
               ),
             ],
           )),
-    );
-  }
-}
-
-class _GreetingsLayout extends StatelessWidget {
-  const _GreetingsLayout({
-    super.key,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        Image.asset(
-          'assets/logo/logo.png',
-          width: 50,
-          height: 50,
-        ),
-        Column(
-          children: [
-            Row(
-              children: [
-                Column(
-                  children: [
-                    Positioned(
-                      top: 10,
-                      left: 50,
-                      child: Padding(
-                        padding: const EdgeInsets.only(left: 6.0),
-                        child: Text(
-                          'Hi, Shaheed',
-                          style: nunitoStyle.copyWith(
-                              fontWeight: FontWeight.normal,
-                              fontSize: 13.0,
-                              color: const Color.fromARGB(255, 116, 115, 115)),
-                        ),
-                      ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.only(left: 6.0),
-                      child: Text(
-                        'New Vaibhav Nagar,Belgaum',
-                        style: nunitoStyle.copyWith(
-                            fontWeight: FontWeight.bold,
-                            fontSize: 12.0,
-                            color: AppColors.descTxtColor),
-                      ),
-                    ),
-                  ],
-                ),
-              ],
-            ),
-          ],
-        ),
-        glb.profileImage != null
-            ? WidgetCircularAnimator(
-                size: 50,
-                innerIconsSize: 3,
-                outerIconsSize: 3,
-                innerAnimation: Curves.easeInOutBack,
-                outerAnimation: Curves.easeInOutBack,
-                innerColor: Colors.deepPurple,
-                outerColor: Colors.orangeAccent,
-                innerAnimationSeconds: 10,
-                outerAnimationSeconds: 10,
-                child: Container(
-                  decoration: BoxDecoration(
-                      shape: BoxShape.circle, color: Colors.grey[200]),
-                  child: CircleAvatar(
-                    radius: 25.0,
-                    backgroundImage: NetworkImage(glb.profileImage!),
-                    backgroundColor: Colors.transparent,
-                  ),
-                ),
-              )
-            : Image.asset(
-                'assets/logo/logo.png',
-                width: 50,
-                height: 50,
-              ),
-      ],
     );
   }
 }

@@ -20,15 +20,15 @@ import 'package:vff_group/widgets/textwidget.dart';
 import 'package:vff_group/global/vffglb.dart' as glb;
 import 'package:http/http.dart' as http;
 
-class LoginScreen extends StatefulWidget {
-  const LoginScreen({super.key});
+class DeliveryLoginScreen extends StatefulWidget {
+  const DeliveryLoginScreen({super.key});
 
   @override
-  State<LoginScreen> createState() => _LoginScreenState();
+  State<DeliveryLoginScreen> createState() => _DeliveryLoginScreenState();
 }
 
-class _LoginScreenState extends State<LoginScreen> {
-  TextEditingController phoneController = TextEditingController();
+class _DeliveryLoginScreenState extends State<DeliveryLoginScreen> {
+  TextEditingController userNameController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
   final _auth = FirebaseAuth.instance;
   final googleSignIn = GoogleSignIn();
@@ -58,7 +58,18 @@ class _LoginScreenState extends State<LoginScreen> {
                         delay: 0.1, child: Image.asset('assets/logo/logo.png')),
                   ),
                   Text(
-                    'Please enter your valid Mobile Number',
+                    'DELIVERY BOY',
+                    style: ralewayStyle.copyWith(
+                      color: Colors.deepOrangeAccent,
+                      fontSize: 20.0,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  SizedBox(
+                    height: width * 0.04,
+                  ),
+                  Text(
+                    'Welcome, please use valid login credentials',
                     style: nunitoStyle.copyWith(
                       color: AppColors.textColor,
                       fontSize: 15.0,
@@ -69,7 +80,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     height: height * 0.014,
                   ),
                   Padding(
-                    padding: const EdgeInsets.all(26.0),
+                    padding: const EdgeInsets.all(16.0),
                     child: Container(
                       height: 50.0,
                       width: width,
@@ -81,20 +92,20 @@ class _LoginScreenState extends State<LoginScreen> {
                         ),
                       ),
                       child: TextFormField(
-                        controller: phoneController,
+                        controller: userNameController,
                         style: nunitoStyle.copyWith(
                             fontWeight: FontWeight.w400,
                             color: AppColors.titleTxtColor,
                             fontSize: 14.0),
-                        keyboardType: TextInputType.phone,
+                        keyboardType: TextInputType.text,
                         decoration: InputDecoration(
                             border: InputBorder.none,
                             prefixIcon: IconButton(
                               onPressed: () {},
-                              icon: const Icon(Icons.phone),
+                              icon: const Icon(Icons.person),
                             ),
                             contentPadding: const EdgeInsets.only(top: 16.0),
-                            hintText: 'Mobile Number',
+                            hintText: 'Username',
                             hintStyle: ralewayStyle.copyWith(
                                 fontWeight: FontWeight.w400,
                                 color: AppColors.textColor.withOpacity(0.5),
@@ -102,60 +113,66 @@ class _LoginScreenState extends State<LoginScreen> {
                       ),
                     ),
                   ),
-                  // SizedBox(
-                  //   height: height * 0.04,
-                  // ),
-                  // Container(
-                  //   height: 50.0,
-                  //   width: width - 35.0,
-                  //   decoration: BoxDecoration(
-                  //     borderRadius: BorderRadius.circular(8.0),
-                  //     border: borderDanger ? Border.all(
-                  //       color: Colors.red, // Border color
-                  //       width: 0.4, // Border width
-                  //     ) :Border.all(
-                  //       color: AppColors.textColor, // Border color
-                  //       width: 0.2, // Border width
-                  //     ),
-                  //   ),
-                  //   child: TextFormField(
-                  //     controller: passwordController,
-                  //     style: ralewayStyle.copyWith(
-                  //         fontWeight: FontWeight.w400,
-                  //         color: AppColors.titleTxtColor,
-                  //         fontSize: 14.0),
-                  //     keyboardType: TextInputType.text,
-                  //     obscureText: _showPassword,
-                  //     decoration: InputDecoration(
-                  //         border: InputBorder.none,
-                  //         suffixIcon: IconButton(
-                  //             onPressed: () {
-                  //               if (_showPassword == true) {
-                  //                 setState(() {
-                  //                   _showPassword = false;
-                  //                 });
-                  //               } else {
-                  //                 setState(() {
-                  //                   _showPassword = true;
-                  //                 });
-                  //               }
-                  //             },
-                  //             icon: _showPassword
-                  //                 ? const Icon(Icons.remove_red_eye)
-                  //                 : const Icon(Icons
-                  //                     .no_encryption_gmailerrorred_outlined)),
-                  //         prefixIcon: IconButton(
-                  //           onPressed: () {},
-                  //           icon: const Icon(Icons.security),
-                  //         ),
-                  //         contentPadding: const EdgeInsets.only(top: 16.0),
-                  //         hintText: 'Password',
-                  //         hintStyle: ralewayStyle.copyWith(
-                  //             fontWeight: FontWeight.w400,
-                  //             color: AppColors.textColor.withOpacity(0.5),
-                  //             fontSize: 12.0)),
-                  //   ),
-                  // ),
+                  
+                  Padding(
+                    padding: const EdgeInsets.all(16.0),
+                    child: Container(
+                      height: 50.0,
+                      width: width - 35.0,
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(8.0),
+                        border: borderDanger
+                            ? Border.all(
+                                color: Colors.red, // Border color
+                                width: 0.4, // Border width
+                              )
+                            : Border.all(
+                                color: AppColors.textColor, // Border color
+                                width: 0.2, // Border width
+                              ),
+                      ),
+                      child: TextFormField(
+                        controller: passwordController,
+                        style: ralewayStyle.copyWith(
+                            fontWeight: FontWeight.w400,
+                            color: AppColors.titleTxtColor,
+                            fontSize: 14.0),
+                        keyboardType: TextInputType.text,
+                        obscureText: _showPassword,
+                        decoration: InputDecoration(
+                            border: InputBorder.none,
+                            suffixIcon: IconButton(
+                                onPressed: () {
+                                  if (_showPassword == true) {
+                                    setState(() {
+                                      _showPassword = false;
+                                    });
+                                  } else {
+                                    setState(() {
+                                      _showPassword = true;
+                                    });
+                                  }
+                                },
+                                icon: _showPassword
+                                    ? const Icon(Icons.remove_red_eye)
+                                    : const Icon(Icons
+                                        .no_encryption_gmailerrorred_outlined)),
+                            prefixIcon: IconButton(
+                              onPressed: () {},
+                              icon: const Icon(Icons.security),
+                            ),
+                            contentPadding: const EdgeInsets.only(top: 16.0),
+                            hintText: 'Password',
+                            hintStyle: ralewayStyle.copyWith(
+                                fontWeight: FontWeight.w400,
+                                color: AppColors.textColor.withOpacity(0.5),
+                                fontSize: 12.0)),
+                      ),
+                    ),
+                  ),
+                  SizedBox(
+                    height: height * 0.03,
+                  ),
                   // Align(
                   //   alignment: Alignment.centerRight,
                   //   child: TextButton(
@@ -188,7 +205,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         'Terms and Conditions',
                         style: nunitoStyle.copyWith(
                             fontSize: 14.0,
-                            color: AppColors.blueDarkColor,
+                            color: Colors.deepOrange,
                             fontWeight: FontWeight.normal),
                       ),
                     ),
@@ -202,15 +219,19 @@ class _LoginScreenState extends State<LoginScreen> {
                             color: Colors.transparent,
                             child: InkWell(
                               onTap: () {
-                                var phoneNo = phoneController.text.trim();
-                                // var password = passwordController.text.trim();
+                                var userName = userNameController.text.trim();
+                                var password = passwordController.text.trim();
 
-                                if (phoneNo.isEmpty) {
+                                if (userName.isEmpty) {
                                   glb.showSnackBar(context, 'Alert!',
-                                      'Please Provide Phone Number');
+                                      'Please Provide User Name');
+                                  return;
+                                } else if (password.isEmpty) {
+                                  glb.showSnackBar(context, 'Alert!',
+                                      'Please Provide Valid Password');
                                   return;
                                 } else {
-                                  loginAsync(phoneNo);
+                                  loginAsync(userName, password);
                                 }
                               },
                               borderRadius: BorderRadius.circular(16.0),
@@ -219,9 +240,9 @@ class _LoginScreenState extends State<LoginScreen> {
                                     horizontal: 70.0, vertical: 18.0),
                                 decoration: BoxDecoration(
                                     borderRadius: BorderRadius.circular(16.0),
-                                    color: AppColors.blueColor),
+                                    color: Colors.deepOrange),
                                 child: Text(
-                                  'Continue',
+                                  'Login',
                                   style: ralewayStyle.copyWith(
                                     fontWeight: FontWeight.w700,
                                     color: AppColors.whiteColor,
@@ -241,49 +262,17 @@ class _LoginScreenState extends State<LoginScreen> {
     );
   }
 
-  Future loginAsync(String phoneNo) async {
+  Future loginAsync(userName,password) async {
     setState(() {
       showLoading = true;
     });
     try {
-      final googleUser = await googleSignIn.signIn();
-
-      if (googleUser == null) {
-        glb.showSnackBar(context, 'Invalid Credentials',
-              'Please login using your valid Email ID');
-        setState(() {
-          showLoading = false;
-        });
-        return;
-      }
-      _user = googleUser;
-
-      final googleAuth = await googleUser.authentication;
-
-      final credentials = GoogleAuthProvider.credential(
-        accessToken: googleAuth.accessToken,
-        idToken: googleAuth.idToken,
-      );
-
-      await FirebaseAuth.instance.signInWithCredential(credentials);
-
-      var emailStr = _user!.email;
-      var name = _user!.displayName;
-      var photoUrl = _user!.photoUrl;
-
-      print(name);
-      print(emailStr);
-      print(photoUrl);
+      
       var url = glb.endPoint;
       final Map dictMap = {};
-      dictMap['mobno'] = "+91$phoneNo";
-      dictMap['email_id'] = emailStr;
-      dictMap['usrname'] = name;
-      dictMap['user_token'] = 'abcd';
-      dictMap['lat'] = 0;
-      dictMap['lng'] = 0;
-      dictMap['profile_img'] = photoUrl;
-      dictMap['pktType'] = "1";
+      dictMap['username'] = userName;
+      dictMap['password'] = password;
+      dictMap['pktType'] = "6";
       dictMap['token'] = "vff";
       dictMap['uid'] = "-1";
 
@@ -299,10 +288,16 @@ class _LoginScreenState extends State<LoginScreen> {
         if (res.contains("ErrorCode#2")) {
           // Navigator.pop(context);
           glb.showSnackBar(context, 'Error', 'You are not registered');
+          setState(() {
+      showLoading = false;
+    });
           return;
         } else if (res.contains("ErrorCode#8")) {
           //Navigator.pop(context);
           glb.showSnackBar(context, 'Error', 'Something Went Wrong');
+          setState(() {
+      showLoading = false;
+    });
           return;
         } else {
           try {
@@ -310,28 +305,22 @@ class _LoginScreenState extends State<LoginScreen> {
             print("userMap:$userMap");
             var usrid = userMap['usrid'];
             var usrname = userMap['usrname'];
-            var customer_id = userMap['customer_id'];
-            var gender = userMap['gender'];
-            var user_token = userMap['user_token'];
-            var created_at = userMap['created_at'];
+            var mobno = userMap['mobno'];
             var profile_img = userMap['profile_img'];
-            var email = userMap['email'];
-            glb.account_created_date = created_at;
-            print("profile_img_url::$profile_img");
-            SharedPreferenceUtils.save_val('usrid', usrid);
-            SharedPreferenceUtils.save_val('usrname', usrname);
-            SharedPreferenceUtils.save_val('customerid', customer_id);
-            SharedPreferenceUtils.save_val('notificationToken', user_token);
-            SharedPreferenceUtils.save_val('profile_img', profile_img);
-            SharedPreferenceUtils.save_val('email', email);
-            glb.profileImage = profile_img;
-            glb.usrid = usrid;
-            // List<String> usridLst = glb.strToLst2(usrid);
-            // List<String> usrNameLst = glb.strToLst2(usrname);
-
-            Navigator.pushReplacementNamed(context, MainRoute);
+            var device_token = userMap['device_token'];
+            var delivery_boy_id = userMap['delivery_boy_id'];
+           
+            SharedPreferenceUtils.save_val('dusrid', usrid);
+            SharedPreferenceUtils.save_val('dusrname', usrname);
+            SharedPreferenceUtils.save_val('dmobno', mobno);
+            SharedPreferenceUtils.save_val('dprofile_img', profile_img);
+            SharedPreferenceUtils.save_val('delivery_boy_id', delivery_boy_id);
+            Navigator.pushReplacementNamed(context, DMainRoute);
           } catch (e) {
             print(e);
+            setState(() {
+      showLoading = false;
+    });
             return "Failed";
           }
         }
