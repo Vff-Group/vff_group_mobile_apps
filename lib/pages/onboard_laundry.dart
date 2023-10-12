@@ -184,7 +184,7 @@ class OnBoardContent extends StatelessWidget {
         const Spacer(),
         Image.asset(
           image,
-          height: 550,
+          height: 500,
         ),
         Text(
           title,
@@ -204,7 +204,7 @@ class OnBoardContent extends StatelessWidget {
           style: nunitoStyle.copyWith(
             color: AppColors.textColor,
             
-            fontSize: 10.0
+            fontSize: 12.0
             ),
         ),
         const Spacer()

@@ -14,12 +14,41 @@ import 'package:location/location.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 
-String endPoint = "http://62.72.57.222:3000/";//8085
+String endPoint = "http://62.72.57.222:8085/";//8085
 String account_created_date = "",orderid="";
+bool addItems = false;
+String cartQuantity = "", cartCost = "";
 
 void showSnackBar(BuildContext context, String alertTxt, String text) {
   Get.snackbar(alertTxt, text, snackPosition: SnackPosition.TOP);
 }
+
+DateTime epochToDateTime(double epoch) {
+  // Convert seconds since epoch to a DateTime object
+  DateTime dateTime = DateTime.fromMillisecondsSinceEpoch(epoch.floor() * 1000);
+
+  return dateTime;
+}
+
+String doubleEpochToFormattedDateTime(double epoch) {
+  // Convert seconds since epoch to a DateTime object
+  DateTime dateTime = DateTime.fromMillisecondsSinceEpoch((epoch * 1000).toInt());
+
+  // Format the DateTime object to a formatted date and time string with AM/PM
+  String formattedDateTime = DateFormat('yyyy-MM-dd hh:mm a').format(dateTime);
+
+  return formattedDateTime;
+}
+
+// String epochToTime(int epoch) {
+//   // Convert milliseconds since epoch to a DateTime object
+//   DateTime dateTime = DateTime.fromMillisecondsSinceEpoch(epoch);
+
+//   // Format the DateTime object to a time string with AM/PM
+//   String formattedTime = DateFormat.jm().format(dateTime);
+
+//   return formattedTime;
+// }
 
 String ext_upload_url = "https://d26ksqb4lnqfvh.cloudfront.net/";
 String upload_url = "http://164.52.210.25:3335/upload";
@@ -127,10 +156,18 @@ showLoaderDialog(BuildContext context, bool isLoading) {
   );
 }
 
+// 18 OCT 2023
 String getDate() {
   var now = DateTime.now();
   var formatter = DateFormat('dd MMM yyyy');
   String formattedDate = formatter.format(now);
+  return formattedDate;
+}
+
+//18/10/2023
+String getDateTodays(){
+  DateTime today = DateTime.now();
+  String formattedDate = DateFormat('yyyy-MM-dd').format(today);
   return formattedDate;
 }
 

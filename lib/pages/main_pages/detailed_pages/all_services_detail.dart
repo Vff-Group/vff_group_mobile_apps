@@ -174,9 +174,13 @@ class _AllServicesPageState extends State<AllServicesPage> {
                                 child: InkWell(
                                   onTap: () {
                                     //Send to Request PickUp Page
-                                    //Navigator.pushNamed(context, PlaceOrderRoute);
-                                    Navigator.pushNamed(
-                                        context, DeliveryAddressRoute);
+                                    if (glb.addItems) {
+                                      Navigator.pushNamed(
+                                          context, PlaceOrderRoute);
+                                    } else {
+                                      Navigator.pushNamed(
+                                          context, DeliveryAddressRoute);
+                                    }
                                   },
                                   borderRadius: BorderRadius.circular(12.0),
                                   child: Ink(

@@ -15,7 +15,7 @@ class _OngoingOrdersState extends State<OngoingOrders> {
   @override
   Widget build(BuildContext context) {
     return ListView.builder(
-        itemCount: 1,
+        itemCount: 10,
         itemBuilder: ((context, index) {
           return Padding(
             padding: const EdgeInsets.all(12.0),

@@ -1,11 +1,18 @@
+import 'dart:convert';
+
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:vff_group/animation/fade_animation.dart';
 import 'package:vff_group/animation/slide_bottom_animation.dart';
 import 'package:vff_group/animation/slide_left_animation.dart';
 import 'package:vff_group/animation/slideright_animation.dart';
+import 'package:vff_group/routings/route_names.dart';
 import 'package:vff_group/utils/app_colors.dart';
 import 'package:vff_group/utils/app_styles.dart';
 import 'package:widget_circular_animator/widget_circular_animator.dart';
+import 'package:http/http.dart' as http;
+import 'package:vff_group/global/vffglb.dart' as glb;
 
 class OrderDetailsPage extends StatefulWidget {
   const OrderDetailsPage({super.key});
@@ -15,6 +22,228 @@ class OrderDetailsPage extends StatefulWidget {
 }
 
 class _OrderDetailsPageState extends State<OrderDetailsPage> {
+  bool showLoading = true, isItemAdded = true, showItemsLoading = true;
+  String timeOrderRecieved = "";
+  String pickupDate = "";
+  String deliveryBoyName = "";
+  String deliveryDateTime = "";
+  String orderStatus = "";
+  String houseNo = "";
+  String addressClient = "";
+  String profilePicture = "";
+  String deliveryMobno = "";
+
+  @override
+  void initState() {
+    super.initState();
+    loadOrderDetails();
+    loadOrderItemsDetails();
+  }
+
+  Future loadOrderDetails() async {
+    setState(() {
+      showLoading = true;
+    });
+    // final prefs = await SharedPreferences.getInstance();
+    // var customerid = prefs.getString('customerid');
+    if (glb.orderid.isEmpty) {
+      glb.showSnackBar(context, 'Alert!', 'Please Select the Active Order');
+      return;
+    }
+    var todaysDate = glb.getDateTodays();
+    try {
+      var url = glb.endPoint;
+      final Map dictMap = {};
+
+      dictMap['order_id'] = glb.orderid;
+      dictMap['pktType'] = "10";
+      dictMap['token'] = "vff";
+      dictMap['uid'] = "-1";
+
+      final response = await http.post(Uri.parse(url),
+          headers: <String, String>{
+            "Accept": "application/json",
+            'Content-Type': 'application/json; charset=UTF-8',
+          },
+          body: jsonEncode(dictMap));
+
+      if (response.statusCode == 200) {
+        var res = response.body;
+        if (res.contains("ErrorCode#2")) {
+          setState(() {
+            showLoading = false;
+          });
+          glb.showSnackBar(context, 'Error', 'No Order Details Found');
+          return;
+        } else if (res.contains("ErrorCode#8")) {
+          setState(() {
+            showLoading = false;
+          });
+          glb.showSnackBar(context, 'Error', 'Something Went Wrong');
+          return;
+        } else {
+          try {
+            Map<String, dynamic> orderMap = json.decode(response.body);
+            // if (kDebugMode) {
+            //   print("categoryMap:$catMap");
+            // }
+
+            var epoch = orderMap['epoch'];
+            var pickup_dt = orderMap['pickup_dt'];
+            var clat = orderMap['clat'];
+            var clng = orderMap['clng'];
+            var delivery_boy_id = orderMap['delivery_boy_id'];
+            var delivery_boy_name = orderMap['delivery_boy_name'];
+            var order_status = orderMap['order_status'];
+            var delvry_boy_mobno = orderMap['delvry_boy_mobno'];
+            var delivery_dt = orderMap['delivery_dt'];
+            var houseno = orderMap['houseno'];
+            var address = orderMap['address'];
+            var landmark = orderMap['landmark'];
+            var pincode = orderMap['pincode'];
+            var deliveryEpoch = orderMap['deliveryEpoch'];
+            var profileImg = orderMap['profileImg'];
+
+            var formattedDateTime =
+                glb.doubleEpochToFormattedDateTime(double.parse(epoch));
+            var deliveryEpochTime =
+                glb.doubleEpochToFormattedDateTime(double.parse(deliveryEpoch));
+            setState(() {
+              timeOrderRecieved = formattedDateTime;
+              pickupDate = pickup_dt;
+              deliveryBoyName = delivery_boy_name;
+              if (order_status != 'Delivered') {
+                deliveryDateTime = "Not Delivered yet";
+              } else {
+                deliveryDateTime = deliveryEpochTime;
+              }
+              orderStatus = order_status;
+              houseNo = houseno;
+              addressClient = address;
+              profilePicture = profileImg;
+              deliveryMobno = delvry_boy_mobno;
+            });
+
+            setState(() {
+              showLoading = false;
+            });
+          } catch (e) {
+            if (kDebugMode) {
+              print(e);
+            }
+            setState(() {
+              showLoading = false;
+            });
+            return "Failed";
+          }
+        }
+      }
+    } catch (e) {
+      if (kDebugMode) {
+        print(e);
+      }
+      setState(() {
+        showLoading = false;
+      });
+      glb.handleErrors(e, context);
+    }
+  }
+
+  Future loadOrderItemsDetails() async {
+    setState(() {
+      showItemsLoading = true;
+      isItemAdded = true;
+    });
+    // final prefs = await SharedPreferences.getInstance();
+    // var customerid = prefs.getString('customerid');
+    if (glb.orderid.isEmpty) {
+      glb.showSnackBar(context, 'Alert!', 'Please Select the Active Order');
+      return;
+    }
+    var todaysDate = glb.getDateTodays();
+    try {
+      var url = glb.endPoint;
+      final Map dictMap = {};
+
+      dictMap['order_id'] = glb.orderid;
+      dictMap['pktType'] = "11";
+      dictMap['token'] = "vff";
+      dictMap['uid'] = "-1";
+
+      final response = await http.post(Uri.parse(url),
+          headers: <String, String>{
+            "Accept": "application/json",
+            'Content-Type': 'application/json; charset=UTF-8',
+          },
+          body: jsonEncode(dictMap));
+
+      if (response.statusCode == 200) {
+        var res = response.body;
+        if (res.contains("ErrorCode#2")) {
+          setState(() {
+            showItemsLoading = false;
+            isItemAdded = true;
+          });
+          glb.showSnackBar(context, 'Error', 'No Order Details Found');
+          return;
+        } else if (res.contains("ErrorCode#8")) {
+          setState(() {
+            showItemsLoading = false;
+            isItemAdded = false;
+          });
+          glb.showSnackBar(context, 'Error', 'Something Went Wrong');
+          return;
+        } else {
+          try {
+            Map<String, dynamic> orderMap = json.decode(response.body);
+            // if (kDebugMode) {
+            //   print("categoryMap:$catMap");
+            // }
+
+            var epoch = orderMap['epoch'];
+            var pickup_dt = orderMap['pickup_dt'];
+            var clat = orderMap['clat'];
+            var clng = orderMap['clng'];
+            var delivery_boy_id = orderMap['delivery_boy_id'];
+            var delivery_boy_name = orderMap['delivery_boy_name'];
+            var order_status = orderMap['order_status'];
+            var delvry_boy_mobno = orderMap['delvry_boy_mobno'];
+            var delivery_dt = orderMap['delivery_dt'];
+            var houseno = orderMap['houseno'];
+            var address = orderMap['address'];
+            var landmark = orderMap['landmark'];
+            var pincode = orderMap['pincode'];
+            var deliveryEpoch = orderMap['deliveryEpoch'];
+            var profileImg = orderMap['profileImg'];
+
+            setState(() {
+              showItemsLoading = false;
+              isItemAdded = false;
+            });
+          } catch (e) {
+            if (kDebugMode) {
+              print(e);
+            }
+            setState(() {
+              showItemsLoading = false;
+              isItemAdded = false;
+            });
+            return "Failed";
+          }
+        }
+      }
+    } catch (e) {
+      if (kDebugMode) {
+        print(e);
+      }
+      setState(() {
+        showItemsLoading = false;
+        isItemAdded = false;
+      });
+      glb.handleErrors(e, context);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     double height = MediaQuery.of(context).size.height;
@@ -26,19 +255,40 @@ class _OrderDetailsPageState extends State<OrderDetailsPage> {
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           _TitleLayout(width: width),
-          const FadeAnimation(delay: 0.5, child: _OrderDetails()),
-          const Divider(
-            color: AppColors.lightGreyColor,
-            thickness: 4,
-          ),
-          _DeliveryBoyDetails(width: width),
-          const Divider(
-            color: AppColors.lightGreyColor,
-            thickness: 4,
-          ),
-          const _TotalClothesCount(),
-          _DryCleaningListWidget(width: width, height: height),
-          _WashAndFoldListWidget(width: width, height: height),
+          showLoading
+              ? LinearProgressIndicator(
+                  semanticsLabel: 'Linear progress indicator',
+                )
+              : Column(
+                  children: [
+                    FadeAnimation(
+                        delay: 0.5,
+                        child: _OrderDetails(
+                            orderStatus: orderStatus,
+                            orderID: glb.orderid,
+                            pickUpDateTime: timeOrderRecieved,
+                            deliveryDateTime: deliveryDateTime,
+                            addressClient: addressClient)),
+                    const Divider(
+                      color: AppColors.lightGreyColor,
+                      thickness: 4,
+                    ),
+                    _DeliveryBoyDetails(
+                        width: width,
+                        profilePicture: profilePicture,
+                        deliveryBoyName: deliveryBoyName,
+                        deliveryMobno: deliveryMobno),
+                    const Divider(
+                      color: AppColors.lightGreyColor,
+                      thickness: 4,
+                    ),
+                    _TotalClothesCount(
+                        showItemsLoading: showItemsLoading,
+                        isItemAdded: isItemAdded),
+                     _DryCleaningListWidget(width: width, height: height),
+                    _WashAndFoldListWidget(width: width, height: height),
+                  ],
+                )
         ],
       )),
     );
@@ -160,7 +410,6 @@ class _WashAndFoldListWidget extends StatelessWidget {
   }
 }
 
-
 class _DryCleaningListWidget extends StatelessWidget {
   const _DryCleaningListWidget({
     super.key,
@@ -279,7 +528,11 @@ class _DryCleaningListWidget extends StatelessWidget {
 class _TotalClothesCount extends StatelessWidget {
   const _TotalClothesCount({
     super.key,
+    required this.showItemsLoading,
+    required this.isItemAdded,
   });
+  final bool showItemsLoading;
+  final bool isItemAdded;
 
   @override
   Widget build(BuildContext context) {
@@ -295,13 +548,29 @@ class _TotalClothesCount extends StatelessWidget {
                 fontWeight: FontWeight.normal,
                 color: AppColors.textColor),
           ),
-          Text(
-            '18 selected',
-            style: nunitoStyle.copyWith(
-                fontSize: 15.0,
-                fontWeight: FontWeight.w600,
-                color: AppColors.mainBlueColor),
-          )
+          showItemsLoading
+              ? const LinearProgressIndicator()
+              : isItemAdded
+                  ? InkWell(
+                      onTap: () {
+                        glb.addItems = true;
+                        Navigator.pushNamed(context, MyBagRoute);
+                      },
+                      child: Text(
+                        'Add Item',
+                        style: nunitoStyle.copyWith(
+                            fontSize: 15.0,
+                            fontWeight: FontWeight.w600,
+                            color: AppColors.mainBlueColor),
+                      ),
+                    )
+                  : Text(
+                      '18 selected',
+                      style: nunitoStyle.copyWith(
+                          fontSize: 15.0,
+                          fontWeight: FontWeight.w600,
+                          color: AppColors.mainBlueColor),
+                    )
         ],
       ),
     );
@@ -312,9 +581,15 @@ class _DeliveryBoyDetails extends StatelessWidget {
   const _DeliveryBoyDetails({
     super.key,
     required this.width,
+    required this.profilePicture,
+    required this.deliveryBoyName,
+    required this.deliveryMobno,
   });
 
   final double width;
+  final String? profilePicture;
+  final String deliveryBoyName;
+  final String deliveryMobno;
 
   @override
   Widget build(BuildContext context) {
@@ -327,27 +602,28 @@ class _DeliveryBoyDetails extends StatelessWidget {
           children: [
             Row(
               children: [
-                WidgetCircularAnimator(
-                  size: 50,
-                  innerIconsSize: 3,
-                  outerIconsSize: 3,
-                  innerAnimation: Curves.easeInOutBack,
-                  outerAnimation: Curves.easeInOutBack,
-                  innerColor: Colors.deepPurple,
-                  outerColor: Colors.orangeAccent,
-                  innerAnimationSeconds: 10,
-                  outerAnimationSeconds: 10,
-                  child: Container(
-                    decoration: BoxDecoration(
-                        shape: BoxShape.circle, color: Colors.grey[200]),
-                    child: const CircleAvatar(
-                      radius: 25.0,
-                      backgroundImage: NetworkImage(
-                          'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSK_vjpKVAjkub5O0sFL7ij3mIzG-shVt-6KKLNdxq4&s'),
-                      backgroundColor: Colors.transparent,
-                    ),
-                  ),
-                ),
+                profilePicture!.isEmpty
+                    ? const CircularProgressIndicator()
+                    : WidgetCircularAnimator(
+                        size: 50,
+                        innerIconsSize: 3,
+                        outerIconsSize: 3,
+                        innerAnimation: Curves.easeInOutBack,
+                        outerAnimation: Curves.easeInOutBack,
+                        innerColor: Colors.deepPurple,
+                        outerColor: Colors.orangeAccent,
+                        innerAnimationSeconds: 10,
+                        outerAnimationSeconds: 10,
+                        child: Container(
+                          decoration: BoxDecoration(
+                              shape: BoxShape.circle, color: Colors.grey[200]),
+                          child: CircleAvatar(
+                            radius: 25.0,
+                            backgroundImage: NetworkImage('$profilePicture'),
+                            backgroundColor: Colors.transparent,
+                          ),
+                        ),
+                      ),
                 SizedBox(
                   width: width * 0.04,
                 ),
@@ -355,14 +631,14 @@ class _DeliveryBoyDetails extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      'Ravi Patil',
+                      deliveryBoyName,
                       style: nunitoStyle.copyWith(
                         fontSize: 18.0,
                         fontWeight: FontWeight.w600,
                       ),
                     ),
                     Text(
-                      '+91-8296565587',
+                      deliveryMobno,
                       style: nunitoStyle.copyWith(
                         fontSize: 14.0,
                         fontWeight: FontWeight.normal,
@@ -417,8 +693,17 @@ class _DeliveryBoyDetails extends StatelessWidget {
 class _OrderDetails extends StatelessWidget {
   const _OrderDetails({
     super.key,
+    required this.orderStatus,
+    required this.orderID,
+    required this.pickUpDateTime,
+    required this.deliveryDateTime,
+    required this.addressClient,
   });
-
+  final String orderStatus;
+  final String orderID;
+  final String pickUpDateTime;
+  final String deliveryDateTime;
+  final String addressClient;
   @override
   Widget build(BuildContext context) {
     return SizedBox(
@@ -440,7 +725,7 @@ class _OrderDetails extends StatelessWidget {
                     ),
                   ),
                   Text(
-                    'Delivered',
+                    orderStatus,
                     style: nunitoStyle.copyWith(
                         color: AppColors.orangeColor,
                         fontSize: 16,
@@ -463,7 +748,7 @@ class _OrderDetails extends StatelessWidget {
                     ),
                   ),
                   Text(
-                    '#21344',
+                    '#${orderID}',
                     style: nunitoStyle.copyWith(
                       color: AppColors.mainBlueColor,
                       fontSize: 14,
@@ -486,7 +771,7 @@ class _OrderDetails extends StatelessWidget {
                     ),
                   ),
                   Text(
-                    '10-02-2023 03:30 PM',
+                    pickUpDateTime,
                     style: nunitoStyle.copyWith(
                       color: AppColors.textColor,
                       fontWeight: FontWeight.w500,
@@ -510,7 +795,7 @@ class _OrderDetails extends StatelessWidget {
                     ),
                   ),
                   Text(
-                    '10-02-2023 06:45 PM',
+                    deliveryDateTime,
                     style: nunitoStyle.copyWith(
                       color: AppColors.textColor,
                       fontWeight: FontWeight.w500,
@@ -534,7 +819,7 @@ class _OrderDetails extends StatelessWidget {
                     ),
                   ),
                   Text(
-                    'New Vaibhav Nagar-590010',
+                    addressClient,
                     style: nunitoStyle.copyWith(
                       color: AppColors.textColor,
                       fontWeight: FontWeight.w500,

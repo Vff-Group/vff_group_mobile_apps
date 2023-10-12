@@ -12,7 +12,9 @@ import 'package:vff_group/pages/main_pages/detailed_pages/main_category_detailed
 import 'package:vff_group/pages/main_pages/home.dart';
 import 'package:vff_group/pages/main_pages/orders.dart';
 import 'package:vff_group/pages/onboard_laundry.dart';
+import 'package:vff_group/pages/orders_pages/checkout_page.dart';
 import 'package:vff_group/pages/orders_pages/delivery_address_page.dart';
+import 'package:vff_group/pages/orders_pages/my_bag_page.dart';
 import 'package:vff_group/pages/orders_pages/order_details.dart';
 import 'package:vff_group/pages/orders_pages/place_new_order.dart';
 import 'package:vff_group/pages/splash_screen.dart';
@@ -39,12 +41,16 @@ Route<dynamic> generateRoute(RouteSettings settings) {
       return _getPageRoute(const OrdersPage());
     case OrderDetailsRoute:
       return _getPageRoute(const OrderDetailsPage());
-    case PlaceOrderRoute:
-      return _getPageRoute(const PlaceOrderPage());
+    // case PlaceOrderRoute:
+    //   return _getPageRoute(const PlaceOrderPage());
     case DeliveryAddressRoute:
       return _getPageRoute(const DeliveryAddressPage());
     case AllServicesRoute:
       return _getPageRoute(const AllServicesPage());
+    case MyBagRoute:
+      return _getPageRoute(const MyBagPage());
+    case CheckOutRoute:
+      return _getPageRoute(const CheckOutScreen());
     case DMainRoute:
       return _getPageRoute(const BottomBarDeliveryBoy(pageDIndex: 0,));
 
