@@ -44,7 +44,7 @@ class _LoginScreenState extends State<LoginScreen> {
         FocusManager.instance.primaryFocus?.unfocus();
       },
       child: Scaffold(
-        backgroundColor: AppColors.whiteColor,
+        backgroundColor: Colors.black,
         body: CustomScrollView(
           slivers: [
             SliverToBoxAdapter(
@@ -60,7 +60,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   Text(
                     'Please enter your valid Mobile Number',
                     style: nunitoStyle.copyWith(
-                      color: AppColors.textColor,
+                      color: AppColors.whiteColor,
                       fontSize: 15.0,
                       fontWeight: FontWeight.w500,
                     ),
@@ -76,7 +76,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(8.0),
                         border: Border.all(
-                          color: AppColors.textColor, // Border color
+                          color: AppColors.whiteColor, // Border color
                           width: 0.2, // Border width
                         ),
                       ),
@@ -84,20 +84,20 @@ class _LoginScreenState extends State<LoginScreen> {
                         controller: phoneController,
                         style: nunitoStyle.copyWith(
                             fontWeight: FontWeight.w400,
-                            color: AppColors.titleTxtColor,
+                            color: AppColors.whiteColor,
                             fontSize: 14.0),
                         keyboardType: TextInputType.phone,
                         decoration: InputDecoration(
                             border: InputBorder.none,
                             prefixIcon: IconButton(
                               onPressed: () {},
-                              icon: const Icon(Icons.phone),
+                              icon: const Icon(Icons.phone,color: Colors.white,),
                             ),
                             contentPadding: const EdgeInsets.only(top: 16.0),
                             hintText: 'Mobile Number',
                             hintStyle: ralewayStyle.copyWith(
                                 fontWeight: FontWeight.w400,
-                                color: AppColors.textColor.withOpacity(0.5),
+                                color: AppColors.whiteColor.withOpacity(0.5),
                                 fontSize: 12.0)),
                       ),
                     ),

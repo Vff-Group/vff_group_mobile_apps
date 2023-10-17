@@ -29,7 +29,7 @@ class _DeliveryAddressPageState extends State<DeliveryAddressPage> {
   TextEditingController cityController = TextEditingController();
   TextEditingController zipCodeController = TextEditingController();
   TextEditingController landmarkController = TextEditingController();
-  bool showLoading = false, showSuccess = false;
+  bool showLoading = false, showSuccess = false, isLoading = true;
   Position? _currentPosition;
   double longitude = 0, latitude = 0;
 
@@ -41,6 +41,9 @@ class _DeliveryAddressPageState extends State<DeliveryAddressPage> {
   }
 
   Future allUsersAddressAsync() async {
+    setState(() {
+      isLoading = true;
+    });
     try {
       final prefs = await SharedPreferences.getInstance();
       var usrid = prefs.getString('usrid');
@@ -62,17 +65,23 @@ class _DeliveryAddressPageState extends State<DeliveryAddressPage> {
       if (response.statusCode == 200) {
         var res = response.body;
         if (res.contains("ErrorCode#2")) {
-          glb.showSnackBar(context, 'Error', 'No Categories Found');
+          setState(() {
+            isLoading = false;
+          });
+          glb.showSnackBar(context, 'Error', 'No Address Details Found');
           return;
         } else if (res.contains("ErrorCode#8")) {
           glb.showSnackBar(context, 'Error', 'Something Went Wrong');
+          setState(() {
+            isLoading = false;
+          });
           return;
         } else {
           try {
             Map<String, dynamic> catMap = json.decode(response.body);
-            // if (kDebugMode) {
-            //   print("categoryMap:$catMap");
-            // }
+            setState(() {
+              isLoading = false;
+            });
             var buildingNo = catMap['buildingNo'];
             var streetAddress = catMap['streetAddress'];
             var cityName = catMap['cityName'];
@@ -80,19 +89,19 @@ class _DeliveryAddressPageState extends State<DeliveryAddressPage> {
             var landMark = catMap['landMark'];
 
             setState(() {
-              if(buildingNo.toString() !='NA'){
+              if (buildingNo.toString() != 'NA') {
                 buildingNoController.text = buildingNo;
               }
-              if(streetAddress.toString() !='NA'){
+              if (streetAddress.toString() != 'NA') {
                 streetAddressController.text = streetAddress;
               }
-              if(cityName.toString() !='NA'){
+              if (cityName.toString() != 'NA') {
                 cityController.text = cityName;
               }
-              if(zipCode.toString() !='-1'){
+              if (zipCode.toString() != '-1') {
                 zipCodeController.text = zipCode;
               }
-              if(landMark.toString() !='NA'){
+              if (landMark.toString() != 'NA') {
                 landmarkController.text = landMark;
               }
             });
@@ -100,6 +109,10 @@ class _DeliveryAddressPageState extends State<DeliveryAddressPage> {
             if (kDebugMode) {
               print(e);
             }
+            setState(() {
+              isLoading = false;
+            });
+            glb.handleErrors(e, context);
             return "Failed";
           }
         }
@@ -108,6 +121,9 @@ class _DeliveryAddressPageState extends State<DeliveryAddressPage> {
       if (kDebugMode) {
         print(e);
       }
+      setState(() {
+        isLoading = false;
+      });
       glb.handleErrors(e, context);
     }
   }
@@ -149,7 +165,7 @@ class _DeliveryAddressPageState extends State<DeliveryAddressPage> {
         var res = response.body;
         print('res:::$res');
         if (res.contains("ErrorCode#2")) {
-          glb.showSnackBar(context, 'Error', 'No Categories Found');
+          // glb.showSnackBar(context, 'Error', 'No Address Found.');
           setState(() {
             showLoading = false;
           });
@@ -307,7 +323,8 @@ class _DeliveryAddressPageState extends State<DeliveryAddressPage> {
       child: Scaffold(
         backgroundColor: AppColors.backColor,
         appBar: AppBar(
-            backgroundColor: AppColors.blueColor,
+            backgroundColor: Colors.transparent,
+            elevation: 0,
             title: FadeAnimation(
               delay: 0.3,
               child: Text('Address Details',
@@ -317,492 +334,528 @@ class _DeliveryAddressPageState extends State<DeliveryAddressPage> {
                       fontWeight: FontWeight.bold,
                       letterSpacing: 1)),
             )),
-        body: SafeArea(
-            child: showSuccess
-                ? Column(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      SizedBox(
-                        height: width * 0.04,
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Text(
-                          'Pick Up Request Accepted Successfully !',
-                          style: ralewayStyle.copyWith(
-                              fontSize: 25.0,
-                              fontWeight: FontWeight.bold,
-                              color: AppColors.titleTxtColor),
-                          textAlign: TextAlign.center,
-                        ),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.all(24.0),
-                        child: Image.asset('assets/images/success_2.gif'),
-                      ),
-                      SizedBox(
-                        height: width * 0.04,
+        body: isLoading
+            ? Center(child: CircularProgressIndicator())
+            : SafeArea(
+                child: showSuccess
+                    ? Column(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          SizedBox(
+                            height: width * 0.04,
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Text(
+                              'Pick Up Request Accepted Successfully !',
+                              style: ralewayStyle.copyWith(
+                                  fontSize: 25.0,
+                                  fontWeight: FontWeight.bold,
+                                  color: AppColors.titleTxtColor),
+                              textAlign: TextAlign.center,
+                            ),
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.all(24.0),
+                            child: Image.asset('assets/images/success_2.gif'),
+                          ),
+                          SizedBox(
+                            height: width * 0.04,
+                          )
+                        ],
                       )
-                    ],
-                  )
-                : Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: showLoading
-                        ? const Center(child: CircularProgressIndicator())
-                        : CustomScrollView(
-                            slivers: [
-                              SliverToBoxAdapter(
-                                child: Column(
-                                  children: [
-                                    Container(
-                                      child: Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: [
-                                          const SizedBox(
-                                            height: 10.0,
-                                          ),
-                                          Center(
-                                            child: Text(
-                                              'Add Pick Up & Delivery Address',
-                                              style: ralewayStyle.copyWith(
-                                                  fontSize: 14.0,
-                                                  color: AppColors.textColor,
-                                                  fontWeight: FontWeight.bold,
-                                                  letterSpacing: 1),
-                                              textAlign: TextAlign.center,
-                                            ),
-                                          ),
-                                          const SizedBox(
-                                            height: 15.0,
-                                          ),
-                                          Text(
-                                              'Our delivery experts will assist you through the process, and payment will be securely processed to ensure a convenient and efficient service experience.',
-                                              style: ralewayStyle.copyWith(
-                                                fontSize: 14.0,
-                                                color: AppColors.textColor,
-                                                fontWeight: FontWeight.w200,
-                                              )),
-                                          const SizedBox(
-                                            height: 15.0,
-                                          ),
-                                          Container(
-                                            decoration: BoxDecoration(
-                                              borderRadius:
-                                                  BorderRadius.circular(12.0),
-                                              color: AppColors.blueColor,
-                                            ),
-                                            child: Padding(
-                                              padding: const EdgeInsets.only(
-                                                  right: 45.0,
-                                                  top: 22.0,
-                                                  bottom: 22.0,
-                                                  left: 20.0),
-                                              child: Column(
-                                                crossAxisAlignment:
-                                                    CrossAxisAlignment.start,
-                                                children: [
-                                                  const Icon(
-                                                    Icons.home_filled,
-                                                    color: Colors.white,
-                                                  ),
-                                                  const SizedBox(
-                                                    height: 5.0,
-                                                  ),
-                                                  Text('Home',
-                                                      style:
-                                                          ralewayStyle.copyWith(
-                                                        fontSize: 20.0,
-                                                        color: AppColors
-                                                            .whiteColor,
-                                                        fontWeight:
-                                                            FontWeight.bold,
-                                                      ))
-                                                ],
-                                              ),
-                                            ),
-                                          ),
-                                          const SizedBox(
-                                            height: 10.0,
-                                          ),
-                                          Text('Enter Address Details',
-                                              style: ralewayStyle.copyWith(
-                                                  fontSize: 20.0,
-                                                  color:
-                                                      AppColors.titleTxtColor,
-                                                  fontWeight: FontWeight.bold,
-                                                  letterSpacing: 1)),
-                                          const SizedBox(
-                                            height: 15.0,
-                                          ),
-                                          Column(
+                    : Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: showLoading
+                            ? const Center(child: CircularProgressIndicator())
+                            : CustomScrollView(
+                                slivers: [
+                                  SliverToBoxAdapter(
+                                    child: Column(
+                                      children: [
+                                        Container(
+                                          child: Column(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
                                             children: [
-                                              Container(
-                                                height: 50.0,
-                                                width: width,
-                                                decoration: BoxDecoration(
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                            8.0),
-                                                    color:
-                                                        AppColors.whiteColor),
-                                                child: TextFormField(
-                                                  controller:
-                                                      buildingNoController,
-                                                  style: nunitoStyle.copyWith(
+                                              const SizedBox(
+                                                height: 10.0,
+                                              ),
+                                              Center(
+                                                child: Text(
+                                                  'Add Pick Up & Delivery Address',
+                                                  style: ralewayStyle.copyWith(
+                                                      fontSize: 14.0,
+                                                      color:
+                                                          AppColors.whiteColor,
                                                       fontWeight:
-                                                          FontWeight.w400,
-                                                      color: AppColors
-                                                          .titleTxtColor,
-                                                      fontSize: 14.0),
-                                                  keyboardType:
-                                                      TextInputType.text,
-                                                  decoration: InputDecoration(
-                                                      prefixIcon: const Icon(Icons
-                                                          .home_work_outlined),
-                                                      border: InputBorder.none,
-                                                      contentPadding:
-                                                          const EdgeInsets.only(
-                                                              top: 16.0),
-                                                      hintText:
-                                                          ' Building/Society Name & Number',
-                                                      hintStyle:
-                                                          ralewayStyle.copyWith(
-                                                              fontWeight:
-                                                                  FontWeight
-                                                                      .w400,
-                                                              color: AppColors
-                                                                  .textColor
-                                                                  .withOpacity(
-                                                                      0.5),
-                                                              fontSize: 14.0)),
+                                                          FontWeight.bold,
+                                                      letterSpacing: 1),
+                                                  textAlign: TextAlign.center,
                                                 ),
                                               ),
                                               const SizedBox(
                                                 height: 15.0,
                                               ),
-                                              Container(
-                                                height: 50.0,
-                                                width: width,
-                                                decoration: BoxDecoration(
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                            8.0),
-                                                    color:
-                                                        AppColors.whiteColor),
-                                                child: TextFormField(
-                                                  controller:
-                                                      streetAddressController,
-                                                  style: nunitoStyle.copyWith(
-                                                      fontWeight:
-                                                          FontWeight.w400,
-                                                      color: AppColors
-                                                          .titleTxtColor,
-                                                      fontSize: 14.0),
-                                                  keyboardType:
-                                                      TextInputType.text,
-                                                  decoration: InputDecoration(
-                                                      prefixIcon: const Icon(
-                                                          Icons
-                                                              .roundabout_right),
-                                                      border: InputBorder.none,
-                                                      contentPadding:
-                                                          const EdgeInsets.only(
-                                                              top: 16.0),
-                                                      hintText:
-                                                          ' Street Address, Landmark etc.',
-                                                      hintStyle:
-                                                          ralewayStyle.copyWith(
-                                                              fontWeight:
-                                                                  FontWeight
-                                                                      .w400,
-                                                              color: AppColors
-                                                                  .textColor
-                                                                  .withOpacity(
-                                                                      0.5),
-                                                              fontSize: 14.0)),
-                                                ),
-                                              ),
+                                              Text(
+                                                  'Our delivery experts will assist you through the process, and payment will be securely processed to ensure a convenient and efficient service experience.',
+                                                  style: ralewayStyle.copyWith(
+                                                    fontSize: 14.0,
+                                                    color: AppColors.whiteColor,
+                                                    fontWeight: FontWeight.w200,
+                                                  )),
                                               const SizedBox(
                                                 height: 15.0,
                                               ),
-                                              Row(
-                                                children: [
-                                                  Expanded(
-                                                    flex: 1,
-                                                    child: Container(
-                                                      height: 50.0,
-                                                      decoration: BoxDecoration(
-                                                          borderRadius:
-                                                              BorderRadius
-                                                                  .circular(
-                                                                      8.0),
-                                                          color: AppColors
-                                                              .whiteColor),
-                                                      child: TextFormField(
-                                                        controller:
-                                                            cityController,
-                                                        style: nunitoStyle
-                                                            .copyWith(
-                                                                fontWeight:
-                                                                    FontWeight
-                                                                        .w400,
-                                                                color: AppColors
-                                                                    .titleTxtColor,
-                                                                fontSize: 14.0),
-                                                        keyboardType:
-                                                            TextInputType.text,
-                                                        decoration: InputDecoration(
-                                                            prefixIcon: const Icon(Icons
-                                                                .location_city_outlined),
-                                                            border: InputBorder
-                                                                .none,
-                                                            contentPadding:
-                                                                const EdgeInsets
-                                                                    .only(
-                                                                    top: 16.0),
-                                                            hintText: ' City',
-                                                            hintStyle: ralewayStyle.copyWith(
-                                                                fontWeight:
-                                                                    FontWeight
-                                                                        .w400,
-                                                                color: AppColors
-                                                                    .textColor
-                                                                    .withOpacity(
-                                                                        0.5),
-                                                                fontSize:
-                                                                    14.0)),
+                                              Container(
+                                                decoration: BoxDecoration(
+                                                  borderRadius:
+                                                      BorderRadius.circular(
+                                                          12.0),
+                                                  color: AppColors.blueColor,
+                                                ),
+                                                child: Padding(
+                                                  padding:
+                                                      const EdgeInsets.only(
+                                                          right: 45.0,
+                                                          top: 22.0,
+                                                          bottom: 22.0,
+                                                          left: 20.0),
+                                                  child: Column(
+                                                    crossAxisAlignment:
+                                                        CrossAxisAlignment
+                                                            .start,
+                                                    children: [
+                                                      const Icon(
+                                                        Icons.home_filled,
+                                                        color: Colors.white,
                                                       ),
+                                                      const SizedBox(
+                                                        height: 5.0,
+                                                      ),
+                                                      Text('Home',
+                                                          style: ralewayStyle
+                                                              .copyWith(
+                                                            fontSize: 20.0,
+                                                            color: AppColors
+                                                                .whiteColor,
+                                                            fontWeight:
+                                                                FontWeight.bold,
+                                                          ))
+                                                    ],
+                                                  ),
+                                                ),
+                                              ),
+                                              const SizedBox(
+                                                height: 10.0,
+                                              ),
+                                              Text('Enter Address Details',
+                                                  style: ralewayStyle.copyWith(
+                                                      fontSize: 20.0,
+                                                      color: AppColors
+                                                          .whiteColor,
+                                                      fontWeight:
+                                                          FontWeight.bold,
+                                                      letterSpacing: 1)),
+                                              const SizedBox(
+                                                height: 15.0,
+                                              ),
+                                              Column(
+                                                children: [
+                                                  Container(
+                                                    height: 50.0,
+                                                    width: width,
+                                                    decoration: BoxDecoration(
+                                                        borderRadius:
+                                                            BorderRadius
+                                                                .circular(8.0),
+                                                        color: AppColors
+                                                            .lightBlackColor),
+                                                    child: TextFormField(
+                                                      controller:
+                                                          buildingNoController,
+                                                      style:
+                                                          nunitoStyle.copyWith(
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .w400,
+                                                              color: AppColors
+                                                                  .whiteColor,
+                                                              fontSize: 14.0),
+                                                      keyboardType:
+                                                          TextInputType.text,
+                                                      decoration: InputDecoration(
+                                                          prefixIcon:
+                                                              const Icon(Icons
+                                                                  .home_work_outlined,color: Colors.white,),
+                                                          border:
+                                                              InputBorder.none,
+                                                          contentPadding:
+                                                              const EdgeInsets.only(
+                                                                  top: 16.0),
+                                                          hintText:
+                                                              ' Building/Society Name & Number',
+                                                          hintStyle: ralewayStyle
+                                                              .copyWith(
+                                                                  fontWeight:
+                                                                      FontWeight
+                                                                          .w400,
+                                                                  color: AppColors
+                                                                      .whiteColor
+                                                                      .withOpacity(
+                                                                          0.5),
+                                                                  fontSize:
+                                                                      14.0)),
                                                     ),
                                                   ),
                                                   const SizedBox(
-                                                    width: 10.0,
+                                                    height: 15.0,
                                                   ),
-                                                  Expanded(
-                                                    flex: 1,
-                                                    child: Container(
-                                                      height: 50.0,
-                                                      width: width,
-                                                      decoration: BoxDecoration(
-                                                          borderRadius:
-                                                              BorderRadius
-                                                                  .circular(
-                                                                      8.0),
-                                                          color: AppColors
-                                                              .whiteColor),
-                                                      child: TextFormField(
-                                                        controller:
-                                                            zipCodeController,
-                                                        style: nunitoStyle
-                                                            .copyWith(
-                                                                fontWeight:
-                                                                    FontWeight
-                                                                        .w400,
-                                                                color: AppColors
-                                                                    .titleTxtColor,
-                                                                fontSize: 14.0),
-                                                        keyboardType:
-                                                            TextInputType
-                                                                .number,
-                                                        decoration: InputDecoration(
-                                                            prefixIcon: const Icon(
-                                                                Icons.numbers),
-                                                            border: InputBorder
-                                                                .none,
-                                                            contentPadding:
-                                                                const EdgeInsets
-                                                                    .only(
-                                                                    top: 16.0),
-                                                            hintText:
-                                                                ' Zip Code',
-                                                            hintStyle: ralewayStyle.copyWith(
-                                                                fontWeight:
-                                                                    FontWeight
-                                                                        .w400,
-                                                                color: AppColors
-                                                                    .textColor
-                                                                    .withOpacity(
-                                                                        0.5),
-                                                                fontSize:
-                                                                    14.0)),
-                                                      ),
-                                                    ),
-                                                  ),
-                                                ],
-                                              ),
-                                              const SizedBox(
-                                                height: 15.0,
-                                              ),
-                                              Container(
-                                                height: 50.0,
-                                                width: width,
-                                                decoration: BoxDecoration(
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                            8.0),
-                                                    color:
-                                                        AppColors.whiteColor),
-                                                child: TextFormField(
-                                                  controller:
-                                                      landmarkController,
-                                                  style: nunitoStyle.copyWith(
-                                                      fontWeight:
-                                                          FontWeight.w400,
-                                                      color: AppColors
-                                                          .titleTxtColor,
-                                                      fontSize: 14.0),
-                                                  keyboardType:
-                                                      TextInputType.text,
-                                                  decoration: InputDecoration(
-                                                      prefixIcon: const Icon(
-                                                          Icons.location_on),
-                                                      border: InputBorder.none,
-                                                      contentPadding:
-                                                          const EdgeInsets.only(
-                                                              top: 16.0),
-                                                      hintText:
-                                                          'Landmark [ Example:Car Showroom,etc ]',
-                                                      hintStyle:
-                                                          ralewayStyle.copyWith(
+                                                  Container(
+                                                    height: 50.0,
+                                                    width: width,
+                                                    decoration: BoxDecoration(
+                                                        borderRadius:
+                                                            BorderRadius
+                                                                .circular(8.0),
+                                                        color: AppColors
+                                                            .lightBlackColor),
+                                                    child: TextFormField(
+                                                      controller:
+                                                          streetAddressController,
+                                                      style:
+                                                          nunitoStyle.copyWith(
                                                               fontWeight:
                                                                   FontWeight
                                                                       .w400,
                                                               color: AppColors
-                                                                  .textColor
-                                                                  .withOpacity(
-                                                                      0.5),
-                                                              fontSize: 14.0)),
-                                                ),
-                                              ),
-                                              const SizedBox(
-                                                height: 15.0,
+                                                                  .whiteColor,
+                                                              fontSize: 14.0),
+                                                      keyboardType:
+                                                          TextInputType.text,
+                                                      decoration: InputDecoration(
+                                                          prefixIcon:
+                                                              const Icon(Icons
+                                                                  .roundabout_right,color: Colors.white,),
+                                                          border:
+                                                              InputBorder.none,
+                                                          contentPadding:
+                                                              const EdgeInsets.only(
+                                                                  top: 16.0),
+                                                          hintText:
+                                                              ' Street Address, Landmark etc.',
+                                                          hintStyle: ralewayStyle
+                                                              .copyWith(
+                                                                  fontWeight:
+                                                                      FontWeight
+                                                                          .w400,
+                                                                  color: AppColors
+                                                                      .whiteColor
+                                                                      .withOpacity(
+                                                                          0.5),
+                                                                  fontSize:
+                                                                      14.0)),
+                                                    ),
+                                                  ),
+                                                  const SizedBox(
+                                                    height: 15.0,
+                                                  ),
+                                                  Row(
+                                                    children: [
+                                                      Expanded(
+                                                        flex: 1,
+                                                        child: Container(
+                                                          height: 50.0,
+                                                          decoration: BoxDecoration(
+                                                              borderRadius:
+                                                                  BorderRadius
+                                                                      .circular(
+                                                                          8.0),
+                                                              color: AppColors
+                                                                  .lightBlackColor),
+                                                          child: TextFormField(
+                                                            controller:
+                                                                cityController,
+                                                            style: nunitoStyle.copyWith(
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .w400,
+                                                                color: AppColors
+                                                                    .whiteColor,
+                                                                fontSize: 14.0),
+                                                            keyboardType:
+                                                                TextInputType
+                                                                    .text,
+                                                            decoration: InputDecoration(
+                                                                prefixIcon:
+                                                                    const Icon(Icons
+                                                                        .location_city_outlined,color: Colors.white,),
+                                                                border:
+                                                                    InputBorder
+                                                                        .none,
+                                                                contentPadding:
+                                                                    const EdgeInsets.only(
+                                                                        top:
+                                                                            16.0),
+                                                                hintText:
+                                                                    ' City',
+                                                                hintStyle: ralewayStyle.copyWith(
+                                                                    fontWeight:
+                                                                        FontWeight
+                                                                            .w400,
+                                                                    color: AppColors
+                                                                        .whiteColor
+                                                                        .withOpacity(
+                                                                            0.5),
+                                                                    fontSize:
+                                                                        14.0)),
+                                                          ),
+                                                        ),
+                                                      ),
+                                                      const SizedBox(
+                                                        width: 10.0,
+                                                      ),
+                                                      Expanded(
+                                                        flex: 1,
+                                                        child: Container(
+                                                          height: 50.0,
+                                                          width: width,
+                                                          decoration: BoxDecoration(
+                                                              borderRadius:
+                                                                  BorderRadius
+                                                                      .circular(
+                                                                          8.0),
+                                                              color: AppColors
+                                                                  .lightBlackColor),
+                                                          child: TextFormField(
+                                                            controller:
+                                                                zipCodeController,
+                                                            style: nunitoStyle.copyWith(
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .w400,
+                                                                color: AppColors
+                                                                    .whiteColor,
+                                                                fontSize: 14.0),
+                                                            keyboardType:
+                                                                TextInputType
+                                                                    .number,
+                                                            decoration: InputDecoration(
+                                                                prefixIcon:
+                                                                    const Icon(Icons
+                                                                        .numbers,color: Colors.white,),
+                                                                border: InputBorder
+                                                                    .none,
+                                                                contentPadding:
+                                                                    const EdgeInsets
+                                                                        .only(
+                                                                        top:
+                                                                            16.0),
+                                                                hintText:
+                                                                    ' Zip Code',
+                                                                hintStyle: ralewayStyle.copyWith(
+                                                                    fontWeight:
+                                                                        FontWeight
+                                                                            .w400,
+                                                                    color: AppColors
+                                                                        .whiteColor
+                                                                        .withOpacity(
+                                                                            0.5),
+                                                                    fontSize:
+                                                                        14.0)),
+                                                          ),
+                                                        ),
+                                                      ),
+                                                    ],
+                                                  ),
+                                                  const SizedBox(
+                                                    height: 15.0,
+                                                  ),
+                                                  Container(
+                                                    height: 50.0,
+                                                    width: width,
+                                                    decoration: BoxDecoration(
+                                                        borderRadius:
+                                                            BorderRadius
+                                                                .circular(8.0),
+                                                        color: AppColors
+                                                            .lightBlackColor),
+                                                    child: TextFormField(
+                                                      controller:
+                                                          landmarkController,
+                                                      style:
+                                                          nunitoStyle.copyWith(
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .w400,
+                                                              color: AppColors
+                                                                  .whiteColor,
+                                                              fontSize: 14.0),
+                                                      keyboardType:
+                                                          TextInputType.text,
+                                                      decoration: InputDecoration(
+                                                          prefixIcon:
+                                                              const Icon(Icons
+                                                                  .location_on,color: AppColors.whiteColor,),
+                                                          border:
+                                                              InputBorder.none,
+                                                          contentPadding:
+                                                              const EdgeInsets.only(
+                                                                  top: 16.0),
+                                                          hintText:
+                                                              'Landmark [ Example:Car Showroom,etc ]',
+                                                          hintStyle: ralewayStyle
+                                                              .copyWith(
+                                                                  fontWeight:
+                                                                      FontWeight
+                                                                          .w400,
+                                                                  color: AppColors
+                                                                      .whiteColor
+                                                                      .withOpacity(
+                                                                          0.5),
+                                                                  fontSize:
+                                                                      14.0)),
+                                                    ),
+                                                  ),
+                                                  const SizedBox(
+                                                    height: 15.0,
+                                                  ),
+                                                ],
                                               ),
                                             ],
                                           ),
-                                        ],
-                                      ),
-                                    ),
-                                    Align(
-                                      alignment: Alignment.bottomCenter,
-                                      child: Padding(
-                                        padding: const EdgeInsets.all(8.0),
-                                        child: SlideFromBottomAnimation(
-                                          delay: 0.5,
-                                          child: Material(
-                                            color: Colors.transparent,
-                                            child: InkWell(
-                                              onTap: () {
-                                                var buildingNo =
-                                                    buildingNoController.text
-                                                        .trim();
-                                                var streetName =
-                                                    streetAddressController.text
-                                                        .trim();
-                                                var cityName =
-                                                    cityController.text.trim();
-                                                var zipCode = zipCodeController
-                                                    .text
-                                                    .trim();
-                                                var landmark =
-                                                    landmarkController.text
-                                                        .trim();
-                                                if (buildingNo.isEmpty) {
-                                                  glb.showSnackBar(
-                                                      context,
-                                                      'Alert',
-                                                      'Please Add Building/Society Name/House No');
-                                                  return;
-                                                } else if (streetName.isEmpty) {
-                                                  glb.showSnackBar(
-                                                      context,
-                                                      'Alert',
-                                                      'Please Add Street Address');
-                                                  return;
-                                                } else if (cityName.isEmpty) {
-                                                  glb.showSnackBar(
-                                                      context,
-                                                      'Alert',
-                                                      'Please Add City Name');
-                                                  return;
-                                                } else if (zipCode.isEmpty) {
-                                                  glb.showSnackBar(
-                                                      context,
-                                                      'Alert',
-                                                      'Please Add ZipCode');
-                                                  return;
-                                                } else if (landmark.isEmpty) {
-                                                  glb.showSnackBar(
-                                                      context,
-                                                      'Alert',
-                                                      'Please Provide LandMark');
-                                                  return;
-                                                } else {
-                                                  if (latitude == 0 ||
-                                                      longitude == 0) {
-                                                    glb.showSnackBar(
-                                                        context,
-                                                        'Alert',
-                                                        'Please Turn On your location');
-                                                    return;
-                                                  }
-                                                  requestPickupAsync(
-                                                      buildingNo,
-                                                      streetName,
-                                                      cityName,
-                                                      zipCode,
-                                                      landmark);
-                                                }
-                                              },
-                                              borderRadius:
-                                                  BorderRadius.circular(16.0),
-                                              child: Ink(
-                                                padding:
-                                                    const EdgeInsets.all(18.0),
-                                                decoration: BoxDecoration(
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                            16.0),
-                                                    gradient:
-                                                        const LinearGradient(
-                                                            colors: [
-                                                          AppColors.blueColor,
-                                                          Colors.blue
-                                                        ])),
-                                                child: Row(
-                                                  mainAxisAlignment:
-                                                      MainAxisAlignment
-                                                          .spaceBetween,
-                                                  children: [
-                                                    Text(
-                                                      'Save & Request Pick Up',
-                                                      style:
-                                                          nunitoStyle.copyWith(
-                                                        fontWeight:
-                                                            FontWeight.w700,
-                                                        color: AppColors
-                                                            .whiteColor,
-                                                        fontSize: 16.0,
-                                                      ),
+                                        ),
+                                        Align(
+                                          alignment: Alignment.bottomCenter,
+                                          child: Padding(
+                                            padding: const EdgeInsets.all(8.0),
+                                            child: SlideFromBottomAnimation(
+                                              delay: 0.5,
+                                              child: Material(
+                                                color: Colors.transparent,
+                                                child: InkWell(
+                                                  onTap: () {
+                                                    var buildingNo =
+                                                        buildingNoController
+                                                            .text
+                                                            .trim();
+                                                    var streetName =
+                                                        streetAddressController
+                                                            .text
+                                                            .trim();
+                                                    var cityName =
+                                                        cityController.text
+                                                            .trim();
+                                                    var zipCode =
+                                                        zipCodeController.text
+                                                            .trim();
+                                                    var landmark =
+                                                        landmarkController.text
+                                                            .trim();
+                                                    if (buildingNo.isEmpty) {
+                                                      glb.showSnackBar(
+                                                          context,
+                                                          'Alert',
+                                                          'Please Add Building/Society Name/House No');
+                                                      return;
+                                                    } else if (streetName
+                                                        .isEmpty) {
+                                                      glb.showSnackBar(
+                                                          context,
+                                                          'Alert',
+                                                          'Please Add Street Address');
+                                                      return;
+                                                    } else if (cityName
+                                                        .isEmpty) {
+                                                      glb.showSnackBar(
+                                                          context,
+                                                          'Alert',
+                                                          'Please Add City Name');
+                                                      return;
+                                                    } else if (zipCode
+                                                        .isEmpty) {
+                                                      glb.showSnackBar(
+                                                          context,
+                                                          'Alert',
+                                                          'Please Add ZipCode');
+                                                      return;
+                                                    } else if (landmark
+                                                        .isEmpty) {
+                                                      glb.showSnackBar(
+                                                          context,
+                                                          'Alert',
+                                                          'Please Provide LandMark');
+                                                      return;
+                                                    } else {
+                                                      if (latitude == 0 ||
+                                                          longitude == 0) {
+                                                        glb.showSnackBar(
+                                                            context,
+                                                            'Alert',
+                                                            'Please Turn On your location');
+                                                        return;
+                                                      }
+                                                      requestPickupAsync(
+                                                          buildingNo,
+                                                          streetName,
+                                                          cityName,
+                                                          zipCode,
+                                                          landmark);
+                                                    }
+                                                  },
+                                                  borderRadius:
+                                                      BorderRadius.circular(
+                                                          16.0),
+                                                  child: Ink(
+                                                    padding:
+                                                        const EdgeInsets.all(
+                                                            18.0),
+                                                    decoration: BoxDecoration(
+                                                        borderRadius:
+                                                            BorderRadius
+                                                                .circular(16.0),
+                                                        gradient:
+                                                            const LinearGradient(
+                                                                colors: [
+                                                              AppColors
+                                                                  .blueColor,
+                                                              Colors.blue
+                                                            ])),
+                                                    child: Row(
+                                                      mainAxisAlignment:
+                                                          MainAxisAlignment
+                                                              .spaceBetween,
+                                                      children: [
+                                                        Text(
+                                                          'Save & Request Pick Up',
+                                                          style: nunitoStyle
+                                                              .copyWith(
+                                                            fontWeight:
+                                                                FontWeight.w700,
+                                                            color: AppColors
+                                                                .whiteColor,
+                                                            fontSize: 16.0,
+                                                          ),
+                                                        ),
+                                                        const Icon(
+                                                          Icons
+                                                              .arrow_right_outlined,
+                                                          color: Colors.white,
+                                                        )
+                                                      ],
                                                     ),
-                                                    const Icon(
-                                                      Icons
-                                                          .arrow_right_outlined,
-                                                      color: Colors.white,
-                                                    )
-                                                  ],
+                                                  ),
                                                 ),
                                               ),
                                             ),
                                           ),
                                         ),
-                                      ),
+                                      ],
                                     ),
-                                  ],
-                                ),
+                                  ),
+                                ],
                               ),
-                            ],
-                          ),
-                  )),
+                      )),
       ),
     );
   }

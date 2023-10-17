@@ -35,60 +35,64 @@ class _OrdersPageState extends State<OrdersPage> {
   Widget build(BuildContext context) {
     double height = MediaQuery.of(context).size.height;
     double width = MediaQuery.of(context).size.width;
-    return SafeArea(
-      child: DefaultTabController(
-        length: 3,
-        child: Column(
-          children: <Widget>[
-            Padding(
-              padding: const EdgeInsets.all(12.0),
-              child: Text('Orders',
-                  style: ralewayStyle.copyWith(
-                      fontSize: 20.0,
-                      color: AppColors.blueColor,
-                      fontWeight: FontWeight.bold,
-                      letterSpacing: 1)),
-            ),
-            ButtonsTabBar(
-              backgroundColor: AppColors.blueColor,
-              unselectedBackgroundColor: Colors.grey[300],
-              unselectedLabelStyle: TextStyle(color: AppColors.textColor),
-              labelStyle:
-                  TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
-              tabs: [
-                Tab(
-                  icon: Padding(
-                    padding: const EdgeInsets.all(4.0),
-                    child: Icon(Icons.delivery_dining_sharp),
+    return Scaffold(
+      backgroundColor: Colors.black,
+      appBar: AppBar(
+        backgroundColor: Colors.transparent,
+        title: Text('Orders',
+                    style: ralewayStyle.copyWith(
+                        fontSize: 25.0,
+                        color: AppColors.whiteColor,
+                        fontWeight: FontWeight.bold,
+                        letterSpacing: 1)),
+      ),
+      body: SafeArea(
+        child: DefaultTabController(
+          length: 3,
+          child: Column(
+            children: <Widget>[
+              SizedBox(height: width * 0.03,),
+              ButtonsTabBar(
+                backgroundColor: AppColors.blueColor,
+                unselectedBackgroundColor: AppColors.lightBlackColor,
+                unselectedLabelStyle: TextStyle(color: AppColors.whiteColor),
+                labelStyle:
+                    TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+                tabs: [
+                  Tab(
+                    icon: Padding(
+                      padding: const EdgeInsets.all(4.0),
+                      child: Icon(Icons.delivery_dining_sharp),
+                    ),
+                    text: "Ongoing",
                   ),
-                  text: "Ongoing",
-                ),
-                Tab(
-                  icon: Padding(
-                    padding: const EdgeInsets.all(4.0),
-                    child: Icon(Icons.done),
+                  Tab(
+                    icon: Padding(
+                      padding: const EdgeInsets.all(4.0),
+                      child: Icon(Icons.done),
+                    ),
+                    text: "Completed",
                   ),
-                  text: "Completed",
-                ),
-                Tab(
-                  icon: Padding(
-                    padding: const EdgeInsets.all(4.0),
-                    child: Icon(Icons.cancel),
+                  Tab(
+                    icon: Padding(
+                      padding: const EdgeInsets.all(4.0),
+                      child: Icon(Icons.cancel),
+                    ),
+                    text: "Cancelled",
                   ),
-                  text: "Cancelled",
-                ),
-              ],
-            ),
-            const Expanded(
-              child: TabBarView(
-                children: <Widget>[
-                  OngoingOrders(),
-                  CompletedOrders(),
-                  CancelledOrders(),
                 ],
               ),
-            ),
-          ],
+              const Expanded(
+                child: TabBarView(
+                  children: <Widget>[
+                    OngoingOrders(),
+                    CompletedOrders(),
+                    CancelledOrders(),
+                  ],
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );

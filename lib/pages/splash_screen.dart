@@ -40,7 +40,19 @@ class _SplashScreenState extends State<SplashScreen> {
     // SharedPreferenceUtils.save_val('firstRun', '');
     var usrid = prefs.getString('usrid');
     if (usrid != null && usrid.toString().isEmpty == false) {
-      Navigator.pushReplacementNamed(context, MainRoute);
+      var defaultRoute = prefs?.getString('AppPreference');
+      print("defaultRoute:$defaultRoute");
+      if (defaultRoute != null &&
+          defaultRoute.isEmpty == false &&
+          defaultRoute == "MainRoute") {
+        Navigator.pushReplacementNamed(context, MainRoute);
+      } else if (defaultRoute != null &&
+          defaultRoute.isEmpty == false &&
+          defaultRoute == "DMainRoute") {
+        Navigator.pushReplacementNamed(context, DMainRoute);
+      }else{
+        Navigator.pushReplacementNamed(context, MainRoute);
+      }
     } else if (firstRun != null && firstRun.toString().isEmpty == false) {
       Navigator.pushReplacementNamed(context, OnBoardRoute);
     } else {

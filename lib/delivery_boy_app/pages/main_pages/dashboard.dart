@@ -8,6 +8,7 @@ import 'package:line_icons/line_icons.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:vff_group/animation/slide_left_animation.dart';
 import 'package:vff_group/delivery_boy_app/models/new_orders.dart';
+import 'package:vff_group/notification_services.dart';
 import 'package:vff_group/routings/route_names.dart';
 import 'package:vff_group/utils/SharedPreferencesUtils.dart';
 import 'package:vff_group/utils/app_colors.dart';
@@ -26,12 +27,79 @@ class DashboardPage extends StatefulWidget {
 class _DashboardPageState extends State<DashboardPage> {
   List<NewOrders> newOrdersModel = [];
   bool showLoading = true, noOrders = true;
+  NotificationServices notificationServices = NotificationServices();
+  var deviceToken = "";
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
     loadNewOrders();
+    getDefault();
+    //Set default app
+    SharedPreferenceUtils.save_val('AppPreference', 'DMainRoute');
   }
+
+  Future getDefault() async {
+    var notificationToken = glb.prefs?.getString('notificationToken');
+    if(notificationToken == null){
+     
+      notificationServices.getDeviceToken().then((value) => {
+            deviceToken = value.toString().replaceAll(':', '__colon__'),
+            SharedPreferenceUtils.save_val('notificationToken', deviceToken),
+            updateDeviceToken(),
+            print('Delivery Boy DeviceToken:$value')
+          });
+
+    }
+    
+  }
+
+    Future updateDeviceToken() async {
+    glb.prefs = await SharedPreferences.getInstance();
+
+    var dusrid = glb.prefs?.getString('dusrid');
+    if (deviceToken.isEmpty) {
+      print('DeviceToken is Empty');
+      return;
+    }
+    try {
+      var url = glb.endPoint;
+      final Map dictMap = {};
+
+      dictMap['usrid'] = dusrid;
+      dictMap['deviceToken'] = deviceToken;
+      dictMap['pktType'] = "5";
+      dictMap['token'] = "vff";
+      dictMap['uid'] = "-1";
+
+      final response = await http.post(Uri.parse(url),
+          headers: <String, String>{
+            "Accept": "application/json",
+            'Content-Type': 'application/json; charset=UTF-8',
+          },
+          body: jsonEncode(dictMap));
+
+      if (response.statusCode == 200) {
+        var res = response.body;
+        if (res.contains("ErrorCode#2")) {
+         // glb.showSnackBar(context, 'Error', 'No Categories Found');
+          return;
+        } else if (res.contains("ErrorCode#8")) {
+          glb.showSnackBar(context, 'Error', 'Something Went Wrong');
+          return;
+        } else {
+          print('Delivery Boy Device Token Updated Successfully');
+          
+        }
+      }
+    } catch (e) {
+      if (kDebugMode) {
+        print(e);
+      }
+      glb.handleErrors(e, context);
+    }
+  }
+
 
   Future loadNewOrders() async {
     //norder_id

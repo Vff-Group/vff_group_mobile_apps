@@ -9,7 +9,10 @@ import 'package:vff_group/global/vffglb.dart' as glb;
 
 class PlaceOrderPage extends StatefulWidget {
   final Function(String) updateQuantity;
-  const PlaceOrderPage({super.key, required this.updateQuantity});
+  final String catId;
+
+  const PlaceOrderPage(
+      {super.key, required this.updateQuantity, required this.catId});
 
   @override
   State<PlaceOrderPage> createState() => _PlaceOrderPageState();
@@ -28,29 +31,27 @@ class _PlaceOrderPageState extends State<PlaceOrderPage> {
   void initState() {
     // TODO: implement initState
     super.initState();
-    quantityController.text = "100";
+    quantityController.text = widget.catId;
   }
 
   @override
   Widget build(BuildContext context) {
     double height = MediaQuery.of(context).size.height;
     double width = MediaQuery.of(context).size.width;
-    return CustomScrollView(
-      slivers: [
-        SliverToBoxAdapter(
-          child: Column(
-            children: [
-              Container(
-                child: Column(
-                  children: [
-                    const SizedBox(
-                      height: 10.0,
-                    ),
-                    Container(
-                      decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(12.0),
-                          color: AppColors.whiteColor),
-                      child: Padding(
+    return Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: CustomScrollView(
+        slivers: [
+          SliverToBoxAdapter(
+            child: Column(
+              children: [
+                Container(
+                  child: Column(
+                    children: [
+                      const SizedBox(
+                        height: 10.0,
+                      ),
+                      Padding(
                         padding: const EdgeInsets.symmetric(
                             vertical: 20.0, horizontal: 12.0),
                         child: Column(
@@ -64,20 +65,21 @@ class _PlaceOrderPageState extends State<PlaceOrderPage> {
                                   style: nunitoStyle.copyWith(
                                       fontSize: 16.0,
                                       fontWeight: FontWeight.bold,
-                                      color: AppColors.textColor),
+                                      color: AppColors.whiteColor),
                                 ),
-                                InkWell(
-                                  onTap: () {
-                                    print('Add item to cart');
-                                  },
-                                  child: Text(
-                                    'Add to cart',
-                                    style: nunitoStyle.copyWith(
-                                        fontSize: 16.0,
-                                        fontWeight: FontWeight.bold,
-                                        color: AppColors.blueColor),
-                                  ),
-                                ),
+                                // InkWell(
+                                //   onTap: () {
+                                //     print('Add item to cart');
+                                //   },
+                                //   child: Text(
+                                //     'Add to cart',
+                                //     style: nunitoStyle.copyWith(
+                                //         fontSize: 16.0,
+                                //         fontWeight: FontWeight.bold,
+                                //         color: AppColors.blueColor),
+                                //   ),
+                                // ),
+                             
                               ],
                             ),
                             SizedBox(
@@ -89,7 +91,7 @@ class _PlaceOrderPageState extends State<PlaceOrderPage> {
                               decoration: BoxDecoration(
                                 borderRadius: BorderRadius.circular(8.0),
                                 border: Border.all(
-                                  color: AppColors.textColor, // Border color
+                                  color: AppColors.whiteColor, // Border color
                                   width: 0.2, // Border width
                                 ),
                               ),
@@ -97,7 +99,7 @@ class _PlaceOrderPageState extends State<PlaceOrderPage> {
                                 controller: quantityController,
                                 style: nunitoStyle.copyWith(
                                     fontWeight: FontWeight.w400,
-                                    color: AppColors.titleTxtColor,
+                                    color: AppColors.whiteColor,
                                     fontSize: 14.0),
                                 keyboardType: TextInputType.number,
                                 onChanged: (value) {
@@ -111,14 +113,14 @@ class _PlaceOrderPageState extends State<PlaceOrderPage> {
                                     prefixIcon: IconButton(
                                       onPressed: () {},
                                       icon: const Icon(
-                                          Icons.local_laundry_service),
+                                          Icons.local_laundry_service,color: Colors.white,),
                                     ),
                                     contentPadding:
                                         const EdgeInsets.only(top: 16.0),
                                     hintText: 'Quantity in Kgs',
                                     hintStyle: ralewayStyle.copyWith(
                                         fontWeight: FontWeight.w400,
-                                        color: AppColors.textColor
+                                        color: AppColors.whiteColor
                                             .withOpacity(0.5),
                                         fontSize: 12.0)),
                               ),
@@ -126,15 +128,10 @@ class _PlaceOrderPageState extends State<PlaceOrderPage> {
                           ],
                         ),
                       ),
-                    ),
-                    const SizedBox(
-                      height: 10.0,
-                    ),
-                    Container(
-                      decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(12.0),
-                          color: AppColors.whiteColor),
-                      child: Padding(
+                      const SizedBox(
+                        height: 10.0,
+                      ),
+                      Padding(
                         padding: const EdgeInsets.symmetric(
                             vertical: 20.0, horizontal: 12.0),
                         child: Column(
@@ -148,7 +145,7 @@ class _PlaceOrderPageState extends State<PlaceOrderPage> {
                                   style: nunitoStyle.copyWith(
                                       fontSize: 16.0,
                                       fontWeight: FontWeight.bold,
-                                      color: AppColors.textColor),
+                                      color: AppColors.whiteColor),
                                 ),
                               ],
                             ),
@@ -160,9 +157,9 @@ class _PlaceOrderPageState extends State<PlaceOrderPage> {
                               width: width,
                               decoration: BoxDecoration(
                                 borderRadius: BorderRadius.circular(8.0),
-                                
                               ),
                               child: DropdownButton<String>(
+                                dropdownColor: AppColors.lightBlackColor,
                                 value: selectedItem,
                                 onChanged: (String? newValue) {
                                   setState(() {
@@ -175,8 +172,11 @@ class _PlaceOrderPageState extends State<PlaceOrderPage> {
                                     child: Row(
                                       children: [
                                         SizedBox(
-                                          width: width-50,
-                                          child: Text(item)),
+                                            width: width - 80,
+                                            child: Text(item,style: ralewayStyle.copyWith(
+                                              fontWeight: FontWeight.bold,
+                                              color: AppColors.whiteColor
+                                            ),)),
                                       ],
                                     ),
                                   );
@@ -186,215 +186,215 @@ class _PlaceOrderPageState extends State<PlaceOrderPage> {
                           ],
                         ),
                       ),
-                    ),
-
-                    // const SizedBox(
-                    //   height: 10.0,
-                    // ),
-                    // Container(
-                    //   decoration: BoxDecoration(
-                    //       borderRadius: BorderRadius.circular(12.0),
-                    //       color: AppColors.whiteColor),
-                    //   child: Padding(
-                    //     padding: const EdgeInsets.symmetric(
-                    //         vertical: 20.0, horizontal: 12.0),
-                    //     child: Column(
-                    //       crossAxisAlignment: CrossAxisAlignment.start,
-                    //       children: [
-                    //         Text(
-                    //           'Color Preferences',
-                    //           style: nunitoStyle.copyWith(
-                    //               fontSize: 20.0,
-                    //               fontWeight: FontWeight.bold,
-                    //               color: AppColors.titleTxtColor),
-                    //         ),
-                    //         Padding(
-                    //           padding: const EdgeInsets.all(8.0),
-                    //           child: Row(
-                    //             mainAxisAlignment: MainAxisAlignment.start,
-                    //             children: [
-                    //               CustomRadioButton(
-                    //                 label: 'Color Clothes',
-                    //                 isSelected:
-                    //                     _isColorColthes, // Set to true for the selected option
-                    //                 onChanged: (selected) {
-                    //                   // Handle option 1 selection
-                    //                   setState(() {
-                    //                     _isColorColthes = true;
-                    //                     _isColorWhite = false;
-                    //                   });
-                    //                 },
-                    //               ),
-                    //               const SizedBox(
-                    //                   width:
-                    //                       20), // Add some spacing between the radio buttons
-                    //               CustomRadioButton(
-                    //                 label: 'White Clothes',
-                    //                 isSelected:
-                    //                     _isColorWhite, // Set to true for the selected option
-                    //                 onChanged: (selected) {
-                    //                   setState(() {
-                    //                     _isColorWhite = true;
-                    //                     _isColorColthes = false;
-                    //                   });
-                    //                 },
-                    //               ),
-                    //             ],
-                    //           ),
-                    //         ),
-                    //       ],
-                    //     ),
-                    //   ),
-                    // ),
-
-                    // const SizedBox(
-                    //   height: 10.0,
-                    // ),
-                    // Container(
-                    //   decoration: BoxDecoration(
-                    //       borderRadius: BorderRadius.circular(12.0),
-                    //       color: AppColors.whiteColor),
-                    //   child: Padding(
-                    //     padding: const EdgeInsets.symmetric(
-                    //         vertical: 20.0, horizontal: 12.0),
-                    //     child: Column(
-                    //       crossAxisAlignment: CrossAxisAlignment.start,
-                    //       children: [
-                    //         Text(
-                    //           'Other',
-                    //           style: nunitoStyle.copyWith(
-                    //               fontSize: 20.0,
-                    //               fontWeight: FontWeight.bold,
-                    //               color: AppColors.titleTxtColor),
-                    //         ),
-                    //         Column(
-                    //           children: [
-                    //             const SizedBox(height: 10),
-                    //             CustomRadioButton(
-                    //               label: 'Dry Heater',
-                    //               isSelected:
-                    //                   _dryHeaterOnly, // Set to true for the selected option
-                    //               onChanged: (selected) {
-                    //                 if (selected == true) {
-                    //                   setState(() {
-                    //                     _dryHeaterOnly = true;
-                    //                   });
-                    //                 } else {
-                    //                   setState(() {
-                    //                     _dryHeaterOnly = false;
-                    //                   });
-                    //                 }
-                    //               },
-                    //             ),
-                    //             const SizedBox(
-                    //                 height:
-                    //                     10), // Add some spacing between the radio buttons
-                    //             CustomRadioButton(
-                    //               label: 'Scented Detergent',
-                    //               isSelected:
-                    //                   _scentedDetergentOnly, // Set to true for the selected option
-                    //               onChanged: (selected) {
-                    //                 if (selected == true) {
-                    //                   setState(() {
-                    //                     _scentedDetergentOnly = true;
-                    //                   });
-                    //                 } else {
-                    //                   setState(() {
-                    //                     _scentedDetergentOnly = false;
-                    //                   });
-                    //                 }
-                    //               },
-                    //             ),
-                    //             const SizedBox(
-                    //                 height:
-                    //                     10), // Add some spacing between the radio buttons
-                    //             CustomRadioButton(
-                    //               label: 'Use Softner',
-                    //               isSelected:
-                    //                   _useSoftnerOnly, // Set to true for the selected option
-                    //               onChanged: (selected) {
-                    //                 if (selected == true) {
-                    //                   setState(() {
-                    //                     _useSoftnerOnly = true;
-                    //                   });
-                    //                 } else {
-                    //                   setState(() {
-                    //                     _useSoftnerOnly = false;
-                    //                   });
-                    //                 }
-                    //               },
-                    //             ),
-                    //           ],
-                    //         )
-                    //       ],
-                    //     ),
-                    //   ),
-                    // ),
-                  
-                    // const SizedBox(
-                    //   height: 10.0,
-                    // ),
-                    // Container(
-                    //   decoration: BoxDecoration(
-                    //       borderRadius: BorderRadius.circular(12.0),
-                    //       color: AppColors.whiteColor),
-                    //   child: Padding(
-                    //     padding: const EdgeInsets.symmetric(
-                    //         vertical: 20.0, horizontal: 12.0),
-                    //     child: Column(
-                    //       crossAxisAlignment: CrossAxisAlignment.start,
-                    //       children: [
-                    //         Row(
-                    //           children: [
-                    //             Text(
-                    //               'Additional Notes',
-                    //               style: nunitoStyle.copyWith(
-                    //                   fontSize: 20.0,
-                    //                   fontWeight: FontWeight.bold,
-                    //                   color: AppColors.titleTxtColor),
-                    //             ),
-                    //           ],
-                    //         ),
-                    //         Container(
-                    //           height: 100.0,
-                    //           width: width,
-                    //           decoration: BoxDecoration(
-                    //             borderRadius: BorderRadius.circular(8.0),
-                    //           ),
-                    //           child: TextFormField(
-                    //             maxLines: 20,
-                    //             style: nunitoStyle.copyWith(
-                    //                 fontWeight: FontWeight.w400,
-                    //                 color: AppColors.titleTxtColor,
-                    //                 fontSize: 14.0),
-                    //             keyboardType: TextInputType.text,
-                    //             decoration: InputDecoration(
-                    //                 border: InputBorder.none,
-                    //                 contentPadding:
-                    //                     const EdgeInsets.only(top: 16.0),
-                    //                 hintText:
-                    //                     'Please provide us with any specific instruction which should be followed by us.',
-                    //                 hintStyle: ralewayStyle.copyWith(
-                    //                     fontWeight: FontWeight.w400,
-                    //                     color: AppColors.textColor,
-                    //                     fontSize: 12.0)),
-                    //           ),
-                    //         ),
-                    //       ],
-                    //     ),
-                    //   ),
-                    // ),
-                    
-                    const SizedBox(
-                      height: 15.0,
-                    ),
-                  ],
-                ),
-              )
-            ],
-          ),
-        )
-      ],
+                
+                      // const SizedBox(
+                      //   height: 10.0,
+                      // ),
+                      // Container(
+                      //   decoration: BoxDecoration(
+                      //       borderRadius: BorderRadius.circular(12.0),
+                      //       color: AppColors.whiteColor),
+                      //   child: Padding(
+                      //     padding: const EdgeInsets.symmetric(
+                      //         vertical: 20.0, horizontal: 12.0),
+                      //     child: Column(
+                      //       crossAxisAlignment: CrossAxisAlignment.start,
+                      //       children: [
+                      //         Text(
+                      //           'Color Preferences',
+                      //           style: nunitoStyle.copyWith(
+                      //               fontSize: 20.0,
+                      //               fontWeight: FontWeight.bold,
+                      //               color: AppColors.titleTxtColor),
+                      //         ),
+                      //         Padding(
+                      //           padding: const EdgeInsets.all(8.0),
+                      //           child: Row(
+                      //             mainAxisAlignment: MainAxisAlignment.start,
+                      //             children: [
+                      //               CustomRadioButton(
+                      //                 label: 'Color Clothes',
+                      //                 isSelected:
+                      //                     _isColorColthes, // Set to true for the selected option
+                      //                 onChanged: (selected) {
+                      //                   // Handle option 1 selection
+                      //                   setState(() {
+                      //                     _isColorColthes = true;
+                      //                     _isColorWhite = false;
+                      //                   });
+                      //                 },
+                      //               ),
+                      //               const SizedBox(
+                      //                   width:
+                      //                       20), // Add some spacing between the radio buttons
+                      //               CustomRadioButton(
+                      //                 label: 'White Clothes',
+                      //                 isSelected:
+                      //                     _isColorWhite, // Set to true for the selected option
+                      //                 onChanged: (selected) {
+                      //                   setState(() {
+                      //                     _isColorWhite = true;
+                      //                     _isColorColthes = false;
+                      //                   });
+                      //                 },
+                      //               ),
+                      //             ],
+                      //           ),
+                      //         ),
+                      //       ],
+                      //     ),
+                      //   ),
+                      // ),
+                
+                      // const SizedBox(
+                      //   height: 10.0,
+                      // ),
+                      // Container(
+                      //   decoration: BoxDecoration(
+                      //       borderRadius: BorderRadius.circular(12.0),
+                      //       color: AppColors.whiteColor),
+                      //   child: Padding(
+                      //     padding: const EdgeInsets.symmetric(
+                      //         vertical: 20.0, horizontal: 12.0),
+                      //     child: Column(
+                      //       crossAxisAlignment: CrossAxisAlignment.start,
+                      //       children: [
+                      //         Text(
+                      //           'Other',
+                      //           style: nunitoStyle.copyWith(
+                      //               fontSize: 20.0,
+                      //               fontWeight: FontWeight.bold,
+                      //               color: AppColors.titleTxtColor),
+                      //         ),
+                      //         Column(
+                      //           children: [
+                      //             const SizedBox(height: 10),
+                      //             CustomRadioButton(
+                      //               label: 'Dry Heater',
+                      //               isSelected:
+                      //                   _dryHeaterOnly, // Set to true for the selected option
+                      //               onChanged: (selected) {
+                      //                 if (selected == true) {
+                      //                   setState(() {
+                      //                     _dryHeaterOnly = true;
+                      //                   });
+                      //                 } else {
+                      //                   setState(() {
+                      //                     _dryHeaterOnly = false;
+                      //                   });
+                      //                 }
+                      //               },
+                      //             ),
+                      //             const SizedBox(
+                      //                 height:
+                      //                     10), // Add some spacing between the radio buttons
+                      //             CustomRadioButton(
+                      //               label: 'Scented Detergent',
+                      //               isSelected:
+                      //                   _scentedDetergentOnly, // Set to true for the selected option
+                      //               onChanged: (selected) {
+                      //                 if (selected == true) {
+                      //                   setState(() {
+                      //                     _scentedDetergentOnly = true;
+                      //                   });
+                      //                 } else {
+                      //                   setState(() {
+                      //                     _scentedDetergentOnly = false;
+                      //                   });
+                      //                 }
+                      //               },
+                      //             ),
+                      //             const SizedBox(
+                      //                 height:
+                      //                     10), // Add some spacing between the radio buttons
+                      //             CustomRadioButton(
+                      //               label: 'Use Softner',
+                      //               isSelected:
+                      //                   _useSoftnerOnly, // Set to true for the selected option
+                      //               onChanged: (selected) {
+                      //                 if (selected == true) {
+                      //                   setState(() {
+                      //                     _useSoftnerOnly = true;
+                      //                   });
+                      //                 } else {
+                      //                   setState(() {
+                      //                     _useSoftnerOnly = false;
+                      //                   });
+                      //                 }
+                      //               },
+                      //             ),
+                      //           ],
+                      //         )
+                      //       ],
+                      //     ),
+                      //   ),
+                      // ),
+                
+                      // const SizedBox(
+                      //   height: 10.0,
+                      // ),
+                      // Container(
+                      //   decoration: BoxDecoration(
+                      //       borderRadius: BorderRadius.circular(12.0),
+                      //       color: AppColors.whiteColor),
+                      //   child: Padding(
+                      //     padding: const EdgeInsets.symmetric(
+                      //         vertical: 20.0, horizontal: 12.0),
+                      //     child: Column(
+                      //       crossAxisAlignment: CrossAxisAlignment.start,
+                      //       children: [
+                      //         Row(
+                      //           children: [
+                      //             Text(
+                      //               'Additional Notes',
+                      //               style: nunitoStyle.copyWith(
+                      //                   fontSize: 20.0,
+                      //                   fontWeight: FontWeight.bold,
+                      //                   color: AppColors.titleTxtColor),
+                      //             ),
+                      //           ],
+                      //         ),
+                      //         Container(
+                      //           height: 100.0,
+                      //           width: width,
+                      //           decoration: BoxDecoration(
+                      //             borderRadius: BorderRadius.circular(8.0),
+                      //           ),
+                      //           child: TextFormField(
+                      //             maxLines: 20,
+                      //             style: nunitoStyle.copyWith(
+                      //                 fontWeight: FontWeight.w400,
+                      //                 color: AppColors.titleTxtColor,
+                      //                 fontSize: 14.0),
+                      //             keyboardType: TextInputType.text,
+                      //             decoration: InputDecoration(
+                      //                 border: InputBorder.none,
+                      //                 contentPadding:
+                      //                     const EdgeInsets.only(top: 16.0),
+                      //                 hintText:
+                      //                     'Please provide us with any specific instruction which should be followed by us.',
+                      //                 hintStyle: ralewayStyle.copyWith(
+                      //                     fontWeight: FontWeight.w400,
+                      //                     color: AppColors.textColor,
+                      //                     fontSize: 12.0)),
+                      //           ),
+                      //         ),
+                      //       ],
+                      //     ),
+                      //   ),
+                      // ),
+                
+                      const SizedBox(
+                        height: 15.0,
+                      ),
+                    ],
+                  ),
+                )
+              ],
+            ),
+          )
+        ],
+      ),
     );
   }
 }

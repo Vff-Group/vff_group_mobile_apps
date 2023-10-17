@@ -108,14 +108,14 @@ class NotificationServices {
   }
 
   var deviceToken = "";
-  Future<bool> isTokenRefreshed() async {
-    var isChanged = false;
+  void isTokenRefreshed() async {
+    
     messaging.onTokenRefresh.listen((event) {
       event.toString();
       print('Firebase Token Refreshed');
-      isChanged = true;
+      SharedPreferenceUtils.save_val('notificationToken', '');
     });
-    return isChanged;
+    
   }
 
   Future<void> setupInteractMessage(BuildContext context) async {

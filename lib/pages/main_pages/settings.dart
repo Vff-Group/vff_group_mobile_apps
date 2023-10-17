@@ -21,6 +21,10 @@ class _SettingsPageState extends State<SettingsPage> {
     double width = MediaQuery.of(context).size.width;
     return Scaffold(
       backgroundColor: AppColors.backColor,
+      appBar: AppBar(
+        backgroundColor: AppColors.blueColor,
+        title: _MainHeaders(),
+      ),
       body: SafeArea(
           child: CustomScrollView(
         slivers: [
@@ -31,7 +35,7 @@ class _SettingsPageState extends State<SettingsPage> {
                   padding: const EdgeInsets.all(12.0),
                   child: Column(
                     children: [
-                      _MainHeaders(),
+                      
                       SizedBox(
                         height: height * 0.02,
                       ),
@@ -150,7 +154,7 @@ class _MainHeaders extends StatelessWidget {
         Text('Settings',
             style: ralewayStyle.copyWith(
               fontSize: 25.0,
-              color: AppColors.blueDarkColor,
+              color: AppColors.whiteColor,
               fontWeight: FontWeight.bold,
             )),
         WidgetCircularAnimator(

@@ -10,118 +10,126 @@ class CancelledOrders extends StatefulWidget {
 }
 
 class _CancelledOrdersState extends State<CancelledOrders> {
+
+  Future<void> _handleRefresh() async {
+  Future.delayed(const Duration(milliseconds: 5));
+}
+
   @override
   Widget build(BuildContext context) {
-    return ListView.builder(
-        itemCount: 1,
-        itemBuilder: ((context, index) {
-          return Padding(
-            padding: const EdgeInsets.all(12.0),
-            child: Container(
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(8.0),
-                color: Colors.white, // Container color
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.grey.withOpacity(0.1), // Shadow color
-                    spreadRadius: 5,
-                    blurRadius: 7,
-                    offset: const Offset(0, 3), // Changes position of shadow
+    return RefreshIndicator(
+      onRefresh: _handleRefresh,
+      child: ListView.builder(
+          itemCount: 1,
+          itemBuilder: ((context, index) {
+            return Padding(
+              padding: const EdgeInsets.all(12.0),
+              child: Container(
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(8.0),
+                  color: AppColors.lightBlackColor, // Container color
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.grey.withOpacity(0.1), // Shadow color
+                      spreadRadius: 5,
+                      blurRadius: 7,
+                      offset: const Offset(0, 3), // Changes position of shadow
+                    ),
+                  ],
+                ),
+                child: Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Column(
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text(
+                              'Order ID:',
+                              style: nunitoStyle.copyWith(
+                                  color: AppColors.whiteColor, fontSize: 14),
+                            ),
+                            Text(
+                              '#123456',
+                              style: nunitoStyle.copyWith(
+                                color: AppColors.whiteColor,
+                                fontSize: 14,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text(
+                              'Order Date:',
+                              style: nunitoStyle.copyWith(
+                                  color: AppColors.whiteColor, fontSize: 14),
+                            ),
+                            Text(
+                              '04-01-2023',
+                              style: nunitoStyle.copyWith(
+                                color: AppColors.whiteColor,
+                                fontSize: 14,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text(
+                              'Pick Up:',
+                              style: nunitoStyle.copyWith(
+                                  color: AppColors.whiteColor, fontSize: 14),
+                            ),
+                            Text(
+                              'New Vaibhav Nagar,590010',
+                              style: nunitoStyle.copyWith(
+                                color: AppColors.whiteColor,
+                                fontSize: 14,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text(
+                              'Total Amount:',
+                              style: nunitoStyle.copyWith(
+                                  color: AppColors.whiteColor, fontSize: 14),
+                            ),
+                            Text(
+                              '₹ 230/-',
+                              style: nunitoStyle.copyWith(
+                                color: AppColors.blueDarkColor,
+                                fontSize: 14,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                        ],
                   ),
-                ],
-              ),
-              child: Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Column(
-                  children: [
-                    Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Text(
-                            'Order ID:',
-                            style: nunitoStyle.copyWith(
-                                color: AppColors.textColor, fontSize: 14),
-                          ),
-                          Text(
-                            '#123456',
-                            style: nunitoStyle.copyWith(
-                              color: AppColors.textColor,
-                              fontSize: 14,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Text(
-                            'Order Date:',
-                            style: nunitoStyle.copyWith(
-                                color: AppColors.textColor, fontSize: 14),
-                          ),
-                          Text(
-                            '04-01-2023',
-                            style: nunitoStyle.copyWith(
-                              color: AppColors.textColor,
-                              fontSize: 14,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Text(
-                            'Pick Up:',
-                            style: nunitoStyle.copyWith(
-                                color: AppColors.textColor, fontSize: 14),
-                          ),
-                          Text(
-                            'New Vaibhav Nagar,590010',
-                            style: nunitoStyle.copyWith(
-                              color: AppColors.textColor,
-                              fontSize: 14,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Text(
-                            'Total Amount:',
-                            style: nunitoStyle.copyWith(
-                                color: AppColors.textColor, fontSize: 14),
-                          ),
-                          Text(
-                            '₹ 230/-',
-                            style: nunitoStyle.copyWith(
-                              color: AppColors.blueDarkColor,
-                              fontSize: 14,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                      ],
                 ),
               ),
-            ),
-          );
-        }));
+            );
+          })),
+    );
   }
 }
 

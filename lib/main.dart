@@ -58,7 +58,7 @@ class MyApp extends StatelessWidget {
             TargetPlatform.android: CupertinoPageTransitionsBuilder(),
             TargetPlatform.iOS: CupertinoPageTransitionsBuilder(),
           })),
-      initialRoute: MyBagRoute,
+      initialRoute: SplashRoute,
       onGenerateRoute: generateRoute,
     );
   }

@@ -6,6 +6,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get_utils/get_utils.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:vff_group/animation/fade_animation.dart';
 import 'package:vff_group/animation/rotate_animation.dart';
 import 'package:vff_group/animation/scale_and_revert_animation.dart';
@@ -266,12 +267,17 @@ class _DeliveryLoginScreenState extends State<DeliveryLoginScreen> {
     setState(() {
       showLoading = true;
     });
+    glb.prefs = await SharedPreferences.getInstance();
+
+    var notificationToken = glb.prefs?.getString('notificationToken');
+    //notificationToken
     try {
       
       var url = glb.endPoint;
       final Map dictMap = {};
       dictMap['username'] = userName;
       dictMap['password'] = password;
+      dictMap['notificationToken'] = notificationToken;
       dictMap['pktType'] = "6";
       dictMap['token'] = "vff";
       dictMap['uid'] = "-1";

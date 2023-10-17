@@ -13,14 +13,14 @@ import 'package:intl/intl.dart';
 import 'package:location/location.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-
-String endPoint = "http://62.72.57.222:8085/";//8085
-String account_created_date = "",orderid="";
+String endPoint = "http://62.72.57.222:8085/"; //8085
+String account_created_date = "", orderid = "";
 bool addItems = false;
 String cartQuantity = "", cartCost = "";
 
 void showSnackBar(BuildContext context, String alertTxt, String text) {
-  Get.snackbar(alertTxt, text, snackPosition: SnackPosition.TOP);
+  Get.snackbar(
+    alertTxt, text, snackPosition: SnackPosition.TOP,colorText: Colors.white,icon: Image.asset('assets/logo/logo.png'));
 }
 
 DateTime epochToDateTime(double epoch) {
@@ -32,7 +32,8 @@ DateTime epochToDateTime(double epoch) {
 
 String doubleEpochToFormattedDateTime(double epoch) {
   // Convert seconds since epoch to a DateTime object
-  DateTime dateTime = DateTime.fromMillisecondsSinceEpoch((epoch * 1000).toInt());
+  DateTime dateTime =
+      DateTime.fromMillisecondsSinceEpoch((epoch * 1000).toInt());
 
   // Format the DateTime object to a formatted date and time string with AM/PM
   String formattedDateTime = DateFormat('yyyy-MM-dd hh:mm a').format(dateTime);
@@ -52,10 +53,10 @@ String doubleEpochToFormattedDateTime(double epoch) {
 
 String ext_upload_url = "https://d26ksqb4lnqfvh.cloudfront.net/";
 String upload_url = "http://164.52.210.25:3335/upload";
-String mainCategoryID = "",mainCategoryName = "",usrid = "";
+String mainCategoryID = "", mainCategoryName = "", usrid = "";
 String profileImage = "";
 SharedPreferences? prefs;
-int pageIndex = 0,pageDIndex = 0;
+int pageIndex = 0, pageDIndex = 0;
 List strToLst(String str) {
   var split = str.toString().split(",");
   return split;
@@ -65,40 +66,36 @@ List<String> strToLst2(String str) {
   var split = str.toString().split(",");
   return split;
 }
+
 Location location = new Location();
 late bool _serviceEnabled;
-  late PermissionStatus permissionGranted;
-  late LocationData _locationData;
+late PermissionStatus permissionGranted;
+late LocationData _locationData;
 
 Future<void> handleLocationPermission() async {
-    // Check if the location service is enabled.
-_locationData = await location.getLocation();
-    print('_locationData.latitude:${_locationData.latitude}');
-    _serviceEnabled = await location.serviceEnabled();
-    if(_serviceEnabled){
-      
-    }
+  // Check if the location service is enabled.
+  _locationData = await location.getLocation();
+  print('_locationData.latitude:${_locationData.latitude}');
+  _serviceEnabled = await location.serviceEnabled();
+  if (_serviceEnabled) {}
+  if (!_serviceEnabled) {
+    _serviceEnabled = await location.requestService();
     if (!_serviceEnabled) {
-      _serviceEnabled = await location.requestService();
-      if (!_serviceEnabled) {
-        return;
-      }
+      return;
     }
-
-    permissionGranted = await location.hasPermission();
-    if (permissionGranted == PermissionStatus.denied) {
-      permissionGranted = await location.requestPermission();
-      if (permissionGranted != PermissionStatus.granted) {
-        return;
-      }
-    }
-
-    // _locationData = await location.getLocation();
-    // print('_locationData.latitude:${_locationData.latitude}');
   }
 
-  
+  permissionGranted = await location.hasPermission();
+  if (permissionGranted == PermissionStatus.denied) {
+    permissionGranted = await location.requestPermission();
+    if (permissionGranted != PermissionStatus.granted) {
+      return;
+    }
+  }
 
+  // _locationData = await location.getLocation();
+  // print('_locationData.latitude:${_locationData.latitude}');
+}
 
 handleErrors(Object e, BuildContext context) {
   if (e.toString().contains('Connection failed')) {
@@ -124,8 +121,16 @@ handleErrors(Object e, BuildContext context) {
   } else if (e.toString().contains("Operation timed out")) {
     showSnackBar(context, 'Network Error', 'Connection Time Out');
     return;
-  }else if(e.toString().contains("Connection closed before full header was received")){
+  } else if (e
+      .toString()
+      .contains("Connection closed before full header was received")) {
     showSnackBar(context, 'Network Error', 'Something Went Wrong');
+    return;
+  } else if (e.toString().contains("ClientException with SocketException")) {
+    showSnackBar(context, 'Network Error', 'Connection timeout');
+    return;
+  } else {
+    showSnackBar(context, 'Network Error', 'Connection timeout');
     return;
   }
 }
@@ -165,15 +170,13 @@ String getDate() {
 }
 
 //18/10/2023
-String getDateTodays(){
+String getDateTodays() {
   DateTime today = DateTime.now();
   String formattedDate = DateFormat('yyyy-MM-dd').format(today);
   return formattedDate;
 }
 
-
-
- // Function to generate a random gradient
+// Function to generate a random gradient
 LinearGradient generateRandomGradient() {
   final List<Color> colors = [
     Colors.red,
@@ -185,7 +188,6 @@ LinearGradient generateRandomGradient() {
     Colors.teal,
     Colors.pink,
   ];
-
 
   final Random random = Random();
   final int startIndex = random.nextInt(colors.length);
@@ -199,8 +201,8 @@ LinearGradient generateRandomGradient() {
 
 // Function to generate a random color with opacity
 
-   // Generate a random gradient for each item
-    LinearGradient randomGradient = generateRandomGradient();
+  // Generate a random gradient for each item
+  LinearGradient randomGradient = generateRandomGradient();
 }
 
 Color generateRandomColorWithOpacity() {
@@ -221,8 +223,9 @@ Color generateRandomColorWithOpacity() {
   // Apply 0.3 opacity to the random color
   return randomColor.withOpacity(0.5);
 }
- // Generate a random color with opacity for each item
-    Color randomColor = generateRandomColorWithOpacity();
+
+// Generate a random color with opacity for each item
+Color randomColor = generateRandomColorWithOpacity();
 
 // Future<void> checkLocationPermission() async {
 //   bool isLocation = false;

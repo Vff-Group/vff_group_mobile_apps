@@ -1,7 +1,11 @@
 import 'package:flutter/material.dart';
 
 class AppColors {
-  static const Color backColor = Color(0xffF6F6F6);
+  // static const Color backColor = Color(0xffF6F6F6);
+  static const Color backColor = Color(0xff141414);
+  static const Color lightBlackColor = Color(0xff212121);
+  static const Color btnColor = Color(0xffF1D058);
+  static const Color sliderBGColor = Color(0xff136756);
   static const Color mainBlueColor = Color(0xff1398DB);
   static const Color blueDarkColor = Color(0xff2491CB);
   static const Color textColor = Color(0xff53587A);
@@ -15,6 +19,7 @@ class AppColors {
   static const Color orangeColor = Color(0xffF2994A);
   static const Color blueColor = Color(0xff0E78F0);
   static const Color iconColor = Color(0xffF2F7FB);
+  static const Color hisColor = Color(0xff7699F6);
   static const Color iconUnSelectedColor = Color(0xff94C2FF);
   static const Color darkOrange = Color.fromARGB(0, 247, 142, 14);
 }

@@ -5,6 +5,7 @@ import 'package:provider/provider.dart';
 import 'package:vff_group/animation/fade_animation.dart';
 import 'package:vff_group/animation/slide_bottom_animation.dart';
 import 'package:vff_group/pages/main_pages/cart.dart';
+import 'package:vff_group/pages/main_pages/history.dart';
 import 'package:vff_group/pages/main_pages/home.dart';
 import 'package:vff_group/pages/main_pages/orders.dart';
 import 'package:vff_group/pages/main_pages/prize_chart.dart';
@@ -34,7 +35,7 @@ class _BottomBarScreenState extends State<BottomBarScreen> {
 
   List pages = [
     const HomePage(),
-    const CartPage(),
+    const HistoryPage(),
     const OrdersPage(),
     const SettingsPage(),
   ];
@@ -54,7 +55,7 @@ class _BottomBarScreenState extends State<BottomBarScreen> {
       body: pages[glb.pageIndex],
       bottomNavigationBar: Container(
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: AppColors.backColor,
           boxShadow: [
             BoxShadow(
               blurRadius: 20,
@@ -70,21 +71,21 @@ class _BottomBarScreenState extends State<BottomBarScreen> {
               rippleColor: Colors.grey[300]!,
               hoverColor: Colors.grey[100]!,
               gap: 8,
-              activeColor: AppColors.blueColor,
+              activeColor: AppColors.btnColor,
               iconSize: 24,
               padding:
                   const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
               duration: const Duration(milliseconds: 400),
-              tabBackgroundColor: Colors.grey[100]!,
-              color: Colors.black,
+              tabBackgroundColor: AppColors.lightBlackColor,
+              color: Colors.white,
               tabs: const [
                 GButton(
                   icon: LineIcons.home,
                   text: 'Home',
                 ),
                 GButton(
-                  icon: LineIcons.shoppingCart,
-                  text: 'Cart',
+                  icon: LineIcons.history,
+                  text: 'History',
                 ),
                 GButton(
                   icon: LineIcons.moon,

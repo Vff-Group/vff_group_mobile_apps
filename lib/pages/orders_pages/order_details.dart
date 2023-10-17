@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:vff_group/animation/fade_animation.dart';
 import 'package:vff_group/animation/slide_bottom_animation.dart';
@@ -22,7 +23,10 @@ class OrderDetailsPage extends StatefulWidget {
 }
 
 class _OrderDetailsPageState extends State<OrderDetailsPage> {
-  bool showLoading = true, isItemAdded = true, showItemsLoading = true;
+  bool showLoading = true,
+      isItemAdded = true,
+      showItemsLoading = true,
+      itemsNotFound = true;
   String timeOrderRecieved = "";
   String pickupDate = "";
   String deliveryBoyName = "";
@@ -183,8 +187,9 @@ class _OrderDetailsPageState extends State<OrderDetailsPage> {
           setState(() {
             showItemsLoading = false;
             isItemAdded = true;
+            itemsNotFound = true;
           });
-          glb.showSnackBar(context, 'Error', 'No Order Details Found');
+          glb.showSnackBar(context, 'Alert', 'No Laundry Items Added');
           return;
         } else if (res.contains("ErrorCode#8")) {
           setState(() {
@@ -219,6 +224,7 @@ class _OrderDetailsPageState extends State<OrderDetailsPage> {
             setState(() {
               showItemsLoading = false;
               isItemAdded = false;
+              itemsNotFound = false;
             });
           } catch (e) {
             if (kDebugMode) {
@@ -244,54 +250,105 @@ class _OrderDetailsPageState extends State<OrderDetailsPage> {
     }
   }
 
+  Future<void> _handleRefresh() async {
+    loadOrderDetails();
+    loadOrderItemsDetails();
+  }
+
   @override
   Widget build(BuildContext context) {
     double height = MediaQuery.of(context).size.height;
     double width = MediaQuery.of(context).size.width;
+
     return Scaffold(
-      backgroundColor: AppColors.whiteColor,
-      body: SafeArea(
-          child: Column(
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          _TitleLayout(width: width),
-          showLoading
-              ? LinearProgressIndicator(
-                  semanticsLabel: 'Linear progress indicator',
-                )
-              : Column(
-                  children: [
-                    FadeAnimation(
-                        delay: 0.5,
-                        child: _OrderDetails(
-                            orderStatus: orderStatus,
-                            orderID: glb.orderid,
-                            pickUpDateTime: timeOrderRecieved,
-                            deliveryDateTime: deliveryDateTime,
-                            addressClient: addressClient)),
-                    const Divider(
-                      color: AppColors.lightGreyColor,
-                      thickness: 4,
-                    ),
-                    _DeliveryBoyDetails(
-                        width: width,
-                        profilePicture: profilePicture,
-                        deliveryBoyName: deliveryBoyName,
-                        deliveryMobno: deliveryMobno),
-                    const Divider(
-                      color: AppColors.lightGreyColor,
-                      thickness: 4,
-                    ),
-                    _TotalClothesCount(
-                        showItemsLoading: showItemsLoading,
-                        isItemAdded: isItemAdded),
-                     _DryCleaningListWidget(width: width, height: height),
-                    _WashAndFoldListWidget(width: width, height: height),
+        extendBodyBehindAppBar: true,
+        backgroundColor: Colors.black,
+        appBar: AppBar(
+          backgroundColor: Colors.transparent,
+          elevation: 0,
+          systemOverlayStyle:
+              SystemUiOverlayStyle(statusBarBrightness: Brightness.dark),
+        ),
+        body: Stack(
+          children: [
+            Padding(
+              padding: EdgeInsets.fromLTRB(20, 1.2 * kToolbarHeight, 20, 20),
+              child: RefreshIndicator(
+                onRefresh: _handleRefresh,
+                child: CustomScrollView(
+                  slivers: [
+                    SliverToBoxAdapter(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          Text(
+                            'Order Details',
+                            style: ralewayStyle.copyWith(
+                              color: AppColors.whiteColor,
+                              fontSize: 25.0,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          showLoading
+                              ? LinearProgressIndicator(
+                                  semanticsLabel: 'Linear progress indicator',
+                                )
+                              : Column(
+                                  children: [
+                                    FadeAnimation(
+                                        delay: 0.5,
+                                        child: _OrderDetails(
+                                            orderStatus: orderStatus,
+                                            orderID: glb.orderid,
+                                            pickUpDateTime: timeOrderRecieved,
+                                            deliveryDateTime: deliveryDateTime,
+                                            addressClient: addressClient)),
+                                    const Divider(
+                                      color: AppColors.whiteColor,
+                                      thickness: 0.5,
+                                    ),
+                                    _DeliveryBoyDetails(
+                                        width: width,
+                                        profilePicture: profilePicture,
+                                        deliveryBoyName: deliveryBoyName,
+                                        deliveryMobno: deliveryMobno),
+                                    const Divider(
+                                      color: AppColors.whiteColor,
+                                      thickness: 0.5,
+                                    ),
+                                    _TotalClothesCount(
+                                        showItemsLoading: showItemsLoading,
+                                        isItemAdded: isItemAdded),
+                                    itemsNotFound
+                                        ? Padding(
+                                            padding: const EdgeInsets.all(30.0),
+                                            child: Center(
+                                                child: Text(
+                                              'NO ITEMS FOUND\n Please Add Items',
+                                              style: ralewayStyle.copyWith(
+                                                  color: Colors.white,
+                                                  fontSize: 12.0),
+                                            )),
+                                          )
+                                        : Column(
+                                            children: [
+                                              _DryCleaningListWidget(
+                                                  width: width, height: height),
+                                              _WashAndFoldListWidget(
+                                                  width: width, height: height),
+                                            ],
+                                          ),
+                                  ],
+                                )
+                        ],
+                      ),
+                    )
                   ],
-                )
-        ],
-      )),
-    );
+                ),
+              ),
+            ),
+          ],
+        ));
   }
 }
 
@@ -361,7 +418,7 @@ class _WashAndFoldListWidget extends StatelessWidget {
                             style: nunitoStyle.copyWith(
                               fontSize: 14.0,
                               fontWeight: FontWeight.normal,
-                              color: AppColors.textColor,
+                              color: AppColors.whiteColor,
                             ),
                           ),
                           SizedBox(
@@ -399,7 +456,7 @@ class _WashAndFoldListWidget extends StatelessWidget {
                 ],
               ),
               const Divider(
-                color: AppColors.lightGreyColor,
+                color: AppColors.whiteColor,
                 thickness: 2,
               ),
             ],
@@ -476,7 +533,7 @@ class _DryCleaningListWidget extends StatelessWidget {
                             style: nunitoStyle.copyWith(
                               fontSize: 14.0,
                               fontWeight: FontWeight.normal,
-                              color: AppColors.textColor,
+                              color: AppColors.whiteColor,
                             ),
                           ),
                           SizedBox(
@@ -544,9 +601,10 @@ class _TotalClothesCount extends StatelessWidget {
           Text(
             'Total Clothes',
             style: nunitoStyle.copyWith(
-                fontSize: 14.0,
-                fontWeight: FontWeight.normal,
-                color: AppColors.textColor),
+              fontSize: 14.0,
+              fontWeight: FontWeight.normal,
+              color: AppColors.whiteColor,
+            ),
           ),
           showItemsLoading
               ? const LinearProgressIndicator()
@@ -633,16 +691,16 @@ class _DeliveryBoyDetails extends StatelessWidget {
                     Text(
                       deliveryBoyName,
                       style: nunitoStyle.copyWith(
-                        fontSize: 18.0,
-                        fontWeight: FontWeight.w600,
-                      ),
+                          fontSize: 18.0,
+                          fontWeight: FontWeight.w600,
+                          color: Colors.white),
                     ),
                     Text(
                       deliveryMobno,
                       style: nunitoStyle.copyWith(
-                        fontSize: 14.0,
-                        fontWeight: FontWeight.normal,
-                      ),
+                          fontSize: 14.0,
+                          fontWeight: FontWeight.normal,
+                          color: AppColors.btnColor),
                     ),
                   ],
                 ),
@@ -719,18 +777,34 @@ class _OrderDetails extends StatelessWidget {
                   Text(
                     'Order',
                     style: nunitoStyle.copyWith(
-                      color: AppColors.textColor,
+                      color: AppColors.whiteColor,
                       fontWeight: FontWeight.bold,
                       fontSize: 18,
                     ),
                   ),
-                  Text(
-                    orderStatus,
-                    style: nunitoStyle.copyWith(
-                        color: AppColors.orangeColor,
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold),
-                  ),
+                  orderStatus == "Rejected"
+                      ? Column(
+                          children: [
+                            Padding(
+                              padding: const EdgeInsets.only(bottom:8.0),
+                              child: Text(
+                                                      'Assigning',
+                                                      style: nunitoStyle.copyWith(
+                                color: AppColors.orangeColor,
+                                fontSize: 8,
+                                fontWeight: FontWeight.bold),
+                                                    ),
+                            ),
+                            CircularProgressIndicator(color: Colors.green,strokeWidth: 1,)
+                          ],
+                        )
+                      : Text(
+                          orderStatus,
+                          style: nunitoStyle.copyWith(
+                              color: AppColors.orangeColor,
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold),
+                        ),
                 ],
               ),
             ),
@@ -742,7 +816,7 @@ class _OrderDetails extends StatelessWidget {
                   Text(
                     'Order ID',
                     style: nunitoStyle.copyWith(
-                      color: AppColors.textColor,
+                      color: AppColors.whiteColor,
                       fontWeight: FontWeight.bold,
                       fontSize: 14,
                     ),
@@ -765,7 +839,7 @@ class _OrderDetails extends StatelessWidget {
                   Text(
                     'Pick Up:',
                     style: nunitoStyle.copyWith(
-                      color: AppColors.textColor,
+                      color: AppColors.whiteColor,
                       fontWeight: FontWeight.normal,
                       fontSize: 14,
                     ),
@@ -773,7 +847,7 @@ class _OrderDetails extends StatelessWidget {
                   Text(
                     pickUpDateTime,
                     style: nunitoStyle.copyWith(
-                      color: AppColors.textColor,
+                      color: AppColors.whiteColor,
                       fontWeight: FontWeight.w500,
                       fontSize: 14,
                     ),
@@ -789,7 +863,7 @@ class _OrderDetails extends StatelessWidget {
                   Text(
                     'Delivered Date:',
                     style: nunitoStyle.copyWith(
-                      color: AppColors.textColor,
+                      color: AppColors.whiteColor,
                       fontWeight: FontWeight.normal,
                       fontSize: 14,
                     ),
@@ -797,7 +871,7 @@ class _OrderDetails extends StatelessWidget {
                   Text(
                     deliveryDateTime,
                     style: nunitoStyle.copyWith(
-                      color: AppColors.textColor,
+                      color: AppColors.whiteColor,
                       fontWeight: FontWeight.w500,
                       fontSize: 14,
                     ),
@@ -813,7 +887,7 @@ class _OrderDetails extends StatelessWidget {
                   Text(
                     'Address:',
                     style: nunitoStyle.copyWith(
-                      color: AppColors.textColor,
+                      color: AppColors.whiteColor,
                       fontWeight: FontWeight.normal,
                       fontSize: 14,
                     ),
@@ -821,7 +895,7 @@ class _OrderDetails extends StatelessWidget {
                   Text(
                     addressClient,
                     style: nunitoStyle.copyWith(
-                      color: AppColors.textColor,
+                      color: AppColors.whiteColor,
                       fontWeight: FontWeight.w500,
                       fontSize: 14,
                     ),
@@ -871,7 +945,7 @@ class _TitleLayout extends StatelessWidget {
         Text(
           'Order Details',
           style: nunitoStyle.copyWith(
-            color: AppColors.blueDarkColor,
+            color: AppColors.whiteColor,
             fontSize: 18.0,
             fontWeight: FontWeight.bold,
           ),

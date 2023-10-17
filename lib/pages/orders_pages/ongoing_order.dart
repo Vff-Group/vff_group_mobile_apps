@@ -12,151 +12,191 @@ class OngoingOrders extends StatefulWidget {
 
 class _OngoingOrdersState extends State<OngoingOrders> {
   final bool _noOrders = false;
+
+  Future<void> _handleRefresh() async {
+  Future.delayed(Duration(milliseconds: 5));
+}
   @override
   Widget build(BuildContext context) {
-    return ListView.builder(
-        itemCount: 10,
-        itemBuilder: ((context, index) {
-          return Padding(
-            padding: const EdgeInsets.all(12.0),
-            child: Material(
-              color: Colors.transparent,
-              child: InkWell(
-                onTap: (){
-                  Navigator.pushNamed(context, OrderDetailsRoute);
-                },
-                borderRadius: BorderRadius.circular(8.0),
-                child: Ink(
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(8.0),
-                    color: Colors.white, // Container color
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.grey.withOpacity(0.1), // Shadow color
-                        spreadRadius: 5,
-                        blurRadius: 7,
-                        offset: const Offset(0, 3), // Changes position of shadow
-                      ),
-                    ],
-                  ),
-                  child: Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Column(
-                      children: [
-                        Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Text(
-                                'Order ID:',
-                                style: nunitoStyle.copyWith(
-                                    color: AppColors.textColor, fontSize: 14),
-                              ),
-                              Text(
-                                '#123456',
-                                style: nunitoStyle.copyWith(
-                                  color: AppColors.textColor,
-                                  fontSize: 14,
-                                  fontWeight: FontWeight.bold,
+    return RefreshIndicator(
+      onRefresh: _handleRefresh,
+      child: ListView.builder(
+          itemCount: 10,
+          itemBuilder: ((context, index) {
+            return Padding(
+              padding: const EdgeInsets.all(12.0),
+              child: Material(
+                color: Colors.transparent,
+                child: InkWell(
+                  onTap: (){
+                    Navigator.pushNamed(context, OrderDetailsRoute);
+                  },
+                  borderRadius: BorderRadius.circular(8.0),
+                  child: Ink(
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(8.0),
+                      color: AppColors.lightBlackColor, // Container color
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.grey.withOpacity(0.1), // Shadow color
+                          spreadRadius: 5,
+                          blurRadius: 7,
+                          offset: const Offset(0, 3), // Changes position of shadow
+                        ),
+                      ],
+                    ),
+                    child: Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Column(
+                        children: [
+                          Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text(
+                                  'Order ID:',
+                                  style: nunitoStyle.copyWith(
+                                      color: AppColors.whiteColor, fontSize: 14),
                                 ),
-                              ),
-                            ],
-                          ),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Text(
-                                'Order Date:',
-                                style: nunitoStyle.copyWith(
-                                    color: AppColors.textColor, fontSize: 14),
-                              ),
-                              Text(
-                                '04-01-2023',
-                                style: nunitoStyle.copyWith(
-                                  color: AppColors.textColor,
-                                  fontSize: 14,
+                                Text(
+                                  '#123456',
+                                  style: nunitoStyle.copyWith(
+                                    color: AppColors.whiteColor,
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.bold,
+                                  ),
                                 ),
-                              ),
-                            ],
+                              ],
+                            ),
                           ),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Text(
-                                'Pick Up:',
-                                style: nunitoStyle.copyWith(
-                                    color: AppColors.textColor, fontSize: 14),
-                              ),
-                              Text(
-                                'New Vaibhav Nagar,590010',
-                                style: nunitoStyle.copyWith(
-                                  color: AppColors.textColor,
-                                  fontSize: 14,
+                          Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text(
+                                  'Order Date:',
+                                  style: nunitoStyle.copyWith(
+                                      color: AppColors.whiteColor, fontSize: 14),
                                 ),
-                              ),
-                            ],
-                          ),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Text(
-                                'Total Amount:',
-                                style: nunitoStyle.copyWith(
-                                    color: AppColors.textColor, fontSize: 14),
-                              ),
-                              Text(
-                                '₹ 230/-',
-                                style: nunitoStyle.copyWith(
-                                  color: AppColors.blueDarkColor,
-                                  fontSize: 14,
-                                  fontWeight: FontWeight.bold,
+                                Text(
+                                  '04-01-2023',
+                                  style: nunitoStyle.copyWith(
+                                    color: AppColors.whiteColor,
+                                    fontSize: 14,
+                                  ),
                                 ),
-                              ),
-                            ],
+                              ],
+                            ),
                           ),
-                        ),
-                        const Padding(
-                          padding: EdgeInsets.all(8.0),
-                          child: Divider(
-                            color: AppColors.textColor,
-                            height: 0.1,
-                            thickness: 0.1,
+                          Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text(
+                                  'Pick Up:',
+                                  style: nunitoStyle.copyWith(
+                                      color: AppColors.whiteColor, fontSize: 14),
+                                ),
+                                Text(
+                                  'New Vaibhav Nagar,590010',
+                                  style: nunitoStyle.copyWith(
+                                    color: AppColors.whiteColor,
+                                    fontSize: 14,
+                                  ),
+                                ),
+                              ],
+                            ),
                           ),
-                        ),
-                        Visibility(
-                          visible: false,
-                          child: Row(
+                          Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text(
+                                  'Total Amount:',
+                                  style: nunitoStyle.copyWith(
+                                      color: AppColors.whiteColor, fontSize: 14),
+                                ),
+                                Text(
+                                  '₹ 230/-',
+                                  style: nunitoStyle.copyWith(
+                                    color: AppColors.blueDarkColor,
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                          const Padding(
+                            padding: EdgeInsets.all(8.0),
+                            child: Divider(
+                              color: AppColors.whiteColor,
+                              height: 0.1,
+                              thickness: 0.1,
+                            ),
+                          ),
+                          Visibility(
+                            visible: false,
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.end,
+                              children: [
+                                Material(
+                                  color: Colors.transparent,
+                                  child: InkWell(
+                                    onTap: () {
+                                      // TODO:Need To give alert and cancel the order
+                                    },
+                                    borderRadius: BorderRadius.circular(12.0),
+                                    child: Ink(
+                                      decoration: BoxDecoration(
+                                          borderRadius: BorderRadius.circular(12.0),
+                                          color: AppColors.dangerColor),
+                                      child: Padding(
+                                        padding: const EdgeInsets.all(10.0),
+                                        child: Text(
+                                          'Cancel',
+                                          style: nunitoStyle.copyWith(
+                                            color: AppColors.whiteColor,
+                                            fontWeight: FontWeight.bold,
+                                            fontSize: 14.0,
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                )
+                              ],
+                            ),
+                          ),
+                          Row(
                             mainAxisAlignment: MainAxisAlignment.end,
                             children: [
-                              Material(
-                                color: Colors.transparent,
-                                child: InkWell(
-                                  onTap: () {
-                                    // TODO:Need To give alert and cancel the order
-                                  },
-                                  borderRadius: BorderRadius.circular(12.0),
-                                  child: Ink(
-                                    decoration: BoxDecoration(
-                                        borderRadius: BorderRadius.circular(12.0),
-                                        color: AppColors.dangerColor),
-                                    child: Padding(
-                                      padding: const EdgeInsets.all(10.0),
-                                      child: Text(
-                                        'Cancel',
-                                        style: nunitoStyle.copyWith(
-                                          color: AppColors.whiteColor,
-                                          fontWeight: FontWeight.bold,
-                                          fontSize: 14.0,
+                              Visibility(
+                                visible: true,
+                                child: Material(
+                                  color: Colors.transparent,
+                                  child: InkWell(
+                                    onTap: () {
+                                      // TODO: Need To show this only when order is confirmed
+                                    },
+                                    borderRadius: BorderRadius.circular(12.0),
+                                    child: Ink(
+                                      decoration: BoxDecoration(
+                                          borderRadius: BorderRadius.circular(12.0),
+                                          color: AppColors.blueDarkColor),
+                                      child: Padding(
+                                        padding: const EdgeInsets.all(10.0),
+                                        child: Text(
+                                          'Confirmed',
+                                          style: nunitoStyle.copyWith(
+                                            color: AppColors.whiteColor,
+                                            fontWeight: FontWeight.bold,
+                                            fontSize: 14.0,
+                                          ),
                                         ),
                                       ),
                                     ),
@@ -164,49 +204,16 @@ class _OngoingOrdersState extends State<OngoingOrders> {
                                 ),
                               )
                             ],
-                          ),
-                        ),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.end,
-                          children: [
-                            Visibility(
-                              visible: true,
-                              child: Material(
-                                color: Colors.transparent,
-                                child: InkWell(
-                                  onTap: () {
-                                    // TODO: Need To show this only when order is confirmed
-                                  },
-                                  borderRadius: BorderRadius.circular(12.0),
-                                  child: Ink(
-                                    decoration: BoxDecoration(
-                                        borderRadius: BorderRadius.circular(12.0),
-                                        color: AppColors.blueDarkColor),
-                                    child: Padding(
-                                      padding: const EdgeInsets.all(10.0),
-                                      child: Text(
-                                        'Confirmed',
-                                        style: nunitoStyle.copyWith(
-                                          color: AppColors.whiteColor,
-                                          fontWeight: FontWeight.bold,
-                                          fontSize: 14.0,
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            )
-                          ],
-                        )
-                      ],
+                          )
+                        ],
+                      ),
                     ),
                   ),
                 ),
               ),
-            ),
-          );
-        }));
+            );
+          })),
+    );
   
   }
 }
