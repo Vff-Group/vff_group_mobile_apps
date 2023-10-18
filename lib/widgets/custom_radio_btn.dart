@@ -27,7 +27,7 @@ class CustomRadioButton extends StatelessWidget {
             padding: EdgeInsets.symmetric(horizontal: 2,vertical: 2),
             decoration: BoxDecoration(
               border: Border.all(
-                color: isSelected ? AppColors.blueColor : Colors.grey,
+                color: isSelected ? AppColors.blueColor : Colors.white,
               ),
               borderRadius: BorderRadius.circular(50),
               color: isSelected ? AppColors.blueColor : Colors.white,
@@ -39,7 +39,7 @@ class CustomRadioButton extends StatelessWidget {
             child: Text(label,style: nunitoStyle.copyWith(
                                 fontSize: 12.0,
                                 fontWeight: FontWeight.bold,
-                                color: isSelected ? AppColors.blueColor : AppColors.textColor)),
+                                color: isSelected ? AppColors.blueColor : AppColors.whiteColor)),
           )
         ],
       ),

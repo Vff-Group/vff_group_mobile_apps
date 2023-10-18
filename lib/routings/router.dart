@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:vff_group/delivery_boy_app/pages/main_pages/bottom_page_main.dart';
 import 'package:vff_group/delivery_boy_app/pages/main_pages/delivery_login.dart';
+import 'package:vff_group/pages/cart/cart_items.dart';
 import 'package:vff_group/pages/categories/dry_clean_home.dart';
 import 'package:vff_group/pages/categories/wash_fold_home.dart';
 import 'package:vff_group/pages/categories/wash_iron_home.dart';
@@ -49,6 +50,8 @@ Route<dynamic> generateRoute(RouteSettings settings) {
       return _getPageRoute(const AllServicesPage());
     case MyBagRoute:
       return _getPageRoute(const MyBagPage());
+    case MyCartRoute:
+      return _getPageRoute(const AddToCartItem());
     case CheckOutRoute:
       return _getPageRoute(const CheckOutScreen());
     case DMainRoute:

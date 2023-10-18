@@ -189,7 +189,7 @@ class _OrderDetailsPageState extends State<OrderDetailsPage> {
             isItemAdded = true;
             itemsNotFound = true;
           });
-          glb.showSnackBar(context, 'Alert', 'No Laundry Items Added');
+          //glb.showSnackBar(context, 'Alert', 'No Laundry Items Added');
           return;
         } else if (res.contains("ErrorCode#8")) {
           setState(() {
@@ -324,10 +324,13 @@ class _OrderDetailsPageState extends State<OrderDetailsPage> {
                                             padding: const EdgeInsets.all(30.0),
                                             child: Center(
                                                 child: Text(
-                                              'NO ITEMS FOUND\n Please Add Items',
+                                              'NO LAUNDRY ITEMS FOUND\n Please Add Items',
                                               style: ralewayStyle.copyWith(
                                                   color: Colors.white,
-                                                  fontSize: 12.0),
+                                                  fontSize: 12.0,
+                                                  letterSpacing: 1),
+                                                  textAlign: TextAlign.center,
+                                                  
                                             )),
                                           )
                                         : Column(

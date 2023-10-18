@@ -146,7 +146,7 @@ class _MyBagPageState extends State<MyBagPage> {
     double height = MediaQuery.of(context).size.height;
     double width = MediaQuery.of(context).size.width;
     return Scaffold(
-      backgroundColor: AppColors.backColor,
+      backgroundColor: Colors.black,
       extendBodyBehindAppBar: true,
       appBar: AppBar(
         backgroundColor: Colors.transparent,
@@ -159,12 +159,26 @@ class _MyBagPageState extends State<MyBagPage> {
             fontWeight: FontWeight.bold,
           ),
         ),
+        actions: [
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: InkWell(
+                onTap: () {
+                  //Navigator.pushNamed(context, CheckOutRoute);
+                  Navigator.pushNamed(context, MyCartRoute);
+                },
+                child: const Icon(
+                  Icons.card_giftcard,
+                  color: Colors.white,
+                )),
+          )
+        ],
         systemOverlayStyle:
-            SystemUiOverlayStyle(statusBarBrightness: Brightness.dark),
+            const SystemUiOverlayStyle(statusBarBrightness: Brightness.dark),
       ),
       body: SafeArea(
         child: isLoading
-            ? Center(child: CircularProgressIndicator())
+            ? const Center(child: CircularProgressIndicator())
             : DefaultTabController(
                 length: catIdLst.length,
                 child: Column(
@@ -173,57 +187,53 @@ class _MyBagPageState extends State<MyBagPage> {
                       height: width * 0.01,
                     ),
                     ButtonsTabBar(
-                            backgroundColor: AppColors.btnColor,
-                            unselectedBackgroundColor:
-                                AppColors.lightBlackColor,
-                            unselectedLabelStyle:
-                                const TextStyle(color: AppColors.whiteColor),
-                            labelStyle: const TextStyle(
-                                color: Colors.white,
-                                fontWeight: FontWeight.bold),
-                            tabs: catNameLst.asMap().entries.map((entry) {
-                              int index = entry.key;
-                              String catName = entry.value;
-                              String catId = catIdLst[index];
-                              catName = catNameLst[index];
-                              print("CatName::$catName");
-                              Tab tabBar;
-                              if (catName == 'DRY CLEAN') {
-                                tabBar = Tab(
-                                  icon: Padding(
-                                    padding: EdgeInsets.all(4.0),
-                                    child: Icon(LineIcons.tShirt),
-                                  ),
-                                  text: catName,
-                                  // Pass the catId to the Tab
-                                );
-                              } else {
-                                tabBar = Tab(
-                                  icon: Padding(
-                                    padding: EdgeInsets.all(4.0),
-                                    child: Icon(
-                                        Icons.local_laundry_service_outlined),
-                                  ),
-                                  text: catName,
-                                  // Pass the catId to the Tab
-                                );
-                              }
-                              return tabBar;
-                            }).toList(),
-                          ),
-                          Expanded(
+                      backgroundColor: AppColors.blueColor,
+                      unselectedBackgroundColor: AppColors.lightBlackColor,
+                      unselectedLabelStyle:
+                          const TextStyle(color: AppColors.whiteColor),
+                      labelStyle: const TextStyle(
+                          color: Colors.white, fontWeight: FontWeight.bold),
+                      tabs: catNameLst.asMap().entries.map((entry) {
+                        int index = entry.key;
+                        String catName = entry.value;
+                        String catId = catIdLst[index];
+                        catName = catNameLst[index];
+
+                        Tab tabBar;
+                        if (catName == 'DRY CLEAN') {
+                          tabBar = Tab(
+                            icon: const Padding(
+                              padding: EdgeInsets.all(4.0),
+                              child: Icon(LineIcons.tShirt),
+                            ),
+                            text: catName,
+                            // Pass the catId to the Tab
+                          );
+                        } else {
+                          tabBar = Tab(
+                            icon: const Padding(
+                              padding: EdgeInsets.all(4.0),
+                              child: Icon(Icons.local_laundry_service_outlined),
+                            ),
+                            text: catName,
+                            // Pass the catId to the Tab
+                          );
+                        }
+                        return tabBar;
+                      }).toList(),
+                    ),
+                    Expanded(
                       child: TabBarView(
                         children: catIdLst.asMap().entries.map<Widget>((entry) {
                           int index = entry.key;
                           String catId = entry.value;
                           String catName = catNameLst[index];
+                          String catImage = catImgLst[index];
                           catId = catIdLst[index];
 
                           Widget categoryScreen;
                           if (catName == 'DRY CLEAN') {
-                            categoryScreen = DryCleaningCart(
-                              catId: catId,
-                            );
+                            categoryScreen = DryCleaningCart(catId: catId, catName: catName, catImage: catImage);
                           } else {
                             categoryScreen = PlaceOrderPage(
                               updateQuantity: updateQuantity,
@@ -235,50 +245,50 @@ class _MyBagPageState extends State<MyBagPage> {
                         }).toList(),
                       ),
                     ),
-                    Padding(
-                      padding: const EdgeInsets.all(12.0),
-                      child: Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Column(
-                          children: [
-                           
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                Material(
-                                  color: Colors.transparent,
-                                  child: InkWell(
-                                    onTap: () {
-                                      Navigator.pushNamed(
-                                          context, CheckOutRoute);
-                                    },
-                                    borderRadius: BorderRadius.circular(12.0),
-                                    child: Ink(
-                                      decoration: BoxDecoration(
-                                        color: AppColors.btnColor,
-                                        borderRadius:
-                                            BorderRadius.circular(12.0),
-                                      ),
-                                      child: Padding(
-                                        padding: const EdgeInsets.symmetric(
-                                            horizontal: 50.0, vertical: 10.0),
-                                        child: Text(
-                                          'Checkout',
-                                          style: ralewayStyle.copyWith(
-                                              fontSize: 16.0,
-                                              color: AppColors.whiteColor,
-                                              fontWeight: FontWeight.bold),
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                )
-                              ],
-                            )
-                          ],
-                        ),
-                      ),
-                    ),
+                    // Padding(
+                    //   padding: const EdgeInsets.all(12.0),
+                    //   child: Padding(
+                    //     padding: const EdgeInsets.all(8.0),
+                    //     child: Column(
+                    //       children: [
+                    //         Row(
+                    //           mainAxisAlignment: MainAxisAlignment.center,
+                    //           children: [
+                    //             Material(
+                    //               color: Colors.transparent,
+                    //               child: InkWell(
+                    //                 onTap: () {
+                    //                   // Navigator.pushNamed(
+                    //                   //     context, CheckOutRoute);
+                    //                 },
+                    //                 borderRadius: BorderRadius.circular(12.0),
+                    //                 child: Ink(
+                    //                   decoration: BoxDecoration(
+                    //                     color: AppColors.blueColor,
+                    //                     borderRadius:
+                    //                         BorderRadius.circular(12.0),
+                    //                   ),
+                    //                   child: Padding(
+                    //                     padding: const EdgeInsets.symmetric(
+                    //                         horizontal: 50.0, vertical: 10.0),
+                    //                     child: Text(
+                    //                       'Add To Cart',
+                    //                       style: ralewayStyle.copyWith(
+                    //                           fontSize: 16.0,
+                    //                           color: AppColors.whiteColor,
+                    //                           fontWeight: FontWeight.bold),
+                    //                     ),
+                    //                   ),
+                    //                 ),
+                    //               ),
+                    //             )
+                    //           ],
+                    //         )
+                    //       ],
+                    //     ),
+                    //   ),
+                    // ),
+                
                   ],
                 ),
               ),

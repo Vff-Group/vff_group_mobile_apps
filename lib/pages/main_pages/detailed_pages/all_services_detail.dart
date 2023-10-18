@@ -4,6 +4,7 @@ import 'dart:convert';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:shimmer/shimmer.dart';
 import 'package:vff_group/animation/fade_animation.dart';
 import 'package:vff_group/animation/slide_left_animation.dart';
 import 'package:vff_group/modals/main_category_model.dart';
@@ -12,6 +13,7 @@ import 'package:vff_group/utils/app_colors.dart';
 import 'package:vff_group/utils/app_styles.dart';
 import 'package:vff_group/global/vffglb.dart' as glb;
 import 'package:http/http.dart' as http;
+import 'package:vff_group/widgets/shimmer_card.dart';
 
 class AllServicesPage extends StatefulWidget {
   const AllServicesPage({super.key});
@@ -31,6 +33,9 @@ class _AllServicesPageState extends State<AllServicesPage> {
   }
 
   Future allCategoryAsync() async {
+    setState(() {
+      showLoading = true;
+    });
     try {
       var url = glb.endPoint;
       final Map dictMap = {};
@@ -134,6 +139,10 @@ class _AllServicesPageState extends State<AllServicesPage> {
     }
   }
 
+  Future<void> _handleRefresh() async {
+    allCategoryAsync();
+  }
+
   @override
   Widget build(BuildContext context) {
     double height = MediaQuery.of(context).size.height;
@@ -159,248 +168,274 @@ class _AllServicesPageState extends State<AllServicesPage> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             showLoading
-                ? LinearProgressIndicator()
+                ? Expanded(
+                    child: Shimmer.fromColors(
+                      baseColor: Colors.grey.withOpacity(0.2),
+                      highlightColor: Colors.grey.withOpacity(0.1),
+                      enabled: showLoading,
+                      child: RefreshIndicator(
+                        onRefresh: _handleRefresh,
+                        child: ListView.separated(
+                            itemCount: 10,
+                            separatorBuilder: (context, _) =>
+                                SizedBox(height: height * 0.02),
+                            itemBuilder: ((context, index) {
+                              return const ShimmerCardLayout();
+                            })),
+                      ),
+                    ),
+                  )
                 : Expanded(
-                    child: ListView.builder(
-                        itemCount: categoryModel.length,
-                        itemBuilder: ((context, index) {
-                          Color randomColor =
-                              glb.generateRandomColorWithOpacity();
-                          return SlideFromLeftAnimation(
-                            delay: 0.8,
-                            child: Padding(
-                              padding: const EdgeInsets.all(8.0),
-                              child: Material(
-                                color: Colors.transparent,
-                                child: InkWell(
-                                  onTap: () {
-                                    //Send to Request PickUp Page
+                    child: RefreshIndicator(
+                      onRefresh: _handleRefresh,
+                      child: ListView.builder(
+                          itemCount: categoryModel.length,
+                          itemBuilder: ((context, index) {
+                            Color randomColor =
+                                glb.generateRandomColorWithOpacity();
+                            return SlideFromLeftAnimation(
+                              delay: 0.8,
+                              child: Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: Material(
+                                  color: Colors.transparent,
+                                  child: InkWell(
+                                    onTap: () {
+                                      //Send to Request PickUp Page
 
-                                    Navigator.pushNamed(
-                                        context, DeliveryAddressRoute);
-                                  },
-                                  borderRadius: BorderRadius.circular(12.0),
-                                  child: Ink(
-                                    decoration: BoxDecoration(
-                                      color: AppColors.lightBlackColor,
-                                      borderRadius: BorderRadius.circular(12.0),
-                                      
-                                    ),
-                                    child: Column(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.center,
-                                      children: [
-                                        Padding(
-                                          padding: const EdgeInsets.all(8.0),
-                                          child: Row(
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.center,
-                                            children: [
-                                              Container(
-                                                  width: 60.0,
-                                                  height: 60.0,
-                                                  decoration: BoxDecoration(
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                            50.0),
-                                                    color: randomColor,
-                                                  ),
-                                                  child: ClipRRect(
+                                      Navigator.pushNamed(
+                                          context, DeliveryAddressRoute);
+                                    },
+                                    borderRadius: BorderRadius.circular(12.0),
+                                    child: Ink(
+                                      decoration: BoxDecoration(
+                                        color: AppColors.lightBlackColor,
+                                        borderRadius:
+                                            BorderRadius.circular(12.0),
+                                      ),
+                                      child: Column(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.center,
+                                        children: [
+                                          Padding(
+                                            padding: const EdgeInsets.all(8.0),
+                                            child: Row(
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.center,
+                                              children: [
+                                                Container(
+                                                    width: 60.0,
+                                                    height: 60.0,
+                                                    decoration: BoxDecoration(
                                                       borderRadius:
                                                           BorderRadius.circular(
                                                               50.0),
-                                                      child: Image.network(
-                                                          categoryModel[index]
-                                                              .categoryBGUrl))),
-                                              Padding(
-                                                padding: const EdgeInsets.only(
-                                                    right: 8.0, left: 8.0),
-                                                child: Column(
-                                                  crossAxisAlignment:
-                                                      CrossAxisAlignment.start,
-                                                  children: [
-                                                    Text(
-                                                        categoryModel[index]
-                                                            .categoryName,
-                                                        style: ralewayStyle
-                                                            .copyWith(
-                                                                fontSize: 14.0,
-                                                                color: Colors
-                                                                    .white,
+                                                      color: randomColor,
+                                                    ),
+                                                    child: ClipRRect(
+                                                        borderRadius:
+                                                            BorderRadius
+                                                                .circular(50.0),
+                                                        child: Image.network(
+                                                            categoryModel[index]
+                                                                .categoryBGUrl))),
+                                                Padding(
+                                                  padding:
+                                                      const EdgeInsets.only(
+                                                          right: 8.0,
+                                                          left: 8.0),
+                                                  child: Column(
+                                                    crossAxisAlignment:
+                                                        CrossAxisAlignment
+                                                            .start,
+                                                    children: [
+                                                      Text(
+                                                          categoryModel[
+                                                                  index]
+                                                              .categoryName,
+                                                          style: ralewayStyle
+                                                              .copyWith(
+                                                                  fontSize:
+                                                                      14.0,
+                                                                  color: Colors
+                                                                      .white,
+                                                                  fontWeight:
+                                                                      FontWeight
+                                                                          .bold,
+                                                                  letterSpacing:
+                                                                      1)),
+                                                      Padding(
+                                                        padding:
+                                                            const EdgeInsets
+                                                                .only(top: 8.0),
+                                                        child: Text(
+                                                            'Min ${categoryModel[index].minHours}Hours',
+                                                            style: ralewayStyle.copyWith(
+                                                                fontSize: 10.0,
+                                                                color: AppColors
+                                                                    .whiteColor,
                                                                 fontWeight:
                                                                     FontWeight
                                                                         .bold,
                                                                 letterSpacing:
                                                                     1)),
+                                                      ),
+                                                    ],
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
+                                          ),
+                                          Padding(
+                                            padding: const EdgeInsets.symmetric(
+                                                horizontal: 8.0, vertical: 4.0),
+                                            child: Container(
+                                              width: width,
+                                              height: 1,
+                                              decoration: BoxDecoration(
+                                                  borderRadius:
+                                                      BorderRadius.circular(
+                                                          12.0),
+                                                  color: AppColors.whiteColor
+                                                      .withOpacity(0.5)),
+                                            ),
+                                          ),
+                                          Padding(
+                                            padding: const EdgeInsets.all(8.0),
+                                            child: Row(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment.spaceAround,
+                                              children: [
+                                                Column(
+                                                  children: [
                                                     Padding(
                                                       padding:
-                                                          const EdgeInsets.only(
-                                                              top: 8.0),
+                                                          const EdgeInsets.all(
+                                                              4.0),
                                                       child: Text(
-                                                          'Min ${categoryModel[index].minHours}Hours',
+                                                          'Regular Price',
                                                           style: ralewayStyle
                                                               .copyWith(
-                                                                  fontSize:
-                                                                      10.0,
-                                                                  color: AppColors
-                                                                      .whiteColor,
+                                                                  fontSize: 8.0,
+                                                                  color: Colors
+                                                                      .white,
                                                                   fontWeight:
                                                                       FontWeight
                                                                           .bold,
                                                                   letterSpacing:
                                                                       1)),
                                                     ),
+                                                    Text(
+                                                        '${categoryModel[index].regularPrice}/${categoryModel[index].regularPriceType}',
+                                                        style: nunitoStyle
+                                                            .copyWith(
+                                                                fontSize: 12.0,
+                                                                color: Colors
+                                                                    .deepOrange,
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .bold,
+                                                                letterSpacing:
+                                                                    1)),
                                                   ],
                                                 ),
-                                              ),
-                                            ],
-                                          ),
-                                        ),
-                                        Padding(
-                                          padding: const EdgeInsets.symmetric(
-                                              horizontal: 8.0, vertical: 4.0),
-                                          child: Container(
-                                            width: width,
-                                            height: 1,
-                                            decoration: BoxDecoration(
-                                                borderRadius:
-                                                    BorderRadius.circular(12.0),
-                                                color: AppColors.whiteColor
-                                                    .withOpacity(0.5)),
-                                          ),
-                                        ),
-                                        Padding(
-                                          padding: const EdgeInsets.all(8.0),
-                                          child: Row(
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.spaceAround,
-                                            children: [
-                                              Column(
-                                                children: [
-                                                  Padding(
-                                                    padding:
-                                                        const EdgeInsets.all(
-                                                            4.0),
-                                                    child: Text('Regular Price',
-                                                        style: ralewayStyle
-                                                            .copyWith(
-                                                                fontSize: 8.0,
-                                                                color: Colors
-                                                                    .white,
-                                                                fontWeight:
-                                                                    FontWeight
-                                                                        .bold,
-                                                                letterSpacing:
-                                                                    1)),
+                                                Container(
+                                                  width: 1,
+                                                  height: 15,
+                                                  decoration: BoxDecoration(
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            12.0),
+                                                    color: Colors.grey,
                                                   ),
-                                                  Text(
-                                                      '${categoryModel[index].regularPrice}/${categoryModel[index].regularPriceType}',
-                                                      style:
-                                                          nunitoStyle.copyWith(
-                                                              fontSize: 12.0,
-                                                              color: Colors
-                                                                  .deepOrange,
-                                                              fontWeight:
-                                                                  FontWeight
-                                                                      .bold,
-                                                              letterSpacing:
-                                                                  1)),
-                                                ],
-                                              ),
-                                              Container(
-                                                width: 1,
-                                                height: 15,
-                                                decoration: BoxDecoration(
-                                                  borderRadius:
-                                                      BorderRadius.circular(
-                                                          12.0),
-                                                  color: Colors.grey,
                                                 ),
-                                              ),
-                                              Column(
-                                                children: [
-                                                  Padding(
-                                                    padding:
-                                                        const EdgeInsets.all(
-                                                            4.0),
-                                                    child: Text('Express Price',
-                                                        style: ralewayStyle
+                                                Column(
+                                                  children: [
+                                                    Padding(
+                                                      padding:
+                                                          const EdgeInsets.all(
+                                                              4.0),
+                                                      child: Text(
+                                                          'Express Price',
+                                                          style: ralewayStyle
+                                                              .copyWith(
+                                                                  fontSize: 8.0,
+                                                                  color: Colors
+                                                                      .white,
+                                                                  fontWeight:
+                                                                      FontWeight
+                                                                          .bold,
+                                                                  letterSpacing:
+                                                                      1)),
+                                                    ),
+                                                    Text(
+                                                        '${categoryModel[index].expressPrice}/${categoryModel[index].expressPriceType}',
+                                                        style: nunitoStyle
                                                             .copyWith(
-                                                                fontSize: 8.0,
-                                                                color: Colors.white,
-                                                                fontWeight:
-                                                                    FontWeight
-                                                                        .bold,
-                                                                letterSpacing:
-                                                                    1)),
-                                                  ),
-                                                  Text(
-                                                      '${categoryModel[index].expressPrice}/${categoryModel[index].expressPriceType}',
-                                                      style:
-                                                          nunitoStyle.copyWith(
-                                                              fontSize: 12.0,
-                                                              color: Colors
-                                                                  .amber,
-                                                              fontWeight:
-                                                                  FontWeight
-                                                                      .bold,
-                                                              letterSpacing:
-                                                                  1)),
-                                                ],
-                                              ),
-                                              Container(
-                                                width: 1,
-                                                height: 15,
-                                                decoration: BoxDecoration(
-                                                  borderRadius:
-                                                      BorderRadius.circular(
-                                                          12.0),
-                                                  color: Colors.grey,
-                                                ),
-                                              ),
-                                              Column(
-                                                children: [
-                                                  Padding(
-                                                    padding:
-                                                        const EdgeInsets.all(
-                                                            4.0),
-                                                    child: Text('Offer Price',
-                                                        style: ralewayStyle
-                                                            .copyWith(
-                                                                fontSize: 8.0,
+                                                                fontSize: 12.0,
                                                                 color: Colors
-                                                                    .white,
+                                                                    .amber,
                                                                 fontWeight:
                                                                     FontWeight
                                                                         .bold,
                                                                 letterSpacing:
                                                                     1)),
+                                                  ],
+                                                ),
+                                                Container(
+                                                  width: 1,
+                                                  height: 15,
+                                                  decoration: BoxDecoration(
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            12.0),
+                                                    color: Colors.grey,
                                                   ),
-                                                  Text(
-                                                      '${categoryModel[index].offerPrice}/${categoryModel[index].offerPriceType}',
-                                                      style:
-                                                          nunitoStyle.copyWith(
-                                                              fontSize: 12.0,
-                                                              color:
-                                                                  Colors.blue,
-                                                              fontWeight:
-                                                                  FontWeight
-                                                                      .bold,
-                                                              letterSpacing:
-                                                                  1)),
-                                                ],
-                                              ),
-                                            ],
+                                                ),
+                                                Column(
+                                                  children: [
+                                                    Padding(
+                                                      padding:
+                                                          const EdgeInsets.all(
+                                                              4.0),
+                                                      child: Text('Offer Price',
+                                                          style: ralewayStyle
+                                                              .copyWith(
+                                                                  fontSize: 8.0,
+                                                                  color: Colors
+                                                                      .white,
+                                                                  fontWeight:
+                                                                      FontWeight
+                                                                          .bold,
+                                                                  letterSpacing:
+                                                                      1)),
+                                                    ),
+                                                    Text(
+                                                        '${categoryModel[index].offerPrice}/${categoryModel[index].offerPriceType}',
+                                                        style: nunitoStyle
+                                                            .copyWith(
+                                                                fontSize: 12.0,
+                                                                color:
+                                                                    Colors.blue,
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .bold,
+                                                                letterSpacing:
+                                                                    1)),
+                                                  ],
+                                                ),
+                                              ],
+                                            ),
                                           ),
-                                        ),
-                                      ],
+                                        ],
+                                      ),
                                     ),
                                   ),
                                 ),
                               ),
-                            ),
-                          );
-                        })),
+                            );
+                          })),
+                    ),
                   )
           ],
         ),
