@@ -1,78 +1,72 @@
 import 'dart:convert';
 
-import 'package:buttons_tabbar/buttons_tabbar.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:line_icons/line_icons.dart';
-import 'package:vff_group/pages/cart/dry_clean_cart_page.dart';
-import 'package:vff_group/pages/orders_pages/cancelled_order.dart';
-import 'package:vff_group/pages/orders_pages/completed_order.dart';
-import 'package:vff_group/pages/orders_pages/ongoing_order.dart';
-import 'package:vff_group/pages/orders_pages/place_new_order.dart';
+import 'package:line_icons/line_icon.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:vff_group/animation/fade_animation.dart';
+import 'package:vff_group/animation/slide_bottom_animation.dart';
+import 'package:vff_group/animation/slide_left_animation.dart';
+import 'package:vff_group/animation/slideright_animation.dart';
+import 'package:vff_group/modals/cart_item_model.dart';
+import 'package:vff_group/modals/order_detail_item_model.dart';
 import 'package:vff_group/routings/route_names.dart';
 import 'package:vff_group/utils/app_colors.dart';
 import 'package:vff_group/utils/app_styles.dart';
-import 'package:vff_group/global/vffglb.dart' as glb;
+import 'package:widget_circular_animator/widget_circular_animator.dart';
 import 'package:http/http.dart' as http;
+import 'package:vff_group/global/vffglb.dart' as glb;
 
-class MyBagPage extends StatefulWidget {
-  const MyBagPage({super.key});
+class OrderDetailsPage extends StatefulWidget {
+  const OrderDetailsPage({super.key});
 
   @override
-  State<MyBagPage> createState() => _MyBagPageState();
+  State<OrderDetailsPage> createState() => _OrderDetailsPageState();
 }
 
-class _MyBagPageState extends State<MyBagPage> {
-  void updateQuantity(String newQuantity) {
-    // Update the quantity value
-    setState(() {
-      glb.cartQuantity = newQuantity;
-    });
-  }
-
-  List<String> catIdLst = [];
-  List<String> catNameLst = [];
-  List<String> catImgLst = [];
-  List<String> regularPricelst = [];
-  List<String> regularPriceTypelst = [];
-  List<String> expressPricelst = [];
-  List<String> expressPriceTypeLst = [];
-  List<String> offerPriceLst = [];
-  List<String> offerPriceTypeLst = [];
-  List<String> descriptionLst = [];
-  List<String> minHoursLst = [];
-
-  bool isLoading = true;
+class _OrderDetailsPageState extends State<OrderDetailsPage> {
+  bool showLoading = true,
+      isItemAdded = true,
+      showItemsLoading = true,
+      itemsNotFound = true;
+  String timeOrderRecieved = "";
+  String pickupDate = "";
+  String deliveryBoyName = "";
+  String deliveryDateTime = "";
+  String orderStatus = "";
+  String houseNo = "";
+  String addressClient = "";
+  String profilePicture = "";
+  String deliveryMobno = "";
+  String totalItemsCount = "";
+  String totalItemsPrice = "";
+  List<OrderItemsModel> orderItemModel = [];
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
-    print('initState is called');
-    allCategoryAsync();
+    loadOrderDetails();
+    loadOrderItemsDetails();
   }
 
-  Future allCategoryAsync() async {
+  Future loadOrderDetails() async {
     setState(() {
-      catIdLst = [];
-      catNameLst = [];
-      catImgLst = [];
-      regularPricelst = [];
-      regularPriceTypelst = [];
-      expressPricelst = [];
-      expressPriceTypeLst = [];
-      offerPriceLst = [];
-      offerPriceTypeLst = [];
-      descriptionLst = [];
-      minHoursLst = [];
-      isLoading = true;
+      showLoading = true;
     });
+    // final prefs = await SharedPreferences.getInstance();
+    // var customerid = prefs.getString('customerid');
+    if (glb.orderid.isEmpty) {
+      glb.showSnackBar(context, 'Alert!', 'Please Select the Active Order');
+      return;
+    }
+    var todaysDate = glb.getDateTodays();
     try {
       var url = glb.endPoint;
       final Map dictMap = {};
 
-      dictMap['pktType'] = "2";
+      dictMap['order_id'] = glb.orderid;
+      dictMap['pktType'] = "10";
       dictMap['token'] = "vff";
       dictMap['uid'] = "-1";
 
@@ -86,49 +80,71 @@ class _MyBagPageState extends State<MyBagPage> {
       if (response.statusCode == 200) {
         var res = response.body;
         if (res.contains("ErrorCode#2")) {
-          glb.showSnackBar(context, 'Error', 'No Categories Found');
-
+          setState(() {
+            showLoading = false;
+          });
+          glb.showSnackBar(context, 'Error', 'No Order Details Found');
           return;
         } else if (res.contains("ErrorCode#8")) {
+          setState(() {
+            showLoading = false;
+          });
           glb.showSnackBar(context, 'Error', 'Something Went Wrong');
           return;
         } else {
           try {
-            Map<String, dynamic> catMap = json.decode(response.body);
+            Map<String, dynamic> orderMap = json.decode(response.body);
             // if (kDebugMode) {
             //   print("categoryMap:$catMap");
             // }
-            var catid = catMap['catid'];
-            var catname = catMap['catname'];
-            var catimg = catMap['catimg'];
-            var regularPrice = catMap['regular_price'];
-            var regularPriceType = catMap['regular_price_type'];
-            var expressPrice = catMap['express_price'];
-            var expressPriceType = catMap['express_price_type'];
-            var offerPrice = catMap['offer_price'];
-            var offerPriceType = catMap['offer_price_type'];
-            var description = catMap['description'];
-            var minHours = catMap['min_hours'];
 
-            catIdLst = glb.strToLst2(catid);
-            catNameLst = glb.strToLst2(catname);
-            catImgLst = glb.strToLst2(catimg);
-            regularPricelst = glb.strToLst2(regularPrice);
-            regularPriceTypelst = glb.strToLst2(regularPriceType);
-            expressPricelst = glb.strToLst2(expressPrice);
-            expressPriceTypeLst = glb.strToLst2(expressPriceType);
-            offerPriceLst = glb.strToLst2(offerPrice);
-            offerPriceTypeLst = glb.strToLst2(offerPriceType);
-            descriptionLst = glb.strToLst2(description);
-            minHoursLst = glb.strToLst2(minHours);
+            var epoch = orderMap['epoch'];
+            var pickupDt = orderMap['pickup_dt'];
+            var clat = orderMap['clat'];
+            var clng = orderMap['clng'];
+            var deliveryBoyId = orderMap['delivery_boy_id'];
+            var deliveryBoyName = orderMap['delivery_boy_name'];
+            var orderStatus = orderMap['order_status'];
+            var delvryBoyMobno = orderMap['delvry_boy_mobno'];
+            var deliveryDt = orderMap['delivery_dt'];
+            var houseno = orderMap['houseno'];
+            var address = orderMap['address'];
+            var landmark = orderMap['landmark'];
+            var pincode = orderMap['pincode'];
+            var deliveryEpoch = orderMap['deliveryEpoch'];
+            var profileImg = orderMap['profileImg'];
+
+            var formattedDateTime =
+                glb.doubleEpochToFormattedDateTime(double.parse(epoch));
+            var deliveryEpochTime =
+                glb.doubleEpochToFormattedDateTime(double.parse(deliveryEpoch));
+            setState(() {
+              timeOrderRecieved = formattedDateTime;
+              pickupDate = pickupDt;
+              print('deliveryBoyName::$deliveryBoyName');
+              deliveryBoyName = deliveryBoyName;
+              if (orderStatus != 'Delivered') {
+                deliveryDateTime = "Not Delivered yet";
+              } else {
+                deliveryDateTime = deliveryEpochTime;
+              }
+              orderStatus = orderStatus;
+              houseNo = houseno;
+              addressClient = address;
+              profilePicture = profileImg;
+              deliveryMobno = delvryBoyMobno;
+            });
 
             setState(() {
-              isLoading = false;
+              showLoading = false;
             });
           } catch (e) {
             if (kDebugMode) {
               print(e);
             }
+            setState(() {
+              showLoading = false;
+            });
             return "Failed";
           }
         }
@@ -137,17 +153,183 @@ class _MyBagPageState extends State<MyBagPage> {
       if (kDebugMode) {
         print(e);
       }
+      setState(() {
+        showLoading = false;
+      });
       glb.handleErrors(e, context);
     }
+  }
+
+  Future loadOrderItemsDetails() async {
+    setState(() {
+      showItemsLoading = true;
+      isItemAdded = true;
+      orderItemModel = [];
+    });
+    final prefs = await SharedPreferences.getInstance();
+    var customerid = prefs.getString('customerid');
+    if (glb.orderid.isEmpty) {
+      glb.showSnackBar(context, 'Alert!', 'Please Select the Active Order');
+      return;
+    }
+    var todaysDate = glb.getDateTodays();
+    try {
+      var url = glb.endPoint;
+      final Map dictMap = {};
+
+      dictMap['order_id'] = glb.orderid;
+      dictMap['pktType'] = "11";
+      dictMap['token'] = "vff";
+      dictMap['uid'] = "-1";
+
+      final response = await http.post(Uri.parse(url),
+          headers: <String, String>{
+            "Accept": "application/json",
+            'Content-Type': 'application/json; charset=UTF-8',
+          },
+          body: jsonEncode(dictMap));
+
+      if (response.statusCode == 200) {
+        var res = response.body;
+        if (res.contains("ErrorCode#2")) {
+          setState(() {
+            showItemsLoading = false;
+            isItemAdded = true;
+            itemsNotFound = true;
+          });
+          //glb.showSnackBar(context, 'Alert', 'No Laundry Items Added');
+          return;
+        } else if (res.contains("ErrorCode#8")) {
+          setState(() {
+            showItemsLoading = false;
+            isItemAdded = false;
+          });
+          glb.showSnackBar(context, 'Error', 'Something Went Wrong');
+          return;
+        } else {
+          try {
+            Map<String, dynamic> cartMap = json.decode(response.body);
+            // if (kDebugMode) {
+            //   print("cartMap:$cartMap");
+            // }
+
+            var categoryID = cartMap['cat_id'];
+            var subCategoryID = cartMap['sub_cat_id'];
+            var totalQuantity = cartMap['total_quantity'];
+            var totalPrice = cartMap['total_price'];
+            var date = cartMap['dt'];
+            var time = cartMap['time'];
+            var orderType = cartMap['order_type'];
+            var totalAdultCost = cartMap['adult_cost'];
+            var totalKidsCost = cartMap['kids_cost'];
+            var categoryImage = cartMap['cat_img'];
+            var categoryName = cartMap['category_name'];
+            var subCategoryName = cartMap['sub_cat_name'];
+            var subCategoryImage = cartMap['sub_cat_img'];
+            var adultQuantity = cartMap['adult_quantity'];
+            var kidsQuantity = cartMap['kids_quantity'];
+            var total_items_count = cartMap['total_items_count'];
+            var total_item_price = cartMap['total_item_price'];
+
+            setState(() {
+              totalItemsCount = total_items_count;
+              totalItemsPrice = total_item_price;
+            });
+            List<String> categoryIDst = glb.strToLst2(categoryID);
+            List<String> subCategoryIDlst = glb.strToLst2(subCategoryID);
+            List<String> totalQuantitylst = glb.strToLst2(totalQuantity);
+            List<String> totalPricelst = glb.strToLst2(totalPrice);
+            List<String> datelst = glb.strToLst2(date);
+            List<String> timelst = glb.strToLst2(time);
+            List<String> orderTypelst = glb.strToLst2(orderType);
+            List<String> totalAdultCostlst = glb.strToLst2(totalAdultCost);
+            List<String> totalKidsCostlst = glb.strToLst2(totalKidsCost);
+            List<String> categoryImagelst = glb.strToLst2(categoryImage);
+            List<String> categoryNamelst = glb.strToLst2(categoryName);
+            List<String> subCategoryNamelst = glb.strToLst2(subCategoryName);
+            List<String> subCategoryImagelst = glb.strToLst2(subCategoryImage);
+            List<String> adultQuantitylst = glb.strToLst2(adultQuantity);
+            List<String> kidsQuantitylst = glb.strToLst2(kidsQuantity);
+
+            for (int i = 0; i < categoryIDst.length; i++) {
+              var categoryID = categoryIDst.elementAt(i).toString();
+              var subCategoryID = subCategoryIDlst.elementAt(i).toString();
+              var totalQuantity = totalQuantitylst.elementAt(i).toString();
+              var totalPrice = totalPricelst.elementAt(i).toString();
+              var date = datelst.elementAt(i).toString();
+              var time = timelst.elementAt(i).toString();
+              var orderType = orderTypelst.elementAt(i).toString();
+              var totalAdultCost = totalAdultCostlst.elementAt(i).toString();
+              var totalKidsCost = totalKidsCostlst.elementAt(i).toString();
+              var categoryImage = categoryImagelst.elementAt(i).toString();
+              var categoryName = categoryNamelst.elementAt(i).toString();
+              var subCategoryName = subCategoryNamelst.elementAt(i).toString();
+              var subCategoryImage =
+                  subCategoryImagelst.elementAt(i).toString();
+              var adultQuantity = adultQuantitylst.elementAt(i).toString();
+              var kidsQuantity = kidsQuantitylst.elementAt(i).toString();
+
+              var timeFormatted =
+                  glb.doubleEpochToFormattedDateTime(double.parse(time));
+              orderItemModel.add(OrderItemsModel(
+                  categoryID: categoryID,
+                  subCategoryID: subCategoryID,
+                  totalQuantity: totalQuantity,
+                  totalPrice: totalPrice,
+                  date: date,
+                  time: timeFormatted,
+                  orderType: orderType,
+                  totalAdultCost: totalAdultCost,
+                  totalKidsCost: totalKidsCost,
+                  quantityAdultCost: adultQuantity,
+                  quantityKidsCost: kidsQuantity,
+                  categoryImage: categoryImage,
+                  categoryName: categoryName,
+                  subCategoryName: subCategoryName,
+                  subCategoryImage: subCategoryImage));
+            }
+            setState(() {
+              showItemsLoading = false;
+              isItemAdded = false;
+              itemsNotFound = false;
+            });
+          } catch (e) {
+            if (kDebugMode) {
+              print(e);
+            }
+            setState(() {
+              showItemsLoading = false;
+              isItemAdded = false;
+            });
+            return "Failed";
+          }
+        }
+      }
+    } catch (e) {
+      if (kDebugMode) {
+        print(e);
+      }
+      setState(() {
+        showItemsLoading = false;
+        isItemAdded = false;
+      });
+      glb.handleErrors(e, context);
+    }
+  }
+
+  Future<void> _handleRefresh() async {
+    loadOrderDetails();
+    loadOrderItemsDetails();
   }
 
   @override
   Widget build(BuildContext context) {
     double height = MediaQuery.of(context).size.height;
     double width = MediaQuery.of(context).size.width;
+
     return Scaffold(
-        backgroundColor: Colors.black,
         extendBodyBehindAppBar: true,
+        backgroundColor: Colors.black,
         appBar: AppBar(
           backgroundColor: Colors.transparent,
           elevation: 0,
@@ -156,229 +338,916 @@ class _MyBagPageState extends State<MyBagPage> {
         ),
         body: Stack(
           children: [
-            isLoading
-                ? Center(child: CircularProgressIndicator())
-                : Padding(
-                    padding:
-                        EdgeInsets.fromLTRB(10, 1.3 * kToolbarHeight, 0, 0),
-                    child: DefaultTabController(
-                      length: catIdLst.length,
+            Padding(
+              padding: EdgeInsets.fromLTRB(20, 1.2 * kToolbarHeight, 20, 20),
+              child: RefreshIndicator(
+                onRefresh: _handleRefresh,
+                child: CustomScrollView(
+                  slivers: [
+                    SliverToBoxAdapter(
                       child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
                           Text(
-                            'My Bag',
+                            'Order Details',
                             style: ralewayStyle.copyWith(
                               color: AppColors.whiteColor,
                               fontSize: 25.0,
                               fontWeight: FontWeight.bold,
                             ),
                           ),
-                          SizedBox(
-                            height: width * 0.04,
-                          ),
-                          ButtonsTabBar(
-                            backgroundColor: AppColors.btnColor,
-                            unselectedBackgroundColor:
-                                AppColors.lightBlackColor,
-                            unselectedLabelStyle:
-                                const TextStyle(color: AppColors.whiteColor),
-                            labelStyle: const TextStyle(
-                                color: Colors.white,
-                                fontWeight: FontWeight.bold),
-                            tabs: catNameLst.asMap().entries.map((entry) {
-                              int index = entry.key;
-                              String catName = entry.value;
-                              String catId = catIdLst[index];
-                              catName = catNameLst[index];
-                              print("CatName::$catName");
-                              Tab tabBar;
-                              if (catName == 'DRY CLEAN') {
-                                tabBar = Tab(
-                                  icon: Padding(
-                                    padding: EdgeInsets.all(4.0),
-                                    child: Icon(LineIcons.tShirt),
-                                  ),
-                                  text: catName,
-                                  // Pass the catId to the Tab
-                                );
-                              } else {
-                                tabBar = Tab(
-                                  icon: Padding(
-                                    padding: EdgeInsets.all(4.0),
-                                    child: Icon(
-                                        Icons.local_laundry_service_outlined),
-                                  ),
-                                  text: catName,
-                                  // Pass the catId to the Tab
-                                );
-                              }
-                              return tabBar;
-                            }).toList(),
-                          ),
-                          Expanded(
-                            child: TabBarView(
-                              children:
-                                  catIdLst.asMap().entries.map<Widget>((entry) {
-                                int index = entry.key;
-                                String catId = entry.value;
-                                String catName = catNameLst[index];
-                                catId = catIdLst[index];
-                          
-                                Widget categoryScreen;
-                                if (catName == 'DRY CLEAN') {
-                                  categoryScreen = DryCleaningCart(
-                                    catId: catId,
-                                  );
-                                } else {
-                                  categoryScreen = PlaceOrderPage(
-                                    updateQuantity: updateQuantity,
-                                    catId: catId,
-                                  );
-                                }
-                          
-                                return categoryScreen;
-                              }).toList(),
+                          showLoading
+                              ? LinearProgressIndicator(
+                                  semanticsLabel: 'Linear progress indicator',
+                                )
+                              : Column(
+                                  children: [
+                                    FadeAnimation(
+                                        delay: 0.5,
+                                        child: _OrderDetails(
+                                            orderStatus: orderStatus,
+                                            orderID: glb.orderid,
+                                            pickUpDateTime: timeOrderRecieved,
+                                            deliveryDateTime: deliveryDateTime,
+                                            addressClient: addressClient)),
+                                    const Divider(
+                                      color: AppColors.whiteColor,
+                                      thickness: 0.5,
+                                    ),
+                                    _DeliveryBoyDetails(
+                                        width: width,
+                                        profilePicture: profilePicture,
+                                        deliveryBoyName: deliveryBoyName,
+                                        deliveryMobno: deliveryMobno),
+                                    const Divider(
+                                      color: AppColors.whiteColor,
+                                      thickness: 0.5,
+                                    ),
+                                    _TotalClothesCount(
+                                      showItemsLoading: showItemsLoading,
+                                      isItemAdded: isItemAdded,
+                                      totalQuantity: totalItemsCount,
+                                    ),
+                                    itemsNotFound
+                                        ? Padding(
+                                            padding:  EdgeInsets.zero,
+                                            child: Center(
+                                                child: Text(
+                                              'NO LAUNDRY ITEMS FOUND\n Please Add Items',
+                                              style: ralewayStyle.copyWith(
+                                                  color: Colors.white,
+                                                  fontSize: 12.0,
+                                                  letterSpacing: 1),
+                                              textAlign: TextAlign.center,
+                                            )),
+                                          )
+                                        : Padding(
+                                          padding: const EdgeInsets.all(8.0),
+                                          child: ListView.builder(
+                                             padding: EdgeInsets.zero,
+                                               shrinkWrap: true,
+                                              itemCount:
+                                                  orderItemModel.length,
+                                              itemBuilder: ((context, index) {
+                                                return Padding(
+                                                  padding:
+                                                      const EdgeInsets.all(
+                                                          12.0),
+                                                  child: Container(
+                                                    decoration: BoxDecoration(
+                                                      borderRadius:
+                                                          BorderRadius
+                                                              .circular(12.0),
+                                                      color: AppColors
+                                                          .lightBlackColor,
+                                                    ),
+                                                    child: Padding(
+                                                      padding:
+                                                          const EdgeInsets
+                                                              .all(16.0),
+                                                      child: Column(
+                                                        children: [
+                                                          Row(
+                                                            mainAxisAlignment:
+                                                                MainAxisAlignment
+                                                                    .spaceBetween,
+                                                            children: [
+                                                              Text(
+                                                                orderItemModel[
+                                                                        index]
+                                                                    .categoryName
+                                                                    .toCapitalized(),
+                                                                style: ralewayStyle
+                                                                    .copyWith(
+                                                                  fontSize:
+                                                                      14.0,
+                                                                  fontWeight:
+                                                                      FontWeight
+                                                                          .bold,
+                                                                  color: AppColors
+                                                                      .neonColor,
+                                                                ),
+                                                              ),
+                                                            ],
+                                                          ),
+                                                          SizedBox(
+                                                            height:
+                                                                width * 0.03,
+                                                          ),
+                                                          Row(
+                                                            mainAxisAlignment:
+                                                                MainAxisAlignment
+                                                                    .spaceBetween,
+                                                            children: [
+                                                              Row(
+                                                                children: [
+                                                                  if (orderItemModel[index]
+                                                                          .subCategoryImage ==
+                                                                      'NA')
+                                                                    ClipRRect(
+                                                                      borderRadius:
+                                                                          BorderRadius.circular(2.0),
+                                                                      child: Image
+                                                                          .network(
+                                                                        orderItemModel[index]
+                                                                            .categoryImage,
+                                                                        width:
+                                                                            50,
+                                                                        height:
+                                                                            50,
+                                                                      ),
+                                                                    )
+                                                                  else
+                                                                    Image
+                                                                        .network(
+                                                                      orderItemModel[index]
+                                                                          .subCategoryImage,
+                                                                      width:
+                                                                          50,
+                                                                      height:
+                                                                          50,
+                                                                    ),
+                                                                  SizedBox(
+                                                                    width: width *
+                                                                        0.04,
+                                                                  ),
+                                                                  Column(
+                                                                    crossAxisAlignment:
+                                                                        CrossAxisAlignment
+                                                                            .start,
+                                                                    children: [
+                                                                      orderItemModel[index].subCategoryName ==
+                                                                              'NA'
+                                                                          ? Text(
+                                                                              orderItemModel[index].categoryName.toCapitalized(),
+                                                                              style: nunitoStyle.copyWith(
+                                                                                fontSize: 14.0,
+                                                                                fontWeight: FontWeight.normal,
+                                                                                color: AppColors.whiteColor,
+                                                                              ),
+                                                                            )
+                                                                          : Text(
+                                                                              orderItemModel[index].subCategoryName.toCapitalized(),
+                                                                              style: nunitoStyle.copyWith(
+                                                                                fontSize: 14.0,
+                                                                                fontWeight: FontWeight.normal,
+                                                                                color: AppColors.whiteColor,
+                                                                              ),
+                                                                            ),
+                                                                      SizedBox(
+                                                                        height:
+                                                                            height * 0.01,
+                                                                      ),
+                                                                      Text(
+                                                                        '₹${orderItemModel[index].totalPrice}',
+                                                                        style: nunitoStyle.copyWith(
+                                                                            fontSize: 14.0,
+                                                                            fontWeight: FontWeight.bold,
+                                                                            color: AppColors.neonColor),
+                                                                      ),
+                                                                    ],
+                                                                  )
+                                                                ],
+                                                              ),
+                                                              Row(
+                                                                children: [
+                                                                  Text(
+                                                                    'Qty: ',
+                                                                    style: nunitoStyle.copyWith(
+                                                                        fontSize:
+                                                                            14.0,
+                                                                        fontWeight: FontWeight
+                                                                            .bold,
+                                                                        color:
+                                                                            AppColors.neonColor),
+                                                                  ),
+                                                                  Text(
+                                                                    '${orderItemModel[index].totalQuantity} ',
+                                                                    style: nunitoStyle.copyWith(
+                                                                        fontSize:
+                                                                            14.0,
+                                                                        fontWeight: FontWeight
+                                                                            .bold,
+                                                                        color:
+                                                                            AppColors.neonColor),
+                                                                  ),
+                                                                ],
+                                                              ),
+                                                            ],
+                                                          ),
+                                                          const Divider(
+                                                            color: AppColors
+                                                                .lightGreyColor,
+                                                            thickness: 0.1,
+                                                          ),
+                                                        ],
+                                                      ),
+                                                    ),
+                                                  ),
+                                                );
+                                              })),
+                                        
+                                        )
+                                  ],
+                                )
+                        ],
+                      ),
+                    )
+                  ],
+                ),
+              ),
+            ),
+          ],
+        ));
+  }
+}
+
+class _WashAndFoldListWidget extends StatelessWidget {
+  const _WashAndFoldListWidget({
+    super.key,
+    required this.width,
+    required this.height,
+  });
+
+  final double width;
+  final double height;
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.all(12.0),
+      child: Container(
+        decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(12.0),
+            color: AppColors.greyBGColor,
+            boxShadow: [
+              BoxShadow(
+                color: Colors.white.withOpacity(0.1), // Shadow color
+                spreadRadius: 5,
+                blurRadius: 7,
+                offset: const Offset(0, 3), // Changes position of shadow
+              ),
+            ]),
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            children: [
+              Row(
+                children: [
+                  Text(
+                    'Wash and Fold',
+                    style: nunitoStyle.copyWith(
+                      fontSize: 14.0,
+                      fontWeight: FontWeight.bold,
+                      color: AppColors.neonColor,
+                    ),
+                  ),
+                ],
+              ),
+              SizedBox(
+                height: width * 0.03,
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Row(
+                    children: [
+                      Image.asset(
+                        'assets/clothes/jacket.png',
+                        width: 30,
+                        height: 30,
+                      ),
+                      SizedBox(
+                        width: width * 0.04,
+                      ),
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            'Jacket',
+                            style: nunitoStyle.copyWith(
+                              fontSize: 14.0,
+                              fontWeight: FontWeight.normal,
+                              color: AppColors.whiteColor,
                             ),
                           ),
+                          SizedBox(
+                            height: height * 0.01,
+                          ),
+                          Text(
+                            '₹25',
+                            style: nunitoStyle.copyWith(
+                              fontSize: 14.0,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ],
+                      )
+                    ],
+                  ),
+                  Row(
+                    children: [
+                      Text(
+                        'Qty: ',
+                        style: nunitoStyle.copyWith(
+                          fontSize: 14.0,
+                          fontWeight: FontWeight.normal,
+                        ),
+                      ),
+                      Text(
+                        '1',
+                        style: nunitoStyle.copyWith(
+                          fontSize: 14.0,
+                          fontWeight: FontWeight.normal,
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+              const Divider(
+                color: AppColors.whiteColor,
+                thickness: 2,
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _DryCleaningListWidget extends StatelessWidget {
+  const _DryCleaningListWidget({
+    super.key,
+    required this.width,
+    required this.height,
+  });
+
+  final double width;
+  final double height;
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.all(12.0),
+      child: Container(
+        decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(12.0),
+            color: AppColors.greyBGColor,
+            boxShadow: [
+              BoxShadow(
+                color: Colors.white.withOpacity(0.1), // Shadow color
+                spreadRadius: 5,
+                blurRadius: 7,
+                offset: const Offset(0, 3), // Changes position of shadow
+              ),
+            ]),
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            children: [
+              Row(
+                children: [
+                  Text(
+                    'Dry Clean',
+                    style: nunitoStyle.copyWith(
+                      fontSize: 14.0,
+                      fontWeight: FontWeight.bold,
+                      color: AppColors.neonColor,
+                    ),
+                  ),
+                ],
+              ),
+              SizedBox(
+                height: width * 0.03,
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Row(
+                    children: [
+                      Image.asset(
+                        'assets/clothes/t_shirt.png',
+                        width: 30,
+                        height: 30,
+                      ),
+                      SizedBox(
+                        width: width * 0.04,
+                      ),
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            'T-Shirt',
+                            style: nunitoStyle.copyWith(
+                              fontSize: 14.0,
+                              fontWeight: FontWeight.normal,
+                              color: AppColors.whiteColor,
+                            ),
+                          ),
+                          SizedBox(
+                            height: height * 0.01,
+                          ),
+                          Text(
+                            '₹10',
+                            style: nunitoStyle.copyWith(
+                              fontSize: 14.0,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ],
+                      )
+                    ],
+                  ),
+                  Row(
+                    children: [
+                      Text(
+                        'Qty: ',
+                        style: nunitoStyle.copyWith(
+                          fontSize: 14.0,
+                          fontWeight: FontWeight.normal,
+                        ),
+                      ),
+                      Text(
+                        '3',
+                        style: nunitoStyle.copyWith(
+                          fontSize: 14.0,
+                          fontWeight: FontWeight.normal,
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+              const Divider(
+                color: AppColors.lightGreyColor,
+                thickness: 2,
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _TotalClothesCount extends StatelessWidget {
+  const _TotalClothesCount({
+    super.key,
+    required this.showItemsLoading,
+    required this.isItemAdded,
+    required this.totalQuantity,
+  });
+  final bool showItemsLoading;
+  final bool isItemAdded;
+  final String totalQuantity;
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.all(12.0),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Text(
+            'Total Clothes',
+            style: nunitoStyle.copyWith(
+              fontSize: 14.0,
+              fontWeight: FontWeight.normal,
+              color: AppColors.whiteColor,
+            ),
+          ),
+          showItemsLoading
+              ? const LinearProgressIndicator()
+              : isItemAdded
+                  ? InkWell(
+                      onTap: () {
+                        glb.addItems = true;
+                        Navigator.pushNamed(context, MyBagRoute);
+                      },
+                      child: Text(
+                        'Add Item',
+                        style: nunitoStyle.copyWith(
+                            fontSize: 15.0,
+                            fontWeight: FontWeight.w600,
+                            color: AppColors.neonColor),
+                      ),
+                    )
+                  : Text(
+                      '$totalQuantity selected',
+                      style: nunitoStyle.copyWith(
+                          fontSize: 15.0,
+                          fontWeight: FontWeight.w600,
+                          color: AppColors.neonColor),
+                    )
+        ],
+      ),
+    );
+  }
+}
+
+class _DeliveryBoyDetails extends StatelessWidget {
+  const _DeliveryBoyDetails({
+    super.key,
+    required this.width,
+    required this.profilePicture,
+    required this.deliveryBoyName,
+    required this.deliveryMobno,
+  });
+
+  final double width;
+  final String? profilePicture;
+  final String deliveryBoyName;
+  final String deliveryMobno;
+
+  @override
+  Widget build(BuildContext context) {
+    return SlideFromLeftAnimation(
+      delay: 0.8,
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 18.0, vertical: 18.0),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Row(
+              children: [
+                profilePicture!.isEmpty
+                    ? const CircularProgressIndicator()
+                    : WidgetCircularAnimator(
+                        size: 50,
+                        innerIconsSize: 3,
+                        outerIconsSize: 3,
+                        innerAnimation: Curves.easeInOutBack,
+                        outerAnimation: Curves.easeInOutBack,
+                        innerColor: Colors.deepPurple,
+                        outerColor: Colors.orangeAccent,
+                        innerAnimationSeconds: 10,
+                        outerAnimationSeconds: 10,
+                        child: Container(
+                          decoration: BoxDecoration(
+                              shape: BoxShape.circle, color: Colors.grey[200]),
+                          child: CircleAvatar(
+                            radius: 25.0,
+                            backgroundImage: NetworkImage('$profilePicture'),
+                            backgroundColor: Colors.transparent,
+                          ),
+                        ),
+                      ),
+                SizedBox(
+                  width: width * 0.04,
+                ),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      deliveryBoyName,
+                      style: nunitoStyle.copyWith(
+                          fontSize: 18.0,
+                          fontWeight: FontWeight.w600,
+                          color: Colors.green),
+                    ),
+                    Text(
+                      deliveryMobno,
+                      style: nunitoStyle.copyWith(
+                          fontSize: 14.0,
+                          fontWeight: FontWeight.normal,
+                          color: AppColors.btnColor),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+            SlideFromRightAnimation(
+              delay: 0.9,
+              child: Material(
+                color: Colors.transparent,
+                child: InkWell(
+                  onTap: () {
+                    Navigator.pushNamed(context, FeedbackRoute);
+                  },
+                  borderRadius: BorderRadius.circular(10.0),
+                  child: Ink(
+                    decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(10.0)),
+                    child: Padding(
+                      padding: const EdgeInsets.all(2.0),
+                      child: Column(
+                        children: [
+                          const Icon(
+                            Icons.message,
+                            color: AppColors.neonColor,
+                          ),
                           Padding(
-                            padding: const EdgeInsets.all(18.0),
-                            child: Padding(
-                              padding: const EdgeInsets.all(8.0),
-                              child: Column(
-                                children: [
-                                  // Row(
-                                  //   mainAxisAlignment:
-                                  //       MainAxisAlignment.spaceBetween,
-                                  //   children: [
-                                  //     Row(
-                                  //       children: [
-                                  //         Container(
-                                  //           decoration: BoxDecoration(
-                                  //               borderRadius:
-                                  //                   BorderRadius.circular(
-                                  //                       12.0),
-                                  //               color: AppColors.backColor),
-                                  //           child: Padding(
-                                  //             padding:
-                                  //                 const EdgeInsets.all(8.0),
-                                  //             child: Icon(
-                                  //               Icons
-                                  //                   .local_laundry_service_rounded,
-                                  //               color: AppColors.btnColor,
-                                  //             ),
-                                  //           ),
-                                  //         ),
-                                  //         Padding(
-                                  //           padding:
-                                  //               const EdgeInsets.all(8.0),
-                                  //           child: Column(
-                                  //             crossAxisAlignment:
-                                  //                 CrossAxisAlignment.start,
-                                  //             children: [
-                                  //               Text(
-                                  //                 'Items',
-                                  //                 style:
-                                  //                     ralewayStyle.copyWith(
-                                  //                         fontSize: 14.0,
-                                  //                         color: AppColors
-                                  //                             .whiteColor),
-                                  //               ),
-                                  //               SizedBox(
-                                  //                 height: 5.0,
-                                  //               ),
-                                  //               Text(
-                                  //                 '4 Items',
-                                  //                 style: nunitoStyle.copyWith(
-                                  //                     fontSize: 14.0,
-                                  //                     color: Colors.white,
-                                  //                     fontWeight:
-                                  //                         FontWeight.bold),
-                                  //               ),
-                                  //             ],
-                                  //           ),
-                                  //         ),
-                                  //       ],
-                                  //     ),
-                                  //     Padding(
-                                  //       padding: const EdgeInsets.all(8.0),
-                                  //       child: Column(
-                                  //         crossAxisAlignment:
-                                  //             CrossAxisAlignment.start,
-                                  //         children: [
-                                  //           Text(
-                                  //             'Cost',
-                                  //             style: ralewayStyle.copyWith(
-                                  //                 fontSize: 14.0,
-                                  //                 color:
-                                  //                     AppColors.whiteColor),
-                                  //           ),
-                                  //           SizedBox(
-                                  //             height: 5.0,
-                                  //           ),
-                                  //           Text(
-                                  //             '₹${glb.cartQuantity}',
-                                  //             style: nunitoStyle.copyWith(
-                                  //                 fontSize: 14.0,
-                                  //                 color: Colors.white,
-                                  //                 fontWeight:
-                                  //                     FontWeight.bold),
-                                  //           ),
-                                  //         ],
-                                  //       ),
-                                  //     ),
-                                  //   ],
-                                  // ),
-                                  // const SizedBox(
-                                  //   height: 5.0,
-                                  // ),
-                                  Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.center,
-                                    children: [
-                                      Material(
-                                        color: Colors.transparent,
-                                        child: InkWell(
-                                          onTap: () {
-                                            Navigator.pushNamed(
-                                                context, CheckOutRoute);
-                                          },
-                                          borderRadius:
-                                              BorderRadius.circular(12.0),
-                                          child: Ink(
-                                            decoration: BoxDecoration(
-                                              color: AppColors.btnColor,
-                                              borderRadius:
-                                                  BorderRadius.circular(12.0),
-                                            ),
-                                            child: Padding(
-                                              padding:
-                                                  const EdgeInsets.symmetric(
-                                                      horizontal: 50.0,
-                                                      vertical: 10.0),
-                                              child: Text(
-                                                'Checkout',
-                                                style: ralewayStyle.copyWith(
-                                                    fontSize: 16.0,
-                                                    color:
-                                                        AppColors.whiteColor,
-                                                    fontWeight:
-                                                        FontWeight.bold),
-                                              ),
-                                            ),
-                                          ),
-                                        ),
-                                      )
-                                    ],
-                                  )
-                                ],
-                              ),
+                            padding: const EdgeInsets.all(1.0),
+                            child: Text(
+                              'Feedback',
+                              style: nunitoStyle.copyWith(
+                                  fontSize: 12.0,
+                                  fontWeight: FontWeight.normal,
+                                  color: AppColors.neonColor),
                             ),
                           ),
                         ],
                       ),
                     ),
                   ),
+                ),
+              ),
+            )
           ],
-        ));
+        ),
+      ),
+    );
   }
+}
+
+class _OrderDetails extends StatelessWidget {
+  const _OrderDetails({
+    super.key,
+    required this.orderStatus,
+    required this.orderID,
+    required this.pickUpDateTime,
+    required this.deliveryDateTime,
+    required this.addressClient,
+  });
+  final String orderStatus;
+  final String orderID;
+  final String pickUpDateTime;
+  final String deliveryDateTime;
+  final String addressClient;
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      child: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            FadeAnimation(
+              delay: 1,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  Container(
+                    decoration: BoxDecoration(
+                        color: AppColors.lightBlackColor,
+                        borderRadius: BorderRadius.circular(50.0)),
+                    child: Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Icon(
+                        Icons.delivery_dining_sharp,
+                        color: AppColors.whiteColor,
+                      ),
+                    ),
+                  ),
+                  Container(
+                    width: 100,
+                    height: 1,
+                    color: Colors.white,
+                  ),
+                  Container(
+                    decoration: BoxDecoration(
+                        color: AppColors.lightBlackColor,
+                        borderRadius: BorderRadius.circular(50.0)),
+                    child: Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Icon(
+                        Icons.local_laundry_service_outlined,
+                        color: AppColors.whiteColor,
+                      ),
+                    ),
+                  ),
+                  Container(
+                    width: 100,
+                    height: 1,
+                    color: Colors.white,
+                  ),
+                  Container(
+                    decoration: BoxDecoration(
+                        color: AppColors.lightBlackColor,
+                        borderRadius: BorderRadius.circular(50.0)),
+                    child: Padding(
+                        padding: const EdgeInsets.all(8.0), child: Text('👍')),
+                  ),
+                ],
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    'Order',
+                    style: nunitoStyle.copyWith(
+                      color: AppColors.whiteColor,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 18,
+                    ),
+                  ),
+                  orderStatus == "Rejected"
+                      ? Column(
+                          children: [
+                            Padding(
+                              padding: const EdgeInsets.only(bottom: 8.0),
+                              child: Text(
+                                'Assigning',
+                                style: nunitoStyle.copyWith(
+                                    color: AppColors.orangeColor,
+                                    fontSize: 8,
+                                    fontWeight: FontWeight.bold),
+                              ),
+                            ),
+                            CircularProgressIndicator(
+                              color: Colors.green,
+                              strokeWidth: 1,
+                            )
+                          ],
+                        )
+                      : Text(
+                          orderStatus,
+                          style: nunitoStyle.copyWith(
+                              color: AppColors.orangeColor,
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold),
+                        ),
+                ],
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    'Order ID',
+                    style: nunitoStyle.copyWith(
+                      color: AppColors.whiteColor,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 14,
+                    ),
+                  ),
+                  Text(
+                    '#${orderID}',
+                    style: nunitoStyle.copyWith(
+                      color: AppColors.neonColor,
+                      fontSize: 14,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    'Pick Up:',
+                    style: nunitoStyle.copyWith(
+                      color: AppColors.whiteColor,
+                      fontWeight: FontWeight.normal,
+                      fontSize: 14,
+                    ),
+                  ),
+                  Text(
+                    pickUpDateTime,
+                    style: nunitoStyle.copyWith(
+                      color: AppColors.whiteColor,
+                      fontWeight: FontWeight.w500,
+                      fontSize: 14,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    'Delivered Date:',
+                    style: nunitoStyle.copyWith(
+                      color: AppColors.whiteColor,
+                      fontWeight: FontWeight.normal,
+                      fontSize: 14,
+                    ),
+                  ),
+                  Text(
+                    deliveryDateTime,
+                    style: nunitoStyle.copyWith(
+                      color: AppColors.whiteColor,
+                      fontWeight: FontWeight.w500,
+                      fontSize: 14,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    'Address:',
+                    style: nunitoStyle.copyWith(
+                      color: AppColors.whiteColor,
+                      fontWeight: FontWeight.normal,
+                      fontSize: 14,
+                    ),
+                  ),
+                  Text(
+                    addressClient,
+                    style: nunitoStyle.copyWith(
+                      color: AppColors.whiteColor,
+                      fontWeight: FontWeight.w500,
+                      fontSize: 14,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _TitleLayout extends StatelessWidget {
+  const _TitleLayout({
+    Key? key,
+    required this.width,
+  }) : super(key: key);
+  final double width;
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        Row(
+          children: [
+            Material(
+              color: Colors.transparent,
+              child: InkWell(
+                onTap: () {
+                  Navigator.pop(context);
+                },
+                borderRadius: BorderRadius.circular(12.0),
+                child: const Padding(
+                  padding: EdgeInsets.all(8.0),
+                  child: Icon(
+                    Icons.arrow_back_ios_new,
+                    color: AppColors.blueDarkColor,
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ),
+        const Spacer(),
+        Text(
+          'Order Details',
+          style: nunitoStyle.copyWith(
+            color: AppColors.whiteColor,
+            fontSize: 18.0,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        const Spacer()
+      ],
+    );
+  }
+}
+
+extension StringCasingExtension on String {
+  String toCapitalized() =>
+      length > 0 ? '${this[0].toUpperCase()}${substring(1).toLowerCase()}' : '';
+  String toTitleCase() => replaceAll(RegExp(' +'), ' ')
+      .split(' ')
+      .map((str) => str.toCapitalized())
+      .join(' ');
 }

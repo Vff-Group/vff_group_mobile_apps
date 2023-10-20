@@ -3,11 +3,14 @@ import 'dart:convert';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:line_icons/line_icon.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:vff_group/animation/fade_animation.dart';
 import 'package:vff_group/animation/slide_bottom_animation.dart';
 import 'package:vff_group/animation/slide_left_animation.dart';
 import 'package:vff_group/animation/slideright_animation.dart';
+import 'package:vff_group/modals/cart_item_model.dart';
+import 'package:vff_group/modals/order_detail_item_model.dart';
 import 'package:vff_group/routings/route_names.dart';
 import 'package:vff_group/utils/app_colors.dart';
 import 'package:vff_group/utils/app_styles.dart';
@@ -36,6 +39,9 @@ class _OrderDetailsPageState extends State<OrderDetailsPage> {
   String addressClient = "";
   String profilePicture = "";
   String deliveryMobno = "";
+  String totalItemsCount = "";
+  String totalItemsPrice = "";
+  List<OrderItemsModel> orderItemModel = [];
 
   @override
   void initState() {
@@ -93,14 +99,14 @@ class _OrderDetailsPageState extends State<OrderDetailsPage> {
             // }
 
             var epoch = orderMap['epoch'];
-            var pickup_dt = orderMap['pickup_dt'];
+            var pickupDt = orderMap['pickup_dt'];
             var clat = orderMap['clat'];
             var clng = orderMap['clng'];
-            var delivery_boy_id = orderMap['delivery_boy_id'];
-            var delivery_boy_name = orderMap['delivery_boy_name'];
-            var order_status = orderMap['order_status'];
-            var delvry_boy_mobno = orderMap['delvry_boy_mobno'];
-            var delivery_dt = orderMap['delivery_dt'];
+            var deliveryBoyId = orderMap['delivery_boy_id'];
+            var deliveryBoyName = orderMap['delivery_boy_name'];
+            var orderStatus = orderMap['order_status'];
+            var delvryBoyMobno = orderMap['delvry_boy_mobno'];
+            var deliveryDt = orderMap['delivery_dt'];
             var houseno = orderMap['houseno'];
             var address = orderMap['address'];
             var landmark = orderMap['landmark'];
@@ -114,18 +120,19 @@ class _OrderDetailsPageState extends State<OrderDetailsPage> {
                 glb.doubleEpochToFormattedDateTime(double.parse(deliveryEpoch));
             setState(() {
               timeOrderRecieved = formattedDateTime;
-              pickupDate = pickup_dt;
-              deliveryBoyName = delivery_boy_name;
-              if (order_status != 'Delivered') {
+              pickupDate = pickupDt;
+              print('deliveryBoyName::$deliveryBoyName');
+              deliveryBoyName = deliveryBoyName;
+              if (orderStatus != 'Delivered') {
                 deliveryDateTime = "Not Delivered yet";
               } else {
                 deliveryDateTime = deliveryEpochTime;
               }
-              orderStatus = order_status;
+              orderStatus = orderStatus;
               houseNo = houseno;
               addressClient = address;
               profilePicture = profileImg;
-              deliveryMobno = delvry_boy_mobno;
+              deliveryMobno = delvryBoyMobno;
             });
 
             setState(() {
@@ -157,9 +164,10 @@ class _OrderDetailsPageState extends State<OrderDetailsPage> {
     setState(() {
       showItemsLoading = true;
       isItemAdded = true;
+      orderItemModel = [];
     });
-    // final prefs = await SharedPreferences.getInstance();
-    // var customerid = prefs.getString('customerid');
+    final prefs = await SharedPreferences.getInstance();
+    var customerid = prefs.getString('customerid');
     if (glb.orderid.isEmpty) {
       glb.showSnackBar(context, 'Alert!', 'Please Select the Active Order');
       return;
@@ -200,27 +208,86 @@ class _OrderDetailsPageState extends State<OrderDetailsPage> {
           return;
         } else {
           try {
-            Map<String, dynamic> orderMap = json.decode(response.body);
+            Map<String, dynamic> cartMap = json.decode(response.body);
             // if (kDebugMode) {
-            //   print("categoryMap:$catMap");
+            //   print("cartMap:$cartMap");
             // }
 
-            var epoch = orderMap['epoch'];
-            var pickup_dt = orderMap['pickup_dt'];
-            var clat = orderMap['clat'];
-            var clng = orderMap['clng'];
-            var delivery_boy_id = orderMap['delivery_boy_id'];
-            var delivery_boy_name = orderMap['delivery_boy_name'];
-            var order_status = orderMap['order_status'];
-            var delvry_boy_mobno = orderMap['delvry_boy_mobno'];
-            var delivery_dt = orderMap['delivery_dt'];
-            var houseno = orderMap['houseno'];
-            var address = orderMap['address'];
-            var landmark = orderMap['landmark'];
-            var pincode = orderMap['pincode'];
-            var deliveryEpoch = orderMap['deliveryEpoch'];
-            var profileImg = orderMap['profileImg'];
+            var categoryID = cartMap['cat_id'];
+            var subCategoryID = cartMap['sub_cat_id'];
+            var totalQuantity = cartMap['total_quantity'];
+            var totalPrice = cartMap['total_price'];
+            var date = cartMap['dt'];
+            var time = cartMap['time'];
+            var orderType = cartMap['order_type'];
+            var totalAdultCost = cartMap['adult_cost'];
+            var totalKidsCost = cartMap['kids_cost'];
+            var categoryImage = cartMap['cat_img'];
+            var categoryName = cartMap['category_name'];
+            var subCategoryName = cartMap['sub_cat_name'];
+            var subCategoryImage = cartMap['sub_cat_img'];
+            var adultQuantity = cartMap['adult_quantity'];
+            var kidsQuantity = cartMap['kids_quantity'];
+            var total_items_count = cartMap['total_items_count'];
+            var total_item_price = cartMap['total_item_price'];
 
+            setState(() {
+              totalItemsCount = total_items_count;
+              totalItemsPrice = total_item_price;
+            });
+            List<String> categoryIDst = glb.strToLst2(categoryID);
+            List<String> subCategoryIDlst = glb.strToLst2(subCategoryID);
+            List<String> totalQuantitylst = glb.strToLst2(totalQuantity);
+            List<String> totalPricelst = glb.strToLst2(totalPrice);
+            List<String> datelst = glb.strToLst2(date);
+            List<String> timelst = glb.strToLst2(time);
+            List<String> orderTypelst = glb.strToLst2(orderType);
+            List<String> totalAdultCostlst = glb.strToLst2(totalAdultCost);
+            List<String> totalKidsCostlst = glb.strToLst2(totalKidsCost);
+            List<String> categoryImagelst = glb.strToLst2(categoryImage);
+            List<String> categoryNamelst = glb.strToLst2(categoryName);
+            List<String> subCategoryNamelst = glb.strToLst2(subCategoryName);
+            List<String> subCategoryImagelst = glb.strToLst2(subCategoryImage);
+            List<String> adultQuantitylst = glb.strToLst2(adultQuantity);
+            List<String> kidsQuantitylst = glb.strToLst2(kidsQuantity);
+
+            for (int i = 0; i < categoryIDst.length; i++) {
+              var categoryID = categoryIDst.elementAt(i).toString();
+              var subCategoryID = subCategoryIDlst.elementAt(i).toString();
+              var totalQuantity = totalQuantitylst.elementAt(i).toString();
+              var totalPrice = totalPricelst.elementAt(i).toString();
+              var date = datelst.elementAt(i).toString();
+              var time = timelst.elementAt(i).toString();
+              var orderType = orderTypelst.elementAt(i).toString();
+              var totalAdultCost = totalAdultCostlst.elementAt(i).toString();
+              var totalKidsCost = totalKidsCostlst.elementAt(i).toString();
+              var categoryImage = categoryImagelst.elementAt(i).toString();
+              var categoryName = categoryNamelst.elementAt(i).toString();
+              var subCategoryName = subCategoryNamelst.elementAt(i).toString();
+              var subCategoryImage =
+                  subCategoryImagelst.elementAt(i).toString();
+              var adultQuantity = adultQuantitylst.elementAt(i).toString();
+              var kidsQuantity = kidsQuantitylst.elementAt(i).toString();
+
+              var timeFormatted =
+                  glb.doubleEpochToFormattedDateTime(double.parse(time));
+              orderItemModel.add(OrderItemsModel(
+                  categoryID: categoryID,
+                  subCategoryID: subCategoryID,
+                  totalQuantity: totalQuantity,
+                  totalPrice: totalPrice,
+                  date: date,
+                  time: timeFormatted,
+                  orderType: orderType,
+                  totalAdultCost: totalAdultCost,
+                  totalKidsCost: totalKidsCost,
+                  quantityAdultCost: adultQuantity,
+                  quantityKidsCost: kidsQuantity,
+                  categoryImage: categoryImage,
+                  categoryName: categoryName,
+                  subCategoryName: subCategoryName,
+                  subCategoryImage: subCategoryImage));
+            }
             setState(() {
               showItemsLoading = false;
               isItemAdded = false;
@@ -317,11 +384,13 @@ class _OrderDetailsPageState extends State<OrderDetailsPage> {
                                       thickness: 0.5,
                                     ),
                                     _TotalClothesCount(
-                                        showItemsLoading: showItemsLoading,
-                                        isItemAdded: isItemAdded),
+                                      showItemsLoading: showItemsLoading,
+                                      isItemAdded: isItemAdded,
+                                      totalQuantity: totalItemsCount,
+                                    ),
                                     itemsNotFound
                                         ? Padding(
-                                            padding: const EdgeInsets.all(30.0),
+                                            padding:  EdgeInsets.zero,
                                             child: Center(
                                                 child: Text(
                                               'NO LAUNDRY ITEMS FOUND\n Please Add Items',
@@ -329,18 +398,176 @@ class _OrderDetailsPageState extends State<OrderDetailsPage> {
                                                   color: Colors.white,
                                                   fontSize: 12.0,
                                                   letterSpacing: 1),
-                                                  textAlign: TextAlign.center,
-                                                  
+                                              textAlign: TextAlign.center,
                                             )),
                                           )
-                                        : Column(
-                                            children: [
-                                              _DryCleaningListWidget(
-                                                  width: width, height: height),
-                                              _WashAndFoldListWidget(
-                                                  width: width, height: height),
-                                            ],
-                                          ),
+                                        : Padding(
+                                          padding: const EdgeInsets.all(8.0),
+                                          child: ListView.builder(
+                                             padding: EdgeInsets.zero,
+                                               shrinkWrap: true,
+                                              itemCount:
+                                                  orderItemModel.length,
+                                              itemBuilder: ((context, index) {
+                                                return Padding(
+                                                  padding:
+                                                      const EdgeInsets.all(
+                                                          12.0),
+                                                  child: Container(
+                                                    decoration: BoxDecoration(
+                                                      borderRadius:
+                                                          BorderRadius
+                                                              .circular(12.0),
+                                                      color: AppColors
+                                                          .lightBlackColor,
+                                                    ),
+                                                    child: Padding(
+                                                      padding:
+                                                          const EdgeInsets
+                                                              .all(16.0),
+                                                      child: Column(
+                                                        children: [
+                                                          Row(
+                                                            mainAxisAlignment:
+                                                                MainAxisAlignment
+                                                                    .spaceBetween,
+                                                            children: [
+                                                              Text(
+                                                                orderItemModel[
+                                                                        index]
+                                                                    .categoryName
+                                                                    .toCapitalized(),
+                                                                style: ralewayStyle
+                                                                    .copyWith(
+                                                                  fontSize:
+                                                                      14.0,
+                                                                  fontWeight:
+                                                                      FontWeight
+                                                                          .bold,
+                                                                  color: AppColors
+                                                                      .neonColor,
+                                                                ),
+                                                              ),
+                                                            ],
+                                                          ),
+                                                          SizedBox(
+                                                            height:
+                                                                width * 0.03,
+                                                          ),
+                                                          Row(
+                                                            mainAxisAlignment:
+                                                                MainAxisAlignment
+                                                                    .spaceBetween,
+                                                            children: [
+                                                              Row(
+                                                                children: [
+                                                                  if (orderItemModel[index]
+                                                                          .subCategoryImage ==
+                                                                      'NA')
+                                                                    ClipRRect(
+                                                                      borderRadius:
+                                                                          BorderRadius.circular(2.0),
+                                                                      child: Image
+                                                                          .network(
+                                                                        orderItemModel[index]
+                                                                            .categoryImage,
+                                                                        width:
+                                                                            50,
+                                                                        height:
+                                                                            50,
+                                                                      ),
+                                                                    )
+                                                                  else
+                                                                    Image
+                                                                        .network(
+                                                                      orderItemModel[index]
+                                                                          .subCategoryImage,
+                                                                      width:
+                                                                          50,
+                                                                      height:
+                                                                          50,
+                                                                    ),
+                                                                  SizedBox(
+                                                                    width: width *
+                                                                        0.04,
+                                                                  ),
+                                                                  Column(
+                                                                    crossAxisAlignment:
+                                                                        CrossAxisAlignment
+                                                                            .start,
+                                                                    children: [
+                                                                      orderItemModel[index].subCategoryName ==
+                                                                              'NA'
+                                                                          ? Text(
+                                                                              orderItemModel[index].categoryName.toCapitalized(),
+                                                                              style: nunitoStyle.copyWith(
+                                                                                fontSize: 14.0,
+                                                                                fontWeight: FontWeight.normal,
+                                                                                color: AppColors.whiteColor,
+                                                                              ),
+                                                                            )
+                                                                          : Text(
+                                                                              orderItemModel[index].subCategoryName.toCapitalized(),
+                                                                              style: nunitoStyle.copyWith(
+                                                                                fontSize: 14.0,
+                                                                                fontWeight: FontWeight.normal,
+                                                                                color: AppColors.whiteColor,
+                                                                              ),
+                                                                            ),
+                                                                      SizedBox(
+                                                                        height:
+                                                                            height * 0.01,
+                                                                      ),
+                                                                      Text(
+                                                                        '₹${orderItemModel[index].totalPrice}',
+                                                                        style: nunitoStyle.copyWith(
+                                                                            fontSize: 14.0,
+                                                                            fontWeight: FontWeight.bold,
+                                                                            color: AppColors.neonColor),
+                                                                      ),
+                                                                    ],
+                                                                  )
+                                                                ],
+                                                              ),
+                                                              Row(
+                                                                children: [
+                                                                  Text(
+                                                                    'Qty: ',
+                                                                    style: nunitoStyle.copyWith(
+                                                                        fontSize:
+                                                                            14.0,
+                                                                        fontWeight: FontWeight
+                                                                            .bold,
+                                                                        color:
+                                                                            AppColors.neonColor),
+                                                                  ),
+                                                                  Text(
+                                                                    '${orderItemModel[index].totalQuantity} ',
+                                                                    style: nunitoStyle.copyWith(
+                                                                        fontSize:
+                                                                            14.0,
+                                                                        fontWeight: FontWeight
+                                                                            .bold,
+                                                                        color:
+                                                                            AppColors.neonColor),
+                                                                  ),
+                                                                ],
+                                                              ),
+                                                            ],
+                                                          ),
+                                                          const Divider(
+                                                            color: AppColors
+                                                                .lightGreyColor,
+                                                            thickness: 0.1,
+                                                          ),
+                                                        ],
+                                                      ),
+                                                    ),
+                                                  ),
+                                                );
+                                              })),
+                                        
+                                        )
                                   ],
                                 )
                         ],
@@ -392,7 +619,7 @@ class _WashAndFoldListWidget extends StatelessWidget {
                     style: nunitoStyle.copyWith(
                       fontSize: 14.0,
                       fontWeight: FontWeight.bold,
-                      color: AppColors.mainBlueColor,
+                      color: AppColors.neonColor,
                     ),
                   ),
                 ],
@@ -507,7 +734,7 @@ class _DryCleaningListWidget extends StatelessWidget {
                     style: nunitoStyle.copyWith(
                       fontSize: 14.0,
                       fontWeight: FontWeight.bold,
-                      color: AppColors.mainBlueColor,
+                      color: AppColors.neonColor,
                     ),
                   ),
                 ],
@@ -590,9 +817,11 @@ class _TotalClothesCount extends StatelessWidget {
     super.key,
     required this.showItemsLoading,
     required this.isItemAdded,
+    required this.totalQuantity,
   });
   final bool showItemsLoading;
   final bool isItemAdded;
+  final String totalQuantity;
 
   @override
   Widget build(BuildContext context) {
@@ -622,15 +851,15 @@ class _TotalClothesCount extends StatelessWidget {
                         style: nunitoStyle.copyWith(
                             fontSize: 15.0,
                             fontWeight: FontWeight.w600,
-                            color: AppColors.mainBlueColor),
+                            color: AppColors.neonColor),
                       ),
                     )
                   : Text(
-                      '18 selected',
+                      '$totalQuantity selected',
                       style: nunitoStyle.copyWith(
                           fontSize: 15.0,
                           fontWeight: FontWeight.w600,
-                          color: AppColors.mainBlueColor),
+                          color: AppColors.neonColor),
                     )
         ],
       ),
@@ -696,7 +925,7 @@ class _DeliveryBoyDetails extends StatelessWidget {
                       style: nunitoStyle.copyWith(
                           fontSize: 18.0,
                           fontWeight: FontWeight.w600,
-                          color: Colors.white),
+                          color: Colors.green),
                     ),
                     Text(
                       deliveryMobno,
@@ -714,7 +943,9 @@ class _DeliveryBoyDetails extends StatelessWidget {
               child: Material(
                 color: Colors.transparent,
                 child: InkWell(
-                  onTap: () {},
+                  onTap: () {
+                    Navigator.pushNamed(context, FeedbackRoute);
+                  },
                   borderRadius: BorderRadius.circular(10.0),
                   child: Ink(
                     decoration: BoxDecoration(
@@ -725,7 +956,7 @@ class _DeliveryBoyDetails extends StatelessWidget {
                         children: [
                           const Icon(
                             Icons.message,
-                            color: AppColors.mainBlueColor,
+                            color: AppColors.neonColor,
                           ),
                           Padding(
                             padding: const EdgeInsets.all(1.0),
@@ -734,7 +965,7 @@ class _DeliveryBoyDetails extends StatelessWidget {
                               style: nunitoStyle.copyWith(
                                   fontSize: 12.0,
                                   fontWeight: FontWeight.normal,
-                                  color: AppColors.mainBlueColor),
+                                  color: AppColors.neonColor),
                             ),
                           ),
                         ],
@@ -771,7 +1002,57 @@ class _OrderDetails extends StatelessWidget {
       child: Padding(
         padding: const EdgeInsets.all(8.0),
         child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            FadeAnimation(
+              delay: 1,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  Container(
+                    decoration: BoxDecoration(
+                        color: AppColors.lightBlackColor,
+                        borderRadius: BorderRadius.circular(50.0)),
+                    child: Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Icon(
+                        Icons.delivery_dining_sharp,
+                        color: AppColors.whiteColor,
+                      ),
+                    ),
+                  ),
+                  Container(
+                    width: 100,
+                    height: 1,
+                    color: Colors.white,
+                  ),
+                  Container(
+                    decoration: BoxDecoration(
+                        color: AppColors.lightBlackColor,
+                        borderRadius: BorderRadius.circular(50.0)),
+                    child: Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Icon(
+                        Icons.local_laundry_service_outlined,
+                        color: AppColors.whiteColor,
+                      ),
+                    ),
+                  ),
+                  Container(
+                    width: 100,
+                    height: 1,
+                    color: Colors.white,
+                  ),
+                  Container(
+                    decoration: BoxDecoration(
+                        color: AppColors.lightBlackColor,
+                        borderRadius: BorderRadius.circular(50.0)),
+                    child: Padding(
+                        padding: const EdgeInsets.all(8.0), child: Text('👍')),
+                  ),
+                ],
+              ),
+            ),
             Padding(
               padding: const EdgeInsets.all(8.0),
               child: Row(
@@ -789,16 +1070,19 @@ class _OrderDetails extends StatelessWidget {
                       ? Column(
                           children: [
                             Padding(
-                              padding: const EdgeInsets.only(bottom:8.0),
+                              padding: const EdgeInsets.only(bottom: 8.0),
                               child: Text(
-                                                      'Assigning',
-                                                      style: nunitoStyle.copyWith(
-                                color: AppColors.orangeColor,
-                                fontSize: 8,
-                                fontWeight: FontWeight.bold),
-                                                    ),
+                                'Assigning',
+                                style: nunitoStyle.copyWith(
+                                    color: AppColors.orangeColor,
+                                    fontSize: 8,
+                                    fontWeight: FontWeight.bold),
+                              ),
                             ),
-                            CircularProgressIndicator(color: Colors.green,strokeWidth: 1,)
+                            CircularProgressIndicator(
+                              color: Colors.green,
+                              strokeWidth: 1,
+                            )
                           ],
                         )
                       : Text(
@@ -827,7 +1111,7 @@ class _OrderDetails extends StatelessWidget {
                   Text(
                     '#${orderID}',
                     style: nunitoStyle.copyWith(
-                      color: AppColors.mainBlueColor,
+                      color: AppColors.neonColor,
                       fontSize: 14,
                     ),
                   ),
@@ -957,4 +1241,13 @@ class _TitleLayout extends StatelessWidget {
       ],
     );
   }
+}
+
+extension StringCasingExtension on String {
+  String toCapitalized() =>
+      length > 0 ? '${this[0].toUpperCase()}${substring(1).toLowerCase()}' : '';
+  String toTitleCase() => replaceAll(RegExp(' +'), ' ')
+      .split(' ')
+      .map((str) => str.toCapitalized())
+      .join(' ');
 }

@@ -16,6 +16,7 @@ const String MainCategoryDetailsRoute = "main_category_details";
 const String MyBagRoute = "my_bag_page";
 const String MyCartRoute = "my_cart_page";
 const String CheckOutRoute = "check_out";
+const String FeedbackRoute = "feedback";
 
 // Delivery_boy Routes
 const String DeliveryLoginRoute = "delivery_login";

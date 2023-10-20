@@ -13,7 +13,7 @@ import 'package:intl/intl.dart';
 import 'package:location/location.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-String endPoint = "http://62.72.57.222:3000/"; //8085
+String endPoint = "http://62.72.57.222:8085/"; //8085
 String account_created_date = "", orderid = "";
 bool addItems = false;
 String cartQuantity = "", cartCost = "";

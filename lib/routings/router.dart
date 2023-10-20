@@ -15,6 +15,7 @@ import 'package:vff_group/pages/main_pages/orders.dart';
 import 'package:vff_group/pages/onboard_laundry.dart';
 import 'package:vff_group/pages/orders_pages/checkout_page.dart';
 import 'package:vff_group/pages/orders_pages/delivery_address_page.dart';
+import 'package:vff_group/pages/orders_pages/feed_back_page.dart';
 import 'package:vff_group/pages/orders_pages/my_bag_page.dart';
 import 'package:vff_group/pages/orders_pages/order_details.dart';
 import 'package:vff_group/pages/orders_pages/place_new_order.dart';
@@ -54,6 +55,8 @@ Route<dynamic> generateRoute(RouteSettings settings) {
       return _getPageRoute(const AddToCartItem());
     case CheckOutRoute:
       return _getPageRoute(const CheckOutScreen());
+    case FeedbackRoute:
+      return _getPageRoute(const FeedBackPage());
     case DMainRoute:
       return _getPageRoute(const BottomBarDeliveryBoy(pageDIndex: 0,));
 

@@ -232,6 +232,10 @@ class _PlaceOrderPageState extends State<PlaceOrderPage> {
           return;
         } else {
           glb.showSnackBar(context, 'Success', 'Added Successfully to cart ');
+          setState(() {
+            quantityController.text = '';
+          });
+          return;
         }
       }
     } catch (e) {
@@ -277,7 +281,7 @@ class _PlaceOrderPageState extends State<PlaceOrderPage> {
                                       Text(
                                         'Add Quantity in Kgs',
                                         style: nunitoStyle.copyWith(
-                                            fontSize: 16.0,
+                                            fontSize: 14.0,
                                             fontWeight: FontWeight.bold,
                                             color: AppColors.whiteColor),
                                       ),
@@ -335,65 +339,72 @@ class _PlaceOrderPageState extends State<PlaceOrderPage> {
                             const SizedBox(
                               height: 10.0,
                             ),
-                            Padding(
-                              padding: const EdgeInsets.symmetric(
-                                  vertical: 20.0, horizontal: 12.0),
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
-                                    children: [
-                                      Text(
-                                        'Laundry Type',
-                                        style: nunitoStyle.copyWith(
-                                            fontSize: 16.0,
-                                            fontWeight: FontWeight.bold,
-                                            color: AppColors.whiteColor),
+                            Container(
+                              decoration: BoxDecoration(
+                                
+                                borderRadius: BorderRadius.circular(12.0)
+                              ),
+                              child: Padding(
+                                padding: const EdgeInsets.symmetric(
+                                    vertical: 30.0, horizontal: 12.0),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        Text(
+                                          'Laundry Type',
+                                          style: ralewayStyle.copyWith(
+                                              fontSize: 14.0,
+                                              fontWeight: FontWeight.bold,
+                                              color: AppColors.whiteColor),
+                                        ),
+                                      ],
+                                    ),
+                                    SizedBox(
+                                      height: width * 0.03,
+                                    ),
+                                    Container(
+                                      height: 50.0,
+                                      width: width,
+                                      decoration: BoxDecoration(
+                                        borderRadius: BorderRadius.circular(8.0),
                                       ),
-                                    ],
-                                  ),
-                                  SizedBox(
-                                    height: width * 0.03,
-                                  ),
-                                  Container(
-                                    height: 50.0,
-                                    width: width,
-                                    decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(8.0),
+                                      child: DropdownButton<String>(
+                                        dropdownColor: AppColors.lightBlackColor,
+                                        value: selectedItem,
+                                        onChanged: (String? newValue) {
+                                          setState(() {
+                                            selectedItem = newValue!;
+                                            order_type = selectedItem;
+                                          });
+                                        },
+                                        items: items.map((String item) {
+                                          return DropdownMenuItem<String>(
+                                            value: item,
+                                            child: Row(
+                                              children: [
+                                                SizedBox(
+                                                    width: width - 80,
+                                                    child: Text(
+                                                      item,
+                                                      style: nunitoStyle.copyWith(
+                                                          fontWeight:
+                                                              FontWeight.normal,
+                                                              fontSize: 12.0,
+                                                          color: AppColors
+                                                              .whiteColor),
+                                                    )),
+                                              ],
+                                            ),
+                                          );
+                                        }).toList(),
+                                      ),
                                     ),
-                                    child: DropdownButton<String>(
-                                      dropdownColor: AppColors.lightBlackColor,
-                                      value: selectedItem,
-                                      onChanged: (String? newValue) {
-                                        setState(() {
-                                          selectedItem = newValue!;
-                                          order_type = selectedItem;
-                                        });
-                                      },
-                                      items: items.map((String item) {
-                                        return DropdownMenuItem<String>(
-                                          value: item,
-                                          child: Row(
-                                            children: [
-                                              SizedBox(
-                                                  width: width - 80,
-                                                  child: Text(
-                                                    item,
-                                                    style: nunitoStyle.copyWith(
-                                                        fontWeight:
-                                                            FontWeight.bold,
-                                                        color: AppColors
-                                                            .whiteColor),
-                                                  )),
-                                            ],
-                                          ),
-                                        );
-                                      }).toList(),
-                                    ),
-                                  ),
-                                ],
+                                  ],
+                                ),
                               ),
                             ),
 

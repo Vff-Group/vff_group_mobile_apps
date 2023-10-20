@@ -6,6 +6,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:vff_group/modals/dry_clean_items_model.dart';
+import 'package:vff_group/routings/route_names.dart';
 import 'package:vff_group/utils/app_colors.dart';
 import 'package:vff_group/utils/app_styles.dart';
 import 'package:vff_group/global/vffglb.dart' as glb;
@@ -17,7 +18,11 @@ class ItemDetailsBottomSheet extends StatefulWidget {
   final String categoryImage;
   final String categoryName;
 
-  ItemDetailsBottomSheet({required this.item, required this.catID, required this.categoryImage, required this.categoryName});
+  ItemDetailsBottomSheet(
+      {required this.item,
+      required this.catID,
+      required this.categoryImage,
+      required this.categoryName});
 
   @override
   State<ItemDetailsBottomSheet> createState() => _ItemDetailsBottomSheetState();
@@ -58,7 +63,6 @@ class _ItemDetailsBottomSheetState extends State<ItemDetailsBottomSheet> {
       cat_name = widget.categoryName;
       sub_cat_img = widget.item.subCategoryImage;
       sub_cat_name = widget.item.subCategoryName;
-      
     });
   }
 
@@ -138,6 +142,7 @@ class _ItemDetailsBottomSheetState extends State<ItemDetailsBottomSheet> {
         } else {
           glb.showSnackBar(context, 'Success',
               '${widget.item.subCategoryName} Added Successfully to cart \n AdultCount:${adultCount}\nKidsCount${kidsCount}');
+
           Navigator.pop(context);
         }
       }
@@ -167,7 +172,7 @@ class _ItemDetailsBottomSheetState extends State<ItemDetailsBottomSheet> {
                   child: Text(
                     widget.item.subCategoryName,
                     style: ralewayStyle.copyWith(
-                      color: AppColors.whiteColor,
+                      color: AppColors.mainBlueColor,
                       fontSize: 16,
                       fontWeight: FontWeight.bold,
                     ),
@@ -193,20 +198,31 @@ class _ItemDetailsBottomSheetState extends State<ItemDetailsBottomSheet> {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Text(
-                      "Adult ₹${widget.item.adultCost} / ${widget.item.adultType}",
-                      style: nunitoStyle.copyWith(
-                        color: AppColors.whiteColor,
-                        fontSize: 14,
-                        fontWeight: FontWeight.w800,
-                      ),
+                    Row(
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.only(right: 8.0),
+                          child: Icon(
+                            Icons.person_2_outlined,
+                            color: AppColors.mainBlueColor,
+                          ),
+                        ),
+                        Text(
+                          "Adult ₹${widget.item.adultCost} / ${widget.item.adultType}",
+                          style: nunitoStyle.copyWith(
+                            color: AppColors.whiteColor,
+                            fontSize: 14,
+                            fontWeight: FontWeight.w800,
+                          ),
+                        ),
+                      ],
                     ),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceAround,
                       children: [
                         Container(
                           decoration: BoxDecoration(
-                            color: AppColors.whiteColor,
+                            color: Colors.red,
                             borderRadius: BorderRadius.circular(25.0),
                           ),
                           child: InkWell(
@@ -219,7 +235,7 @@ class _ItemDetailsBottomSheetState extends State<ItemDetailsBottomSheet> {
                             },
                             child: Icon(
                               Icons.remove,
-                              color: Colors.black,
+                              color: Colors.white,
                               size: 20.0,
                             ),
                           ),
@@ -240,7 +256,7 @@ class _ItemDetailsBottomSheetState extends State<ItemDetailsBottomSheet> {
                         ),
                         Container(
                           decoration: BoxDecoration(
-                            color: AppColors.whiteColor,
+                            color: Colors.green[700],
                             borderRadius: BorderRadius.circular(25.0),
                           ),
                           child: InkWell(
@@ -251,7 +267,7 @@ class _ItemDetailsBottomSheetState extends State<ItemDetailsBottomSheet> {
                             },
                             child: Icon(
                               Icons.add,
-                              color: Colors.black,
+                              color: Colors.white,
                               size: 20.0,
                             ),
                           ),
@@ -276,20 +292,31 @@ class _ItemDetailsBottomSheetState extends State<ItemDetailsBottomSheet> {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Text(
-                      "Kids ₹${widget.item.kidsCost} / ${widget.item.kidsType}",
-                      style: nunitoStyle.copyWith(
-                        color: AppColors.whiteColor,
-                        fontSize: 14,
-                        fontWeight: FontWeight.w800,
-                      ),
+                    Row(
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.only(right: 8.0),
+                          child: Icon(
+                            Icons.child_care,
+                            color: AppColors.mainBlueColor,
+                          ),
+                        ),
+                        Text(
+                          "Kids ₹${widget.item.kidsCost} / ${widget.item.kidsType}",
+                          style: nunitoStyle.copyWith(
+                            color: AppColors.whiteColor,
+                            fontSize: 14,
+                            fontWeight: FontWeight.w800,
+                          ),
+                        ),
+                      ],
                     ),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceAround,
                       children: [
                         Container(
                           decoration: BoxDecoration(
-                            color: AppColors.whiteColor,
+                            color: Colors.red,
                             borderRadius: BorderRadius.circular(25.0),
                           ),
                           child: InkWell(
@@ -302,7 +329,7 @@ class _ItemDetailsBottomSheetState extends State<ItemDetailsBottomSheet> {
                             },
                             child: Icon(
                               Icons.remove,
-                              color: Colors.black,
+                              color: Colors.white,
                               size: 20.0,
                             ),
                           ),
@@ -323,7 +350,7 @@ class _ItemDetailsBottomSheetState extends State<ItemDetailsBottomSheet> {
                         ),
                         Container(
                           decoration: BoxDecoration(
-                            color: AppColors.whiteColor,
+                            color: Colors.green[700],
                             borderRadius: BorderRadius.circular(25.0),
                           ),
                           child: InkWell(
@@ -334,7 +361,7 @@ class _ItemDetailsBottomSheetState extends State<ItemDetailsBottomSheet> {
                             },
                             child: Icon(
                               Icons.add,
-                              color: Colors.black,
+                              color: Colors.white,
                               size: 20.0,
                             ),
                           ),

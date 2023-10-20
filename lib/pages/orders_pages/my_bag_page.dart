@@ -190,30 +190,42 @@ class _MyBagPageState extends State<MyBagPage> {
                       backgroundColor: AppColors.blueColor,
                       unselectedBackgroundColor: AppColors.lightBlackColor,
                       unselectedLabelStyle:
-                          const TextStyle(color: AppColors.whiteColor),
-                      labelStyle: const TextStyle(
-                          color: Colors.white, fontWeight: FontWeight.bold),
+                          nunitoStyle.copyWith(color: AppColors.whiteColor),
+                      labelStyle: nunitoStyle.copyWith(color: AppColors.whiteColor),
                       tabs: catNameLst.asMap().entries.map((entry) {
                         int index = entry.key;
                         String catName = entry.value;
                         String catId = catIdLst[index];
                         catName = catNameLst[index];
+                        String catImage = catImgLst[index];
 
                         Tab tabBar;
                         if (catName == 'DRY CLEAN') {
                           tabBar = Tab(
-                            icon: const Padding(
+                            icon: Padding(
                               padding: EdgeInsets.all(4.0),
-                              child: Icon(LineIcons.tShirt),
+                              child: ClipRRect(
+                                  borderRadius: BorderRadius.circular(50.0),
+                                  child: Image.network(
+                                    catImage,
+                                    width: 50,
+                                    height: 50,
+                                  )),
                             ),
                             text: catName,
                             // Pass the catId to the Tab
                           );
                         } else {
                           tabBar = Tab(
-                            icon: const Padding(
+                            icon: Padding(
                               padding: EdgeInsets.all(4.0),
-                              child: Icon(Icons.local_laundry_service_outlined),
+                              child: ClipRRect(
+                                  borderRadius: BorderRadius.circular(50.0),
+                                  child: Image.network(
+                                    catImage,
+                                    width: 50,
+                                    height: 50,
+                                  )),
                             ),
                             text: catName,
                             // Pass the catId to the Tab
@@ -233,7 +245,10 @@ class _MyBagPageState extends State<MyBagPage> {
 
                           Widget categoryScreen;
                           if (catName == 'DRY CLEAN') {
-                            categoryScreen = DryCleaningCart(catId: catId, catName: catName, catImage: catImage);
+                            categoryScreen = DryCleaningCart(
+                                catId: catId,
+                                catName: catName,
+                                catImage: catImage);
                           } else {
                             categoryScreen = PlaceOrderPage(
                               updateQuantity: updateQuantity,
@@ -288,7 +303,6 @@ class _MyBagPageState extends State<MyBagPage> {
                     //     ),
                     //   ),
                     // ),
-                
                   ],
                 ),
               ),

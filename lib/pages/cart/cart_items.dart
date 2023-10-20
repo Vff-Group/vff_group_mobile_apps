@@ -39,6 +39,7 @@ class _AddToCartItemState extends State<AddToCartItem> {
       final Map dictMap = {};
 
       dictMap['customer_id'] = customerid;
+      dictMap['order_id'] = glb.orderid;
       dictMap['pktType'] = "15";
       dictMap['token'] = "vff";
       dictMap['uid'] = "-1";
@@ -174,6 +175,60 @@ class _AddToCartItemState extends State<AddToCartItem> {
     }
   }
 
+  Future deleteCartItem(String itemID) async {
+    setState(() {
+      showLoading = true;
+      
+    });
+ 
+    try {
+      var url = glb.endPoint;
+      final Map dictMap = {};
+
+      dictMap['item_id'] = itemID;
+      dictMap['pktType'] = "16";
+      dictMap['token'] = "vff";
+      dictMap['uid'] = "-1";
+
+      final response = await http.post(Uri.parse(url),
+          headers: <String, String>{
+            "Accept": "application/json",
+            'Content-Type': 'application/json; charset=UTF-8',
+          },
+          body: jsonEncode(dictMap));
+
+      if (response.statusCode == 200) {
+        var res = response.body;
+        if (res.contains("ErrorCode#2")) {
+          setState(() {
+            showLoading = false;
+            _noItems = true;
+          });
+          //glb.showSnackBar(context, 'Error', 'No Category Details Found');
+          //Navigator.pop(context);
+          return;
+        } else if (res.contains("ErrorCode#8")) {
+          setState(() {
+            showLoading = false;
+          });
+          glb.showSnackBar(context, 'Error', 'Something Went Wrong');
+          //Navigator.pop(context);
+          return;
+        } else {
+          loadCartItems();
+        }
+      }
+    } catch (e) {
+      if (kDebugMode) {
+        print(e);
+      }
+      setState(() {
+        showLoading = false;
+      });
+      glb.handleErrors(e, context);
+    }
+  }
+
   @override
   void initState() {
     // TODO: implement initState
@@ -200,16 +255,22 @@ class _AddToCartItemState extends State<AddToCartItem> {
           ),
         ),
         systemOverlayStyle:
-            SystemUiOverlayStyle(statusBarBrightness: Brightness.dark),
+            const SystemUiOverlayStyle(statusBarBrightness: Brightness.dark),
       ),
       body: _noItems
-          ? Center(
-              child: Text(
-                'No Laundry Items Found',
-                style: ralewayStyle.copyWith(
-                    fontWeight: FontWeight.bold,
-                    fontSize: 16.0,
-                    color: AppColors.whiteColor),
+          ? SafeArea(
+              child: Stack(
+                children: [
+                  Center(
+                    child: Text(
+                      'No Laundry Items Added Yet',
+                      style: ralewayStyle.copyWith(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 16.0,
+                          color: AppColors.whiteColor),
+                    ),
+                  ),
+                ],
               ),
             )
           : Stack(
@@ -236,165 +297,171 @@ class _AddToCartItemState extends State<AddToCartItem> {
                                 itemCount: cartItemModel.length,
                                 itemBuilder: ((context, index) {
                                   return Padding(
-                                    padding: const EdgeInsets.all(8.0),
-                                    child: Material(
-                                      color: Colors.transparent,
-                                      child: InkWell(
-                                        onTap: () {
-                                          //Navigator.pushNamed(context, OrderDetailsRoute);
-                                        },
+                                    padding: const EdgeInsets.all(12.0),
+                                    child: Container(
+                                      decoration: BoxDecoration(
                                         borderRadius:
-                                            BorderRadius.circular(8.0),
-                                        child: Ink(
-                                          decoration: BoxDecoration(
-                                              borderRadius:
-                                                  BorderRadius.circular(8.0),
-                                              color: AppColors.lightBlackColor
-                                              // Container color
-                                              ),
-                                          child: Column(
-                                            children: [
-                                              Row(
-                                                children: [
-                                                  Padding(
-                                                    padding:
-                                                        const EdgeInsets.all(
-                                                            8.0),
-                                                    child: ClipRRect(
-                                                      borderRadius:
-                                                          BorderRadius.circular(
-                                                              25.0),
-                                                      child: Image.network(
-                                                        cartItemModel[index]
-                                                            .categoryImage,
-                                                        width: 25,
-                                                        height: 25,
-                                                      ),
-                                                    ),
-                                                  ),
-                                                  Text(
-                                                    cartItemModel[index]
-                                                        .categoryName,
-                                                    style:
-                                                        ralewayStyle.copyWith(
-                                                      color:
-                                                          AppColors.whiteColor,
-                                                      fontSize: 16,
-                                                      fontWeight:
-                                                          FontWeight.w800,
-                                                    ),
-                                                  )
-                                                ],
-                                              ),
-                                              Padding(
-                                                padding:
-                                                    const EdgeInsets.symmetric(
-                                                        horizontal: 8.0,
-                                                        vertical: 2.0),
-                                                child: Container(
-                                                  width: width,
-                                                  height: 0.1,
-                                                  decoration: BoxDecoration(
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                            12.0),
-                                                    color: Colors.grey,
+                                            BorderRadius.circular(12.0),
+                                        color: AppColors.lightBlackColor,
+                                      ),
+                                      child: Padding(
+                                        padding: const EdgeInsets.all(16.0),
+                                        child: Column(
+                                          children: [
+                                            Row(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment
+                                                      .spaceBetween,
+                                              children: [
+                                                Text(
+                                                  cartItemModel[index]
+                                                      .categoryName
+                                                      .toCapitalized(),
+                                                  style: ralewayStyle.copyWith(
+                                                    fontSize: 14.0,
+                                                    fontWeight: FontWeight.bold,
+                                                    color:
+                                                        AppColors.neonColor,
                                                   ),
                                                 ),
-                                              ),
-                                              Row(
-                                                children: [
-                                                  Padding(
-                                                    padding:
-                                                        const EdgeInsets.all(
-                                                            8.0),
-                                                    child: Container(
-                                                      decoration: BoxDecoration(
-                                                        borderRadius:
-                                                            BorderRadius
-                                                                .circular(12.0),
-                                                        color: Colors.white,
-                                                      ),
-                                                      child: Padding(
-                                                        padding:
-                                                            const EdgeInsets
-                                                                .all(8.0),
+                                                InkWell(
+                                                  onTap: (){
+                                                    var itemID = cartItemModel[index].itemID;
+                                                    deleteCartItem(itemID);
+                                                  },
+                                                  child: Icon(
+                                                    Icons.delete_outline_outlined,
+                                                    color: Colors.red,
+                                                  ),
+                                                )
+                                              ],
+                                            ),
+                                            SizedBox(
+                                              height: width * 0.03,
+                                            ),
+                                            Row(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment
+                                                      .spaceBetween,
+                                              children: [
+                                                Row(
+                                                  children: [
+                                                    if (cartItemModel[index]
+                                                            .subCategoryImage ==
+                                                        'NA')
+                                                      ClipRRect(
+                                                        borderRadius: BorderRadius.circular(2.0),
                                                         child: Image.network(
                                                           cartItemModel[index]
-                                                              .subCategoryImage,
+                                                              .categoryImage,
                                                           width: 50,
                                                           height: 50,
                                                         ),
-                                                      ),
-                                                    ),
-                                                  ),
-                                                  Column(
-                                                    crossAxisAlignment:
-                                                        CrossAxisAlignment
-                                                            .start,
-                                                    children: [
-                                                      Text(
-                                                        cartItemModel[index]
-                                                            .subCategoryName,
-                                                        style: ralewayStyle
-                                                            .copyWith(
-                                                          color: AppColors
-                                                              .whiteColor,
-                                                          fontSize: 16,
-                                                          fontWeight:
-                                                              FontWeight.bold,
-                                                        ),
-                                                      ),
-                                                      SizedBox(
-                                                        height: 5.0,
-                                                      ),
-                                                      Text(
-                                                        cartItemModel[index]
-                                                            .totalPrice,
-                                                        style: nunitoStyle
-                                                            .copyWith(
-                                                          color: AppColors
-                                                              .textColor,
-                                                          fontSize: 12,
-                                                          fontWeight:
-                                                              FontWeight.bold,
-                                                        ),
-                                                      ),
-                                                      SizedBox(
-                                                        height: 10.0,
-                                                      ),
-                                                      Row(
-                                                        mainAxisAlignment: MainAxisAlignment.spaceAround,
-                                                        children: [
-                                                          Icon(
-                                                            Icons
-                                                                .delete_sweep_rounded,
-                                                            color: Colors.red,
-                                                          ),
-                                                           Text(
-                                                        'Remove',
-                                                        style: nunitoStyle
-                                                            .copyWith(
-                                                          color: Colors
-                                                              .red[500],
-                                                          fontSize: 12,
-                                                          fontWeight:
-                                                              FontWeight.bold,
-                                                        ),
-                                                      ),
-                                                        ],
                                                       )
-                                                    ],
-                                                  )
-                                                ],
-                                              )
-                                            ],
-                                          ),
+                                                    else
+                                                      Image.network(
+                                                        cartItemModel[index]
+                                                            .subCategoryImage,
+                                                        width: 50,
+                                                        height: 50,
+                                                      ),
+                                                    SizedBox(
+                                                      width: width * 0.04,
+                                                    ),
+                                                    Column(
+                                                      crossAxisAlignment:
+                                                          CrossAxisAlignment
+                                                              .start,
+                                                      children: [
+                                                        cartItemModel[index]
+                                                                    .subCategoryName ==
+                                                                'NA'
+                                                            ? Text(
+                                                                cartItemModel[
+                                                                        index]
+                                                                    .categoryName
+                                                                    .toCapitalized(),
+                                                                style: nunitoStyle
+                                                                    .copyWith(
+                                                                  fontSize:
+                                                                      14.0,
+                                                                  fontWeight:
+                                                                      FontWeight
+                                                                          .normal,
+                                                                  color: AppColors
+                                                                      .whiteColor,
+                                                                ),
+                                                              )
+                                                            : Text(
+                                                                cartItemModel[
+                                                                        index]
+                                                                    .subCategoryName
+                                                                    .toCapitalized(),
+                                                                style: nunitoStyle
+                                                                    .copyWith(
+                                                                  fontSize:
+                                                                      14.0,
+                                                                  fontWeight:
+                                                                      FontWeight
+                                                                          .normal,
+                                                                  color: AppColors
+                                                                      .whiteColor,
+                                                                ),
+                                                              ),
+                                                        SizedBox(
+                                                          height: height * 0.01,
+                                                        ),
+                                                        Text(
+                                                          '₹${cartItemModel[index].totalPrice}',
+                                                          style: nunitoStyle.copyWith(
+                                                              fontSize: 14.0,
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .bold,
+                                                              color: AppColors
+                                                                  .neonColor),
+                                                        ),
+                                                      ],
+                                                    )
+                                                  ],
+                                                ),
+                                                Row(
+                                                  children: [
+                                                    Text(
+                                                      'Qty: ',
+                                                      style: nunitoStyle.copyWith(
+                                                          fontSize: 14.0,
+                                                          fontWeight:
+                                                              FontWeight.bold,
+                                                          color: AppColors
+                                                              .neonColor),
+                                                    ),
+                                                    Text(
+                                                      '${cartItemModel[index].totalQuantity} ',
+                                                      style: nunitoStyle.copyWith(
+                                                          fontSize: 14.0,
+                                                          fontWeight:
+                                                              FontWeight.bold,
+                                                          color: AppColors
+                                                              .neonColor),
+                                                    ),
+                                                  ],
+                                                ),
+                                              ],
+                                            ),
+                                            const Divider(
+                                              color: AppColors.lightGreyColor,
+                                              thickness: 2,
+                                            ),
+                                          ],
                                         ),
                                       ),
                                     ),
                                   );
+                               
+                               
                                 })),
+                         
                           ),
                   ],
                 ),
@@ -449,4 +516,13 @@ class _AddToCartItemState extends State<AddToCartItem> {
             ),
     );
   }
+}
+
+extension StringCasingExtension on String {
+  String toCapitalized() =>
+      length > 0 ? '${this[0].toUpperCase()}${substring(1).toLowerCase()}' : '';
+  String toTitleCase() => replaceAll(RegExp(' +'), ' ')
+      .split(' ')
+      .map((str) => str.toCapitalized())
+      .join(' ');
 }

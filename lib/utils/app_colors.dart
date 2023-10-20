@@ -20,6 +20,7 @@ class AppColors {
   static const Color blueColor = Color(0xff0E78F0);
   static const Color iconColor = Color(0xffF2F7FB);
   static const Color hisColor = Color(0xff7699F6);
+  static const Color neonColor = Color(0xffD0FD3E);
   static const Color iconUnSelectedColor = Color(0xff94C2FF);
   static const Color darkOrange = Color.fromARGB(0, 247, 142, 14);
 }

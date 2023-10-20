@@ -23,6 +23,7 @@ import 'package:geolocator_platform_interface/src/enums/location_accuracy.dart'
     as geolocator;
 import 'package:location_platform_interface/location_platform_interface.dart'
     as location;
+import 'package:shimmer/shimmer.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import 'package:vff_group/animation/fade_animation.dart';
@@ -39,6 +40,7 @@ import 'package:vff_group/utils/app_colors.dart';
 import 'package:vff_group/utils/app_styles.dart';
 import 'package:http/http.dart' as http;
 import 'package:vff_group/widgets/custom_slider.dart';
+import 'package:vff_group/widgets/shimmer_card.dart';
 import 'package:widget_circular_animator/widget_circular_animator.dart';
 
 extension StringCasingExtension on String {
@@ -529,6 +531,7 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     double width = MediaQuery.of(context).size.width;
+    double height = MediaQuery.of(context).size.height;
     return Scaffold(
       key: _scaffoldKey,
       extendBodyBehindAppBar: true,
@@ -536,11 +539,11 @@ class _HomePageState extends State<HomePage> {
         backgroundColor: Colors.transparent,
         elevation: 0,
         systemOverlayStyle:
-            SystemUiOverlayStyle(statusBarBrightness: Brightness.dark),
+            const SystemUiOverlayStyle(statusBarBrightness: Brightness.dark),
       ),
       backgroundColor: Colors.black,
       body: Padding(
-          padding: EdgeInsets.fromLTRB(20, 1.2 * kToolbarHeight, 20, 20),
+          padding: const EdgeInsets.fromLTRB(20, 1.2 * kToolbarHeight, 20, 20),
           child: RefreshIndicator(
             onRefresh: _handleRefresh,
             child: CustomScrollView(
@@ -557,7 +560,8 @@ class _HomePageState extends State<HomePage> {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Row(
-                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
                                 crossAxisAlignment: CrossAxisAlignment.center,
                                 children: [
                                   Row(
@@ -580,11 +584,12 @@ class _HomePageState extends State<HomePage> {
                                                 ? CircleAvatar(
                                                     radius: 25.0,
                                                     backgroundImage:
-                                                        NetworkImage(profile_img),
+                                                        NetworkImage(
+                                                            profile_img),
                                                     backgroundColor:
                                                         Colors.transparent,
                                                   )
-                                                : Icon(Icons.person)),
+                                                : const Icon(Icons.person)),
                                       ),
                                     ],
                                   ),
@@ -599,7 +604,7 @@ class _HomePageState extends State<HomePage> {
                                         child: Container(
                                           width: 10,
                                           height: 10,
-                                          decoration: BoxDecoration(
+                                          decoration: const BoxDecoration(
                                             shape: BoxShape.circle,
                                             color: Colors.red,
                                           ),
@@ -617,7 +622,7 @@ class _HomePageState extends State<HomePage> {
                                   ),
                                 ],
                               ),
-                              SizedBox(
+                              const SizedBox(
                                 height: 10.0,
                               ),
                               Row(
@@ -655,7 +660,8 @@ class _HomePageState extends State<HomePage> {
                                 height: width * 0.01,
                               ),
                               Row(
-                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
                                 crossAxisAlignment: CrossAxisAlignment.center,
                                 children: [
                                   Text('Services',
@@ -682,7 +688,11 @@ class _HomePageState extends State<HomePage> {
                                 height: width * 0.02,
                               ),
                               showLoading
-                                  ? const LinearProgressIndicator()
+                                  ? const Center(
+                                      child: Padding(
+                                      padding: EdgeInsets.all(8.0),
+                                      child: CircularProgressIndicator(),
+                                    ))
                                   : SizedBox(
                                       height: 120,
                                       child: ListView.builder(
@@ -694,7 +704,8 @@ class _HomePageState extends State<HomePage> {
                                             Color randomColor = glb
                                                 .generateRandomColorWithOpacity();
                                             return Padding(
-                                              padding: const EdgeInsets.all(8.0),
+                                              padding:
+                                                  const EdgeInsets.all(8.0),
                                               child: InkWell(
                                                 onTap: () {
                                                   Navigator.pushNamed(context,
@@ -711,13 +722,13 @@ class _HomePageState extends State<HomePage> {
                                                         color: AppColors
                                                             .lightBlackColor,
                                                         borderRadius:
-                                                            BorderRadius.circular(
-                                                                12.0),
+                                                            BorderRadius
+                                                                .circular(12.0),
                                                       ),
                                                       child: Padding(
                                                         padding:
-                                                            const EdgeInsets.all(
-                                                                8.0),
+                                                            const EdgeInsets
+                                                                .all(8.0),
                                                         child: Container(
                                                             width: 60.0,
                                                             height: 60.0,
@@ -727,7 +738,8 @@ class _HomePageState extends State<HomePage> {
                                                                   BorderRadius
                                                                       .circular(
                                                                           50.0),
-                                                              color: randomColor,
+                                                              color:
+                                                                  randomColor,
                                                             ),
                                                             child: ClipRRect(
                                                                 borderRadius:
@@ -740,18 +752,18 @@ class _HomePageState extends State<HomePage> {
                                                                         .categoryBGUrl))),
                                                       ),
                                                     ),
-                                                    SizedBox(
+                                                    const SizedBox(
                                                       height: 10.0,
                                                     ),
                                                     Text(
                                                         categoryModel[index]
                                                             .categoryName
                                                             .toCapitalized(),
-                                                        style:
-                                                            nunitoStyle.copyWith(
+                                                        style: nunitoStyle
+                                                            .copyWith(
                                                                 fontSize: 10.0,
-                                                                color:
-                                                                    Colors.white,
+                                                                color: Colors
+                                                                    .white,
                                                                 fontWeight:
                                                                     FontWeight
                                                                         .bold,
@@ -767,7 +779,8 @@ class _HomePageState extends State<HomePage> {
                                 height: width * 0.05,
                               ),
                               Row(
-                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
                                 crossAxisAlignment: CrossAxisAlignment.center,
                                 children: [
                                   Text(activeOrdersText,
@@ -801,21 +814,20 @@ class _HomePageState extends State<HomePage> {
                                 height: width * 0.02,
                               ),
                               activeOrdersLoading
-                                  ? Padding(
-                                      padding: const EdgeInsets.all(16.0),
-                                      child: LinearProgressIndicator(),
-                                    )
+                                  ? const LinearProgressIndicator()
                                   : SizedBox(
                                       height: 105,
                                       child: noOrders
                                           ? Padding(
-                                              padding: const EdgeInsets.all(26.0),
+                                              padding:
+                                                  const EdgeInsets.all(26.0),
                                               child: Center(
                                                 child: Text(
                                                   'No Orders',
                                                   style: ralewayStyle.copyWith(
                                                       fontSize: 16.0,
-                                                      fontWeight: FontWeight.bold,
+                                                      fontWeight:
+                                                          FontWeight.bold,
                                                       color: AppColors
                                                           .titleTxtColor),
                                                 ),
@@ -823,7 +835,8 @@ class _HomePageState extends State<HomePage> {
                                             )
                                           : ListView.builder(
                                               scrollDirection: Axis.horizontal,
-                                              itemCount: activeOrdersModel.length,
+                                              itemCount:
+                                                  activeOrdersModel.length,
                                               itemBuilder: (context, index) {
                                                 // Generate a random gradient for each item
                                                 //LinearGradient randomGradient = generateRandomGradient();
@@ -883,30 +896,30 @@ class _HomePageState extends State<HomePage> {
                                                                       .center,
                                                               children: [
                                                                 Container(
-                                                                  decoration: BoxDecoration(
+                                                                  decoration: const BoxDecoration(
                                                                       shape: BoxShape
                                                                           .circle,
                                                                       color: Colors
                                                                           .white),
-                                                                  child: Padding(
+                                                                  child:
+                                                                      Padding(
                                                                     padding:
                                                                         const EdgeInsets
                                                                             .all(
                                                                             2.0),
-                                                                    child:
-                                                                        Container(
-                                                                            decoration: BoxDecoration(
-                                                                                shape: BoxShape.circle,
-                                                                                color: AppColors.lightBlackColor),
-                                                                            child: Padding(
-                                                                              padding:
-                                                                                  const EdgeInsets.all(8.0),
-                                                                              child:
-                                                                                  Icon(
-                                                                                Icons.local_laundry_service_outlined,
-                                                                                color: Colors.white,
-                                                                              ),
-                                                                            )),
+                                                                    child: Container(
+                                                                        decoration: const BoxDecoration(shape: BoxShape.circle, color: AppColors.lightBlackColor),
+                                                                        child: const Padding(
+                                                                          padding: EdgeInsets
+                                                                              .all(
+                                                                              8.0),
+                                                                          child:
+                                                                              Icon(
+                                                                            Icons.local_laundry_service_outlined,
+                                                                            color:
+                                                                                Colors.white,
+                                                                          ),
+                                                                        )),
                                                                   ),
                                                                 ),
                                                                 Padding(
@@ -928,10 +941,8 @@ class _HomePageState extends State<HomePage> {
                                                                             Text(
                                                                           'Order ID: #${activeOrdersModel[index].orderID}',
                                                                           style: nunitoStyle.copyWith(
-                                                                              fontSize:
-                                                                                  16.0,
-                                                                              color:
-                                                                                  Colors.white,
+                                                                              fontSize: 16.0,
+                                                                              color: Colors.white,
                                                                               fontWeight: FontWeight.bold,
                                                                               letterSpacing: 1),
                                                                           overflow:
@@ -974,7 +985,7 @@ class _HomePageState extends State<HomePage> {
               ],
             ),
           )),
-            floatingActionButton: SlideFromLeftAnimation(
+      floatingActionButton: SlideFromLeftAnimation(
         delay: 1.2,
         child: AnimatedFloatingActionButton(
             //Fab list
@@ -985,7 +996,6 @@ class _HomePageState extends State<HomePage> {
             animatedIconData: AnimatedIcons.list_view //To principal button
             ),
       ),
-   
     );
   }
 
@@ -1183,12 +1193,12 @@ class _NavBar extends StatelessWidget {
         Row(
           children: [
             Padding(
-              padding: EdgeInsets.only(right: 16.0),
+              padding: const EdgeInsets.only(right: 16.0),
               child: InkWell(
                 onTap: () {
                   _makePhoneCall('+918296565587');
                 },
-                child: Icon(
+                child: const Icon(
                   Icons.phone,
                   color: Colors.white,
                 ),
@@ -1220,7 +1230,7 @@ class _NavBar extends StatelessWidget {
                           backgroundImage: NetworkImage(profileImg),
                           backgroundColor: Colors.transparent,
                         )
-                      : Icon(Icons.person)),
+                      : const Icon(Icons.person)),
             ),
           ],
         )

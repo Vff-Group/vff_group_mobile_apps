@@ -18,7 +18,11 @@ class DryCleaningCart extends StatefulWidget {
   final String catId;
   final String catName;
   final String catImage;
-  const DryCleaningCart({super.key, required this.catId, required this.catName, required this.catImage});
+  const DryCleaningCart(
+      {super.key,
+      required this.catId,
+      required this.catName,
+      required this.catImage});
 
   @override
   State<DryCleaningCart> createState() => _DryCleaningCartState();
@@ -29,8 +33,8 @@ class _DryCleaningCartState extends State<DryCleaningCart> {
   var orderQuantity = "0";
   List<DryCleanItemModel> dryCleanItemModel = [];
 
-    List<DryCleanItemModel> taskModelCache = [];
-    void filterSearchResults(String query) {
+  List<DryCleanItemModel> taskModelCache = [];
+  void filterSearchResults(String query) {
     List<DryCleanItemModel> dummySearchList = [];
     dummySearchList.clear();
     dummySearchList.addAll(taskModelCache);
@@ -59,8 +63,6 @@ class _DryCleaningCartState extends State<DryCleaningCart> {
       });
     }
   }
-
-
 
   Future loadDryCleanItems() async {
     setState(() {
@@ -173,11 +175,11 @@ class _DryCleaningCartState extends State<DryCleaningCart> {
   }
 
   Future<void> _handleRefresh() async {
-    Future.delayed(Duration(milliseconds: 5));
+    Future.delayed(const Duration(milliseconds: 5));
     loadDryCleanItems();
   }
 
-TextEditingController searchController = TextEditingController();
+  TextEditingController searchController = TextEditingController();
   @override
   void initState() {
     // TODO: implement initState
@@ -191,41 +193,44 @@ TextEditingController searchController = TextEditingController();
     double width = MediaQuery.of(context).size.width;
     return Column(
       children: [
-         Padding(
-           padding: const EdgeInsets.all(8.0),
-           child: Container(
-             height: 50.0,
-             width: width - 20,
-             decoration: BoxDecoration(
-               borderRadius: BorderRadius.circular(16.0),
-               color: AppColors.lightBlackColor,
-             ),
-             child: TextFormField(
-               onChanged: ((value) {
-                 print('Value::$value');
-                 filterSearchResults(value);
-               }),
-               controller: searchController,
-               style: ralewayStyle.copyWith(
-                   fontWeight: FontWeight.w400,
-                   color: AppColors.whiteColor,
-                   fontSize: 14.0),
-               keyboardType: TextInputType.name,
-               decoration: InputDecoration(
-                   border: InputBorder.none,
-                   prefixIcon: IconButton(
-                     onPressed: () {},
-                     icon: Icon(Icons.search,color: Colors.white,),
-                   ),
-                   contentPadding: const EdgeInsets.only(top: 16.0),
-                   hintText: 'Search',
-                   hintStyle: ralewayStyle.copyWith(
-                       fontWeight: FontWeight.w400,
-                       color: AppColors.whiteColor.withOpacity(0.5),
-                       fontSize: 12.0)),
-             ),
-           ),
-         ),
+        Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Container(
+            height: 50.0,
+            width: width - 20,
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(16.0),
+              color: AppColors.lightBlackColor,
+            ),
+            child: TextFormField(
+              onChanged: ((value) {
+                print('Value::$value');
+                filterSearchResults(value);
+              }),
+              controller: searchController,
+              style: ralewayStyle.copyWith(
+                  fontWeight: FontWeight.w400,
+                  color: AppColors.whiteColor,
+                  fontSize: 14.0),
+              keyboardType: TextInputType.name,
+              decoration: InputDecoration(
+                  border: InputBorder.none,
+                  prefixIcon: IconButton(
+                    onPressed: () {},
+                    icon: const Icon(
+                      Icons.search,
+                      color: Colors.white,
+                    ),
+                  ),
+                  contentPadding: const EdgeInsets.only(top: 16.0),
+                  hintText: 'Search',
+                  hintStyle: ralewayStyle.copyWith(
+                      fontWeight: FontWeight.w400,
+                      color: AppColors.whiteColor.withOpacity(0.5),
+                      fontSize: 12.0)),
+            ),
+          ),
+        ),
         showLoading
             ? Expanded(
                 child: Shimmer.fromColors(
@@ -257,8 +262,12 @@ TextEditingController searchController = TextEditingController();
                             child: InkWell(
                               onTap: () {
                                 //Navigator.pushNamed(context, OrderDetailsRoute);
-                                _showItemDetailsBottomSheet(context,
-                                    dryCleanItemModel[index], widget.catId,widget.catName,widget.catImage);
+                                _showItemDetailsBottomSheet(
+                                    context,
+                                    dryCleanItemModel[index],
+                                    widget.catId,
+                                    widget.catName,
+                                    widget.catImage);
                               },
                               borderRadius: BorderRadius.circular(8.0),
                               child: Ink(
@@ -271,17 +280,16 @@ TextEditingController searchController = TextEditingController();
                                     Padding(
                                       padding: const EdgeInsets.all(8.0),
                                       child: Row(
-                                        
                                         children: [
                                           Row(
                                             children: [
                                               Container(
                                                 decoration: BoxDecoration(
-                                                    color: Colors.grey
-                                                        .withOpacity(0.1),
+                                                    color: AppColors
+                                                        .lightBlackColor,
                                                     borderRadius:
                                                         BorderRadius.circular(
-                                                            12.0)),
+                                                            50.0)),
                                                 child: Padding(
                                                   padding: const EdgeInsets.all(
                                                       12.0),
@@ -290,37 +298,115 @@ TextEditingController searchController = TextEditingController();
                                                         .subCategoryImage,
                                                     width: 30,
                                                     height: 30,
-                                                    color: AppColors.blueColor,
                                                   ),
                                                 ),
                                               ),
-                                              Padding(
-                                                padding: const EdgeInsets.only(
-                                                    left: 10.0),
-                                                child: Column(
-                                                  crossAxisAlignment:
-                                                      CrossAxisAlignment.start,
-                                                  children: [
-                                                    Text(
-                                                      dryCleanItemModel[index]
-                                                          .subCategoryName,
-                                                      style:
-                                                          ralewayStyle.copyWith(
-                                                        color: AppColors
-                                                            .whiteColor,
-                                                        fontSize: 16,
-                                                        fontWeight:
-                                                            FontWeight.bold,
-                                                      ),
+                                              Column(
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.start,
+                                                children: [
+                                                  Padding(
+                                                    padding:
+                                                        const EdgeInsets.only(
+                                                            left: 10.0),
+                                                    child: Column(
+                                                      crossAxisAlignment:
+                                                          CrossAxisAlignment
+                                                              .start,
+                                                      children: [
+                                                        Text(
+                                                          dryCleanItemModel[
+                                                                  index]
+                                                              .subCategoryName
+                                                              .toCapitalized(),
+                                                          style: nunitoStyle
+                                                              .copyWith(
+                                                            color: AppColors
+                                                                .whiteColor,
+                                                            fontSize: 14,
+                                                            fontWeight:
+                                                                FontWeight.bold,
+                                                          ),
+                                                        ),
+                                                        const SizedBox(
+                                                          height: 10.0,
+                                                        ),
+                                                      ],
                                                     ),
-                                                    SizedBox(
-                                                      height: 10.0,
+                                                  ),
+                                                  Padding(
+                                                    padding:
+                                                        const EdgeInsets.only(
+                                                            left: 10.0),
+                                                    child: Row(
+                                                      children: [
+                                                        Padding(
+                                                          padding:
+                                                              const EdgeInsets
+                                                                  .only(
+                                                                  right: 4.0),
+                                                          child: Icon(
+                                                            Icons
+                                                                .person_2_outlined,
+                                                            color: AppColors
+                                                                .neonColor,
+                                                            size: 15,
+                                                          ),
+                                                        ),
+                                                        Text(
+                                                          "Adult - ₹${dryCleanItemModel[index].adultCost} / ${dryCleanItemModel[index].adultType}",
+                                                          style: nunitoStyle
+                                                              .copyWith(
+                                                            color: AppColors
+                                                                .whiteColor,
+                                                            fontSize: 12,
+                                                            fontWeight:
+                                                                FontWeight.w800,
+                                                          ),
+                                                        ),
+                                                      ],
                                                     ),
-                                                  ],
-                                                ),
+                                                  ),
+                                                  SizedBox(
+                                                    height: width * 0.02,
+                                                  ),
+                                                  Padding(
+                                                    padding:
+                                                        const EdgeInsets.only(
+                                                            left: 10.0),
+                                                    child: Row(
+                                                      children: [
+                                                        Padding(
+                                                          padding:
+                                                              const EdgeInsets
+                                                                  .only(
+                                                                  right: 4.0),
+                                                          child: Icon(
+                                                            Icons.child_care,
+                                                            color: AppColors
+                                                                .neonColor,
+                                                            size: 15,
+                                                          ),
+                                                        ),
+                                                        Text(
+                                                          "Kids - ₹${dryCleanItemModel[index].kidsCost} / ${dryCleanItemModel[index].kidsType}",
+                                                          style: nunitoStyle
+                                                              .copyWith(
+                                                            color: AppColors
+                                                                .whiteColor,
+                                                            fontSize: 12,
+                                                            fontWeight:
+                                                                FontWeight.w800,
+                                                          ),
+                                                        ),
+                                                      ],
+                                                    ),
+                                                  ),
+                                                ],
                                               ),
                                             ],
                                           ),
+
                                           // Row(
                                           //   mainAxisAlignment:
                                           //       MainAxisAlignment.spaceAround,
@@ -370,7 +456,6 @@ TextEditingController searchController = TextEditingController();
                                         ],
                                       ),
                                     ),
-                                   
                                     Padding(
                                       padding: const EdgeInsets.only(top: 8.0),
                                       child: Container(
@@ -396,12 +481,16 @@ TextEditingController searchController = TextEditingController();
   }
 }
 
-void _showItemDetailsBottomSheet(
-    BuildContext context, DryCleanItemModel item, String catID,String categoryName,String categoryImage) {
+void _showItemDetailsBottomSheet(BuildContext context, DryCleanItemModel item,
+    String catID, String categoryName, String categoryImage) {
   showModalBottomSheet(
     context: context,
     builder: (BuildContext context) {
-      return ItemDetailsBottomSheet(item: item, catID: catID, categoryImage: categoryImage, categoryName: categoryName);
+      return ItemDetailsBottomSheet(
+          item: item,
+          catID: catID,
+          categoryImage: categoryImage,
+          categoryName: categoryName);
     },
   );
 }
@@ -427,7 +516,7 @@ class _OnOrders extends StatelessWidget {
               style: nunitoStyle.copyWith(
                   fontSize: 16.0, color: AppColors.textColor),
             ),
-            SizedBox(
+            const SizedBox(
               height: 15.0,
             ),
             Material(
@@ -459,4 +548,13 @@ class _OnOrders extends StatelessWidget {
       ),
     );
   }
+}
+
+extension StringCasingExtension on String {
+  String toCapitalized() =>
+      length > 0 ? '${this[0].toUpperCase()}${substring(1).toLowerCase()}' : '';
+  String toTitleCase() => replaceAll(RegExp(' +'), ' ')
+      .split(' ')
+      .map((str) => str.toCapitalized())
+      .join(' ');
 }
