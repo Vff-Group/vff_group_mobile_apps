@@ -215,6 +215,7 @@ class _HomePageState extends State<HomePage> {
     setState(() {
       activeOrdersLoading = true;
       noOrders = false;
+      activeOrdersText = "Active Orders [0]";
       activeOrdersModel = [];
     });
     final prefs = await SharedPreferences.getInstance();
@@ -393,7 +394,7 @@ class _HomePageState extends State<HomePage> {
 
     if (usrname != null && usrname.isNotEmpty) {
       var split = usrname.split(" ");
-    print(split[0]);
+
       setState(() {
         userName = split[0];
       });
@@ -831,9 +832,9 @@ class _HomePageState extends State<HomePage> {
                                                       fontSize: 12.0,
                                                       fontWeight:
                                                           FontWeight.bold,
-                                                      color: AppColors
-                                                          .whiteColor),
-                                                          textAlign: TextAlign.center,
+                                                      color:
+                                                          AppColors.whiteColor),
+                                                  textAlign: TextAlign.center,
                                                 ),
                                               ),
                                             )
@@ -853,6 +854,7 @@ class _HomePageState extends State<HomePage> {
                                                       onTap: () {
                                                         //Send to Order detail Screen
                                                         glb.orderid = "";
+                                                        glb.order_status = "0";
                                                         glb.orderid =
                                                             activeOrdersModel[
                                                                     index]
@@ -914,9 +916,8 @@ class _HomePageState extends State<HomePage> {
                                                                     child: Container(
                                                                         decoration: const BoxDecoration(shape: BoxShape.circle, color: AppColors.lightBlackColor),
                                                                         child: const Padding(
-                                                                          padding: EdgeInsets
-                                                                              .all(
-                                                                              8.0),
+                                                                          padding:
+                                                                              EdgeInsets.all(8.0),
                                                                           child:
                                                                               Icon(
                                                                             Icons.local_laundry_service_outlined,

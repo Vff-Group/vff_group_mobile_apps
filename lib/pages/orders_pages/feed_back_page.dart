@@ -59,7 +59,7 @@ class _FeedBackPageState extends State<FeedBackPage> {
       dictMap['customer_id'] = customerid;
       dictMap['feedback'] = feedback;
 
-      dictMap['pktType'] = "10";
+      dictMap['pktType'] = "21";
       dictMap['token'] = "vff";
       dictMap['uid'] = "-1";
 
@@ -206,6 +206,7 @@ class _FeedBackPageState extends State<FeedBackPage> {
                                     child: Padding(
                                       padding: const EdgeInsets.all(8.0),
                                       child: TextFormField(
+                                        controller: feedBackController,
                                         maxLines: 50,
                                         style: nunitoStyle.copyWith(
                                             fontWeight: FontWeight.w400,

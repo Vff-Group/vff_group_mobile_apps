@@ -292,6 +292,7 @@ class _CheckOutScreenState extends State<CheckOutScreen> {
         } else {
           //Send to main screen and remove back references
           glb.showSnackBar(context, 'Success', 'Payment Done Successfully');
+          Navigator.pop(context);
           Navigator.pushReplacementNamed(context, MainRoute);
         }
       }
@@ -654,12 +655,12 @@ class _CheckOutScreenState extends State<CheckOutScreen> {
                                 borderRadius: BorderRadius.circular(12.0),
                                 child: Ink(
                                     decoration: BoxDecoration(
-                                        borderRadius:
-                                            BorderRadius.circular(12.0),
-                                        gradient: LinearGradient(colors: [
+                                      borderRadius: BorderRadius.circular(12.0),
+                                      gradient: LinearGradient(colors: [
                                         Colors.green,
-                                      Colors.blue,
-                                      ]),),
+                                        Colors.blue,
+                                      ]),
+                                    ),
                                     child: Padding(
                                       padding: const EdgeInsets.symmetric(
                                           horizontal: 30.0, vertical: 10.0),

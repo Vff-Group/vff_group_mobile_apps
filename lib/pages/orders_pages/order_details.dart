@@ -68,6 +68,7 @@ class _OrderDetailsPageState extends State<OrderDetailsPage> {
       final Map dictMap = {};
 
       dictMap['order_id'] = glb.orderid;
+      dictMap['order_status'] = glb.order_status;
       dictMap['pktType'] = "10";
       dictMap['token'] = "vff";
       dictMap['uid'] = "-1";
@@ -117,7 +118,7 @@ class _OrderDetailsPageState extends State<OrderDetailsPage> {
             var profileImg = orderMap['profileImg'];
             var cancel_reason = orderMap['cancel_reason'];
             var feedback = orderMap['feedback'];
-
+            glb.deliveryBoyID = deliveryBoyId;
             var formattedDateTime =
                 glb.doubleEpochToFormattedDateTime(double.parse(epoch));
             var deliveryEpochTime =

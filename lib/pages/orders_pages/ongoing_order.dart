@@ -1,7 +1,12 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
+import 'package:vff_group/modals/order_detail_item_model.dart';
 import 'package:vff_group/routings/route_names.dart';
 import 'package:vff_group/utils/app_colors.dart';
 import 'package:vff_group/utils/app_styles.dart';
+import 'package:http/http.dart' as http;
+import 'package:vff_group/global/vffglb.dart' as glb;
 
 class OngoingOrders extends StatefulWidget {
   const OngoingOrders({super.key});
@@ -12,10 +17,128 @@ class OngoingOrders extends StatefulWidget {
 
 class _OngoingOrdersState extends State<OngoingOrders> {
   final bool _noOrders = false;
+/*
+  Future loadOrderDetails() async {
+    setState(() {
+      showLoading = true;
+    });
+    // final prefs = await SharedPreferences.getInstance();
+    // var customerid = prefs.getString('customerid');
+    if (glb.orderid.isEmpty) {
+      glb.showSnackBar(context, 'Alert!', 'Please Select the Active Order');
+      return;
+    }
+    var todaysDate = glb.getDateTodays();
+    glb.order_status = "0";
+    try {
+      var url = glb.endPoint;
+      final Map dictMap = {};
 
+      dictMap['order_id'] = glb.orderid;
+      dictMap['order_status'] = glb.order_status;
+      dictMap['pktType'] = "10";
+      dictMap['token'] = "vff";
+      dictMap['uid'] = "-1";
+
+      final response = await http.post(Uri.parse(url),
+          headers: <String, String>{
+            "Accept": "application/json",
+            'Content-Type': 'application/json; charset=UTF-8',
+          },
+          body: jsonEncode(dictMap));
+
+      if (response.statusCode == 200) {
+        var res = response.body;
+        if (res.contains("ErrorCode#2")) {
+          setState(() {
+            showLoading = false;
+          });
+          glb.showSnackBar(context, 'Error', 'No Order Details Found');
+          return;
+        } else if (res.contains("ErrorCode#8")) {
+          setState(() {
+            showLoading = false;
+          });
+          glb.showSnackBar(context, 'Error', 'Something Went Wrong');
+          return;
+        } else {
+          try {
+            Map<String, dynamic> orderMap = json.decode(response.body);
+            if (kDebugMode) {
+              print("orderMap:$orderMap");
+            }
+
+            var epoch = orderMap['epoch'];
+            var pickupDt = orderMap['pickup_dt'];
+            var clat = orderMap['clat'];
+            var clng = orderMap['clng'];
+            var deliveryBoyId = orderMap['delivery_boy_id'];
+            var delivery_boyName = orderMap['delivery_boy_name'];
+            var order_status = orderMap['order_status'];
+            var delvryBoyMobno = orderMap['delvry_boy_mobno'];
+            var deliveryDt = orderMap['delivery_dt'];
+            var houseno = orderMap['houseno'];
+            var address = orderMap['address'];
+            var landmark = orderMap['landmark'];
+            var pincode = orderMap['pincode'];
+            var deliveryEpoch = orderMap['deliveryEpoch'];
+            var profileImg = orderMap['profileImg'];
+            var cancel_reason = orderMap['cancel_reason'];
+            var feedback = orderMap['feedback'];
+            glb.deliveryBoyID = deliveryBoyId;
+            var formattedDateTime =
+                glb.doubleEpochToFormattedDateTime(double.parse(epoch));
+            var deliveryEpochTime =
+                glb.doubleEpochToFormattedDateTime(double.parse(deliveryEpoch));
+            setState(() {
+              timeOrderRecieved = formattedDateTime;
+              pickupDate = pickupDt;
+
+              deliveryBoyName = delivery_boyName;
+              if (order_status != 'Delivered') {
+                deliveryDateTime = "Not Delivered yet";
+              } else {
+                deliveryDateTime = deliveryEpochTime;
+              }
+              orderStatus = order_status;
+              houseNo = houseno;
+              addressClient = address;
+              profilePicture = profileImg;
+              deliveryMobno = delvryBoyMobno;
+              cancelReason = cancel_reason;
+              feedBack = feedback;
+            });
+
+            setState(() {
+              showLoading = false;
+            });
+            loadOrderItemsDetails();
+          } catch (e) {
+            if (kDebugMode) {
+              print(e);
+            }
+            setState(() {
+              showLoading = false;
+            });
+            return "Failed";
+          }
+        }
+      }
+    } catch (e) {
+      if (kDebugMode) {
+        print(e);
+      }
+      setState(() {
+        showLoading = false;
+      });
+      glb.handleErrors(e, context);
+    }
+  }
+*/
   Future<void> _handleRefresh() async {
-  Future.delayed(Duration(milliseconds: 5));
-}
+    Future.delayed(Duration(milliseconds: 5));
+  }
+
   @override
   Widget build(BuildContext context) {
     return RefreshIndicator(
@@ -28,7 +151,7 @@ class _OngoingOrdersState extends State<OngoingOrders> {
               child: Material(
                 color: Colors.transparent,
                 child: InkWell(
-                  onTap: (){
+                  onTap: () {
                     Navigator.pushNamed(context, OrderDetailsRoute);
                   },
                   borderRadius: BorderRadius.circular(8.0),
@@ -41,7 +164,8 @@ class _OngoingOrdersState extends State<OngoingOrders> {
                           color: Colors.grey.withOpacity(0.1), // Shadow color
                           spreadRadius: 5,
                           blurRadius: 7,
-                          offset: const Offset(0, 3), // Changes position of shadow
+                          offset:
+                              const Offset(0, 3), // Changes position of shadow
                         ),
                       ],
                     ),
@@ -57,7 +181,8 @@ class _OngoingOrdersState extends State<OngoingOrders> {
                                 Text(
                                   'Order ID:',
                                   style: nunitoStyle.copyWith(
-                                      color: AppColors.whiteColor, fontSize: 14),
+                                      color: AppColors.whiteColor,
+                                      fontSize: 14),
                                 ),
                                 Text(
                                   '#123456',
@@ -78,7 +203,8 @@ class _OngoingOrdersState extends State<OngoingOrders> {
                                 Text(
                                   'Order Date:',
                                   style: nunitoStyle.copyWith(
-                                      color: AppColors.whiteColor, fontSize: 14),
+                                      color: AppColors.whiteColor,
+                                      fontSize: 14),
                                 ),
                                 Text(
                                   '04-01-2023',
@@ -98,7 +224,8 @@ class _OngoingOrdersState extends State<OngoingOrders> {
                                 Text(
                                   'Pick Up:',
                                   style: nunitoStyle.copyWith(
-                                      color: AppColors.whiteColor, fontSize: 14),
+                                      color: AppColors.whiteColor,
+                                      fontSize: 14),
                                 ),
                                 Text(
                                   'New Vaibhav Nagar,590010',
@@ -118,7 +245,8 @@ class _OngoingOrdersState extends State<OngoingOrders> {
                                 Text(
                                   'Total Amount:',
                                   style: nunitoStyle.copyWith(
-                                      color: AppColors.whiteColor, fontSize: 14),
+                                      color: AppColors.whiteColor,
+                                      fontSize: 14),
                                 ),
                                 Text(
                                   '₹ 230/-',
@@ -153,7 +281,8 @@ class _OngoingOrdersState extends State<OngoingOrders> {
                                     borderRadius: BorderRadius.circular(12.0),
                                     child: Ink(
                                       decoration: BoxDecoration(
-                                          borderRadius: BorderRadius.circular(12.0),
+                                          borderRadius:
+                                              BorderRadius.circular(12.0),
                                           color: AppColors.dangerColor),
                                       child: Padding(
                                         padding: const EdgeInsets.all(10.0),
@@ -186,7 +315,8 @@ class _OngoingOrdersState extends State<OngoingOrders> {
                                     borderRadius: BorderRadius.circular(12.0),
                                     child: Ink(
                                       decoration: BoxDecoration(
-                                          borderRadius: BorderRadius.circular(12.0),
+                                          borderRadius:
+                                              BorderRadius.circular(12.0),
                                           color: AppColors.blueDarkColor),
                                       child: Padding(
                                         padding: const EdgeInsets.all(10.0),
@@ -214,7 +344,6 @@ class _OngoingOrdersState extends State<OngoingOrders> {
             );
           })),
     );
-  
   }
 }
 

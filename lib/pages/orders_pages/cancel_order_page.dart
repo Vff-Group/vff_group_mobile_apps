@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:vff_group/animation/fade_animation.dart';
 import 'package:vff_group/animation/slide_bottom_animation.dart';
+import 'package:vff_group/routings/route_names.dart';
 import 'package:vff_group/utils/app_colors.dart';
 import 'package:vff_group/utils/app_styles.dart';
 import 'package:http/http.dart' as http;
@@ -56,9 +57,10 @@ class _CancelOrderPageState extends State<CancelOrderPage> {
 
       dictMap['order_id'] = glb.orderid;
       dictMap['customer_id'] = customerid;
+      dictMap['delivery_boy_id'] = glb.deliveryBoyID;
       dictMap['reason'] = reasonTxt;
 
-      dictMap['pktType'] = "10";
+      dictMap['pktType'] = "20";
       dictMap['token'] = "vff";
       dictMap['uid'] = "-1";
 
@@ -84,8 +86,9 @@ class _CancelOrderPageState extends State<CancelOrderPage> {
           glb.showSnackBar(context, 'Error', 'Something Went Wrong');
           return;
         } else {
-          glb.showSnackBar(context, 'Error', 'Thank you we will work on it :)');
+          glb.showSnackBar(context, 'Success', 'Thank you we will work on it :)');
           Navigator.pop(context);
+          Navigator.pushNamed(context, MainRoute);
         }
       }
     } catch (e) {
@@ -204,6 +207,7 @@ class _CancelOrderPageState extends State<CancelOrderPage> {
                                     child: Padding(
                                       padding: const EdgeInsets.all(8.0),
                                       child: TextFormField(
+                                        controller: reasonController,
                                         maxLines: 50,
                                         style: nunitoStyle.copyWith(
                                             fontWeight: FontWeight.w400,
@@ -242,7 +246,9 @@ class _CancelOrderPageState extends State<CancelOrderPage> {
                             child: Material(
                               color: Colors.transparent,
                               child: InkWell(
-                                onTap: () {},
+                                onTap: () {
+                                  addreasonTxtDetails();
+                                },
                                 borderRadius: BorderRadius.circular(16.0),
                                 child: Ink(
                                   padding: const EdgeInsets.all(18.0),
