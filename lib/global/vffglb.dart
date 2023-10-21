@@ -12,8 +12,9 @@ import 'package:get/get_navigation/src/snackbar/snackbar.dart';
 import 'package:intl/intl.dart';
 import 'package:location/location.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:url_launcher/url_launcher.dart';
 
-String endPoint = "http://62.72.57.222:8085/"; //8085
+String endPoint = "http://62.72.57.222:3000/"; //8085
 String account_created_date = "", orderid = "";
 bool addItems = false;
 String cartQuantity = "", cartCost = "";
@@ -254,3 +255,13 @@ Color randomColor = generateRandomColorWithOpacity();
 //     }
 //   }
 // }
+
+
+void makePhoneCall(String phoneNumber) async {
+  final url = 'tel:$phoneNumber';
+  if (await canLaunch(url)) {
+    await launch(url);
+  } else {
+    throw 'Could not launch $url';
+  }
+}

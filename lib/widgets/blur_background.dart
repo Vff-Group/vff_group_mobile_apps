@@ -71,6 +71,7 @@ class _BlurBackgroundPageState extends State<BlurBackgroundPage> {
                   color: Colors.transparent
                 ),
               ),),
+                
                 SizedBox(
                 width: MediaQuery.of(context).size.width,
                 height: MediaQuery.of(context).size.height,

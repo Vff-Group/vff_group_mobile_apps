@@ -45,7 +45,7 @@ class _DeliveryLoginScreenState extends State<DeliveryLoginScreen> {
         FocusManager.instance.primaryFocus?.unfocus();
       },
       child: Scaffold(
-        backgroundColor: AppColors.whiteColor,
+        backgroundColor: Colors.black,
         body: CustomScrollView(
           slivers: [
             SliverToBoxAdapter(
@@ -72,7 +72,7 @@ class _DeliveryLoginScreenState extends State<DeliveryLoginScreen> {
                   Text(
                     'Welcome, please use valid login credentials',
                     style: nunitoStyle.copyWith(
-                      color: AppColors.textColor,
+                      color: AppColors.whiteColor,
                       fontSize: 15.0,
                       fontWeight: FontWeight.w500,
                     ),
@@ -88,7 +88,7 @@ class _DeliveryLoginScreenState extends State<DeliveryLoginScreen> {
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(8.0),
                         border: Border.all(
-                          color: AppColors.textColor, // Border color
+                          color: AppColors.whiteColor, // Border color
                           width: 0.2, // Border width
                         ),
                       ),
@@ -96,20 +96,20 @@ class _DeliveryLoginScreenState extends State<DeliveryLoginScreen> {
                         controller: userNameController,
                         style: nunitoStyle.copyWith(
                             fontWeight: FontWeight.w400,
-                            color: AppColors.titleTxtColor,
+                            color: AppColors.whiteColor,
                             fontSize: 14.0),
                         keyboardType: TextInputType.text,
                         decoration: InputDecoration(
                             border: InputBorder.none,
                             prefixIcon: IconButton(
                               onPressed: () {},
-                              icon: const Icon(Icons.person),
+                              icon: const Icon(Icons.person,color: AppColors.whiteColor,),
                             ),
                             contentPadding: const EdgeInsets.only(top: 16.0),
                             hintText: 'Username',
                             hintStyle: ralewayStyle.copyWith(
                                 fontWeight: FontWeight.w400,
-                                color: AppColors.textColor.withOpacity(0.5),
+                                color: AppColors.whiteColor.withOpacity(0.5),
                                 fontSize: 12.0)),
                       ),
                     ),
@@ -128,7 +128,7 @@ class _DeliveryLoginScreenState extends State<DeliveryLoginScreen> {
                                 width: 0.4, // Border width
                               )
                             : Border.all(
-                                color: AppColors.textColor, // Border color
+                                color: AppColors.whiteColor, // Border color
                                 width: 0.2, // Border width
                               ),
                       ),
@@ -136,7 +136,7 @@ class _DeliveryLoginScreenState extends State<DeliveryLoginScreen> {
                         controller: passwordController,
                         style: ralewayStyle.copyWith(
                             fontWeight: FontWeight.w400,
-                            color: AppColors.titleTxtColor,
+                            color: AppColors.whiteColor,
                             fontSize: 14.0),
                         keyboardType: TextInputType.text,
                         obscureText: _showPassword,
@@ -155,18 +155,18 @@ class _DeliveryLoginScreenState extends State<DeliveryLoginScreen> {
                                   }
                                 },
                                 icon: _showPassword
-                                    ? const Icon(Icons.remove_red_eye)
+                                    ? const Icon(Icons.remove_red_eye,color: AppColors.whiteColor,)
                                     : const Icon(Icons
-                                        .no_encryption_gmailerrorred_outlined)),
+                                        .no_encryption_gmailerrorred_outlined,color: AppColors.whiteColor,)),
                             prefixIcon: IconButton(
                               onPressed: () {},
-                              icon: const Icon(Icons.security),
+                              icon: const Icon(Icons.security,color: AppColors.whiteColor,),
                             ),
                             contentPadding: const EdgeInsets.only(top: 16.0),
                             hintText: 'Password',
                             hintStyle: ralewayStyle.copyWith(
                                 fontWeight: FontWeight.w400,
-                                color: AppColors.textColor.withOpacity(0.5),
+                                color: AppColors.whiteColor.withOpacity(0.5),
                                 fontSize: 12.0)),
                       ),
                     ),

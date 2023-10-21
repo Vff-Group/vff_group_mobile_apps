@@ -2,7 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:vff_group/delivery_boy_app/pages/main_pages/bottom_page_main.dart';
 import 'package:vff_group/delivery_boy_app/pages/main_pages/delivery_login.dart';
-import 'package:vff_group/pages/cart/cart_items.dart';
+import 'package:vff_group/pages/cart/cart_items_page.dart';
 import 'package:vff_group/pages/categories/dry_clean_home.dart';
 import 'package:vff_group/pages/categories/wash_fold_home.dart';
 import 'package:vff_group/pages/categories/wash_iron_home.dart';
@@ -13,6 +13,7 @@ import 'package:vff_group/pages/main_pages/detailed_pages/main_category_detailed
 import 'package:vff_group/pages/main_pages/home.dart';
 import 'package:vff_group/pages/main_pages/orders.dart';
 import 'package:vff_group/pages/onboard_laundry.dart';
+import 'package:vff_group/pages/orders_pages/cancel_order_page.dart';
 import 'package:vff_group/pages/orders_pages/checkout_page.dart';
 import 'package:vff_group/pages/orders_pages/delivery_address_page.dart';
 import 'package:vff_group/pages/orders_pages/feed_back_page.dart';
@@ -57,6 +58,8 @@ Route<dynamic> generateRoute(RouteSettings settings) {
       return _getPageRoute(const CheckOutScreen());
     case FeedbackRoute:
       return _getPageRoute(const FeedBackPage());
+    case CancelOrderRoute:
+      return _getPageRoute(const CancelOrderPage());
     case DMainRoute:
       return _getPageRoute(const BottomBarDeliveryBoy(pageDIndex: 0,));
 

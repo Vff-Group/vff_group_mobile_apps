@@ -6,6 +6,7 @@ import 'package:vff_group/delivery_boy_app/pages/main_pages/dashboard.dart';
 import 'package:vff_group/delivery_boy_app/pages/main_pages/my_order.dart';
 import 'package:vff_group/delivery_boy_app/pages/main_pages/my_profile.dart';
 import 'package:vff_group/global/vffglb.dart' as glb;
+import 'package:vff_group/utils/app_colors.dart';
 
 class BottomBarDeliveryBoy extends StatefulWidget {
   const BottomBarDeliveryBoy({super.key, required this.pageDIndex});
@@ -43,7 +44,7 @@ class _BottomBarDeliveryBoyState extends State<BottomBarDeliveryBoy> {
       body: pages[glb.pageDIndex],
       bottomNavigationBar: Container(
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: AppColors.backColor,
           boxShadow: [
             BoxShadow(
               blurRadius: 20,
@@ -64,8 +65,8 @@ class _BottomBarDeliveryBoyState extends State<BottomBarDeliveryBoy> {
               padding:
                   const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
               duration: const Duration(milliseconds: 400),
-              tabBackgroundColor: Colors.deepOrange[100]!,
-              color: Colors.orange[300],
+              tabBackgroundColor: AppColors.lightBlackColor,
+              color: Colors.deepOrange[300],
               tabs: const [
                 GButton(
                   icon: LineIcons.home,

@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:line_icons/line_icon.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:url_launcher/url_launcher.dart';
 import 'package:vff_group/animation/fade_animation.dart';
 import 'package:vff_group/animation/slide_bottom_animation.dart';
 import 'package:vff_group/animation/slide_left_animation.dart';
@@ -39,6 +40,8 @@ class _OrderDetailsPageState extends State<OrderDetailsPage> {
   String addressClient = "";
   String profilePicture = "";
   String deliveryMobno = "";
+  String cancelReason = "";
+  String feedBack = "";
   String totalItemsCount = "";
   String totalItemsPrice = "";
   List<OrderItemsModel> orderItemModel = [];
@@ -47,7 +50,6 @@ class _OrderDetailsPageState extends State<OrderDetailsPage> {
   void initState() {
     super.initState();
     loadOrderDetails();
-    loadOrderItemsDetails();
   }
 
   Future loadOrderDetails() async {
@@ -94,17 +96,17 @@ class _OrderDetailsPageState extends State<OrderDetailsPage> {
         } else {
           try {
             Map<String, dynamic> orderMap = json.decode(response.body);
-            // if (kDebugMode) {
-            //   print("categoryMap:$catMap");
-            // }
+            if (kDebugMode) {
+              print("orderMap:$orderMap");
+            }
 
             var epoch = orderMap['epoch'];
             var pickupDt = orderMap['pickup_dt'];
             var clat = orderMap['clat'];
             var clng = orderMap['clng'];
             var deliveryBoyId = orderMap['delivery_boy_id'];
-            var deliveryBoyName = orderMap['delivery_boy_name'];
-            var orderStatus = orderMap['order_status'];
+            var delivery_boyName = orderMap['delivery_boy_name'];
+            var order_status = orderMap['order_status'];
             var delvryBoyMobno = orderMap['delvry_boy_mobno'];
             var deliveryDt = orderMap['delivery_dt'];
             var houseno = orderMap['houseno'];
@@ -113,6 +115,8 @@ class _OrderDetailsPageState extends State<OrderDetailsPage> {
             var pincode = orderMap['pincode'];
             var deliveryEpoch = orderMap['deliveryEpoch'];
             var profileImg = orderMap['profileImg'];
+            var cancel_reason = orderMap['cancel_reason'];
+            var feedback = orderMap['feedback'];
 
             var formattedDateTime =
                 glb.doubleEpochToFormattedDateTime(double.parse(epoch));
@@ -121,23 +125,26 @@ class _OrderDetailsPageState extends State<OrderDetailsPage> {
             setState(() {
               timeOrderRecieved = formattedDateTime;
               pickupDate = pickupDt;
-              print('deliveryBoyName::$deliveryBoyName');
-              deliveryBoyName = deliveryBoyName;
-              if (orderStatus != 'Delivered') {
+
+              deliveryBoyName = delivery_boyName;
+              if (order_status != 'Delivered') {
                 deliveryDateTime = "Not Delivered yet";
               } else {
                 deliveryDateTime = deliveryEpochTime;
               }
-              orderStatus = orderStatus;
+              orderStatus = order_status;
               houseNo = houseno;
               addressClient = address;
               profilePicture = profileImg;
               deliveryMobno = delvryBoyMobno;
+              cancelReason = cancel_reason;
+              feedBack = feedback;
             });
 
             setState(() {
               showLoading = false;
             });
+            loadOrderItemsDetails();
           } catch (e) {
             if (kDebugMode) {
               print(e);
@@ -215,21 +222,20 @@ class _OrderDetailsPageState extends State<OrderDetailsPage> {
 
             var categoryID = cartMap['cat_id'];
             var subCategoryID = cartMap['sub_cat_id'];
-            var totalQuantity = cartMap['total_quantity'];
-            var totalPrice = cartMap['total_price'];
             var date = cartMap['dt'];
             var time = cartMap['time'];
             var orderType = cartMap['order_type'];
-            var totalAdultCost = cartMap['adult_cost'];
-            var totalKidsCost = cartMap['kids_cost'];
+            var item_cost = cartMap['item_cost'];
+            var item_quantity = cartMap['item_quantity'];
             var categoryImage = cartMap['cat_img'];
             var categoryName = cartMap['category_name'];
             var subCategoryName = cartMap['sub_cat_name'];
             var subCategoryImage = cartMap['sub_cat_img'];
-            var adultQuantity = cartMap['adult_quantity'];
-            var kidsQuantity = cartMap['kids_quantity'];
+            var type_of = cartMap['type_of'];
+
             var total_items_count = cartMap['total_items_count'];
             var total_item_price = cartMap['total_item_price'];
+            var section_type = cartMap['section_type'];
 
             setState(() {
               totalItemsCount = total_items_count;
@@ -237,56 +243,54 @@ class _OrderDetailsPageState extends State<OrderDetailsPage> {
             });
             List<String> categoryIDst = glb.strToLst2(categoryID);
             List<String> subCategoryIDlst = glb.strToLst2(subCategoryID);
-            List<String> totalQuantitylst = glb.strToLst2(totalQuantity);
-            List<String> totalPricelst = glb.strToLst2(totalPrice);
+
             List<String> datelst = glb.strToLst2(date);
             List<String> timelst = glb.strToLst2(time);
             List<String> orderTypelst = glb.strToLst2(orderType);
-            List<String> totalAdultCostlst = glb.strToLst2(totalAdultCost);
-            List<String> totalKidsCostlst = glb.strToLst2(totalKidsCost);
+            List<String> itemCostlst = glb.strToLst2(item_cost);
+            List<String> itemQuantitylst = glb.strToLst2(item_quantity);
             List<String> categoryImagelst = glb.strToLst2(categoryImage);
             List<String> categoryNamelst = glb.strToLst2(categoryName);
             List<String> subCategoryNamelst = glb.strToLst2(subCategoryName);
             List<String> subCategoryImagelst = glb.strToLst2(subCategoryImage);
-            List<String> adultQuantitylst = glb.strToLst2(adultQuantity);
-            List<String> kidsQuantitylst = glb.strToLst2(kidsQuantity);
+            List<String> typeOflst = glb.strToLst2(type_of);
+            List<String> section_typelst = glb.strToLst2(section_type);
 
             for (int i = 0; i < categoryIDst.length; i++) {
               var categoryID = categoryIDst.elementAt(i).toString();
               var subCategoryID = subCategoryIDlst.elementAt(i).toString();
-              var totalQuantity = totalQuantitylst.elementAt(i).toString();
-              var totalPrice = totalPricelst.elementAt(i).toString();
+
               var date = datelst.elementAt(i).toString();
               var time = timelst.elementAt(i).toString();
               var orderType = orderTypelst.elementAt(i).toString();
-              var totalAdultCost = totalAdultCostlst.elementAt(i).toString();
-              var totalKidsCost = totalKidsCostlst.elementAt(i).toString();
+              var itemCost = itemCostlst.elementAt(i).toString();
+              var itemQuantity = itemQuantitylst.elementAt(i).toString();
               var categoryImage = categoryImagelst.elementAt(i).toString();
               var categoryName = categoryNamelst.elementAt(i).toString();
               var subCategoryName = subCategoryNamelst.elementAt(i).toString();
               var subCategoryImage =
                   subCategoryImagelst.elementAt(i).toString();
-              var adultQuantity = adultQuantitylst.elementAt(i).toString();
-              var kidsQuantity = kidsQuantitylst.elementAt(i).toString();
+              var typeOf = typeOflst.elementAt(i).toString();
+              var section_type = section_typelst.elementAt(i).toString();
 
               var timeFormatted =
                   glb.doubleEpochToFormattedDateTime(double.parse(time));
               orderItemModel.add(OrderItemsModel(
                   categoryID: categoryID,
                   subCategoryID: subCategoryID,
-                  totalQuantity: totalQuantity,
-                  totalPrice: totalPrice,
+                  totalQuantity: itemQuantity,
+                  totalPrice: itemCost,
                   date: date,
                   time: timeFormatted,
                   orderType: orderType,
-                  totalAdultCost: totalAdultCost,
-                  totalKidsCost: totalKidsCost,
-                  quantityAdultCost: adultQuantity,
-                  quantityKidsCost: kidsQuantity,
+                  itemCost: itemCost,
+                  itemQuantity: itemQuantity,
+                  typeOf: typeOf,
                   categoryImage: categoryImage,
                   categoryName: categoryName,
                   subCategoryName: subCategoryName,
-                  subCategoryImage: subCategoryImage));
+                  subCategoryImage: subCategoryImage,
+                  sectionType: section_type));
             }
             setState(() {
               showItemsLoading = false;
@@ -362,14 +366,12 @@ class _OrderDetailsPageState extends State<OrderDetailsPage> {
                                 )
                               : Column(
                                   children: [
-                                    FadeAnimation(
-                                        delay: 0.5,
-                                        child: _OrderDetails(
-                                            orderStatus: orderStatus,
-                                            orderID: glb.orderid,
-                                            pickUpDateTime: timeOrderRecieved,
-                                            deliveryDateTime: deliveryDateTime,
-                                            addressClient: addressClient)),
+                                    _OrderDetails(
+                                        orderStatus: orderStatus,
+                                        orderID: glb.orderid,
+                                        pickUpDateTime: timeOrderRecieved,
+                                        deliveryDateTime: deliveryDateTime,
+                                        addressClient: addressClient),
                                     const Divider(
                                       color: AppColors.whiteColor,
                                       thickness: 0.5,
@@ -378,7 +380,9 @@ class _OrderDetailsPageState extends State<OrderDetailsPage> {
                                         width: width,
                                         profilePicture: profilePicture,
                                         deliveryBoyName: deliveryBoyName,
-                                        deliveryMobno: deliveryMobno),
+                                        deliveryMobno: deliveryMobno,
+                                        feedBack: feedBack,
+                                        orderStatus: orderStatus),
                                     const Divider(
                                       color: AppColors.whiteColor,
                                       thickness: 0.5,
@@ -390,184 +394,270 @@ class _OrderDetailsPageState extends State<OrderDetailsPage> {
                                     ),
                                     itemsNotFound
                                         ? Padding(
-                                            padding:  EdgeInsets.zero,
-                                            child: Center(
-                                                child: Text(
-                                              'NO LAUNDRY ITEMS FOUND\n Please Add Items',
-                                              style: ralewayStyle.copyWith(
-                                                  color: Colors.white,
-                                                  fontSize: 12.0,
-                                                  letterSpacing: 1),
-                                              textAlign: TextAlign.center,
-                                            )),
-                                          )
-                                        : Padding(
-                                          padding: const EdgeInsets.all(8.0),
-                                          child: ListView.builder(
-                                             padding: EdgeInsets.zero,
-                                               shrinkWrap: true,
-                                              itemCount:
-                                                  orderItemModel.length,
-                                              itemBuilder: ((context, index) {
-                                                return Padding(
-                                                  padding:
-                                                      const EdgeInsets.all(
-                                                          12.0),
-                                                  child: Container(
-                                                    decoration: BoxDecoration(
-                                                      borderRadius:
-                                                          BorderRadius
-                                                              .circular(12.0),
-                                                      color: AppColors
-                                                          .lightBlackColor,
-                                                    ),
-                                                    child: Padding(
-                                                      padding:
-                                                          const EdgeInsets
-                                                              .all(16.0),
-                                                      child: Column(
-                                                        children: [
-                                                          Row(
-                                                            mainAxisAlignment:
-                                                                MainAxisAlignment
-                                                                    .spaceBetween,
-                                                            children: [
-                                                              Text(
-                                                                orderItemModel[
-                                                                        index]
-                                                                    .categoryName
-                                                                    .toCapitalized(),
-                                                                style: ralewayStyle
-                                                                    .copyWith(
-                                                                  fontSize:
-                                                                      14.0,
-                                                                  fontWeight:
-                                                                      FontWeight
-                                                                          .bold,
-                                                                  color: AppColors
-                                                                      .neonColor,
+                                            padding: EdgeInsets.zero,
+                                            child: Column(
+                                              children: [
+                                                Text(
+                                                  'NO LAUNDRY ITEMS FOUND\n Please Add Items',
+                                                  style: ralewayStyle.copyWith(
+                                                      color: Colors.white,
+                                                      fontSize: 12.0,
+                                                      letterSpacing: 1),
+                                                  textAlign: TextAlign.center,
+                                                ),
+                                                cancelReason == "NA"
+                                                    ? Padding(
+                                                        padding:
+                                                            const EdgeInsets
+                                                                .only(
+                                                                top: 10.0),
+                                                        child:
+                                                            SlideFromBottomAnimation(
+                                                          delay: 0.5,
+                                                          child: Padding(
+                                                            padding:
+                                                                const EdgeInsets
+                                                                    .all(8.0),
+                                                            child: Material(
+                                                              color: Colors
+                                                                  .transparent,
+                                                              child: InkWell(
+                                                                onTap: () {
+                                                                  Navigator.pushNamed(
+                                                                      context,
+                                                                      CancelOrderRoute);
+                                                                },
+                                                                borderRadius:
+                                                                    BorderRadius
+                                                                        .circular(
+                                                                            16.0),
+                                                                child: Ink(
+                                                                  padding:
+                                                                      const EdgeInsets
+                                                                          .all(
+                                                                          16.0),
+                                                                  decoration:
+                                                                      BoxDecoration(
+                                                                          borderRadius: BorderRadius.circular(
+                                                                              16.0),
+                                                                          gradient:
+                                                                              LinearGradient(colors: [
+                                                                            Colors.red,
+                                                                            AppColors.neonColor,
+                                                                          ])),
+                                                                  child: Row(
+                                                                    mainAxisAlignment:
+                                                                        MainAxisAlignment
+                                                                            .spaceBetween,
+                                                                    children: [
+                                                                      Text(
+                                                                        'Cancel Order',
+                                                                        style: nunitoStyle
+                                                                            .copyWith(
+                                                                          fontWeight:
+                                                                              FontWeight.w700,
+                                                                          color:
+                                                                              AppColors.whiteColor,
+                                                                          fontSize:
+                                                                              16.0,
+                                                                        ),
+                                                                      ),
+                                                                      const Icon(
+                                                                        Icons
+                                                                            .arrow_right_outlined,
+                                                                        color: Colors
+                                                                            .white,
+                                                                      )
+                                                                    ],
+                                                                  ),
                                                                 ),
                                                               ),
-                                                            ],
+                                                            ),
                                                           ),
-                                                          SizedBox(
-                                                            height:
-                                                                width * 0.03,
-                                                          ),
-                                                          Row(
-                                                            mainAxisAlignment:
-                                                                MainAxisAlignment
-                                                                    .spaceBetween,
-                                                            children: [
-                                                              Row(
-                                                                children: [
-                                                                  if (orderItemModel[index]
-                                                                          .subCategoryImage ==
-                                                                      'NA')
-                                                                    ClipRRect(
-                                                                      borderRadius:
-                                                                          BorderRadius.circular(2.0),
-                                                                      child: Image
+                                                        ),
+                                                      )
+                                                    : Text('')
+                                              ],
+                                            ),
+                                          )
+                                        : SizedBox(
+                                            height: 300,
+                                            child: ListView.builder(
+                                                padding: EdgeInsets.zero,
+                                                shrinkWrap: true,
+                                                itemCount:
+                                                    orderItemModel.length,
+                                                itemBuilder: ((context, index) {
+                                                  return Padding(
+                                                    padding:
+                                                        const EdgeInsets.all(
+                                                            12.0),
+                                                    child: Container(
+                                                      decoration: BoxDecoration(
+                                                        borderRadius:
+                                                            BorderRadius
+                                                                .circular(12.0),
+                                                        color: AppColors
+                                                            .lightBlackColor,
+                                                      ),
+                                                      child: Padding(
+                                                        padding:
+                                                            const EdgeInsets
+                                                                .all(16.0),
+                                                        child: Column(
+                                                          children: [
+                                                            Row(
+                                                              mainAxisAlignment:
+                                                                  MainAxisAlignment
+                                                                      .spaceBetween,
+                                                              children: [
+                                                                Text(
+                                                                  orderItemModel[
+                                                                          index]
+                                                                      .categoryName
+                                                                      .toCapitalized(),
+                                                                  style: ralewayStyle
+                                                                      .copyWith(
+                                                                    fontSize:
+                                                                        14.0,
+                                                                    fontWeight:
+                                                                        FontWeight
+                                                                            .bold,
+                                                                    color: AppColors
+                                                                        .neonColor,
+                                                                  ),
+                                                                ),
+                                                              ],
+                                                            ),
+                                                            SizedBox(
+                                                              height:
+                                                                  width * 0.03,
+                                                            ),
+                                                            Row(
+                                                              mainAxisAlignment:
+                                                                  MainAxisAlignment
+                                                                      .spaceBetween,
+                                                              children: [
+                                                                Row(
+                                                                  children: [
+                                                                    if (orderItemModel[index]
+                                                                            .subCategoryImage ==
+                                                                        'NA')
+                                                                      ClipRRect(
+                                                                        borderRadius:
+                                                                            BorderRadius.circular(2.0),
+                                                                        child: Image
+                                                                            .network(
+                                                                          orderItemModel[index]
+                                                                              .categoryImage,
+                                                                          width:
+                                                                              50,
+                                                                          height:
+                                                                              50,
+                                                                        ),
+                                                                      )
+                                                                    else
+                                                                      Image
                                                                           .network(
                                                                         orderItemModel[index]
-                                                                            .categoryImage,
+                                                                            .subCategoryImage,
                                                                         width:
                                                                             50,
                                                                         height:
                                                                             50,
                                                                       ),
-                                                                    )
-                                                                  else
-                                                                    Image
-                                                                        .network(
-                                                                      orderItemModel[index]
-                                                                          .subCategoryImage,
-                                                                      width:
-                                                                          50,
-                                                                      height:
-                                                                          50,
+                                                                    SizedBox(
+                                                                      width: width *
+                                                                          0.04,
                                                                     ),
-                                                                  SizedBox(
-                                                                    width: width *
-                                                                        0.04,
-                                                                  ),
-                                                                  Column(
-                                                                    crossAxisAlignment:
-                                                                        CrossAxisAlignment
-                                                                            .start,
-                                                                    children: [
-                                                                      orderItemModel[index].subCategoryName ==
-                                                                              'NA'
-                                                                          ? Text(
-                                                                              orderItemModel[index].categoryName.toCapitalized(),
-                                                                              style: nunitoStyle.copyWith(
-                                                                                fontSize: 14.0,
-                                                                                fontWeight: FontWeight.normal,
-                                                                                color: AppColors.whiteColor,
+                                                                    Column(
+                                                                      crossAxisAlignment:
+                                                                          CrossAxisAlignment
+                                                                              .start,
+                                                                      children: [
+                                                                        orderItemModel[index].subCategoryName ==
+                                                                                'NA'
+                                                                            ? Text(
+                                                                                orderItemModel[index].categoryName.toCapitalized(),
+                                                                                style: nunitoStyle.copyWith(
+                                                                                  fontSize: 14.0,
+                                                                                  fontWeight: FontWeight.normal,
+                                                                                  color: AppColors.whiteColor,
+                                                                                ),
+                                                                              )
+                                                                            : Row(
+                                                                                children: [
+                                                                                  Text(
+                                                                                    orderItemModel[index].subCategoryName.toCapitalized(),
+                                                                                    style: nunitoStyle.copyWith(
+                                                                                      fontSize: 14.0,
+                                                                                      fontWeight: FontWeight.normal,
+                                                                                      color: AppColors.whiteColor,
+                                                                                    ),
+                                                                                  ),
+                                                                                  Text(
+                                                                                    ' - ${orderItemModel[index].sectionType.toCapitalized()}',
+                                                                                    style: nunitoStyle.copyWith(
+                                                                                      fontSize: 14.0,
+                                                                                      fontWeight: FontWeight.normal,
+                                                                                      color: AppColors.whiteColor,
+                                                                                    ),
+                                                                                  ),
+                                                                                ],
                                                                               ),
-                                                                            )
-                                                                          : Text(
-                                                                              orderItemModel[index].subCategoryName.toCapitalized(),
-                                                                              style: nunitoStyle.copyWith(
-                                                                                fontSize: 14.0,
-                                                                                fontWeight: FontWeight.normal,
-                                                                                color: AppColors.whiteColor,
-                                                                              ),
-                                                                            ),
-                                                                      SizedBox(
-                                                                        height:
-                                                                            height * 0.01,
-                                                                      ),
-                                                                      Text(
-                                                                        '₹${orderItemModel[index].totalPrice}',
-                                                                        style: nunitoStyle.copyWith(
-                                                                            fontSize: 14.0,
-                                                                            fontWeight: FontWeight.bold,
-                                                                            color: AppColors.neonColor),
-                                                                      ),
-                                                                    ],
-                                                                  )
-                                                                ],
-                                                              ),
-                                                              Row(
-                                                                children: [
-                                                                  Text(
-                                                                    'Qty: ',
-                                                                    style: nunitoStyle.copyWith(
-                                                                        fontSize:
-                                                                            14.0,
-                                                                        fontWeight: FontWeight
-                                                                            .bold,
-                                                                        color:
-                                                                            AppColors.neonColor),
-                                                                  ),
-                                                                  Text(
-                                                                    '${orderItemModel[index].totalQuantity} ',
-                                                                    style: nunitoStyle.copyWith(
-                                                                        fontSize:
-                                                                            14.0,
-                                                                        fontWeight: FontWeight
-                                                                            .bold,
-                                                                        color:
-                                                                            AppColors.neonColor),
-                                                                  ),
-                                                                ],
-                                                              ),
-                                                            ],
-                                                          ),
-                                                          const Divider(
-                                                            color: AppColors
-                                                                .lightGreyColor,
-                                                            thickness: 0.1,
-                                                          ),
-                                                        ],
+                                                                        SizedBox(
+                                                                          height:
+                                                                              height * 0.01,
+                                                                        ),
+                                                                        Text(
+                                                                          '₹${orderItemModel[index].totalPrice}',
+                                                                          style: nunitoStyle.copyWith(
+                                                                              fontSize: 14.0,
+                                                                              fontWeight: FontWeight.bold,
+                                                                              color: AppColors.neonColor),
+                                                                        ),
+                                                                      ],
+                                                                    )
+                                                                  ],
+                                                                ),
+                                                                Row(
+                                                                  children: [
+                                                                    Text(
+                                                                      'Qty: ',
+                                                                      style: nunitoStyle.copyWith(
+                                                                          fontSize:
+                                                                              14.0,
+                                                                          fontWeight: FontWeight
+                                                                              .bold,
+                                                                          color:
+                                                                              AppColors.neonColor),
+                                                                    ),
+                                                                    Text(
+                                                                      '${orderItemModel[index].totalQuantity} ',
+                                                                      style: nunitoStyle.copyWith(
+                                                                          fontSize:
+                                                                              14.0,
+                                                                          fontWeight: FontWeight
+                                                                              .bold,
+                                                                          color:
+                                                                              AppColors.neonColor),
+                                                                    ),
+                                                                  ],
+                                                                ),
+                                                              ],
+                                                            ),
+                                                            const Divider(
+                                                              color: AppColors
+                                                                  .lightGreyColor,
+                                                              thickness: 0.1,
+                                                            ),
+                                                          ],
+                                                        ),
                                                       ),
                                                     ),
-                                                  ),
-                                                );
-                                              })),
-                                        
-                                        )
+                                                  );
+                                                })),
+                                          )
                                   ],
                                 )
                         ],
@@ -831,7 +921,7 @@ class _TotalClothesCount extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Text(
-            'Total Clothes',
+            'Total Laundry',
             style: nunitoStyle.copyWith(
               fontSize: 14.0,
               fontWeight: FontWeight.normal,
@@ -855,9 +945,9 @@ class _TotalClothesCount extends StatelessWidget {
                       ),
                     )
                   : Text(
-                      '$totalQuantity selected',
+                      '$totalQuantity items',
                       style: nunitoStyle.copyWith(
-                          fontSize: 15.0,
+                          fontSize: 14.0,
                           fontWeight: FontWeight.w600,
                           color: AppColors.neonColor),
                     )
@@ -874,12 +964,16 @@ class _DeliveryBoyDetails extends StatelessWidget {
     required this.profilePicture,
     required this.deliveryBoyName,
     required this.deliveryMobno,
+    required this.feedBack,
+    required this.orderStatus,
   });
 
   final double width;
   final String? profilePicture;
   final String deliveryBoyName;
   final String deliveryMobno;
+  final String feedBack;
+  final String orderStatus;
 
   @override
   Widget build(BuildContext context) {
@@ -925,56 +1019,109 @@ class _DeliveryBoyDetails extends StatelessWidget {
                       style: nunitoStyle.copyWith(
                           fontSize: 18.0,
                           fontWeight: FontWeight.w600,
-                          color: Colors.green),
+                          color: AppColors.neonColor),
                     ),
                     Text(
                       deliveryMobno,
                       style: nunitoStyle.copyWith(
                           fontSize: 14.0,
                           fontWeight: FontWeight.normal,
-                          color: AppColors.btnColor),
+                          color: AppColors.whiteColor),
                     ),
                   ],
                 ),
               ],
             ),
-            SlideFromRightAnimation(
-              delay: 0.9,
-              child: Material(
-                color: Colors.transparent,
-                child: InkWell(
-                  onTap: () {
-                    Navigator.pushNamed(context, FeedbackRoute);
-                  },
-                  borderRadius: BorderRadius.circular(10.0),
-                  child: Ink(
-                    decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(10.0)),
-                    child: Padding(
-                      padding: const EdgeInsets.all(2.0),
-                      child: Column(
-                        children: [
-                          const Icon(
-                            Icons.message,
-                            color: AppColors.neonColor,
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.all(1.0),
-                            child: Text(
-                              'Feedback',
-                              style: nunitoStyle.copyWith(
-                                  fontSize: 12.0,
-                                  fontWeight: FontWeight.normal,
-                                  color: AppColors.neonColor),
+            feedBack == "NA" && orderStatus == "Delivered"
+                ? SlideFromRightAnimation(
+                    delay: 0.9,
+                    child: Material(
+                      color: Colors.transparent,
+                      child: InkWell(
+                        onTap: () {
+                          Navigator.pushNamed(context, FeedbackRoute);
+                        },
+                        borderRadius: BorderRadius.circular(10.0),
+                        child: Ink(
+                          decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(10.0)),
+                          child: Padding(
+                            padding: const EdgeInsets.all(2.0),
+                            child: Column(
+                              children: [
+                                const Icon(
+                                  Icons.message,
+                                  color: AppColors.neonColor,
+                                ),
+                                Padding(
+                                  padding: const EdgeInsets.all(1.0),
+                                  child: Text(
+                                    'Feedback',
+                                    style: nunitoStyle.copyWith(
+                                        fontSize: 12.0,
+                                        fontWeight: FontWeight.normal,
+                                        color: AppColors.neonColor),
+                                  ),
+                                ),
+                              ],
                             ),
                           ),
-                        ],
+                        ),
                       ),
                     ),
-                  ),
-                ),
-              ),
-            )
+                  )
+                : SlideFromRightAnimation(
+                    delay: 0.9,
+                    child: Material(
+                      color: Colors.transparent,
+                      child: InkWell(
+                        onTap: () {
+                          if (orderStatus == "Accepted") {
+                            _makePhoneCall(deliveryMobno);
+                          } else if (orderStatus == "Delivered") {
+                            glb.showSnackBar(context, 'Alert',
+                                "Order is Delivered so you can't call this delivery boy");
+                            return;
+                          } else if (orderStatus == "Processing") {
+                            glb.showSnackBar(
+                                context, 'Alert', "Order is yet in Processing");
+                            return;
+                          } else {
+                            glb.showSnackBar(context, 'Alert',
+                                "Order is not yet assigned to Delivery agent");
+                            return;
+                          }
+                        },
+                        borderRadius: BorderRadius.circular(10.0),
+                        child: Ink(
+                          decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(10.0)),
+                          child: Padding(
+                            padding: const EdgeInsets.all(2.0),
+                            child: Row(
+                              children: [
+                                const Icon(
+                                  Icons.phone,
+                                  color: AppColors.neonColor,
+                                  size: 20,
+                                ),
+                                Padding(
+                                  padding: const EdgeInsets.all(1.0),
+                                  child: Text(
+                                    'Call',
+                                    style: nunitoStyle.copyWith(
+                                        fontSize: 12.0,
+                                        fontWeight: FontWeight.normal,
+                                        color: AppColors.neonColor),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                  )
           ],
         ),
       ),
@@ -1011,38 +1158,59 @@ class _OrderDetails extends StatelessWidget {
                 children: [
                   Container(
                     decoration: BoxDecoration(
-                        color: AppColors.lightBlackColor,
+                        color: orderStatus == "Accepted" ||
+                                orderStatus == "Payment Done" ||
+                                orderStatus == "Processing" ||
+                                orderStatus == "Delivered"
+                            ? AppColors.neonColor
+                            : AppColors.lightBlackColor,
                         borderRadius: BorderRadius.circular(50.0)),
                     child: Padding(
                       padding: const EdgeInsets.all(8.0),
                       child: Icon(
                         Icons.delivery_dining_sharp,
-                        color: AppColors.whiteColor,
+                        color: orderStatus == "Accepted" ||
+                                orderStatus == "Payment Done" ||
+                                orderStatus == "Processing" ||
+                                orderStatus == "Delivered"
+                            ? AppColors.backColor
+                            : AppColors.whiteColor,
                       ),
                     ),
                   ),
                   Container(
                     width: 100,
                     height: 1,
-                    color: Colors.white,
+                    color: orderStatus == "Processing" ||
+                            orderStatus == "Delivered"
+                        ? AppColors.neonColor
+                        : AppColors.whiteColor,
                   ),
                   Container(
                     decoration: BoxDecoration(
-                        color: AppColors.lightBlackColor,
+                        color: orderStatus == "Processing" ||
+                                orderStatus == "Delivered"
+                            ? AppColors.neonColor
+                            : AppColors.lightBlackColor,
                         borderRadius: BorderRadius.circular(50.0)),
                     child: Padding(
                       padding: const EdgeInsets.all(8.0),
                       child: Icon(
                         Icons.local_laundry_service_outlined,
-                        color: AppColors.whiteColor,
+                        color: orderStatus == "Processing" ||
+                                orderStatus == "Delivered"
+                            ? AppColors.backColor
+                            : AppColors.whiteColor,
                       ),
                     ),
                   ),
                   Container(
-                    width: 100,
-                    height: 1,
-                    color: Colors.white,
-                  ),
+                      width: 100,
+                      height: 1,
+                      color: orderStatus == "Processing" ||
+                              orderStatus == "Delivered"
+                          ? AppColors.neonColor
+                          : AppColors.whiteColor),
                   Container(
                     decoration: BoxDecoration(
                         color: AppColors.lightBlackColor,
@@ -1250,4 +1418,12 @@ extension StringCasingExtension on String {
       .split(' ')
       .map((str) => str.toCapitalized())
       .join(' ');
+}
+
+Future<void> _makePhoneCall(String phoneNumber) async {
+  final Uri launchUri = Uri(
+    scheme: 'tel',
+    path: phoneNumber,
+  );
+  await launchUrl(launchUri);
 }

@@ -392,8 +392,10 @@ class _HomePageState extends State<HomePage> {
     }
 
     if (usrname != null && usrname.isNotEmpty) {
+      var split = usrname.split(" ");
+    print(split[0]);
       setState(() {
-        userName = usrname;
+        userName = split[0];
       });
     }
 
@@ -536,6 +538,7 @@ class _HomePageState extends State<HomePage> {
       key: _scaffoldKey,
       extendBodyBehindAppBar: true,
       appBar: AppBar(
+        automaticallyImplyLeading: false,
         backgroundColor: Colors.transparent,
         elevation: 0,
         systemOverlayStyle:
@@ -632,7 +635,7 @@ class _HomePageState extends State<HomePage> {
                                           color: Colors.white,
                                           fontSize: 25.0,
                                           fontWeight: FontWeight.normal)),
-                                  Text('Shaheed 👋',
+                                  Text('${userName} 👋',
                                       style: ralewayStyle.copyWith(
                                           color: Colors.white,
                                           fontSize: 25.0,
@@ -823,13 +826,14 @@ class _HomePageState extends State<HomePage> {
                                                   const EdgeInsets.all(26.0),
                                               child: Center(
                                                 child: Text(
-                                                  'No Orders',
+                                                  'No Active Order Found\nIf you have Requested a Pickup Request wait until a Delivery boy is assigned to you.',
                                                   style: ralewayStyle.copyWith(
-                                                      fontSize: 16.0,
+                                                      fontSize: 12.0,
                                                       fontWeight:
                                                           FontWeight.bold,
                                                       color: AppColors
-                                                          .titleTxtColor),
+                                                          .whiteColor),
+                                                          textAlign: TextAlign.center,
                                                 ),
                                               ),
                                             )

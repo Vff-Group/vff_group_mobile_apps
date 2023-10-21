@@ -163,6 +163,42 @@ class _PlaceOrderPageState extends State<PlaceOrderPage> {
     loadOtherLaundryCategoryItems();
   }
 
+  List<Map<String, dynamic>> createJsonData(laundryQuantity) {
+    List<Map<String, dynamic>> selectedItems = [];
+    var typeOf = "Kgs";
+    print("order_type::$order_type");
+    if (order_type.contains('Regular')) {
+      total_price = (double.parse(regularPrice) * int.parse(laundryQuantity));
+      actual_cost = double.parse(regularPrice);
+      typeOf = regularType;
+    } else if (order_type.contains("Express")) {
+      total_price = (double.parse(expressPrice) * int.parse(laundryQuantity));
+      actual_cost = double.parse(expressPrice);
+      typeOf = expressType;
+    } else {
+      total_price = (double.parse(offerPrice) * int.parse(laundryQuantity));
+      actual_cost = double.parse(offerPrice);
+      typeOf = offerPrice;
+    }
+
+    total_quantity = int.parse(laundryQuantity);
+    print("total_price::$total_price");
+    print("total_quantity::$total_quantity");
+
+    selectedItems.add({
+      'subCategoryName': 'NA',
+      'item_quantity': total_quantity,
+      'sub_cat_name': 'NA',
+      'actual_cost': actual_cost,
+      'cost': total_price,
+      'type_of': typeOf,
+      'sub_cat_id': '-1',
+      'sub_cat_img': 'NA',
+      'section_type': 'NA'
+    });
+    return selectedItems;
+  }
+
   Future addLaundryItemToCart(String laundryQuantity) async {
     glb.prefs = await SharedPreferences.getInstance();
 
@@ -175,21 +211,7 @@ class _PlaceOrderPageState extends State<PlaceOrderPage> {
           context, 'Alert', 'Please use valid credentials and Login In Again');
       return;
     }
-    print("order_type::$order_type");
-    if (order_type.contains('Regular')) {
-      total_price = (double.parse(regularPrice) * int.parse(laundryQuantity));
-      actual_cost = double.parse(regularPrice);
-    } else if (order_type.contains("Express")) {
-      total_price = (double.parse(expressPrice) * int.parse(laundryQuantity));
-      actual_cost = double.parse(expressPrice);
-    } else {
-      total_price = (double.parse(offerPrice) * int.parse(laundryQuantity));
-      actual_cost = double.parse(offerPrice);
-    }
-
-    total_quantity = int.parse(laundryQuantity);
-    print("total_price::$total_price");
-    print("total_quantity::$total_quantity");
+    var allItemsJson = createJsonData(laundryQuantity);
 
     try {
       var url = glb.endPoint;
@@ -202,15 +224,9 @@ class _PlaceOrderPageState extends State<PlaceOrderPage> {
       dictMap['customer_id'] = customer_id;
       dictMap['order_id'] = order_id;
       dictMap['order_type'] = order_type;
-      dictMap['adult_cost'] = 0.0;
-      dictMap['kids_cost'] = 0.0;
-      dictMap['adult_quantity'] = 0;
-      dictMap['kids_quantity'] = 0;
+      dictMap['all_items'] = allItemsJson;
       dictMap['cat_img'] = categoryImage;
       dictMap['cat_name'] = categoryname;
-      dictMap['sub_cat_name'] = 'NA';
-      dictMap['sub_cat_img'] = 'NA';
-      dictMap['actual_cost'] = actual_cost;
       dictMap['pktType'] = "14";
       dictMap['token'] = "vff";
       dictMap['uid'] = "-1";
@@ -235,6 +251,7 @@ class _PlaceOrderPageState extends State<PlaceOrderPage> {
           setState(() {
             quantityController.text = '';
           });
+          Navigator.pushNamed(context, MyCartRoute);
           return;
         }
       }
@@ -247,106 +264,45 @@ class _PlaceOrderPageState extends State<PlaceOrderPage> {
   }
 
   @override
+  void dispose() {
+    // TODO: implement dispose
+    super.dispose();
+    FocusManager.instance.primaryFocus?.unfocus();
+  }
+
+  @override
   Widget build(BuildContext context) {
     double height = MediaQuery.of(context).size.height;
     double width = MediaQuery.of(context).size.width;
-    return Padding(
-      padding: const EdgeInsets.all(8.0),
-      child: CustomScrollView(
-        slivers: [
-          SliverToBoxAdapter(
-            child: Column(
-              children: [
-                showLoading
-                    ? Padding(
-                        padding: const EdgeInsets.all(30.0),
-                        child: Center(child: CircularProgressIndicator()),
-                      )
-                    : Container(
-                        child: Column(
-                          children: [
-                            const SizedBox(
-                              height: 10.0,
-                            ),
-                            Padding(
-                              padding: const EdgeInsets.symmetric(
-                                  vertical: 20.0, horizontal: 12.0),
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
-                                    children: [
-                                      Text(
-                                        'Add Quantity in Kgs',
-                                        style: nunitoStyle.copyWith(
-                                            fontSize: 14.0,
-                                            fontWeight: FontWeight.bold,
-                                            color: AppColors.whiteColor),
-                                      ),
-                                    ],
-                                  ),
-                                  SizedBox(
-                                    height: width * 0.03,
-                                  ),
-                                  Container(
-                                    height: 50.0,
-                                    width: width,
-                                    decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(8.0),
-                                      border: Border.all(
-                                        color: AppColors
-                                            .whiteColor, // Border color
-                                        width: 0.2, // Border width
-                                      ),
-                                    ),
-                                    child: TextFormField(
-                                      controller: quantityController,
-                                      style: nunitoStyle.copyWith(
-                                          fontWeight: FontWeight.w400,
-                                          color: AppColors.whiteColor,
-                                          fontSize: 14.0),
-                                      keyboardType: TextInputType.number,
-                                      onChanged: (value) {
-                                        // Update the quantity value as the user types
-                                        widget.updateQuantity(value);
-                                        // You can perform actions based on the updated value here
-                                        print('Quantity changed to: $value');
-                                      },
-                                      decoration: InputDecoration(
-                                          border: InputBorder.none,
-                                          prefixIcon: IconButton(
-                                            onPressed: () {},
-                                            icon: const Icon(
-                                              Icons.local_laundry_service,
-                                              color: Colors.white,
-                                            ),
-                                          ),
-                                          contentPadding:
-                                              const EdgeInsets.only(top: 16.0),
-                                          hintText: 'Quantity in Kgs',
-                                          hintStyle: ralewayStyle.copyWith(
-                                              fontWeight: FontWeight.w400,
-                                              color: AppColors.whiteColor
-                                                  .withOpacity(0.5),
-                                              fontSize: 12.0)),
-                                    ),
-                                  ),
-                                ],
+    return GestureDetector(
+      onTap: () {
+        FocusManager.instance.primaryFocus?.unfocus();
+      },
+      child: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: CustomScrollView(
+          slivers: [
+            SliverToBoxAdapter(
+              child: Column(
+                children: [
+                  showLoading
+                      ? Padding(
+                          padding: const EdgeInsets.all(30.0),
+                          child: Center(child: CircularProgressIndicator()),
+                        )
+                      : Container(
+                          child: Column(
+                            children: [
+                              const SizedBox(
+                                height: 10.0,
                               ),
-                            ),
-                            const SizedBox(
-                              height: 10.0,
-                            ),
-                            Container(
-                              decoration: BoxDecoration(
-                                
-                                borderRadius: BorderRadius.circular(12.0)
+                              ClipOval(child: Image.network(categoryImage,width: 200,height: 200,)),
+                              const SizedBox(
+                                height: 10.0,
                               ),
-                              child: Padding(
+                              Padding(
                                 padding: const EdgeInsets.symmetric(
-                                    vertical: 30.0, horizontal: 12.0),
+                                    vertical: 20.0, horizontal: 12.0),
                                 child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
@@ -355,8 +311,8 @@ class _PlaceOrderPageState extends State<PlaceOrderPage> {
                                           MainAxisAlignment.spaceBetween,
                                       children: [
                                         Text(
-                                          'Laundry Type',
-                                          style: ralewayStyle.copyWith(
+                                          'Add Quantity in Kgs',
+                                          style: nunitoStyle.copyWith(
                                               fontSize: 14.0,
                                               fontWeight: FontWeight.bold,
                                               color: AppColors.whiteColor),
@@ -370,312 +326,402 @@ class _PlaceOrderPageState extends State<PlaceOrderPage> {
                                       height: 50.0,
                                       width: width,
                                       decoration: BoxDecoration(
-                                        borderRadius: BorderRadius.circular(8.0),
+                                        borderRadius:
+                                            BorderRadius.circular(8.0),
+                                        border: Border.all(
+                                          color: AppColors
+                                              .whiteColor, // Border color
+                                          width: 0.2, // Border width
+                                        ),
                                       ),
-                                      child: DropdownButton<String>(
-                                        dropdownColor: AppColors.lightBlackColor,
-                                        value: selectedItem,
-                                        onChanged: (String? newValue) {
-                                          setState(() {
-                                            selectedItem = newValue!;
-                                            order_type = selectedItem;
-                                          });
+                                      child: TextFormField(
+                                        controller: quantityController,
+                                        style: nunitoStyle.copyWith(
+                                            fontWeight: FontWeight.w400,
+                                            color: AppColors.whiteColor,
+                                            fontSize: 14.0),
+                                        keyboardType: TextInputType.number,
+                                        onChanged: (value) {
+                                          // Update the quantity value as the user types
+                                          widget.updateQuantity(value);
+                                          // You can perform actions based on the updated value here
+                                          print('Quantity changed to: $value');
                                         },
-                                        items: items.map((String item) {
-                                          return DropdownMenuItem<String>(
-                                            value: item,
-                                            child: Row(
-                                              children: [
-                                                SizedBox(
-                                                    width: width - 80,
-                                                    child: Text(
-                                                      item,
-                                                      style: nunitoStyle.copyWith(
-                                                          fontWeight:
-                                                              FontWeight.normal,
-                                                              fontSize: 12.0,
-                                                          color: AppColors
-                                                              .whiteColor),
-                                                    )),
-                                              ],
+                                        decoration: InputDecoration(
+                                            border: InputBorder.none,
+                                            prefixIcon: IconButton(
+                                              onPressed: () {},
+                                              icon: const Icon(
+                                                Icons.local_laundry_service,
+                                                color: Colors.white,
+                                              ),
                                             ),
-                                          );
-                                        }).toList(),
+                                            contentPadding:
+                                                const EdgeInsets.only(
+                                                    top: 16.0),
+                                            hintText: 'Quantity in Kgs',
+                                            hintStyle: ralewayStyle.copyWith(
+                                                fontWeight: FontWeight.w400,
+                                                color: AppColors.whiteColor
+                                                    .withOpacity(0.5),
+                                                fontSize: 12.0)),
                                       ),
                                     ),
                                   ],
                                 ),
                               ),
-                            ),
-
-                            Padding(
-                              padding: const EdgeInsets.all(12.0),
-                              child: Padding(
-                                padding: const EdgeInsets.all(8.0),
-                                child: Column(
-                                  children: [
-                                    Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.center,
-                                      children: [
-                                        Material(
-                                          color: Colors.transparent,
-                                          child: InkWell(
-                                            onTap: () {
-                                              var quantityLaundry =
-                                                  quantityController.text
-                                                      .trim();
-                                              if (quantityLaundry == null ||
-                                                  quantityLaundry.isEmpty) {
-                                                glb.showSnackBar(
-                                                    context,
-                                                    'Alert',
-                                                    "Please add quantity for $categoryname first");
-                                                return;
-                                              }
-                                              addLaundryItemToCart(
-                                                  quantityLaundry);
-                                            },
-                                            borderRadius:
-                                                BorderRadius.circular(12.0),
-                                            child: Ink(
-                                              decoration: BoxDecoration(
-                                                color: AppColors.blueColor,
-                                                borderRadius:
-                                                    BorderRadius.circular(12.0),
+                              const SizedBox(
+                                height: 10.0,
+                              ),
+                              Container(
+                                decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(12.0)),
+                                child: Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                      vertical: 30.0, horizontal: 12.0),
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceBetween,
+                                        children: [
+                                          Text(
+                                            'Laundry Type',
+                                            style: ralewayStyle.copyWith(
+                                                fontSize: 14.0,
+                                                fontWeight: FontWeight.bold,
+                                                color: AppColors.whiteColor),
+                                          ),
+                                        ],
+                                      ),
+                                      SizedBox(
+                                        height: width * 0.03,
+                                      ),
+                                      Container(
+                                        height: 50.0,
+                                        width: width,
+                                        decoration: BoxDecoration(
+                                          borderRadius:
+                                              BorderRadius.circular(8.0),
+                                        ),
+                                        child: DropdownButton<String>(
+                                          dropdownColor:
+                                              AppColors.lightBlackColor,
+                                          value: selectedItem,
+                                          onChanged: (String? newValue) {
+                                            setState(() {
+                                              selectedItem = newValue!;
+                                              order_type = selectedItem;
+                                            });
+                                          },
+                                          items: items.map((String item) {
+                                            return DropdownMenuItem<String>(
+                                              value: item,
+                                              child: Row(
+                                                children: [
+                                                  SizedBox(
+                                                      width: width - 80,
+                                                      child: Text(
+                                                        item,
+                                                        style: nunitoStyle
+                                                            .copyWith(
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .normal,
+                                                                fontSize: 12.0,
+                                                                color: AppColors
+                                                                    .whiteColor),
+                                                      )),
+                                                ],
                                               ),
-                                              child: Padding(
-                                                padding:
-                                                    const EdgeInsets.symmetric(
-                                                        horizontal: 50.0,
-                                                        vertical: 10.0),
-                                                child: Text(
-                                                  'Add To Cart',
-                                                  style: ralewayStyle.copyWith(
-                                                      fontSize: 16.0,
-                                                      color:
-                                                          AppColors.whiteColor,
-                                                      fontWeight:
-                                                          FontWeight.bold),
+                                            );
+                                          }).toList(),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ),
+
+                              Padding(
+                                padding: const EdgeInsets.all(12.0),
+                                child: Padding(
+                                  padding: const EdgeInsets.all(8.0),
+                                  child: Column(
+                                    children: [
+                                      Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.center,
+                                        children: [
+                                          Material(
+                                            color: Colors.transparent,
+                                            child: InkWell(
+                                              onTap: () {
+                                                var quantityLaundry =
+                                                    quantityController.text
+                                                        .trim();
+                                                if (quantityLaundry == null ||
+                                                    quantityLaundry.isEmpty) {
+                                                  glb.showSnackBar(
+                                                      context,
+                                                      'Alert',
+                                                      "Please add quantity for $categoryname first");
+                                                  return;
+                                                }
+
+                                                addLaundryItemToCart(
+                                                    quantityLaundry);
+                                              },
+                                              borderRadius:
+                                                  BorderRadius.circular(12.0),
+                                              child: Ink(
+                                                decoration: BoxDecoration(
+                                                  gradient:
+                                                      LinearGradient(colors: [
+                                                    Colors.green,
+                                                    Colors.blue,
+                                                  ]),
+                                                  borderRadius:
+                                                      BorderRadius.circular(
+                                                          12.0),
+                                                ),
+                                                child: Padding(
+                                                  padding: const EdgeInsets
+                                                      .symmetric(
+                                                      horizontal: 50.0,
+                                                      vertical: 10.0),
+                                                  child: Text(
+                                                    'Add To Cart',
+                                                    style: ralewayStyle
+                                                        .copyWith(
+                                                            fontSize: 16.0,
+                                                            color: AppColors
+                                                                .whiteColor,
+                                                            fontWeight:
+                                                                FontWeight
+                                                                    .bold),
+                                                  ),
                                                 ),
                                               ),
                                             ),
-                                          ),
-                                        )
-                                      ],
-                                    )
-                                  ],
+                                          )
+                                        ],
+                                      )
+                                    ],
+                                  ),
                                 ),
                               ),
-                            ),
 
-                            // const SizedBox(
-                            //   height: 10.0,
-                            // ),
-                            // Container(
-                            //   decoration: BoxDecoration(
-                            //       borderRadius: BorderRadius.circular(12.0),
-                            //       color: AppColors.whiteColor),
-                            //   child: Padding(
-                            //     padding: const EdgeInsets.symmetric(
-                            //         vertical: 20.0, horizontal: 12.0),
-                            //     child: Column(
-                            //       crossAxisAlignment: CrossAxisAlignment.start,
-                            //       children: [
-                            //         Text(
-                            //           'Color Preferences',
-                            //           style: nunitoStyle.copyWith(
-                            //               fontSize: 20.0,
-                            //               fontWeight: FontWeight.bold,
-                            //               color: AppColors.titleTxtColor),
-                            //         ),
-                            //         Padding(
-                            //           padding: const EdgeInsets.all(8.0),
-                            //           child: Row(
-                            //             mainAxisAlignment: MainAxisAlignment.start,
-                            //             children: [
-                            //               CustomRadioButton(
-                            //                 label: 'Color Clothes',
-                            //                 isSelected:
-                            //                     _isColorColthes, // Set to true for the selected option
-                            //                 onChanged: (selected) {
-                            //                   // Handle option 1 selection
-                            //                   setState(() {
-                            //                     _isColorColthes = true;
-                            //                     _isColorWhite = false;
-                            //                   });
-                            //                 },
-                            //               ),
-                            //               const SizedBox(
-                            //                   width:
-                            //                       20), // Add some spacing between the radio buttons
-                            //               CustomRadioButton(
-                            //                 label: 'White Clothes',
-                            //                 isSelected:
-                            //                     _isColorWhite, // Set to true for the selected option
-                            //                 onChanged: (selected) {
-                            //                   setState(() {
-                            //                     _isColorWhite = true;
-                            //                     _isColorColthes = false;
-                            //                   });
-                            //                 },
-                            //               ),
-                            //             ],
-                            //           ),
-                            //         ),
-                            //       ],
-                            //     ),
-                            //   ),
-                            // ),
+                              // const SizedBox(
+                              //   height: 10.0,
+                              // ),
+                              // Container(
+                              //   decoration: BoxDecoration(
+                              //       borderRadius: BorderRadius.circular(12.0),
+                              //       color: AppColors.whiteColor),
+                              //   child: Padding(
+                              //     padding: const EdgeInsets.symmetric(
+                              //         vertical: 20.0, horizontal: 12.0),
+                              //     child: Column(
+                              //       crossAxisAlignment: CrossAxisAlignment.start,
+                              //       children: [
+                              //         Text(
+                              //           'Color Preferences',
+                              //           style: nunitoStyle.copyWith(
+                              //               fontSize: 20.0,
+                              //               fontWeight: FontWeight.bold,
+                              //               color: AppColors.titleTxtColor),
+                              //         ),
+                              //         Padding(
+                              //           padding: const EdgeInsets.all(8.0),
+                              //           child: Row(
+                              //             mainAxisAlignment: MainAxisAlignment.start,
+                              //             children: [
+                              //               CustomRadioButton(
+                              //                 label: 'Color Clothes',
+                              //                 isSelected:
+                              //                     _isColorColthes, // Set to true for the selected option
+                              //                 onChanged: (selected) {
+                              //                   // Handle option 1 selection
+                              //                   setState(() {
+                              //                     _isColorColthes = true;
+                              //                     _isColorWhite = false;
+                              //                   });
+                              //                 },
+                              //               ),
+                              //               const SizedBox(
+                              //                   width:
+                              //                       20), // Add some spacing between the radio buttons
+                              //               CustomRadioButton(
+                              //                 label: 'White Clothes',
+                              //                 isSelected:
+                              //                     _isColorWhite, // Set to true for the selected option
+                              //                 onChanged: (selected) {
+                              //                   setState(() {
+                              //                     _isColorWhite = true;
+                              //                     _isColorColthes = false;
+                              //                   });
+                              //                 },
+                              //               ),
+                              //             ],
+                              //           ),
+                              //         ),
+                              //       ],
+                              //     ),
+                              //   ),
+                              // ),
 
-                            // const SizedBox(
-                            //   height: 10.0,
-                            // ),
-                            // Container(
-                            //   decoration: BoxDecoration(
-                            //       borderRadius: BorderRadius.circular(12.0),
-                            //       color: AppColors.whiteColor),
-                            //   child: Padding(
-                            //     padding: const EdgeInsets.symmetric(
-                            //         vertical: 20.0, horizontal: 12.0),
-                            //     child: Column(
-                            //       crossAxisAlignment: CrossAxisAlignment.start,
-                            //       children: [
-                            //         Text(
-                            //           'Other',
-                            //           style: nunitoStyle.copyWith(
-                            //               fontSize: 20.0,
-                            //               fontWeight: FontWeight.bold,
-                            //               color: AppColors.titleTxtColor),
-                            //         ),
-                            //         Column(
-                            //           children: [
-                            //             const SizedBox(height: 10),
-                            //             CustomRadioButton(
-                            //               label: 'Dry Heater',
-                            //               isSelected:
-                            //                   _dryHeaterOnly, // Set to true for the selected option
-                            //               onChanged: (selected) {
-                            //                 if (selected == true) {
-                            //                   setState(() {
-                            //                     _dryHeaterOnly = true;
-                            //                   });
-                            //                 } else {
-                            //                   setState(() {
-                            //                     _dryHeaterOnly = false;
-                            //                   });
-                            //                 }
-                            //               },
-                            //             ),
-                            //             const SizedBox(
-                            //                 height:
-                            //                     10), // Add some spacing between the radio buttons
-                            //             CustomRadioButton(
-                            //               label: 'Scented Detergent',
-                            //               isSelected:
-                            //                   _scentedDetergentOnly, // Set to true for the selected option
-                            //               onChanged: (selected) {
-                            //                 if (selected == true) {
-                            //                   setState(() {
-                            //                     _scentedDetergentOnly = true;
-                            //                   });
-                            //                 } else {
-                            //                   setState(() {
-                            //                     _scentedDetergentOnly = false;
-                            //                   });
-                            //                 }
-                            //               },
-                            //             ),
-                            //             const SizedBox(
-                            //                 height:
-                            //                     10), // Add some spacing between the radio buttons
-                            //             CustomRadioButton(
-                            //               label: 'Use Softner',
-                            //               isSelected:
-                            //                   _useSoftnerOnly, // Set to true for the selected option
-                            //               onChanged: (selected) {
-                            //                 if (selected == true) {
-                            //                   setState(() {
-                            //                     _useSoftnerOnly = true;
-                            //                   });
-                            //                 } else {
-                            //                   setState(() {
-                            //                     _useSoftnerOnly = false;
-                            //                   });
-                            //                 }
-                            //               },
-                            //             ),
-                            //           ],
-                            //         )
-                            //       ],
-                            //     ),
-                            //   ),
-                            // ),
+                              // const SizedBox(
+                              //   height: 10.0,
+                              // ),
+                              // Container(
+                              //   decoration: BoxDecoration(
+                              //       borderRadius: BorderRadius.circular(12.0),
+                              //       color: AppColors.whiteColor),
+                              //   child: Padding(
+                              //     padding: const EdgeInsets.symmetric(
+                              //         vertical: 20.0, horizontal: 12.0),
+                              //     child: Column(
+                              //       crossAxisAlignment: CrossAxisAlignment.start,
+                              //       children: [
+                              //         Text(
+                              //           'Other',
+                              //           style: nunitoStyle.copyWith(
+                              //               fontSize: 20.0,
+                              //               fontWeight: FontWeight.bold,
+                              //               color: AppColors.titleTxtColor),
+                              //         ),
+                              //         Column(
+                              //           children: [
+                              //             const SizedBox(height: 10),
+                              //             CustomRadioButton(
+                              //               label: 'Dry Heater',
+                              //               isSelected:
+                              //                   _dryHeaterOnly, // Set to true for the selected option
+                              //               onChanged: (selected) {
+                              //                 if (selected == true) {
+                              //                   setState(() {
+                              //                     _dryHeaterOnly = true;
+                              //                   });
+                              //                 } else {
+                              //                   setState(() {
+                              //                     _dryHeaterOnly = false;
+                              //                   });
+                              //                 }
+                              //               },
+                              //             ),
+                              //             const SizedBox(
+                              //                 height:
+                              //                     10), // Add some spacing between the radio buttons
+                              //             CustomRadioButton(
+                              //               label: 'Scented Detergent',
+                              //               isSelected:
+                              //                   _scentedDetergentOnly, // Set to true for the selected option
+                              //               onChanged: (selected) {
+                              //                 if (selected == true) {
+                              //                   setState(() {
+                              //                     _scentedDetergentOnly = true;
+                              //                   });
+                              //                 } else {
+                              //                   setState(() {
+                              //                     _scentedDetergentOnly = false;
+                              //                   });
+                              //                 }
+                              //               },
+                              //             ),
+                              //             const SizedBox(
+                              //                 height:
+                              //                     10), // Add some spacing between the radio buttons
+                              //             CustomRadioButton(
+                              //               label: 'Use Softner',
+                              //               isSelected:
+                              //                   _useSoftnerOnly, // Set to true for the selected option
+                              //               onChanged: (selected) {
+                              //                 if (selected == true) {
+                              //                   setState(() {
+                              //                     _useSoftnerOnly = true;
+                              //                   });
+                              //                 } else {
+                              //                   setState(() {
+                              //                     _useSoftnerOnly = false;
+                              //                   });
+                              //                 }
+                              //               },
+                              //             ),
+                              //           ],
+                              //         )
+                              //       ],
+                              //     ),
+                              //   ),
+                              // ),
 
-                            // const SizedBox(
-                            //   height: 10.0,
-                            // ),
-                            // Container(
-                            //   decoration: BoxDecoration(
-                            //       borderRadius: BorderRadius.circular(12.0),
-                            //       color: AppColors.whiteColor),
-                            //   child: Padding(
-                            //     padding: const EdgeInsets.symmetric(
-                            //         vertical: 20.0, horizontal: 12.0),
-                            //     child: Column(
-                            //       crossAxisAlignment: CrossAxisAlignment.start,
-                            //       children: [
-                            //         Row(
-                            //           children: [
-                            //             Text(
-                            //               'Additional Notes',
-                            //               style: nunitoStyle.copyWith(
-                            //                   fontSize: 20.0,
-                            //                   fontWeight: FontWeight.bold,
-                            //                   color: AppColors.titleTxtColor),
-                            //             ),
-                            //           ],
-                            //         ),
-                            //         Container(
-                            //           height: 100.0,
-                            //           width: width,
-                            //           decoration: BoxDecoration(
-                            //             borderRadius: BorderRadius.circular(8.0),
-                            //           ),
-                            //           child: TextFormField(
-                            //             maxLines: 20,
-                            //             style: nunitoStyle.copyWith(
-                            //                 fontWeight: FontWeight.w400,
-                            //                 color: AppColors.titleTxtColor,
-                            //                 fontSize: 14.0),
-                            //             keyboardType: TextInputType.text,
-                            //             decoration: InputDecoration(
-                            //                 border: InputBorder.none,
-                            //                 contentPadding:
-                            //                     const EdgeInsets.only(top: 16.0),
-                            //                 hintText:
-                            //                     'Please provide us with any specific instruction which should be followed by us.',
-                            //                 hintStyle: ralewayStyle.copyWith(
-                            //                     fontWeight: FontWeight.w400,
-                            //                     color: AppColors.textColor,
-                            //                     fontSize: 12.0)),
-                            //           ),
-                            //         ),
-                            //       ],
-                            //     ),
-                            //   ),
-                            // ),
+                              // const SizedBox(
+                              //   height: 10.0,
+                              // ),
+                              // Container(
+                              //   decoration: BoxDecoration(
+                              //       borderRadius: BorderRadius.circular(12.0),
+                              //       color: AppColors.whiteColor),
+                              //   child: Padding(
+                              //     padding: const EdgeInsets.symmetric(
+                              //         vertical: 20.0, horizontal: 12.0),
+                              //     child: Column(
+                              //       crossAxisAlignment: CrossAxisAlignment.start,
+                              //       children: [
+                              //         Row(
+                              //           children: [
+                              //             Text(
+                              //               'Additional Notes',
+                              //               style: nunitoStyle.copyWith(
+                              //                   fontSize: 20.0,
+                              //                   fontWeight: FontWeight.bold,
+                              //                   color: AppColors.titleTxtColor),
+                              //             ),
+                              //           ],
+                              //         ),
+                              //         Container(
+                              //           height: 100.0,
+                              //           width: width,
+                              //           decoration: BoxDecoration(
+                              //             borderRadius: BorderRadius.circular(8.0),
+                              //           ),
+                              //           child: TextFormField(
+                              //             maxLines: 20,
+                              //             style: nunitoStyle.copyWith(
+                              //                 fontWeight: FontWeight.w400,
+                              //                 color: AppColors.titleTxtColor,
+                              //                 fontSize: 14.0),
+                              //             keyboardType: TextInputType.text,
+                              //             decoration: InputDecoration(
+                              //                 border: InputBorder.none,
+                              //                 contentPadding:
+                              //                     const EdgeInsets.only(top: 16.0),
+                              //                 hintText:
+                              //                     'Please provide us with any specific instruction which should be followed by us.',
+                              //                 hintStyle: ralewayStyle.copyWith(
+                              //                     fontWeight: FontWeight.w400,
+                              //                     color: AppColors.textColor,
+                              //                     fontSize: 12.0)),
+                              //           ),
+                              //         ),
+                              //       ],
+                              //     ),
+                              //   ),
+                              // ),
 
-                            const SizedBox(
-                              height: 15.0,
-                            ),
-                          ],
-                        ),
-                      )
-              ],
-            ),
-          )
-        ],
+                              const SizedBox(
+                                height: 15.0,
+                              ),
+                            ],
+                          ),
+                        )
+                ],
+              ),
+            )
+          ],
+        ),
       ),
     );
   }

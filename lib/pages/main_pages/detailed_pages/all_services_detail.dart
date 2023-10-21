@@ -330,8 +330,7 @@ class _AllServicesPageState extends State<AllServicesPage> {
                                                         style: nunitoStyle
                                                             .copyWith(
                                                                 fontSize: 12.0,
-                                                                color: Colors
-                                                                    .deepOrange,
+                                                                color: AppColors.neonColor,
                                                                 fontWeight:
                                                                     FontWeight
                                                                         .bold,
@@ -373,8 +372,7 @@ class _AllServicesPageState extends State<AllServicesPage> {
                                                         style: nunitoStyle
                                                             .copyWith(
                                                                 fontSize: 12.0,
-                                                                color: Colors
-                                                                    .amber,
+                                                                color: AppColors.neonColor,
                                                                 fontWeight:
                                                                     FontWeight
                                                                         .bold,
@@ -415,8 +413,7 @@ class _AllServicesPageState extends State<AllServicesPage> {
                                                         style: nunitoStyle
                                                             .copyWith(
                                                                 fontSize: 12.0,
-                                                                color:
-                                                                    Colors.blue,
+                                                                color: AppColors.neonColor,
                                                                 fontWeight:
                                                                     FontWeight
                                                                         .bold,

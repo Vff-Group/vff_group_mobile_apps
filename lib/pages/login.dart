@@ -35,6 +35,13 @@ class _LoginScreenState extends State<LoginScreen> {
   GoogleSignInAccount? _user;
   bool _showPassword = true, borderDanger = false;
   bool showLoading = false;
+
+  @override
+  void dispose() {
+    // TODO: implement dispose
+    super.dispose();
+    FocusManager.instance.primaryFocus?.unfocus();
+  }
   @override
   Widget build(BuildContext context) {
     double height = MediaQuery.of(context).size.height;
@@ -219,7 +226,10 @@ class _LoginScreenState extends State<LoginScreen> {
                                     horizontal: 70.0, vertical: 18.0),
                                 decoration: BoxDecoration(
                                     borderRadius: BorderRadius.circular(16.0),
-                                    color: AppColors.blueColor),
+                                    gradient:  LinearGradient(colors: [
+                                                          Colors.green,
+                                                          Colors.blue,
+                                                        ])),
                                 child: Text(
                                   'Continue',
                                   style: ralewayStyle.copyWith(
@@ -321,7 +331,7 @@ class _LoginScreenState extends State<LoginScreen> {
             SharedPreferenceUtils.save_val('usrid', usrid);
             SharedPreferenceUtils.save_val('usrname', usrname);
             SharedPreferenceUtils.save_val('customerid', customer_id);
-            SharedPreferenceUtils.save_val('notificationToken', user_token);
+            //SharedPreferenceUtils.save_val('notificationToken', user_token);
             SharedPreferenceUtils.save_val('profile_img', profile_img);
             SharedPreferenceUtils.save_val('email', email);
             glb.profileImage = profile_img;

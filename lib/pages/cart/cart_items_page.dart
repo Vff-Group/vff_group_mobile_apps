@@ -75,59 +75,59 @@ class _AddToCartItemState extends State<AddToCartItem> {
             var itemID = cartMap['itemid'];
             var categoryID = cartMap['catid'];
             var subCategoryID = cartMap['subcatid'];
-            var totalQuantity = cartMap['total_quantity'];
-            var totalPrice = cartMap['total_price'];
+
             var orderID = cartMap['order_id'];
             var date = cartMap['date'];
             var time = cartMap['time'];
             var orderType = cartMap['order_type'];
-            var totalAdultCost = cartMap['total_adult_cost'];
-            var totalKidsCost = cartMap['total_kids_cost'];
+            var itemCost = cartMap['item_cost'];
+            var itemQuantity = cartMap['item_quantity'];
+            var typeOf = cartMap['type_of'];
             var categoryImage = cartMap['category_img'];
             var categoryName = cartMap['category_name'];
             var subCategoryName = cartMap['sub_cat_name'];
             var subCategoryImage = cartMap['sub_cat_img'];
-            var regularPrice = cartMap['regular_price'];
-            var expressPrice = cartMap['express_price'];
-            var offerPrice = cartMap['offer_price'];
-            var dryCleaningAdultCost = cartMap['dry_adult_cost'];
             var actualCost = cartMap['actual_cost'];
+            var sectionType = cartMap['section_type'];
 
             List<String> itemIDlst = glb.strToLst2(itemID);
             List<String> categoryIDst = glb.strToLst2(categoryID);
             List<String> subCategoryIDlst = glb.strToLst2(subCategoryID);
-            List<String> totalQuantitylst = glb.strToLst2(totalQuantity);
-            List<String> totalPricelst = glb.strToLst2(totalPrice);
+
             List<String> orderIDlst = glb.strToLst2(orderID);
             List<String> datelst = glb.strToLst2(date);
             List<String> timelst = glb.strToLst2(time);
             List<String> orderTypelst = glb.strToLst2(orderType);
-            List<String> totalAdultCostlst = glb.strToLst2(totalAdultCost);
-            List<String> totalKidsCostlst = glb.strToLst2(totalKidsCost);
+            List<String> itemCostlst = glb.strToLst2(itemCost);
+            List<String> itemQuantitylst = glb.strToLst2(itemQuantity);
+            List<String> typeOflst = glb.strToLst2(typeOf);
+
             List<String> categoryImagelst = glb.strToLst2(categoryImage);
             List<String> categoryNamelst = glb.strToLst2(categoryName);
             List<String> subCategoryNamelst = glb.strToLst2(subCategoryName);
             List<String> subCategoryImagelst = glb.strToLst2(subCategoryImage);
             List<String> actualCostlst = glb.strToLst2(actualCost);
+            List<String> sectionTypelst = glb.strToLst2(sectionType);
 
             for (int i = 0; i < itemIDlst.length; i++) {
               var itemID = itemIDlst.elementAt(i).toString();
               var categoryID = categoryIDst.elementAt(i).toString();
               var subCategoryID = subCategoryIDlst.elementAt(i).toString();
-              var totalQuantity = totalQuantitylst.elementAt(i).toString();
-              var totalPrice = totalPricelst.elementAt(i).toString();
+
               var orderID = orderIDlst.elementAt(i).toString();
               var date = datelst.elementAt(i).toString();
               var time = timelst.elementAt(i).toString();
               var orderType = orderTypelst.elementAt(i).toString();
-              var totalAdultCost = totalAdultCostlst.elementAt(i).toString();
-              var totalKidsCost = totalKidsCostlst.elementAt(i).toString();
+              var itemCost = itemCostlst.elementAt(i).toString();
+              var itemQuantity = itemQuantitylst.elementAt(i).toString();
+              var typeOf = typeOflst.elementAt(i).toString();
               var categoryImage = categoryImagelst.elementAt(i).toString();
               var categoryName = categoryNamelst.elementAt(i).toString();
               var subCategoryName = subCategoryNamelst.elementAt(i).toString();
               var subCategoryImage =
                   subCategoryImagelst.elementAt(i).toString();
               var actualCost = actualCostlst.elementAt(i).toString();
+              var sectionType = sectionTypelst.elementAt(i).toString();
 
               var timeFormatted =
                   glb.doubleEpochToFormattedDateTime(double.parse(time));
@@ -135,19 +135,19 @@ class _AddToCartItemState extends State<AddToCartItem> {
                   itemID: itemID,
                   categoryID: categoryID,
                   subCategoryID: subCategoryID,
-                  totalQuantity: totalQuantity,
-                  totalPrice: totalPrice,
+                  itemCost: itemCost,
+                  itemQuantity: itemQuantity,
+                  typeOf: typeOf,
                   orderID: orderID,
                   date: date,
                   time: timeFormatted,
                   orderType: orderType,
-                  totalAdultCost: totalAdultCost,
-                  totalKidsCost: totalKidsCost,
                   categoryImage: categoryImage,
                   categoryName: categoryName,
                   subCategoryName: subCategoryName,
                   subCategoryImage: subCategoryImage,
-                  actualCost: actualCost));
+                  actualCost: actualCost,
+                  sectionType: sectionType));
             }
             setState(() {
               showLoading = false;
@@ -178,9 +178,8 @@ class _AddToCartItemState extends State<AddToCartItem> {
   Future deleteCartItem(String itemID) async {
     setState(() {
       showLoading = true;
-      
     });
- 
+
     try {
       var url = glb.endPoint;
       final Map dictMap = {};
@@ -320,17 +319,19 @@ class _AddToCartItemState extends State<AddToCartItem> {
                                                   style: ralewayStyle.copyWith(
                                                     fontSize: 14.0,
                                                     fontWeight: FontWeight.bold,
-                                                    color:
-                                                        AppColors.neonColor,
+                                                    color: AppColors.neonColor,
                                                   ),
                                                 ),
                                                 InkWell(
-                                                  onTap: (){
-                                                    var itemID = cartItemModel[index].itemID;
+                                                  onTap: () {
+                                                    var itemID =
+                                                        cartItemModel[index]
+                                                            .itemID;
                                                     deleteCartItem(itemID);
                                                   },
                                                   child: Icon(
-                                                    Icons.delete_outline_outlined,
+                                                    Icons
+                                                        .delete_outline_outlined,
                                                     color: Colors.red,
                                                   ),
                                                 )
@@ -350,7 +351,9 @@ class _AddToCartItemState extends State<AddToCartItem> {
                                                             .subCategoryImage ==
                                                         'NA')
                                                       ClipRRect(
-                                                        borderRadius: BorderRadius.circular(2.0),
+                                                        borderRadius:
+                                                            BorderRadius
+                                                                .circular(2.0),
                                                         child: Image.network(
                                                           cartItemModel[index]
                                                               .categoryImage,
@@ -387,39 +390,58 @@ class _AddToCartItemState extends State<AddToCartItem> {
                                                                       14.0,
                                                                   fontWeight:
                                                                       FontWeight
-                                                                          .normal,
+                                                                          .bold,
                                                                   color: AppColors
                                                                       .whiteColor,
                                                                 ),
                                                               )
-                                                            : Text(
-                                                                cartItemModel[
-                                                                        index]
-                                                                    .subCategoryName
-                                                                    .toCapitalized(),
-                                                                style: nunitoStyle
-                                                                    .copyWith(
-                                                                  fontSize:
-                                                                      14.0,
-                                                                  fontWeight:
-                                                                      FontWeight
-                                                                          .normal,
-                                                                  color: AppColors
-                                                                      .whiteColor,
-                                                                ),
+                                                            : Row(
+                                                                children: [
+                                                                  Text(
+                                                                    cartItemModel[
+                                                                            index]
+                                                                        .subCategoryName
+                                                                        .toCapitalized(),
+                                                                    style: nunitoStyle
+                                                                        .copyWith(
+                                                                      fontSize:
+                                                                          14.0,
+                                                                      fontWeight:
+                                                                          FontWeight
+                                                                              .bold,
+                                                                      color: AppColors
+                                                                          .whiteColor,
+                                                                    ),
+                                                                  ),
+                                                                  Text(
+                                                                    ' - ${cartItemModel[index].sectionType.toCapitalized()}',
+                                                                    style: nunitoStyle
+                                                                        .copyWith(
+                                                                      fontSize:
+                                                                          14.0,
+                                                                      fontWeight:
+                                                                          FontWeight
+                                                                              .normal,
+                                                                      color: AppColors
+                                                                          .whiteColor,
+                                                                    ),
+                                                                  ),
+                                                                ],
                                                               ),
                                                         SizedBox(
                                                           height: height * 0.01,
                                                         ),
                                                         Text(
-                                                          '₹${cartItemModel[index].totalPrice}',
-                                                          style: nunitoStyle.copyWith(
-                                                              fontSize: 14.0,
-                                                              fontWeight:
-                                                                  FontWeight
-                                                                      .bold,
-                                                              color: AppColors
-                                                                  .neonColor),
+                                                          '₹${cartItemModel[index].itemCost}',
+                                                          style: nunitoStyle
+                                                              .copyWith(
+                                                                  fontSize:
+                                                                      14.0,
+                                                                  fontWeight:
+                                                                      FontWeight
+                                                                          .bold,
+                                                                  color: AppColors
+                                                                      .neonColor),
                                                         ),
                                                       ],
                                                     )
@@ -429,21 +451,25 @@ class _AddToCartItemState extends State<AddToCartItem> {
                                                   children: [
                                                     Text(
                                                       'Qty: ',
-                                                      style: nunitoStyle.copyWith(
-                                                          fontSize: 14.0,
-                                                          fontWeight:
-                                                              FontWeight.bold,
-                                                          color: AppColors
-                                                              .neonColor),
+                                                      style:
+                                                          nunitoStyle.copyWith(
+                                                              fontSize: 14.0,
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .bold,
+                                                              color: AppColors
+                                                                  .neonColor),
                                                     ),
                                                     Text(
-                                                      '${cartItemModel[index].totalQuantity} ',
-                                                      style: nunitoStyle.copyWith(
-                                                          fontSize: 14.0,
-                                                          fontWeight:
-                                                              FontWeight.bold,
-                                                          color: AppColors
-                                                              .neonColor),
+                                                      '${cartItemModel[index].itemQuantity}  ${cartItemModel[index].typeOf}',
+                                                      style:
+                                                          nunitoStyle.copyWith(
+                                                              fontSize: 12.0,
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .bold,
+                                                              color: AppColors
+                                                                  .neonColor),
                                                     ),
                                                   ],
                                                 ),
@@ -458,10 +484,7 @@ class _AddToCartItemState extends State<AddToCartItem> {
                                       ),
                                     ),
                                   );
-                               
-                               
                                 })),
-                         
                           ),
                   ],
                 ),
@@ -487,7 +510,10 @@ class _AddToCartItemState extends State<AddToCartItem> {
                                   borderRadius: BorderRadius.circular(12.0),
                                   child: Ink(
                                     decoration: BoxDecoration(
-                                      color: AppColors.blueColor,
+                                      gradient: LinearGradient(colors: [
+                                        Colors.green,
+                                      Colors.blue,
+                                      ]),
                                       borderRadius: BorderRadius.circular(12.0),
                                     ),
                                     child: Padding(

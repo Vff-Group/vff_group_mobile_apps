@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:get/get.dart';
 import 'package:vff_group/animation/fade_animation.dart';
@@ -19,16 +20,21 @@ class _CurrentDeliveryPageState extends State<CurrentDeliveryPage> {
   bool isOrderDelivered = false,
       isOrderPickup = false,
       isOrderProcessing = false;
-  bool showData = true;
+  bool showData = false;
   @override
   Widget build(BuildContext context) {
     double height = MediaQuery.of(context).size.height;
     double width = MediaQuery.of(context).size.width;
 
     return Scaffold(
-        backgroundColor: AppColors.backColor,
+        backgroundColor: Colors.black,
         appBar: AppBar(
-          backgroundColor: Colors.deepOrange,
+          automaticallyImplyLeading: false,
+        elevation: 0,
+        backgroundColor: Colors.transparent,
+        systemOverlayStyle: SystemUiOverlayStyle(
+          statusBarBrightness: Brightness.dark
+        ),
           actions: [
             InkWell(
               onTap: () {
@@ -60,11 +66,11 @@ class _CurrentDeliveryPageState extends State<CurrentDeliveryPage> {
                   style: ralewayStyle.copyWith(
                       fontWeight: FontWeight.bold,
                       fontSize: 20.0,
-                      color: AppColors.titleTxtColor),
+                      color: AppColors.whiteColor),
                 ),
             )
             : Visibility(
-                visible: false,
+                visible: true,
                 child: Stack(
                   children: [
                     Positioned(
@@ -79,7 +85,7 @@ class _CurrentDeliveryPageState extends State<CurrentDeliveryPage> {
                                   children: [
                                     Container(
                                       decoration: BoxDecoration(
-                                          color: Colors.green[50],
+                                          color: AppColors.lightBlackColor,
                                           borderRadius:
                                               BorderRadius.circular(16.0)),
                                       child: Padding(
@@ -88,7 +94,7 @@ class _CurrentDeliveryPageState extends State<CurrentDeliveryPage> {
                                           width: 20,
                                           height: 20,
                                           decoration: BoxDecoration(
-                                              color: Colors.green,
+                                              color: Colors.deepOrange,
                                               borderRadius:
                                                   BorderRadius.circular(25.0)),
                                         ),
@@ -104,7 +110,7 @@ class _CurrentDeliveryPageState extends State<CurrentDeliveryPage> {
                                             'Order Recieved',
                                             style: ralewayStyle.copyWith(
                                                 fontWeight: FontWeight.bold,
-                                                color: AppColors.titleTxtColor),
+                                                color: AppColors.whiteColor),
                                           ),
                                           const SizedBox(
                                             height: 2.0,
@@ -114,7 +120,7 @@ class _CurrentDeliveryPageState extends State<CurrentDeliveryPage> {
                                             style: nunitoStyle.copyWith(
                                                 fontWeight: FontWeight.normal,
                                                 fontSize: 12.0,
-                                                color: AppColors.titleTxtColor),
+                                                color: AppColors.whiteColor),
                                           )
                                         ],
                                       ),
@@ -136,7 +142,7 @@ class _CurrentDeliveryPageState extends State<CurrentDeliveryPage> {
                                   children: [
                                     Container(
                                       decoration: BoxDecoration(
-                                          color: Colors.deepPurple[50],
+                                          color: AppColors.lightBlackColor,
                                           borderRadius:
                                               BorderRadius.circular(16.0)),
                                       child: const Padding(
@@ -156,7 +162,7 @@ class _CurrentDeliveryPageState extends State<CurrentDeliveryPage> {
                                             'Pickup',
                                             style: ralewayStyle.copyWith(
                                                 fontWeight: FontWeight.bold,
-                                                color: AppColors.titleTxtColor),
+                                                color: AppColors.whiteColor),
                                           ),
                                           const SizedBox(
                                             height: 2.0,
@@ -166,7 +172,7 @@ class _CurrentDeliveryPageState extends State<CurrentDeliveryPage> {
                                             style: nunitoStyle.copyWith(
                                                 fontWeight: FontWeight.normal,
                                                 fontSize: 12.0,
-                                                color: AppColors.titleTxtColor),
+                                                color: AppColors.whiteColor),
                                           )
                                         ],
                                       ),
@@ -187,7 +193,7 @@ class _CurrentDeliveryPageState extends State<CurrentDeliveryPage> {
                                   children: [
                                     Container(
                                       decoration: BoxDecoration(
-                                          color: Colors.blue[50],
+                                          color: AppColors.lightBlackColor,
                                           borderRadius:
                                               BorderRadius.circular(16.0)),
                                       child: const Padding(
@@ -207,7 +213,7 @@ class _CurrentDeliveryPageState extends State<CurrentDeliveryPage> {
                                             'Processing',
                                             style: ralewayStyle.copyWith(
                                                 fontWeight: FontWeight.bold,
-                                                color: AppColors.titleTxtColor),
+                                                color: AppColors.whiteColor),
                                           ),
                                           const SizedBox(
                                             height: 2.0,
@@ -217,7 +223,7 @@ class _CurrentDeliveryPageState extends State<CurrentDeliveryPage> {
                                             style: nunitoStyle.copyWith(
                                                 fontWeight: FontWeight.normal,
                                                 fontSize: 12.0,
-                                                color: AppColors.titleTxtColor),
+                                                color: AppColors.whiteColor),
                                           )
                                         ],
                                       ),
@@ -238,14 +244,14 @@ class _CurrentDeliveryPageState extends State<CurrentDeliveryPage> {
                                   children: [
                                     Container(
                                       decoration: BoxDecoration(
-                                          color: Colors.grey[200],
+                                          color: AppColors.lightBlackColor,
                                           borderRadius:
                                               BorderRadius.circular(16.0)),
                                       child: const Padding(
                                           padding: EdgeInsets.all(16.0),
                                           child: Icon(
                                             Icons.delivery_dining_sharp,
-                                            color: Colors.black,
+                                            color: Colors.green,
                                           )),
                                     ),
                                     Padding(
@@ -258,7 +264,7 @@ class _CurrentDeliveryPageState extends State<CurrentDeliveryPage> {
                                             'Order Delivered',
                                             style: ralewayStyle.copyWith(
                                                 fontWeight: FontWeight.bold,
-                                                color: AppColors.titleTxtColor),
+                                                color: AppColors.whiteColor),
                                           ),
                                           const SizedBox(
                                             height: 2.0,
@@ -268,7 +274,7 @@ class _CurrentDeliveryPageState extends State<CurrentDeliveryPage> {
                                             style: nunitoStyle.copyWith(
                                                 fontWeight: FontWeight.normal,
                                                 fontSize: 12.0,
-                                                color: AppColors.titleTxtColor),
+                                                color: AppColors.whiteColor),
                                           )
                                         ],
                                       ),
@@ -286,7 +292,10 @@ class _CurrentDeliveryPageState extends State<CurrentDeliveryPage> {
                       child: Container(
                         height: 200,
                         decoration: const BoxDecoration(
-                          color: Colors.black,
+                          gradient: LinearGradient(colors: [
+                            Colors.green,
+                            Colors.blue
+                          ]),
                           borderRadius: BorderRadius.only(
                               topLeft: Radius.circular(26.0),
                               topRight: Radius.circular(26.0)),
@@ -403,7 +412,7 @@ class _CurrentDeliveryPageState extends State<CurrentDeliveryPage> {
                       left: 0,
                       child: Container(
                         decoration: const BoxDecoration(
-                          color: Colors.white,
+                          color: AppColors.lightBlackColor,
                           borderRadius: BorderRadius.only(
                               topLeft: Radius.circular(26.0),
                               topRight: Radius.circular(26.0)),
@@ -424,6 +433,7 @@ class _CurrentDeliveryPageState extends State<CurrentDeliveryPage> {
                                       child: Icon(
                                         Icons.location_city,
                                         color: Colors.orange,
+                                        size: 15,
                                       ),
                                     ),
                                   ),
@@ -437,7 +447,7 @@ class _CurrentDeliveryPageState extends State<CurrentDeliveryPage> {
                                           'Address',
                                           style: ralewayStyle.copyWith(
                                               fontSize: 12.0,
-                                              color: AppColors.textColor,
+                                              color: AppColors.whiteColor,
                                               fontWeight: FontWeight.normal),
                                         ),
                                         const SizedBox(
@@ -449,7 +459,7 @@ class _CurrentDeliveryPageState extends State<CurrentDeliveryPage> {
                                             'New Vaibhav Nagar ,6th cross Belgaum',
                                             style: ralewayStyle.copyWith(
                                                 fontSize: 14.0,
-                                                color: AppColors.titleTxtColor,
+                                                color: AppColors.whiteColor,
                                                 fontWeight: FontWeight.bold),
                                             overflow: TextOverflow.ellipsis,
                                           ),
@@ -471,6 +481,7 @@ class _CurrentDeliveryPageState extends State<CurrentDeliveryPage> {
                                       child: Icon(
                                         Icons.watch_later_outlined,
                                         color: Colors.green,
+                                        size: 15,
                                       ),
                                     ),
                                   ),
@@ -484,7 +495,7 @@ class _CurrentDeliveryPageState extends State<CurrentDeliveryPage> {
                                           'Delivery Start Time',
                                           style: ralewayStyle.copyWith(
                                               fontSize: 12.0,
-                                              color: AppColors.textColor,
+                                              color: AppColors.whiteColor,
                                               fontWeight: FontWeight.normal),
                                         ),
                                         const SizedBox(
@@ -494,7 +505,7 @@ class _CurrentDeliveryPageState extends State<CurrentDeliveryPage> {
                                           '12:35 AM',
                                           style: nunitoStyle.copyWith(
                                               fontSize: 14.0,
-                                              color: AppColors.titleTxtColor,
+                                              color: AppColors.whiteColor,
                                               fontWeight: FontWeight.bold),
                                           overflow: TextOverflow.ellipsis,
                                         ),
@@ -515,6 +526,7 @@ class _CurrentDeliveryPageState extends State<CurrentDeliveryPage> {
                                       child: Icon(
                                         Icons.location_city,
                                         color: Colors.pink,
+                                        size: 15,
                                       ),
                                     ),
                                   ),
@@ -525,10 +537,10 @@ class _CurrentDeliveryPageState extends State<CurrentDeliveryPage> {
                                           CrossAxisAlignment.start,
                                       children: [
                                         Text(
-                                          'Order ID #',
+                                          'Order ID ',
                                           style: ralewayStyle.copyWith(
                                               fontSize: 12.0,
-                                              color: AppColors.textColor,
+                                              color: AppColors.whiteColor,
                                               fontWeight: FontWeight.normal),
                                         ),
                                         const SizedBox(
@@ -538,7 +550,7 @@ class _CurrentDeliveryPageState extends State<CurrentDeliveryPage> {
                                           '#1234',
                                           style: nunitoStyle.copyWith(
                                               fontSize: 14.0,
-                                              color: AppColors.titleTxtColor,
+                                              color: AppColors.whiteColor,
                                               fontWeight: FontWeight.bold),
                                           overflow: TextOverflow.ellipsis,
                                         ),
@@ -580,7 +592,7 @@ class _CurrentDeliveryPageState extends State<CurrentDeliveryPage> {
                       style: ralewayStyle.copyWith(
                           fontWeight: FontWeight.bold,
                           fontSize: 20.0,
-                          color: AppColors.titleTxtColor),
+                          color: AppColors.whiteColor),
                     ),
                     Container(
                       child: Padding(
@@ -618,7 +630,7 @@ class _CurrentDeliveryPageState extends State<CurrentDeliveryPage> {
                                         'Order Recieved',
                                         style: ralewayStyle.copyWith(
                                             fontWeight: FontWeight.bold,
-                                            color: AppColors.titleTxtColor),
+                                            color: AppColors.whiteColor),
                                       ),
                                       const SizedBox(
                                         height: 2.0,
@@ -676,7 +688,7 @@ class _CurrentDeliveryPageState extends State<CurrentDeliveryPage> {
                                         'Pickup',
                                         style: ralewayStyle.copyWith(
                                             fontWeight: FontWeight.bold,
-                                            color: AppColors.titleTxtColor),
+                                            color: AppColors.whiteColor),
                                       ),
                                       const SizedBox(
                                         height: 2.0,
@@ -735,7 +747,7 @@ class _CurrentDeliveryPageState extends State<CurrentDeliveryPage> {
                                         'Processing',
                                         style: ralewayStyle.copyWith(
                                             fontWeight: FontWeight.bold,
-                                            color: AppColors.titleTxtColor),
+                                            color: AppColors.whiteColor),
                                       ),
                                       const SizedBox(
                                         height: 2.0,
@@ -793,7 +805,7 @@ class _CurrentDeliveryPageState extends State<CurrentDeliveryPage> {
                                         'Order Delivered',
                                         style: ralewayStyle.copyWith(
                                             fontWeight: FontWeight.bold,
-                                            color: AppColors.titleTxtColor),
+                                            color: AppColors.whiteColor),
                                       ),
                                       const SizedBox(
                                         height: 2.0,

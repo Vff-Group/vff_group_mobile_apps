@@ -87,8 +87,8 @@ class _ItemDetailsBottomSheetState extends State<ItemDetailsBottomSheet> {
           context, 'Alert', 'Please add anyone one category item quantity');
       return;
     }
-    var actualAdultPrice = widget.item.adultCost;
-    var actualKidsPrice = widget.item.kidsCost;
+    var actualAdultPrice = "0";
+    var actualKidsPrice = "0";
 
     var adultResult = (double.parse(actualAdultPrice) * adultCount);
     if (adultCount != 0) {
@@ -208,7 +208,7 @@ class _ItemDetailsBottomSheetState extends State<ItemDetailsBottomSheet> {
                           ),
                         ),
                         Text(
-                          "Adult ₹${widget.item.adultCost} / ${widget.item.adultType}",
+                          "Adult ₹",
                           style: nunitoStyle.copyWith(
                             color: AppColors.whiteColor,
                             fontSize: 14,
@@ -302,7 +302,7 @@ class _ItemDetailsBottomSheetState extends State<ItemDetailsBottomSheet> {
                           ),
                         ),
                         Text(
-                          "Kids ₹${widget.item.kidsCost} / ${widget.item.kidsType}",
+                          "Kids ₹",
                           style: nunitoStyle.copyWith(
                             color: AppColors.whiteColor,
                             fontSize: 14,

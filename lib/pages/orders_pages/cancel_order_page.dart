@@ -11,31 +11,30 @@ import 'package:vff_group/utils/app_styles.dart';
 import 'package:http/http.dart' as http;
 import 'package:vff_group/global/vffglb.dart' as glb;
 
-class FeedBackPage extends StatefulWidget {
-  const FeedBackPage({super.key});
+class CancelOrderPage extends StatefulWidget {
+  const CancelOrderPage({super.key});
 
   @override
-  State<FeedBackPage> createState() => _FeedBackPageState();
+  State<CancelOrderPage> createState() => _CancelOrderPageState();
 }
 
-class _FeedBackPageState extends State<FeedBackPage> {
-  TextEditingController feedBackController = TextEditingController();
+class _CancelOrderPageState extends State<CancelOrderPage> {
+  TextEditingController reasonController = TextEditingController();
   bool showLoading = false;
-  /* 
-  21
-      order_id = jdict['order_id']
+  /*
+  20
+  order_id = jdict['order_id']
     customer_id = jdict['customer_id']
-    feedback = jdict['feedback']
+    reason = jdict['reason'] 
   */
 
-  Future addFeedbackDetails() async {
+  Future addreasonTxtDetails() async {
     setState(() {
       showLoading = true;
     });
-    var feedback = feedBackController.text.trim();
-    if (feedback.isEmpty) {
-      glb.showSnackBar(
-          context, 'Alert', 'Please add your valuable feedback first');
+    var reasonTxt = reasonController.text.trim();
+    if (reasonTxt.isEmpty) {
+      glb.showSnackBar(context, 'Alert', 'Please add your cancel reason first');
       setState(() {
         showLoading = false;
       });
@@ -57,7 +56,7 @@ class _FeedBackPageState extends State<FeedBackPage> {
 
       dictMap['order_id'] = glb.orderid;
       dictMap['customer_id'] = customerid;
-      dictMap['feedback'] = feedback;
+      dictMap['reason'] = reasonTxt;
 
       dictMap['pktType'] = "10";
       dictMap['token'] = "vff";
@@ -85,8 +84,7 @@ class _FeedBackPageState extends State<FeedBackPage> {
           glb.showSnackBar(context, 'Error', 'Something Went Wrong');
           return;
         } else {
-          glb.showSnackBar(
-              context, 'Error', 'Thank you for your valuable feedback');
+          glb.showSnackBar(context, 'Error', 'Thank you we will work on it :)');
           Navigator.pop(context);
         }
       }
@@ -116,7 +114,7 @@ class _FeedBackPageState extends State<FeedBackPage> {
               elevation: 0,
               title: FadeAnimation(
                 delay: 0.3,
-                child: Text('Feedback 😊',
+                child: Text('Cancel Order ',
                     style: ralewayStyle.copyWith(
                         fontSize: 20.0,
                         color: AppColors.whiteColor,
@@ -139,7 +137,7 @@ class _FeedBackPageState extends State<FeedBackPage> {
                                 height: 15.0,
                               ),
                               Text(
-                                  'At VelVet Wash, we are dedicated to providing you with the best laundry service experience. Your feedback is incredibly important to us, as it helps us enhance our services and better meet your needs',
+                                  "At VelVet Wash, your satisfaction is paramount. If you ever need to cancel an order, we've designed a streamlined process to assist you.Your input is valuable as it aids us in improving our services to align with your preferences. ",
                                   style: ralewayStyle.copyWith(
                                     fontSize: 14.0,
                                     color: AppColors.whiteColor,
@@ -166,13 +164,13 @@ class _FeedBackPageState extends State<FeedBackPage> {
                                         CrossAxisAlignment.start,
                                     children: [
                                       const Icon(
-                                        Icons.feedback_outlined,
+                                        Icons.cancel,
                                         color: Colors.white,
                                       ),
                                       const SizedBox(
                                         height: 5.0,
                                       ),
-                                      Text('Feedback',
+                                      Text('Cancel',
                                           style: ralewayStyle.copyWith(
                                             fontSize: 20.0,
                                             color: AppColors.whiteColor,
@@ -185,7 +183,7 @@ class _FeedBackPageState extends State<FeedBackPage> {
                               const SizedBox(
                                 height: 10.0,
                               ),
-                              Text('Enter your valuable feedback',
+                              Text('Enter your the reason',
                                   style: ralewayStyle.copyWith(
                                       fontSize: 20.0,
                                       color: AppColors.whiteColor,
@@ -218,7 +216,7 @@ class _FeedBackPageState extends State<FeedBackPage> {
                                                 const EdgeInsets.only(
                                                     top: 16.0),
                                             hintText:
-                                                "Let us know how we've met your expectations in terms of laundry quality and cleanliness.",
+                                                "Let us know why you want to cancel the order?",
                                             hintStyle: ralewayStyle.copyWith(
                                                 fontWeight: FontWeight.w400,
                                                 color: AppColors.whiteColor,
@@ -244,9 +242,7 @@ class _FeedBackPageState extends State<FeedBackPage> {
                             child: Material(
                               color: Colors.transparent,
                               child: InkWell(
-                                onTap: () {
-                                  addFeedbackDetails();
-                                },
+                                onTap: () {},
                                 borderRadius: BorderRadius.circular(16.0),
                                 child: Ink(
                                   padding: const EdgeInsets.all(18.0),

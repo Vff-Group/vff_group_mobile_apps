@@ -1,5 +1,7 @@
 // ignore_for_file: use_build_context_synchronously
 
+import 'dart:ui';
+
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:vff_group/animation/fade_animation.dart';
@@ -74,6 +76,49 @@ class _SplashScreenState extends State<SplashScreen> {
         child: Stack(
           alignment: Alignment.center,
           children: [
+             Align(
+                alignment: AlignmentDirectional(1, -0.3),
+                child: Container(
+                  height: 300,
+                  width: 300,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: Colors.deepPurple
+                  ),
+                ),
+              ),
+              Align(
+                alignment: AlignmentDirectional(-1, -0.3),
+                child: Container(
+                  height: 300,
+                  width: 300,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: Colors.deepPurple
+                  ),
+                ),
+              ),
+              Align(
+                alignment: AlignmentDirectional(0, -1.3),
+                child: Container(
+                  height: 300,
+                  width: 300,
+                  decoration: BoxDecoration(
+                    
+                    color: Colors.amber
+                  ),
+                ),
+              ),
+              BackdropFilter(filter: ImageFilter.blur(
+                sigmaX: 100.0,
+                sigmaY: 100.0
+              ),
+              child: Container(
+                decoration: BoxDecoration(
+                  color: Colors.transparent
+                ),
+              ),),
+                
             Positioned(
               child: Padding(
                 padding: const EdgeInsets.all(8.0),

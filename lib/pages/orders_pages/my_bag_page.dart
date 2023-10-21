@@ -202,31 +202,31 @@ class _MyBagPageState extends State<MyBagPage> {
                         Tab tabBar;
                         if (catName == 'DRY CLEAN') {
                           tabBar = Tab(
-                            icon: Padding(
-                              padding: EdgeInsets.all(4.0),
-                              child: ClipRRect(
-                                  borderRadius: BorderRadius.circular(50.0),
-                                  child: Image.network(
-                                    catImage,
-                                    width: 50,
-                                    height: 50,
-                                  )),
-                            ),
+                            // icon: Padding(
+                            //   padding: EdgeInsets.all(4.0),
+                            //   child: ClipRRect(
+                            //       borderRadius: BorderRadius.circular(50.0),
+                            //       child: Image.network(
+                            //         catImage,
+                            //         width: 50,
+                            //         height: 50,
+                            //       )),
+                            // ),
                             text: catName,
                             // Pass the catId to the Tab
                           );
                         } else {
                           tabBar = Tab(
-                            icon: Padding(
-                              padding: EdgeInsets.all(4.0),
-                              child: ClipRRect(
-                                  borderRadius: BorderRadius.circular(50.0),
-                                  child: Image.network(
-                                    catImage,
-                                    width: 50,
-                                    height: 50,
-                                  )),
-                            ),
+                            // icon: Padding(
+                            //   padding: EdgeInsets.all(4.0),
+                            //   child: ClipRRect(
+                            //       borderRadius: BorderRadius.circular(50.0),
+                            //       child: Image.network(
+                            //         catImage,
+                            //         width: 50,
+                            //         height: 50,
+                            //       )),
+                            // ),
                             text: catName,
                             // Pass the catId to the Tab
                           );
@@ -260,49 +260,7 @@ class _MyBagPageState extends State<MyBagPage> {
                         }).toList(),
                       ),
                     ),
-                    // Padding(
-                    //   padding: const EdgeInsets.all(12.0),
-                    //   child: Padding(
-                    //     padding: const EdgeInsets.all(8.0),
-                    //     child: Column(
-                    //       children: [
-                    //         Row(
-                    //           mainAxisAlignment: MainAxisAlignment.center,
-                    //           children: [
-                    //             Material(
-                    //               color: Colors.transparent,
-                    //               child: InkWell(
-                    //                 onTap: () {
-                    //                   // Navigator.pushNamed(
-                    //                   //     context, CheckOutRoute);
-                    //                 },
-                    //                 borderRadius: BorderRadius.circular(12.0),
-                    //                 child: Ink(
-                    //                   decoration: BoxDecoration(
-                    //                     color: AppColors.blueColor,
-                    //                     borderRadius:
-                    //                         BorderRadius.circular(12.0),
-                    //                   ),
-                    //                   child: Padding(
-                    //                     padding: const EdgeInsets.symmetric(
-                    //                         horizontal: 50.0, vertical: 10.0),
-                    //                     child: Text(
-                    //                       'Add To Cart',
-                    //                       style: ralewayStyle.copyWith(
-                    //                           fontSize: 16.0,
-                    //                           color: AppColors.whiteColor,
-                    //                           fontWeight: FontWeight.bold),
-                    //                     ),
-                    //                   ),
-                    //                 ),
-                    //               ),
-                    //             )
-                    //           ],
-                    //         )
-                    //       ],
-                    //     ),
-                    //   ),
-                    // ),
+                  
                   ],
                 ),
               ),

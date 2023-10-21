@@ -178,10 +178,13 @@ class _DeliveryAddressPageState extends State<DeliveryAddressPage> {
           return;
         } else {
           //Successfully pickup request placed
+          glb.showSnackBar(
+              context, 'Success', 'Pickup Request Placed Successfully');
           setState(() {
             showLoading = false;
             showSuccess = true;
           });
+          Navigator.pop(context);
           //showSuccessPopup(context);
         }
       }
@@ -347,17 +350,13 @@ class _DeliveryAddressPageState extends State<DeliveryAddressPage> {
                           Padding(
                             padding: const EdgeInsets.all(8.0),
                             child: Text(
-                              'Pick Up Request Accepted Successfully !',
+                              'Pick Up Placed Successfully !',
                               style: ralewayStyle.copyWith(
                                   fontSize: 25.0,
                                   fontWeight: FontWeight.bold,
-                                  color: AppColors.titleTxtColor),
+                                  color: AppColors.whiteColor),
                               textAlign: TextAlign.center,
                             ),
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.all(24.0),
-                            child: Image.asset('assets/images/success_2.gif'),
                           ),
                           SizedBox(
                             height: width * 0.04,
@@ -412,7 +411,10 @@ class _DeliveryAddressPageState extends State<DeliveryAddressPage> {
                                                   borderRadius:
                                                       BorderRadius.circular(
                                                           12.0),
-                                                  color: AppColors.blueColor,
+                                                  gradient:  LinearGradient(colors: [
+                                                          Colors.green,
+                                                          Colors.blue,
+                                                        ])
                                                 ),
                                                 child: Padding(
                                                   padding:
@@ -452,8 +454,8 @@ class _DeliveryAddressPageState extends State<DeliveryAddressPage> {
                                               Text('Enter Address Details',
                                                   style: ralewayStyle.copyWith(
                                                       fontSize: 20.0,
-                                                      color: AppColors
-                                                          .whiteColor,
+                                                      color:
+                                                          AppColors.whiteColor,
                                                       fontWeight:
                                                           FontWeight.bold,
                                                       letterSpacing: 1)),
@@ -484,19 +486,26 @@ class _DeliveryAddressPageState extends State<DeliveryAddressPage> {
                                                               fontSize: 14.0),
                                                       keyboardType:
                                                           TextInputType.text,
-                                                      decoration: InputDecoration(
-                                                          prefixIcon:
-                                                              const Icon(Icons
-                                                                  .home_work_outlined,color: Colors.white,),
-                                                          border:
-                                                              InputBorder.none,
-                                                          contentPadding:
-                                                              const EdgeInsets.only(
-                                                                  top: 16.0),
-                                                          hintText:
-                                                              ' Building/Society Name & Number',
-                                                          hintStyle: ralewayStyle
-                                                              .copyWith(
+                                                      decoration:
+                                                          InputDecoration(
+                                                              prefixIcon:
+                                                                  const Icon(
+                                                                Icons
+                                                                    .home_work_outlined,
+                                                                color: Colors
+                                                                    .white,
+                                                              ),
+                                                              border:
+                                                                  InputBorder
+                                                                      .none,
+                                                              contentPadding:
+                                                                  const EdgeInsets
+                                                                      .only(
+                                                                      top:
+                                                                          16.0),
+                                                              hintText:
+                                                                  ' Building/Society Name & Number',
+                                                              hintStyle: ralewayStyle.copyWith(
                                                                   fontWeight:
                                                                       FontWeight
                                                                           .w400,
@@ -533,19 +542,26 @@ class _DeliveryAddressPageState extends State<DeliveryAddressPage> {
                                                               fontSize: 14.0),
                                                       keyboardType:
                                                           TextInputType.text,
-                                                      decoration: InputDecoration(
-                                                          prefixIcon:
-                                                              const Icon(Icons
-                                                                  .roundabout_right,color: Colors.white,),
-                                                          border:
-                                                              InputBorder.none,
-                                                          contentPadding:
-                                                              const EdgeInsets.only(
-                                                                  top: 16.0),
-                                                          hintText:
-                                                              ' Street Address, Landmark etc.',
-                                                          hintStyle: ralewayStyle
-                                                              .copyWith(
+                                                      decoration:
+                                                          InputDecoration(
+                                                              prefixIcon:
+                                                                  const Icon(
+                                                                Icons
+                                                                    .roundabout_right,
+                                                                color: Colors
+                                                                    .white,
+                                                              ),
+                                                              border:
+                                                                  InputBorder
+                                                                      .none,
+                                                              contentPadding:
+                                                                  const EdgeInsets
+                                                                      .only(
+                                                                      top:
+                                                                          16.0),
+                                                              hintText:
+                                                                  ' Street Address, Landmark etc.',
+                                                              hintStyle: ralewayStyle.copyWith(
                                                                   fontWeight:
                                                                       FontWeight
                                                                           .w400,
@@ -586,29 +602,34 @@ class _DeliveryAddressPageState extends State<DeliveryAddressPage> {
                                                             keyboardType:
                                                                 TextInputType
                                                                     .text,
-                                                            decoration: InputDecoration(
-                                                                prefixIcon:
-                                                                    const Icon(Icons
-                                                                        .location_city_outlined,color: Colors.white,),
-                                                                border:
-                                                                    InputBorder
-                                                                        .none,
-                                                                contentPadding:
-                                                                    const EdgeInsets.only(
-                                                                        top:
-                                                                            16.0),
-                                                                hintText:
-                                                                    ' City',
-                                                                hintStyle: ralewayStyle.copyWith(
-                                                                    fontWeight:
-                                                                        FontWeight
-                                                                            .w400,
-                                                                    color: AppColors
-                                                                        .whiteColor
-                                                                        .withOpacity(
-                                                                            0.5),
-                                                                    fontSize:
-                                                                        14.0)),
+                                                            decoration:
+                                                                InputDecoration(
+                                                                    prefixIcon:
+                                                                        const Icon(
+                                                                      Icons
+                                                                          .location_city_outlined,
+                                                                      color: Colors
+                                                                          .white,
+                                                                    ),
+                                                                    border:
+                                                                        InputBorder
+                                                                            .none,
+                                                                    contentPadding:
+                                                                        const EdgeInsets.only(
+                                                                            top:
+                                                                                16.0),
+                                                                    hintText:
+                                                                        ' City',
+                                                                    hintStyle: ralewayStyle.copyWith(
+                                                                        fontWeight:
+                                                                            FontWeight
+                                                                                .w400,
+                                                                        color: AppColors
+                                                                            .whiteColor
+                                                                            .withOpacity(
+                                                                                0.5),
+                                                                        fontSize:
+                                                                            14.0)),
                                                           ),
                                                         ),
                                                       ),
@@ -640,29 +661,34 @@ class _DeliveryAddressPageState extends State<DeliveryAddressPage> {
                                                             keyboardType:
                                                                 TextInputType
                                                                     .number,
-                                                            decoration: InputDecoration(
-                                                                prefixIcon:
-                                                                    const Icon(Icons
-                                                                        .numbers,color: Colors.white,),
-                                                                border: InputBorder
-                                                                    .none,
-                                                                contentPadding:
-                                                                    const EdgeInsets
-                                                                        .only(
-                                                                        top:
-                                                                            16.0),
-                                                                hintText:
-                                                                    ' Zip Code',
-                                                                hintStyle: ralewayStyle.copyWith(
-                                                                    fontWeight:
-                                                                        FontWeight
-                                                                            .w400,
-                                                                    color: AppColors
-                                                                        .whiteColor
-                                                                        .withOpacity(
-                                                                            0.5),
-                                                                    fontSize:
-                                                                        14.0)),
+                                                            decoration:
+                                                                InputDecoration(
+                                                                    prefixIcon:
+                                                                        const Icon(
+                                                                      Icons
+                                                                          .numbers,
+                                                                      color: Colors
+                                                                          .white,
+                                                                    ),
+                                                                    border:
+                                                                        InputBorder
+                                                                            .none,
+                                                                    contentPadding:
+                                                                        const EdgeInsets.only(
+                                                                            top:
+                                                                                16.0),
+                                                                    hintText:
+                                                                        ' Zip Code',
+                                                                    hintStyle: ralewayStyle.copyWith(
+                                                                        fontWeight:
+                                                                            FontWeight
+                                                                                .w400,
+                                                                        color: AppColors
+                                                                            .whiteColor
+                                                                            .withOpacity(
+                                                                                0.5),
+                                                                        fontSize:
+                                                                            14.0)),
                                                           ),
                                                         ),
                                                       ),
@@ -693,19 +719,26 @@ class _DeliveryAddressPageState extends State<DeliveryAddressPage> {
                                                               fontSize: 14.0),
                                                       keyboardType:
                                                           TextInputType.text,
-                                                      decoration: InputDecoration(
-                                                          prefixIcon:
-                                                              const Icon(Icons
-                                                                  .location_on,color: AppColors.whiteColor,),
-                                                          border:
-                                                              InputBorder.none,
-                                                          contentPadding:
-                                                              const EdgeInsets.only(
-                                                                  top: 16.0),
-                                                          hintText:
-                                                              'Landmark [ Example:Car Showroom,etc ]',
-                                                          hintStyle: ralewayStyle
-                                                              .copyWith(
+                                                      decoration:
+                                                          InputDecoration(
+                                                              prefixIcon:
+                                                                  const Icon(
+                                                                Icons
+                                                                    .location_on,
+                                                                color: AppColors
+                                                                    .whiteColor,
+                                                              ),
+                                                              border:
+                                                                  InputBorder
+                                                                      .none,
+                                                              contentPadding:
+                                                                  const EdgeInsets
+                                                                      .only(
+                                                                      top:
+                                                                          16.0),
+                                                              hintText:
+                                                                  'Landmark [ Example:Car Showroom,etc ]',
+                                                              hintStyle: ralewayStyle.copyWith(
                                                                   fontWeight:
                                                                       FontWeight
                                                                           .w400,
@@ -815,11 +848,10 @@ class _DeliveryAddressPageState extends State<DeliveryAddressPage> {
                                                             BorderRadius
                                                                 .circular(16.0),
                                                         gradient:
-                                                            const LinearGradient(
+                                                            LinearGradient(
                                                                 colors: [
-                                                              AppColors
-                                                                  .blueColor,
-                                                              Colors.blue
+                                                              Colors.green,
+                                                              Colors.blue,
                                                             ])),
                                                     child: Row(
                                                       mainAxisAlignment:
@@ -858,6 +890,5 @@ class _DeliveryAddressPageState extends State<DeliveryAddressPage> {
                       )),
       ),
     );
-  
   }
 }

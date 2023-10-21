@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:vff_group/animation/scale_and_revert_animation.dart';
 import 'package:vff_group/animation/slide_bottom_animation.dart';
 import 'package:vff_group/routings/route_names.dart';
@@ -31,10 +32,13 @@ class _OnBoardingScreenState extends State<OnBoardingScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.black,
+      extendBodyBehindAppBar: true,
+     
       body: SafeArea(
         child: Padding(
           padding: const EdgeInsets.all(16.0),
-          child: Column(
+          child: Stack(
             children: [
               Expanded(
                 child: PageView.builder(
@@ -58,30 +62,36 @@ class _OnBoardingScreenState extends State<OnBoardingScreen> {
                 children: [
                   ...List.generate(
                     data.length,
-                    (index) => Padding(
-                      padding: const EdgeInsets.only(right: 4),
-                      child: DotIndicator(
-                        isActive: index == _pageIndex,
+                    (index) => Align(
+                      alignment: Alignment.bottomLeft,
+                      child: Padding(
+                        padding: const EdgeInsets.only(right: 4),
+                        child: DotIndicator(
+                          isActive: index == _pageIndex,
+                        ),
                       ),
                     ),
                   ),
                   const Spacer(),
-                  SizedBox(
-                    width: 60,
-                    height: 60,
-                    child: ElevatedButton(
-                      onPressed: () {
-                        _pageController.nextPage(
-                            duration: const Duration(milliseconds: 300),
-                            curve: Curves.ease);
-                        if (_pageIndex == 3) {
-                          SharedPreferenceUtils.save_val('firstRun', '1');
-                          Navigator.pushReplacementNamed(context, LoginRoute);
-                        }
-                      },
-                      style:
-                          ElevatedButton.styleFrom(shape: const CircleBorder()),
-                      child: const Icon(Icons.keyboard_arrow_right),
+                  Align(
+                    alignment: Alignment.bottomRight,
+                    child: SizedBox(
+                      width: 60,
+                      height: 60,
+                      child: ElevatedButton(
+                        onPressed: () {
+                          _pageController.nextPage(
+                              duration: const Duration(milliseconds: 300),
+                              curve: Curves.ease);
+                          if (_pageIndex == 3) {
+                            SharedPreferenceUtils.save_val('firstRun', '1');
+                            Navigator.pushReplacementNamed(context, LoginRoute);
+                          }
+                        },
+                        style:
+                            ElevatedButton.styleFrom(shape: const CircleBorder()),
+                        child: const Icon(Icons.keyboard_arrow_right),
+                      ),
                     ),
                   ),
                 ],
@@ -175,7 +185,7 @@ class OnBoardContent extends StatelessWidget {
                 style: ralewayStyle.copyWith(
                   fontSize: 18.0,
                   fontWeight: FontWeight.w400,
-                  color: AppColors.mainBlueColor,
+                  color: AppColors.neonColor,
                 ),
               ),
             ),
@@ -184,14 +194,14 @@ class OnBoardContent extends StatelessWidget {
         const Spacer(),
         Image.asset(
           image,
-          height: 500,
+          height: 400,
         ),
         Text(
           title,
           textAlign: TextAlign.center,
           style: nunitoStyle.copyWith(
             fontWeight: FontWeight.bold,
-            color: AppColors.titleTxtColor,
+            color: AppColors.neonColor,
             fontSize: 24.0
             ),
         ),
@@ -202,7 +212,7 @@ class OnBoardContent extends StatelessWidget {
           description,
           textAlign: TextAlign.center,
           style: nunitoStyle.copyWith(
-            color: AppColors.textColor,
+            color: AppColors.whiteColor,
             
             fontSize: 12.0
             ),

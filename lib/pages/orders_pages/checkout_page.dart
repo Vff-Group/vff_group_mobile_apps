@@ -656,7 +656,10 @@ class _CheckOutScreenState extends State<CheckOutScreen> {
                                     decoration: BoxDecoration(
                                         borderRadius:
                                             BorderRadius.circular(12.0),
-                                        color: AppColors.blueColor),
+                                        gradient: LinearGradient(colors: [
+                                        Colors.green,
+                                      Colors.blue,
+                                      ]),),
                                     child: Padding(
                                       padding: const EdgeInsets.symmetric(
                                           horizontal: 30.0, vertical: 10.0),
