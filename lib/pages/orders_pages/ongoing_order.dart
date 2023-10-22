@@ -1,6 +1,8 @@
 import 'dart:convert';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:vff_group/modals/order_detail_item_model.dart';
 import 'package:vff_group/routings/route_names.dart';
 import 'package:vff_group/utils/app_colors.dart';
@@ -17,13 +19,13 @@ class OngoingOrders extends StatefulWidget {
 
 class _OngoingOrdersState extends State<OngoingOrders> {
   final bool _noOrders = false;
-/*
+  bool showLoading = false;
   Future loadOrderDetails() async {
     setState(() {
       showLoading = true;
     });
-    // final prefs = await SharedPreferences.getInstance();
-    // var customerid = prefs.getString('customerid');
+    final prefs = await SharedPreferences.getInstance();
+    var customerid = prefs.getString('customerid');
     if (glb.orderid.isEmpty) {
       glb.showSnackBar(context, 'Alert!', 'Please Select the Active Order');
       return;
@@ -34,9 +36,9 @@ class _OngoingOrdersState extends State<OngoingOrders> {
       var url = glb.endPoint;
       final Map dictMap = {};
 
-      dictMap['order_id'] = glb.orderid;
+      dictMap['customer_id'] = customerid;
       dictMap['order_status'] = glb.order_status;
-      dictMap['pktType'] = "10";
+      dictMap['pktType'] = "22";
       dictMap['token'] = "vff";
       dictMap['uid'] = "-1";
 
@@ -63,56 +65,45 @@ class _OngoingOrdersState extends State<OngoingOrders> {
           return;
         } else {
           try {
-            Map<String, dynamic> orderMap = json.decode(response.body);
+            Map<String, dynamic> onGoingOrdersMap = json.decode(response.body);
             if (kDebugMode) {
-              print("orderMap:$orderMap");
+              print("onGoingOrdersMap:$onGoingOrdersMap");
             }
 
-            var epoch = orderMap['epoch'];
-            var pickupDt = orderMap['pickup_dt'];
-            var clat = orderMap['clat'];
-            var clng = orderMap['clng'];
-            var deliveryBoyId = orderMap['delivery_boy_id'];
-            var delivery_boyName = orderMap['delivery_boy_name'];
-            var order_status = orderMap['order_status'];
-            var delvryBoyMobno = orderMap['delvry_boy_mobno'];
-            var deliveryDt = orderMap['delivery_dt'];
-            var houseno = orderMap['houseno'];
-            var address = orderMap['address'];
-            var landmark = orderMap['landmark'];
-            var pincode = orderMap['pincode'];
-            var deliveryEpoch = orderMap['deliveryEpoch'];
-            var profileImg = orderMap['profileImg'];
-            var cancel_reason = orderMap['cancel_reason'];
-            var feedback = orderMap['feedback'];
-            glb.deliveryBoyID = deliveryBoyId;
-            var formattedDateTime =
-                glb.doubleEpochToFormattedDateTime(double.parse(epoch));
-            var deliveryEpochTime =
-                glb.doubleEpochToFormattedDateTime(double.parse(deliveryEpoch));
-            setState(() {
-              timeOrderRecieved = formattedDateTime;
-              pickupDate = pickupDt;
+            var orderid = onGoingOrdersMap["orderid"];
+            var delivery_boyid = onGoingOrdersMap["delivery_boyid"];
+            var quantity = onGoingOrdersMap["quantity"];
+            var price = onGoingOrdersMap["price"];
+            var pickup_date = onGoingOrdersMap["pickup_date"];
+            var delivery_date = onGoingOrdersMap["delivery_date"];
+            var clat = onGoingOrdersMap["clat"];
+            var clng = onGoingOrdersMap["clng"];
+            var order_status = onGoingOrdersMap["order_status"];
+            var delivery_epoch = onGoingOrdersMap["delivery_epoch"];
+            var order_taken_epoch = onGoingOrdersMap["order_taken_epoch"];
+            var cancel_reason = onGoingOrdersMap["cancel_reason"];
+            var house_no = onGoingOrdersMap["house_no"];
+            var address = onGoingOrdersMap["address"];
 
-              deliveryBoyName = delivery_boyName;
-              if (order_status != 'Delivered') {
-                deliveryDateTime = "Not Delivered yet";
-              } else {
-                deliveryDateTime = deliveryEpochTime;
-              }
-              orderStatus = order_status;
-              houseNo = houseno;
-              addressClient = address;
-              profilePicture = profileImg;
-              deliveryMobno = delvryBoyMobno;
-              cancelReason = cancel_reason;
-              feedBack = feedback;
-            });
+            List<String> orderIDLst = glb.strToLst2(orderid);
+            List<String> delivery_boyidLst = glb.strToLst2(delivery_boyid);
+            List<String> quantityLst = glb.strToLst2(quantity);
+            List<String> priceLst = glb.strToLst2(price);
+            List<String> pickup_dateLst = glb.strToLst2(pickup_date);
+            List<String> delivery_dateLst = glb.strToLst2(delivery_date);
+            List<String> clatLst = glb.strToLst2(clat);
+            List<String> clngLst = glb.strToLst2(clng);
+            List<String> order_statusLst = glb.strToLst2(order_status);
+            List<String> delivery_epochLst = glb.strToLst2(delivery_epoch);
+            List<String> order_taken_epochLst =
+                glb.strToLst2(order_taken_epoch);
+            List<String> cancel_reasonLst = glb.strToLst2(cancel_reason);
+            List<String> house_noLst = glb.strToLst2(house_no);
+            List<String> addressLst = glb.strToLst2(address);
 
             setState(() {
               showLoading = false;
             });
-            loadOrderItemsDetails();
           } catch (e) {
             if (kDebugMode) {
               print(e);
@@ -134,7 +125,7 @@ class _OngoingOrdersState extends State<OngoingOrders> {
       glb.handleErrors(e, context);
     }
   }
-*/
+
   Future<void> _handleRefresh() async {
     Future.delayed(Duration(milliseconds: 5));
   }

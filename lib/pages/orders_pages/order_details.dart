@@ -634,7 +634,7 @@ class _OrderDetailsPageState extends State<OrderDetailsPage> {
                                                                               AppColors.neonColor),
                                                                     ),
                                                                     Text(
-                                                                      '${orderItemModel[index].totalQuantity} ',
+                                                                      '${orderItemModel[index].totalQuantity} ${orderItemModel[index].typeOf} ',
                                                                       style: nunitoStyle.copyWith(
                                                                           fontSize:
                                                                               14.0,
@@ -1077,7 +1077,7 @@ class _DeliveryBoyDetails extends StatelessWidget {
                       color: Colors.transparent,
                       child: InkWell(
                         onTap: () {
-                          if (orderStatus == "Accepted") {
+                          if (orderStatus == "Accepted" || orderStatus == "Payment Done") {
                             _makePhoneCall(deliveryMobno);
                           } else if (orderStatus == "Delivered") {
                             glb.showSnackBar(context, 'Alert',
