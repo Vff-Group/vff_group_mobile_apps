@@ -253,7 +253,7 @@ class _CancelledOrdersState extends State<CancelledOrders> {
                                           Text(
                                             '${ongoingModel[index].order_status}',
                                             style: nunitoStyle.copyWith(
-                                              color: AppColors.btnColor,
+                                              color: AppColors.dangerColor,
                                               fontSize: 14,
                                               fontWeight: FontWeight.bold,
                                             ),
@@ -367,7 +367,7 @@ class _CancelledOrdersState extends State<CancelledOrders> {
                                       Text(
                                         '₹ ${ongoingModel[index].totalPrice}/-',
                                         style: nunitoStyle.copyWith(
-                                          color: AppColors.blueDarkColor,
+                                          color: AppColors.neonColor,
                                           fontSize: 14,
                                           fontWeight: FontWeight.bold,
                                         ),

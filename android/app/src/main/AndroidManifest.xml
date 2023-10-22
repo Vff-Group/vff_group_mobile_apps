@@ -45,9 +45,9 @@
     android:name="com.google.firebase.messaging.default_notification_channel_id"
     android:value="high_importance_channel" />
      <!-- If your app checks for call support -->
-  <intent>
-    <action android:name="android.intent.action.VIEW" />
-    <data android:scheme="tel" />
-  </intent>
+<!--  <intent>-->
+<!--    <action android:name="android.intent.action.VIEW" />-->
+<!--    <data android:scheme="tel" />-->
+<!--  </intent>-->
     </application>
 </manifest>

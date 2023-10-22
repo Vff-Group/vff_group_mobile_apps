@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get_utils/get_utils.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:shimmer/shimmer.dart';
 import 'package:vff_group/routings/route_names.dart';
 import 'package:vff_group/utils/app_colors.dart';
 import 'package:vff_group/utils/app_styles.dart';
@@ -12,7 +13,9 @@ import 'package:vff_group/widgets/custom_radio_btn.dart';
 import 'package:razorpay_flutter/razorpay_flutter.dart';
 import 'package:http/http.dart' as http;
 import 'package:vff_group/global/vffglb.dart' as glb;
+import 'package:vff_group/widgets/full_screen_loading.dart';
 import 'package:vff_group/widgets/radio_btn_for_extra_item.dart';
+import 'package:vff_group/widgets/shimmer_card.dart';
 
 class CheckOutScreen extends StatefulWidget {
   const CheckOutScreen({super.key});
@@ -28,7 +31,8 @@ class _CheckOutScreenState extends State<CheckOutScreen> {
       _scentedDetergentOnly = false,
       _useSoftnerOnly = false,
       razorPayLoading = false,
-      showLoading = true;
+      showLoading = true,
+      showProgress = false;
   var totalPrice = 0.0;
   var deliveryDPrice = 0.0;
   var rangeDelivery = 0.0;
@@ -112,6 +116,8 @@ class _CheckOutScreenState extends State<CheckOutScreen> {
 
             if (totalPrice < rangeDelivery) {
               deliveryPrice = deliveryDPrice; //To add delivery Price
+              // totalPrice += deliveryPrice;
+              // print('totalPrice after delivery price::$totalPrice');
             } else {
               deliveryPrice = 0;
             }
@@ -170,14 +176,21 @@ class _CheckOutScreenState extends State<CheckOutScreen> {
                 setState(() {
                   var price = double.parse(priceLst[i]);
                   print("price:$price");
-                  totalPrice += price;
+                  setState(() {
+                    totalPrice += price;
+                  });
+                  print("totalPrice+:$totalPrice");
                 });
               } else {
                 selectedIndexes.remove(i);
                 setState(() {
                   var price = double.parse(priceLst[i]);
                   print("price:$price");
-                  totalPrice -= price;
+                  setState(() {
+                    totalPrice -= price;
+                  });
+
+                  print("totalPrice-:$totalPrice");
                 });
               }
             });
@@ -285,7 +298,9 @@ class _CheckOutScreenState extends State<CheckOutScreen> {
         } else if (res.contains("ErrorCode#8")) {
           setState(() {
             showLoading = false;
+            showProgress = true;
           });
+
           glb.showSnackBar(context, 'Error', 'Something Went Wrong');
           //Navigator.pop(context);
           return;
@@ -316,6 +331,9 @@ class _CheckOutScreenState extends State<CheckOutScreen> {
     }
     razor_pay_status = "Success";
     savePaymentAndCartDetails();
+    setState(() {
+      showProgress = false;
+    });
   }
 
   void _handlePaymentError(PaymentFailureResponse response) {
@@ -323,12 +341,19 @@ class _CheckOutScreenState extends State<CheckOutScreen> {
     print('Failed Response::$response');
     razor_pay_status = "Failed";
     glb.showSnackBar(context, 'Alert', 'Payment Failed please try again');
+    setState(() {
+      showProgress = false;
+    });
   }
 
   void _handleExternalWallet(ExternalWalletResponse response) {
     // Do something when an external wallet is selected
     print('External Wallet Response::$response');
     razor_pay_status = "External Wallet";
+    savePaymentAndCartDetails();
+    setState(() {
+      showProgress = false;
+    });
   }
 
   @override
@@ -370,39 +395,54 @@ class _CheckOutScreenState extends State<CheckOutScreen> {
               SystemUiOverlayStyle(statusBarBrightness: Brightness.dark),
         ),
         body: SafeArea(
-          child: CustomScrollView(
-            slivers: [
-              SliverToBoxAdapter(
-                child: showLoading
-                    ? LinearProgressIndicator()
-                    : Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Column(
-                          children: [
-                            const SizedBox(
-                              height: 10.0,
-                            ),
-                            Container(
-                              decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(12.0),
-                                  color: AppColors.lightBlackColor),
-                              child: Padding(
-                                padding: const EdgeInsets.symmetric(
-                                    vertical: 20.0, horizontal: 12.0),
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text(
-                                      'Other',
-                                      style: nunitoStyle.copyWith(
-                                          fontSize: 20.0,
-                                          fontWeight: FontWeight.bold,
-                                          color: AppColors.whiteColor),
-                                    ),
-                                    Column(
-                                      children: [
-                                        ...generateRadioButtons()
-                                        /*  const SizedBox(height: 10),
+          child: showProgress
+              ? Shimmer.fromColors(
+                  baseColor: Colors.grey.withOpacity(0.2),
+                  highlightColor: Colors.grey.withOpacity(0.1),
+                  enabled: showLoading,
+                  child: ListView.separated(
+                      itemCount: 10,
+                      separatorBuilder: (context, _) =>
+                          SizedBox(height: height * 0.02),
+                      itemBuilder: ((context, index) {
+                        return const ShimmerCardLayout();
+                      })),
+                )
+              : CustomScrollView(
+                  slivers: [
+                    SliverToBoxAdapter(
+                      child: showLoading
+                          ? LinearProgressIndicator()
+                          : Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Column(
+                                children: [
+                                  const SizedBox(
+                                    height: 10.0,
+                                  ),
+                                  Container(
+                                    decoration: BoxDecoration(
+                                        borderRadius:
+                                            BorderRadius.circular(12.0),
+                                        color: AppColors.lightBlackColor),
+                                    child: Padding(
+                                      padding: const EdgeInsets.symmetric(
+                                          vertical: 20.0, horizontal: 12.0),
+                                      child: Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          Text(
+                                            'Other',
+                                            style: nunitoStyle.copyWith(
+                                                fontSize: 20.0,
+                                                fontWeight: FontWeight.bold,
+                                                color: AppColors.whiteColor),
+                                          ),
+                                          Column(
+                                            children: [
+                                              ...generateRadioButtons()
+                                              /*  const SizedBox(height: 10),
                                   CustomRadioButton(
                                     label: 'Dry Heater',
                                     isSelected:
@@ -458,228 +498,249 @@ class _CheckOutScreenState extends State<CheckOutScreen> {
                                     },
                                   ),
                               */
-                                        ,
-                                        // Text(
-                                        //   'Selected Items: ${getSelectedItemsID()}',
-                                        //   style: TextStyle(fontSize: 16),
-                                        // ),
-                                      ],
-                                    )
-                                  ],
-                                ),
-                              ),
-                            ),
-                            const SizedBox(
-                              height: 10.0,
-                            ),
-                            Container(
-                              decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(12.0),
-                                  color: AppColors.lightBlackColor),
-                              child: Padding(
-                                padding: const EdgeInsets.symmetric(
-                                    vertical: 20.0, horizontal: 12.0),
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Row(
-                                      children: [
-                                        Text(
-                                          'Additional Notes',
-                                          style: nunitoStyle.copyWith(
-                                              fontSize: 20.0,
-                                              fontWeight: FontWeight.bold,
-                                              color: AppColors.whiteColor),
-                                        ),
-                                      ],
-                                    ),
-                                    Container(
-                                      height: 100.0,
-                                      width: width,
-                                      decoration: BoxDecoration(
-                                        borderRadius:
-                                            BorderRadius.circular(8.0),
-                                      ),
-                                      child: TextFormField(
-                                        controller:
-                                            additionalInformationController,
-                                        maxLines: 20,
-                                        style: nunitoStyle.copyWith(
-                                            fontWeight: FontWeight.w400,
-                                            color: AppColors.whiteColor,
-                                            fontSize: 14.0),
-                                        keyboardType: TextInputType.text,
-                                        decoration: InputDecoration(
-                                            border: InputBorder.none,
-                                            contentPadding:
-                                                const EdgeInsets.only(
-                                                    top: 16.0),
-                                            hintText:
-                                                'Please provide us with any specific instruction which should be followed by us.',
-                                            hintStyle: ralewayStyle.copyWith(
-                                                fontWeight: FontWeight.w400,
-                                                color: AppColors.whiteColor,
-                                                fontSize: 12.0)),
+                                              ,
+                                              // Text(
+                                              //   'Selected Items: ${getSelectedItemsID()}',
+                                              //   style: TextStyle(fontSize: 16),
+                                              // ),
+                                            ],
+                                          )
+                                        ],
                                       ),
                                     ),
-                                  ],
-                                ),
-                              ),
-                            ),
-                            const SizedBox(
-                              height: 10.0,
-                            ),
-                            Container(
-                              decoration: BoxDecoration(
-                                  color: AppColors.lightBlackColor,
-                                  borderRadius: BorderRadius.circular(12.0)),
-                              child: Padding(
-                                padding: const EdgeInsets.symmetric(
-                                    vertical: 20.0, horizontal: 12.0),
-                                child: Column(
-                                  children: [
-                                    Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceBetween,
-                                      children: [
-                                        Text(
-                                          'Service Cost',
-                                          style: nunitoStyle.copyWith(
-                                              fontSize: 14.0,
-                                              fontWeight: FontWeight.w500,
-                                              color: AppColors.whiteColor),
-                                        ),
-                                        Text(
-                                          '₹.$totalPrice/-',
-                                          style: nunitoStyle.copyWith(
-                                              fontSize: 12.0,
-                                              fontWeight: FontWeight.bold,
-                                              color: AppColors.neonColor),
-                                        ),
-                                      ],
-                                    ),
-                                    SizedBox(
-                                      height: 10.0,
-                                    ),
-                                    Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceBetween,
-                                      children: [
-                                        Column(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
-                                          children: [
-                                            Text(
-                                              'Delivery',
-                                              style: nunitoStyle.copyWith(
-                                                  fontSize: 14.0,
-                                                  fontWeight: FontWeight.w500,
-                                                  color: AppColors.whiteColor),
-                                            ),
-                                            Text(
-                                              'Free delivery for orders above ₹.$rangeDelivery/- 😊',
-                                              style: nunitoStyle.copyWith(
-                                                  fontSize: 10.0,
-                                                  fontWeight: FontWeight.normal,
-                                                  color: AppColors.whiteColor),
-                                            ),
-                                          ],
-                                        ),
-                                        Text(
-                                          '₹.$deliveryPrice/-',
-                                          style: nunitoStyle.copyWith(
-                                              fontSize: 12.0,
-                                              fontWeight: FontWeight.w500,
-                                              color: AppColors.whiteColor),
-                                        ),
-                                      ],
-                                    ),
-                                    SizedBox(
-                                      height: 10.0,
-                                    ),
-                                    const Padding(
-                                      padding: EdgeInsets.all(8.0),
-                                      child: Divider(
-                                        color: AppColors.whiteColor,
-                                        height: 0.1,
-                                        thickness: 0.1,
-                                      ),
-                                    ),
-                                    Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceBetween,
-                                      children: [
-                                        Text(
-                                          'Total',
-                                          style: nunitoStyle.copyWith(
-                                              fontSize: 16.0,
-                                              fontWeight: FontWeight.bold,
-                                              color: AppColors.whiteColor),
-                                        ),
-                                        Text(
-                                          '₹.${totalPrice + deliveryPrice}/-',
-                                          style: nunitoStyle.copyWith(
-                                              fontSize: 14.0,
-                                              fontWeight: FontWeight.bold,
-                                              color: AppColors.neonColor),
-                                        ),
-                                      ],
-                                    ),
-                                    SizedBox(
-                                      height: 10.0,
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ),
-                            const SizedBox(
-                              height: 30.0,
-                            ),
-                            Material(
-                              color: Colors.transparent,
-                              child: InkWell(
-                                onTap: () {
-                                  //Razor Pay Code
-                                  var options = {
-                                    'key': 'rzp_test_qtHIWapeUEAAZO',
-                                    'amount': totalPrice *
-                                        100, //in the smallest currency sub-unit.
-                                    'name': 'VFF Group',
-                                    'description': 'Laundry service charge',
-                                    'timeout': 100, // in seconds
-                                  };
-
-                                  //To Open RazorPay Activity
-                                  _razorpay.open(options);
-                                },
-                                borderRadius: BorderRadius.circular(12.0),
-                                child: Ink(
+                                  ),
+                                  const SizedBox(
+                                    height: 10.0,
+                                  ),
+                                  Container(
                                     decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(12.0),
-                                      gradient: LinearGradient(colors: [
-                                        Colors.green,
-                                        Colors.blue,
-                                      ]),
-                                    ),
+                                        borderRadius:
+                                            BorderRadius.circular(12.0),
+                                        color: AppColors.lightBlackColor),
                                     child: Padding(
                                       padding: const EdgeInsets.symmetric(
-                                          horizontal: 30.0, vertical: 10.0),
-                                      child: Text(
-                                        'Pay Now',
-                                        style: ralewayStyle.copyWith(
-                                            fontWeight: FontWeight.bold,
-                                            color: AppColors.whiteColor,
-                                            fontSize: 18.0),
+                                          vertical: 20.0, horizontal: 12.0),
+                                      child: Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          Row(
+                                            children: [
+                                              Text(
+                                                'Additional Notes',
+                                                style: nunitoStyle.copyWith(
+                                                    fontSize: 20.0,
+                                                    fontWeight: FontWeight.bold,
+                                                    color:
+                                                        AppColors.whiteColor),
+                                              ),
+                                            ],
+                                          ),
+                                          Container(
+                                            height: 100.0,
+                                            width: width,
+                                            decoration: BoxDecoration(
+                                              borderRadius:
+                                                  BorderRadius.circular(8.0),
+                                            ),
+                                            child: TextFormField(
+                                              controller:
+                                                  additionalInformationController,
+                                              maxLines: 20,
+                                              style: nunitoStyle.copyWith(
+                                                  fontWeight: FontWeight.w400,
+                                                  color: AppColors.whiteColor,
+                                                  fontSize: 14.0),
+                                              keyboardType: TextInputType.text,
+                                              decoration: InputDecoration(
+                                                  border: InputBorder.none,
+                                                  contentPadding:
+                                                      const EdgeInsets.only(
+                                                          top: 16.0),
+                                                  hintText:
+                                                      'Please provide us with any specific instruction which should be followed by us.',
+                                                  hintStyle:
+                                                      ralewayStyle.copyWith(
+                                                          fontWeight:
+                                                              FontWeight.w400,
+                                                          color: AppColors
+                                                              .whiteColor,
+                                                          fontSize: 12.0)),
+                                            ),
+                                          ),
+                                        ],
                                       ),
-                                    )),
+                                    ),
+                                  ),
+                                  const SizedBox(
+                                    height: 10.0,
+                                  ),
+                                  Container(
+                                    decoration: BoxDecoration(
+                                        color: AppColors.lightBlackColor,
+                                        borderRadius:
+                                            BorderRadius.circular(12.0)),
+                                    child: Padding(
+                                      padding: const EdgeInsets.symmetric(
+                                          vertical: 20.0, horizontal: 12.0),
+                                      child: Column(
+                                        children: [
+                                          Row(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.spaceBetween,
+                                            children: [
+                                              Text(
+                                                'Service Cost',
+                                                style: nunitoStyle.copyWith(
+                                                    fontSize: 14.0,
+                                                    fontWeight: FontWeight.w500,
+                                                    color:
+                                                        AppColors.whiteColor),
+                                              ),
+                                              Text(
+                                                '₹.$totalPrice/-',
+                                                style: nunitoStyle.copyWith(
+                                                    fontSize: 12.0,
+                                                    fontWeight: FontWeight.bold,
+                                                    color: AppColors.neonColor),
+                                              ),
+                                            ],
+                                          ),
+                                          SizedBox(
+                                            height: 10.0,
+                                          ),
+                                          Row(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.spaceBetween,
+                                            children: [
+                                              Column(
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.start,
+                                                children: [
+                                                  Text(
+                                                    'Delivery',
+                                                    style: nunitoStyle.copyWith(
+                                                        fontSize: 14.0,
+                                                        fontWeight:
+                                                            FontWeight.w500,
+                                                        color: AppColors
+                                                            .whiteColor),
+                                                  ),
+                                                  Text(
+                                                    'Free delivery for orders above ₹.$rangeDelivery/- 😊',
+                                                    style: nunitoStyle.copyWith(
+                                                        fontSize: 10.0,
+                                                        fontWeight:
+                                                            FontWeight.normal,
+                                                        color: AppColors
+                                                            .whiteColor),
+                                                  ),
+                                                ],
+                                              ),
+                                              Text(
+                                                '₹.$deliveryPrice/-',
+                                                style: nunitoStyle.copyWith(
+                                                    fontSize: 12.0,
+                                                    fontWeight: FontWeight.w500,
+                                                    color:
+                                                        AppColors.whiteColor),
+                                              ),
+                                            ],
+                                          ),
+                                          SizedBox(
+                                            height: 10.0,
+                                          ),
+                                          const Padding(
+                                            padding: EdgeInsets.all(8.0),
+                                            child: Divider(
+                                              color: AppColors.whiteColor,
+                                              height: 0.1,
+                                              thickness: 0.1,
+                                            ),
+                                          ),
+                                          Row(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.spaceBetween,
+                                            children: [
+                                              Text(
+                                                'Total',
+                                                style: nunitoStyle.copyWith(
+                                                    fontSize: 16.0,
+                                                    fontWeight: FontWeight.bold,
+                                                    color:
+                                                        AppColors.whiteColor),
+                                              ),
+                                              Text(
+                                                '₹.${totalPrice + deliveryPrice}/-',
+                                                style: nunitoStyle.copyWith(
+                                                    fontSize: 14.0,
+                                                    fontWeight: FontWeight.bold,
+                                                    color: AppColors.neonColor),
+                                              ),
+                                            ],
+                                          ),
+                                          SizedBox(
+                                            height: 10.0,
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  ),
+                                  const SizedBox(
+                                    height: 30.0,
+                                  ),
+                                  Material(
+                                    color: Colors.transparent,
+                                    child: InkWell(
+                                      onTap: () {
+                                        setState(() {
+                                          showProgress = true;
+                                        });
+                                        //Razor Pay Code
+                                        var options = {
+                                          'key': 'rzp_test_qtHIWapeUEAAZO',
+                                          'amount': (totalPrice +
+                                                  deliveryPrice) *
+                                              100, //in the smallest currency sub-unit.
+                                          'name': 'VFF Group',
+                                          'description':
+                                              'Laundry service charge',
+                                          'timeout': 100, // in seconds
+                                        };
+
+                                        //To Open RazorPay Activity
+                                        _razorpay.open(options);
+                                      },
+                                      borderRadius: BorderRadius.circular(12.0),
+                                      child: Ink(
+                                          decoration: BoxDecoration(
+                                            borderRadius:
+                                                BorderRadius.circular(12.0),
+                                            gradient: LinearGradient(colors: [
+                                              Colors.green,
+                                              Colors.blue,
+                                            ]),
+                                          ),
+                                          child: Padding(
+                                            padding: const EdgeInsets.symmetric(
+                                                horizontal: 30.0,
+                                                vertical: 10.0),
+                                            child: Text(
+                                              'Pay Now',
+                                              style: ralewayStyle.copyWith(
+                                                  fontWeight: FontWeight.bold,
+                                                  color: AppColors.whiteColor,
+                                                  fontSize: 18.0),
+                                            ),
+                                          )),
+                                    ),
+                                  )
+                                ],
                               ),
-                            )
-                          ],
-                        ),
-                      ),
-              )
-            ],
-          ),
+                            ),
+                    )
+                  ],
+                ),
         ));
   }
 }
