@@ -38,20 +38,23 @@ class _OrdersPageState extends State<OrdersPage> {
     return Scaffold(
       backgroundColor: Colors.black,
       appBar: AppBar(
+        automaticallyImplyLeading: false,
         backgroundColor: Colors.transparent,
         title: Text('Orders',
-                    style: ralewayStyle.copyWith(
-                        fontSize: 25.0,
-                        color: AppColors.whiteColor,
-                        fontWeight: FontWeight.bold,
-                        letterSpacing: 1)),
+            style: ralewayStyle.copyWith(
+                fontSize: 25.0,
+                color: AppColors.whiteColor,
+                fontWeight: FontWeight.bold,
+                letterSpacing: 1)),
       ),
       body: SafeArea(
         child: DefaultTabController(
           length: 3,
           child: Column(
             children: <Widget>[
-              SizedBox(height: width * 0.03,),
+              SizedBox(
+                height: width * 0.03,
+              ),
               ButtonsTabBar(
                 backgroundColor: AppColors.blueColor,
                 unselectedBackgroundColor: AppColors.lightBlackColor,

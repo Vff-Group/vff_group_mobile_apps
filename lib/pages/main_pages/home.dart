@@ -855,6 +855,7 @@ class _HomePageState extends State<HomePage> {
                                                         //Send to Order detail Screen
                                                         glb.orderid = "";
                                                         glb.order_status = "0";
+                                                        glb.hideControls = false;
                                                         glb.orderid =
                                                             activeOrdersModel[
                                                                     index]

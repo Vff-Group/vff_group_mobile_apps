@@ -406,7 +406,7 @@ class _OrderDetailsPageState extends State<OrderDetailsPage> {
                                                       letterSpacing: 1),
                                                   textAlign: TextAlign.center,
                                                 ),
-                                                cancelReason == "NA"
+                                                cancelReason == "NA" && glb.hideControls == false
                                                     ? Padding(
                                                         padding:
                                                             const EdgeInsets
@@ -931,7 +931,7 @@ class _TotalClothesCount extends StatelessWidget {
           ),
           showItemsLoading
               ? const LinearProgressIndicator()
-              : isItemAdded
+              : isItemAdded && glb.hideControls == false
                   ? InkWell(
                       onTap: () {
                         glb.addItems = true;

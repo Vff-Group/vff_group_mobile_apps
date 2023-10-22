@@ -5,7 +5,7 @@ import 'package:provider/provider.dart';
 import 'package:vff_group/animation/fade_animation.dart';
 import 'package:vff_group/animation/slide_bottom_animation.dart';
 import 'package:vff_group/pages/main_pages/cart.dart';
-import 'package:vff_group/pages/main_pages/history.dart';
+import 'package:vff_group/pages/main_pages/offers.dart';
 import 'package:vff_group/pages/main_pages/home.dart';
 import 'package:vff_group/pages/main_pages/orders.dart';
 import 'package:vff_group/pages/main_pages/prize_chart.dart';
@@ -35,7 +35,7 @@ class _BottomBarScreenState extends State<BottomBarScreen> {
 
   List pages = [
     const HomePage(),
-    const HistoryPage(),
+    const OffersPage(),
     const OrdersPage(),
     const SettingsPage(),
   ];
@@ -84,8 +84,8 @@ class _BottomBarScreenState extends State<BottomBarScreen> {
                   text: 'Home',
                 ),
                 GButton(
-                  icon: LineIcons.history,
-                  text: 'History',
+                  icon: LineIcons.bomb,
+                  text: 'Offers',
                 ),
                 GButton(
                   icon: LineIcons.moon,

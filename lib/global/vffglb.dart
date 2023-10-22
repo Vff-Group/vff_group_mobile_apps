@@ -16,7 +16,7 @@ import 'package:url_launcher/url_launcher.dart';
 
 String endPoint = "http://62.72.57.222:3000/"; //8085
 String account_created_date = "", orderid = "",deliveryBoyID="",order_status="0";
-bool addItems = false;
+bool addItems = false,hideControls = false;
 String cartQuantity = "", cartCost = "";
 
 void showSnackBar(BuildContext context, String alertTxt, String text) {
