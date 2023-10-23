@@ -15,7 +15,7 @@ class _MyOrdersPageState extends State<MyOrdersPage> {
     double height = MediaQuery.of(context).size.height;
     double width = MediaQuery.of(context).size.width;
     return  Scaffold(
-      backgroundColor: AppColors.whiteColor,
+      backgroundColor: Colors.black,
     body: CustomScrollView(
           slivers: [
             SliverToBoxAdapter(
@@ -24,7 +24,7 @@ class _MyOrdersPageState extends State<MyOrdersPage> {
                   SizedBox(height: height * 0.05),
                   
                   Text(
-                    'My Orders',
+                    'Orders',
                     style: ralewayStyle.copyWith(
                       color: Colors.deepOrangeAccent,
                       fontSize: 20.0,

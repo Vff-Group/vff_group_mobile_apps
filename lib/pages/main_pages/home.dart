@@ -382,7 +382,7 @@ class _HomePageState extends State<HomePage> {
 
     var profile = glb.prefs?.getString('profile_img');
     var usrname = glb.prefs?.getString('usrname');
-   // SharedPreferenceUtils.save_val("notificationToken", "");
+  //  SharedPreferenceUtils.save_val("notificationToken", "");
     var notificationToken = glb.prefs?.getString('notificationToken');
     print('notificationToken::$notificationToken');
     if (notificationToken == null || notificationToken.isEmpty) {

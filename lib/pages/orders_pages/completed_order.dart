@@ -124,7 +124,7 @@ class _CompletedOrdersState extends State<CompletedOrders> {
               var timeOrderRecieved = formattedDateTime;
 
               var deliveryDateTime = "";
-              if (order_status != 'Delivered') {
+              if (order_status != 'Completed') {
                 deliveryDateTime = "Not Delivered yet";
               } else {
                 deliveryDateTime = deliveryEpochTime;
@@ -378,7 +378,7 @@ class _CompletedOrdersState extends State<CompletedOrders> {
                                           Text(
                                             '₹ ${ongoingModel[index].totalPrice}/-',
                                             style: nunitoStyle.copyWith(
-                                              color: AppColors.blueDarkColor,
+                                              color: AppColors.neonColor,
                                               fontSize: 14,
                                               fontWeight: FontWeight.bold,
                                             ),

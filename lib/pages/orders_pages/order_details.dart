@@ -406,7 +406,9 @@ class _OrderDetailsPageState extends State<OrderDetailsPage> {
                                                       letterSpacing: 1),
                                                   textAlign: TextAlign.center,
                                                 ),
-                                                cancelReason == "NA" && glb.hideControls == false
+                                                cancelReason == "NA" &&
+                                                        glb.hideControls ==
+                                                            false
                                                     ? Padding(
                                                         padding:
                                                             const EdgeInsets
@@ -1033,7 +1035,7 @@ class _DeliveryBoyDetails extends StatelessWidget {
                 ),
               ],
             ),
-            feedBack == "NA" && orderStatus == "Delivered"
+            feedBack == "NA" && orderStatus == "Completed"
                 ? SlideFromRightAnimation(
                     delay: 0.9,
                     child: Material(
@@ -1077,7 +1079,8 @@ class _DeliveryBoyDetails extends StatelessWidget {
                       color: Colors.transparent,
                       child: InkWell(
                         onTap: () {
-                          if (orderStatus == "Accepted" || orderStatus == "Payment Done") {
+                          if (orderStatus == "Accepted" ||
+                              orderStatus == "Payment Done") {
                             _makePhoneCall(deliveryMobno);
                           } else if (orderStatus == "Delivered") {
                             glb.showSnackBar(context, 'Alert',
@@ -1162,6 +1165,7 @@ class _OrderDetails extends StatelessWidget {
                         color: orderStatus == "Accepted" ||
                                 orderStatus == "Payment Done" ||
                                 orderStatus == "Processing" ||
+                                orderStatus == "Out for Delivery" ||
                                 orderStatus == "Delivered"
                             ? AppColors.neonColor
                             : AppColors.lightBlackColor,
@@ -1173,7 +1177,8 @@ class _OrderDetails extends StatelessWidget {
                         color: orderStatus == "Accepted" ||
                                 orderStatus == "Payment Done" ||
                                 orderStatus == "Processing" ||
-                                orderStatus == "Delivered"
+                                orderStatus == "Out for Delivery" ||
+                                orderStatus == "Completed"
                             ? AppColors.backColor
                             : AppColors.whiteColor,
                       ),
@@ -1183,14 +1188,16 @@ class _OrderDetails extends StatelessWidget {
                     width: 100,
                     height: 1,
                     color: orderStatus == "Processing" ||
-                            orderStatus == "Delivered"
+                            orderStatus == "Out for Delivery" ||
+                            orderStatus == "Completed"
                         ? AppColors.neonColor
                         : AppColors.whiteColor,
                   ),
                   Container(
                     decoration: BoxDecoration(
                         color: orderStatus == "Processing" ||
-                                orderStatus == "Delivered"
+                                orderStatus == "Out for Delivery" ||
+                                orderStatus == "Completed"
                             ? AppColors.neonColor
                             : AppColors.lightBlackColor,
                         borderRadius: BorderRadius.circular(50.0)),
@@ -1199,7 +1206,8 @@ class _OrderDetails extends StatelessWidget {
                       child: Icon(
                         Icons.local_laundry_service_outlined,
                         color: orderStatus == "Processing" ||
-                                orderStatus == "Delivered"
+                                orderStatus == "Out for Delivery" ||
+                                orderStatus == "Completed"
                             ? AppColors.backColor
                             : AppColors.whiteColor,
                       ),
@@ -1209,7 +1217,8 @@ class _OrderDetails extends StatelessWidget {
                       width: 100,
                       height: 1,
                       color: orderStatus == "Processing" ||
-                              orderStatus == "Delivered"
+                              orderStatus == "Out for Delivery" ||
+                                orderStatus == "Completed"
                           ? AppColors.neonColor
                           : AppColors.whiteColor),
                   Container(

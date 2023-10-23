@@ -42,6 +42,7 @@ class _LoginScreenState extends State<LoginScreen> {
     super.dispose();
     FocusManager.instance.primaryFocus?.unfocus();
   }
+
   @override
   Widget build(BuildContext context) {
     double height = MediaQuery.of(context).size.height;
@@ -98,7 +99,10 @@ class _LoginScreenState extends State<LoginScreen> {
                             border: InputBorder.none,
                             prefixIcon: IconButton(
                               onPressed: () {},
-                              icon: const Icon(Icons.phone,color: Colors.white,),
+                              icon: const Icon(
+                                Icons.phone,
+                                color: Colors.white,
+                              ),
                             ),
                             contentPadding: const EdgeInsets.only(top: 16.0),
                             hintText: 'Mobile Number',
@@ -226,10 +230,10 @@ class _LoginScreenState extends State<LoginScreen> {
                                     horizontal: 70.0, vertical: 18.0),
                                 decoration: BoxDecoration(
                                     borderRadius: BorderRadius.circular(16.0),
-                                    gradient:  LinearGradient(colors: [
-                                                          Colors.green,
-                                                          Colors.blue,
-                                                        ])),
+                                    gradient: LinearGradient(colors: [
+                                      Colors.green,
+                                      Colors.blue,
+                                    ])),
                                 child: Text(
                                   'Continue',
                                   style: ralewayStyle.copyWith(
@@ -260,7 +264,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
       if (googleUser == null) {
         glb.showSnackBar(context, 'Invalid Credentials',
-              'Please login using your valid Email ID');
+            'Please login using your valid Email ID');
         setState(() {
           showLoading = false;
         });
@@ -286,7 +290,8 @@ class _LoginScreenState extends State<LoginScreen> {
       print(photoUrl);
       var url = glb.endPoint;
       final Map dictMap = {};
-      dictMap['mobno'] = "+91$phoneNo";
+      // dictMap['mobno'] = "+91$phoneNo";
+      dictMap['mobno'] = phoneNo;
       dictMap['email_id'] = emailStr;
       dictMap['usrname'] = name;
       dictMap['user_token'] = 'abcd';
@@ -338,7 +343,7 @@ class _LoginScreenState extends State<LoginScreen> {
             glb.usrid = usrid;
             // List<String> usridLst = glb.strToLst2(usrid);
             // List<String> usrNameLst = glb.strToLst2(usrname);
-
+            SharedPreferenceUtils.save_val("notificationToken", "");
             Navigator.pushReplacementNamed(context, MainRoute);
           } catch (e) {
             print(e);

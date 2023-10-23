@@ -15,7 +15,7 @@ class _MyProfilePageState extends State<MyProfilePage> {
     double height = MediaQuery.of(context).size.height;
     double width = MediaQuery.of(context).size.width;
     return  Scaffold(
-      backgroundColor: AppColors.whiteColor,
+      backgroundColor: Colors.black,
     body: CustomScrollView(
           slivers: [
             SliverToBoxAdapter(
