@@ -2,7 +2,7 @@ class DryCleanItemModel {
   final String subCategoryID;
   final String subCategoryName;
   final String subCategoryImage;
-  final String cost;
+  final double cost;
   final String typeOf;
   final String sectionType;
   int itemCount;

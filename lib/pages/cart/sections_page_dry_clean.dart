@@ -37,11 +37,15 @@ class _SectionsPageDryCleanState extends State<SectionsPageDryClean> {
 
   List<DryCleanItemModel> dryCleanItemModel = []; // Your original list of items
   List<Map<String, dynamic>> selectedItems = []; // List to track selected items
+  List<Map<String, dynamic>> selectedItems2 =
+      []; // List to track selected items
   List<String> selectedItemsJsonList = []; // List to store JSON strings
 
 // Function to convert a DryCleanItemModel to a JSON representation
-  String dryCleanItemModelToJson(DryCleanItemModel item) {
-    var totalCost = (double.parse(item.cost) * item.itemCount);
+  String dryCleanItemModelToJson(DryCleanItemModel item, int itemCount) {
+    var totalCost = item.cost * itemCount;
+    print('TotalCost::$totalCost');
+   
     return jsonEncode({
       'sub_cat_name': item.subCategoryName,
       'item_quantity': item.itemCount,
@@ -56,7 +60,7 @@ class _SectionsPageDryCleanState extends State<SectionsPageDryClean> {
 // Function to update the selected items list and JSON list
   void updateSelectedItems(int index, int itemCount) {
     DryCleanItemModel item = dryCleanItemModel[index];
-    String itemJson = dryCleanItemModelToJson(item);
+    String itemJson = dryCleanItemModelToJson(item, itemCount);
 
     // Check if the item is already in the selectedItems list
     int existingIndex = selectedItems.indexWhere((selectedItem) =>
@@ -65,7 +69,10 @@ class _SectionsPageDryCleanState extends State<SectionsPageDryClean> {
     if (existingIndex != -1) {
       if (itemCount > 0) {
         // Update the existing item
+        print('coming here everytine');
         selectedItems[existingIndex]['item_quantity'] = itemCount;
+        selectedItems[existingIndex]['cost'] = item.cost * itemCount;
+        print('CostLL${selectedItems[existingIndex]['cost']}');
         selectedItemsJsonList[existingIndex] = itemJson;
       } else {
         // If the item count is zero, remove the item
@@ -75,18 +82,21 @@ class _SectionsPageDryCleanState extends State<SectionsPageDryClean> {
     } else {
       if (itemCount > 0) {
         // Add the new item
-        var totalCost = (double.parse(item.cost) * itemCount);
+
+        //var totalCost = (double.parse(item.cost) * itemCount);
+        print('coming here');
         selectedItems.add({
           'subCategoryName': item.subCategoryName,
           'item_quantity': itemCount,
           'sub_cat_name': item.subCategoryName,
           'actual_cost': item.cost,
-          'cost': totalCost,
+          'cost': item.cost * itemCount,
           'type_of': item.typeOf,
           'sub_cat_id': item.subCategoryID,
           'sub_cat_img': item.subCategoryImage,
           'section_type': widget.sectionType
         });
+
         selectedItemsJsonList.add(itemJson);
       }
     }
@@ -140,7 +150,7 @@ class _SectionsPageDryCleanState extends State<SectionsPageDryClean> {
           context, 'Alert', 'Please use valid credentials and Login In Again');
       return;
     }
-
+    
     try {
       var url = glb.endPoint;
       final Map dictMap = {};
@@ -255,7 +265,7 @@ class _SectionsPageDryCleanState extends State<SectionsPageDryClean> {
               var subCatName = sub_categorynameLst.elementAt(i).toString();
               var subCatID = sub_catidLst.elementAt(i).toString();
               var subCatImg = subcat_imgLst.elementAt(i).toString();
-              var cost = costLst.elementAt(i).toString();
+              var cost = double.parse(costLst.elementAt(i).toString());
               var typeOf = typeOfLst.elementAt(i).toString();
 
               dryCleanItemModel.add(DryCleanItemModel(
@@ -471,12 +481,7 @@ class _SectionsPageDryCleanState extends State<SectionsPageDryClean> {
                                                                   height: 10.0,
                                                                 ),
                                                                 Text(
-                                                                  '₹ ${dryCleanItemModel[
-                                                                          index]
-                                                                      .cost} / ${dryCleanItemModel[
-                                                                          index]
-                                                                      .typeOf}'
-                                                                      ,
+                                                                  '₹ ${dryCleanItemModel[index].cost} / ${dryCleanItemModel[index].typeOf}',
                                                                   style: nunitoStyle
                                                                       .copyWith(
                                                                     color: AppColors
@@ -488,7 +493,6 @@ class _SectionsPageDryCleanState extends State<SectionsPageDryClean> {
                                                                             .bold,
                                                                   ),
                                                                 ),
-                                                                
                                                               ],
                                                             ),
                                                           ),
