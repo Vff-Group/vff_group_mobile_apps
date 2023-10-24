@@ -13,7 +13,7 @@ class NotificationServices {
   FirebaseMessaging messaging = FirebaseMessaging.instance;
   final FlutterLocalNotificationsPlugin _flutterLocalNotificationsPlugin =
       FlutterLocalNotificationsPlugin();
-
+  int notificationId = 0; // Track the current notification ID
   void initLocalNotifications(
       BuildContext context, RemoteMessage message) async {
     var androidInitialization =
@@ -70,7 +70,8 @@ class NotificationServices {
 
     NotificationDetails notificationDetails = NotificationDetails(
         android: androidNotificationDetails, iOS: darwinNotificationDetails);
-
+    // final int uniqueId = notificationId++; // Generate a unique notification ID to avoid multiple notifications
+    // print("uniqueId::$uniqueId");
     Future.delayed(Duration.zero, () {
       _flutterLocalNotificationsPlugin.show(
           0,
@@ -109,13 +110,11 @@ class NotificationServices {
 
   var deviceToken = "";
   void isTokenRefreshed() async {
-    
     messaging.onTokenRefresh.listen((event) {
       event.toString();
       print('Firebase Token Refreshed');
       SharedPreferenceUtils.save_val('notificationToken', '');
     });
-    
   }
 
   Future<void> setupInteractMessage(BuildContext context) async {

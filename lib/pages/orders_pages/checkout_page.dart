@@ -39,6 +39,7 @@ class _CheckOutScreenState extends State<CheckOutScreen> {
   var totalQuantity = 0;
   var selectedIndex = 0;
   var deliveryPrice = 0.0;
+  var extraItemPrices = "";
   var razor_pay_id = "";
   var razor_pay_status = "";
   var additionalInstruction = "NA";
@@ -234,6 +235,7 @@ class _CheckOutScreenState extends State<CheckOutScreen> {
       if (index < itemIDLst.length &&
           index < itemNameLst.length &&
           index < priceLst.length) {
+            extraItemPrices = priceLst.elementAt(index);
         selectedItems.add({
           'extra_item_id': itemIDLst.elementAt(index),
           'extra_item_name': itemNameLst.elementAt(index),
@@ -262,6 +264,10 @@ class _CheckOutScreenState extends State<CheckOutScreen> {
     if (additionalInstruction == null || additionalInstruction.isEmpty) {
       additionalInstruction = "NA";
     }
+    print('TotalCost::$totalPrice');
+    print('deliveryPrice::$deliveryPrice'); 
+    print('FinalTotal::${totalPrice+deliveryPrice}');
+    totalPrice = totalPrice+deliveryPrice;
     try {
       var url = glb.endPoint;
       final Map dictMap = {};
@@ -709,6 +715,7 @@ class _CheckOutScreenState extends State<CheckOutScreen> {
                                         };
 
                                         //To Open RazorPay Activity
+                                        
                                         _razorpay.open(options);
                                       },
                                       borderRadius: BorderRadius.circular(12.0),

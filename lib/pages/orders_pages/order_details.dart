@@ -1024,12 +1024,15 @@ class _DeliveryBoyDetails extends StatelessWidget {
                           fontWeight: FontWeight.w600,
                           color: AppColors.neonColor),
                     ),
-                    Text(
-                      deliveryMobno,
-                      style: nunitoStyle.copyWith(
-                          fontSize: 14.0,
-                          fontWeight: FontWeight.normal,
-                          color: AppColors.whiteColor),
+                    Visibility(
+                      visible: false,
+                      child: Text(
+                        deliveryMobno,
+                        style: nunitoStyle.copyWith(
+                            fontSize: 14.0,
+                            fontWeight: FontWeight.normal,
+                            color: AppColors.whiteColor),
+                      ),
                     ),
                   ],
                 ),
