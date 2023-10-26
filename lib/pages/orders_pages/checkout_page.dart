@@ -695,51 +695,55 @@ class _CheckOutScreenState extends State<CheckOutScreen> {
                                   const SizedBox(
                                     height: 30.0,
                                   ),
-                                  Material(
-                                    color: Colors.transparent,
-                                    child: InkWell(
-                                      onTap: () {
-                                        setState(() {
-                                          showProgress = true;
-                                        });
-                                        //Razor Pay Code
-                                        var options = {
-                                          'key': 'rzp_test_qtHIWapeUEAAZO',
-                                          'amount': (totalPrice +
-                                                  deliveryPrice) *
-                                              100, //in the smallest currency sub-unit.
-                                          'name': 'VFF Group',
-                                          'description':
-                                              'Laundry service charge',
-                                          'timeout': 100, // in seconds
-                                        };
-
-                                        //To Open RazorPay Activity
-                                        
-                                        _razorpay.open(options);
-                                      },
-                                      borderRadius: BorderRadius.circular(12.0),
-                                      child: Ink(
-                                          decoration: BoxDecoration(
-                                            borderRadius:
-                                                BorderRadius.circular(12.0),
-                                            gradient: LinearGradient(colors: [
-                                              Colors.green,
-                                              Colors.blue,
-                                            ]),
-                                          ),
-                                          child: Padding(
-                                            padding: const EdgeInsets.symmetric(
-                                                horizontal: 30.0,
-                                                vertical: 10.0),
-                                            child: Text(
-                                              'Pay Now',
-                                              style: ralewayStyle.copyWith(
-                                                  fontWeight: FontWeight.bold,
-                                                  color: AppColors.whiteColor,
-                                                  fontSize: 18.0),
+                                  Visibility(
+                                    visible: glb.showPayOption,
+                                    child: Material(
+                                      color: Colors.transparent,
+                                      child: InkWell(
+                                        onTap: () {
+                                          setState(() {
+                                            showProgress = true;
+                                          });
+                                          //Razor Pay Code
+                                          var options = {
+                                            'key': 'rzp_test_qtHIWapeUEAAZO',
+                                            'amount': (totalPrice +
+                                                    deliveryPrice) *
+                                                100, //in the smallest currency sub-unit.
+                                            'name': 'VFF Group',
+                                            'description':
+                                                'Laundry service charge',
+                                            'timeout': 100, // in seconds
+                                          };
+                                  
+                                          //To Open RazorPay Activity
+                                          
+                                          _razorpay.open(options);
+                                        },
+                                        borderRadius: BorderRadius.circular(12.0),
+                                        child: Ink(
+                                            decoration: BoxDecoration(
+                                              borderRadius:
+                                                  BorderRadius.circular(12.0),
+                                                  color: AppColors.blueColor
+                                              // gradient: LinearGradient(colors: [
+                                              //   Colors.green,
+                                              //   Colors.blue,
+                                              // ]),
                                             ),
-                                          )),
+                                            child: Padding(
+                                              padding: const EdgeInsets.symmetric(
+                                                  horizontal: 30.0,
+                                                  vertical: 10.0),
+                                              child: Text(
+                                                'Pay Now',
+                                                style: ralewayStyle.copyWith(
+                                                    fontWeight: FontWeight.bold,
+                                                    color: AppColors.whiteColor,
+                                                    fontSize: 18.0),
+                                              ),
+                                            )),
+                                      ),
                                     ),
                                   )
                                 ],

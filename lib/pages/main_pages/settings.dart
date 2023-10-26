@@ -62,7 +62,7 @@ class _SettingsPageState extends State<SettingsPage> {
             SystemUiOverlayStyle(statusBarBrightness: Brightness.dark),
       ),
       body: Padding(
-        padding: const EdgeInsets.fromLTRB(20, 1.2 * kToolbarHeight, 20, 20),
+        padding: const EdgeInsets.fromLTRB(20, kToolbarHeight, 20, 20),
         child: CustomScrollView(
           slivers: [
             SliverToBoxAdapter(

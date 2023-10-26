@@ -246,7 +246,7 @@ class _HomePageState extends State<HomePage> {
             activeOrdersLoading = false;
             noOrders = true;
           });
-          glb.showSnackBar(context, 'Error', 'No Active Orders Found');
+          //glb.showSnackBar(context, 'Error', 'No Active Orders Found');
           return;
         } else if (res.contains("ErrorCode#8")) {
           setState(() {
@@ -549,7 +549,7 @@ class _HomePageState extends State<HomePage> {
       ),
       backgroundColor: Colors.black,
       body: Padding(
-          padding: const EdgeInsets.fromLTRB(20, 1.2 * kToolbarHeight, 20, 20),
+          padding: const EdgeInsets.fromLTRB(20, kToolbarHeight, 20, 20),
           child: RefreshIndicator(
             onRefresh: _handleRefresh,
             child: CustomScrollView(
@@ -858,6 +858,7 @@ class _HomePageState extends State<HomePage> {
                                                         glb.orderid = "";
                                                         glb.order_status = "0";
                                                         glb.hideControls = false;
+                                                        glb.showPayOption = true;
                                                         glb.orderid =
                                                             activeOrdersModel[
                                                                     index]

@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'dart:convert';
 
 import 'package:flutter/foundation.dart';
@@ -10,16 +11,15 @@ import 'package:vff_group/utils/app_styles.dart';
 import 'package:http/http.dart' as http;
 import 'package:vff_group/global/vffglb.dart' as glb;
 import 'package:vff_group/widgets/shimmer_card.dart';
-
-class CancelledOrders extends StatefulWidget {
-  const CancelledOrders({super.key});
+class CancelledOrderPage extends StatefulWidget {
+  const CancelledOrderPage({super.key});
 
   @override
-  State<CancelledOrders> createState() => _CancelledOrdersState();
+  State<CancelledOrderPage> createState() => _CancelledOrderPageState();
 }
 
-class _CancelledOrdersState extends State<CancelledOrders> {
-  bool showLoading = false, showError = false;
+class _CancelledOrderPageState extends State<CancelledOrderPage> {
+    bool showLoading = false, showError = false;
 
   List<OngoingOrdersModel> ongoingModel = [];
   Future loadOrderDetails() async {
@@ -29,17 +29,18 @@ class _CancelledOrdersState extends State<CancelledOrders> {
       ongoingModel = [];
     });
     final prefs = await SharedPreferences.getInstance();
-    var customerid = prefs.getString('customerid');
+    var delivery_boy_id = prefs.getString('delivery_boy_id');
 
     var todaysDate = glb.getDateTodays();
     glb.order_status = "2";
     try {
       var url = glb.endPoint;
       final Map dictMap = {};
-
-      dictMap['customer_id'] = customerid;
-      dictMap['order_status'] = glb.order_status;
-      dictMap['pktType'] = "22";
+//select orderid,customerid,quantity,price,pickup_dt,delivery,clat,clng,order_status,delivery_epoch,laundry_ordertbl.epoch,cancel_reason,houseno,address from vff.usertbl,vff.laundry_delivery_boytbl,vff.laundry_ordertbl where usertbl.usrid=laundry_delivery_boytbl.usrid and laundry_delivery_boytbl.delivery_boy_id=laundry_ordertbl.delivery_boyid and delivery_boyid='3' and order_completed='0' and order_status='Rejected'  order by orderid desc
+      dictMap['delivery_boy_id'] = delivery_boy_id;
+      dictMap['order_completed'] = glb.order_status;
+      dictMap['order_status'] = 'Rejected';
+      dictMap['pktType'] = "24";
       dictMap['token'] = "vff";
       dictMap['uid'] = "-1";
 
@@ -73,7 +74,7 @@ class _CancelledOrdersState extends State<CancelledOrders> {
             }
 
             var orderid = cancelOrdersMap["orderid"];
-            var delivery_boyid = cancelOrdersMap["delivery_boyid"];
+            var customer_id = cancelOrdersMap["customer_id"];
             var quantity = cancelOrdersMap["quantity"];
             var price = cancelOrdersMap["price"];
             var pickup_date = cancelOrdersMap["pickup_date"];
@@ -86,9 +87,10 @@ class _CancelledOrdersState extends State<CancelledOrders> {
             var cancel_reason = cancelOrdersMap["cancel_reason"];
             var house_no = cancelOrdersMap["house_no"];
             var address = cancelOrdersMap["address"];
+            var rejected_time = cancelOrdersMap["rejected_time"];
 
             List<String> orderIDLst = glb.strToLst2(orderid);
-            List<String> delivery_boyidLst = glb.strToLst2(delivery_boyid);
+            List<String> customer_idLst = glb.strToLst2(customer_id);
             List<String> quantityLst = glb.strToLst2(quantity);
             List<String> priceLst = glb.strToLst2(price);
             List<String> pickup_dateLst = glb.strToLst2(pickup_date);
@@ -102,6 +104,7 @@ class _CancelledOrdersState extends State<CancelledOrders> {
             List<String> cancel_reasonLst = glb.strToLst2(cancel_reason);
             List<String> house_noLst = glb.strToLst2(house_no);
             List<String> addressLst = glb.strToLst2(address);
+            List<String> rejected_timeLst = glb.strToLst2(rejected_time);
 
             for (int i = 0; i < orderIDLst.length; i++) {
               var orderID = orderIDLst.elementAt(i).toString();
@@ -113,9 +116,11 @@ class _CancelledOrdersState extends State<CancelledOrders> {
               var cancel_reason = cancel_reasonLst.elementAt(i).toString();
               var house_no = house_noLst.elementAt(i).toString();
               var address = addressLst.elementAt(i).toString();
+              var rejected_time = rejected_timeLst.elementAt(i).toString();
               var price = priceLst.elementAt(i).toString();
+              var customerid = customer_idLst.elementAt(i).toString();
               var formattedDateTime =
-                  glb.doubleEpochToFormattedDateTime(double.parse(orderepoch));
+                  glb.doubleEpochToFormattedDateTime(double.parse(rejected_time));
               var deliveryEpochTime =
                   glb.doubleEpochToFormattedDateTime(double.parse(depoch));
 
@@ -134,7 +139,7 @@ class _CancelledOrdersState extends State<CancelledOrders> {
               }
               ongoingModel.add(OngoingOrdersModel(
                   orderID: orderID,
-                  pickup_date: pickup_date,
+                  pickup_date: formattedDateTime,
                   delivery_date: delivery_date,
                   order_status: order_status,
                   delivery_epoch: deliveryDateTime,
@@ -144,7 +149,7 @@ class _CancelledOrdersState extends State<CancelledOrders> {
                   address: address,
                   totalPrice: price,
                   showCancelBtn: showCancelBtn,
-                  customerID: customerid.toString()));
+                  customerID: customerid));
             }
 
             setState(() {
@@ -270,7 +275,7 @@ class _CancelledOrdersState extends State<CancelledOrders> {
                                         MainAxisAlignment.spaceBetween,
                                     children: [
                                       Text(
-                                        'Order ID:',
+                                        'Booking ID:',
                                         style: nunitoStyle.copyWith(
                                             color: AppColors.whiteColor,
                                             fontSize: 14),
@@ -330,52 +335,52 @@ class _CancelledOrdersState extends State<CancelledOrders> {
                                     ],
                                   ),
                                 ),
-                                Padding(
-                                  padding: const EdgeInsets.all(8.0),
-                                  child: Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
-                                    children: [
-                                      Text(
-                                        'Delivered Date:',
-                                        style: nunitoStyle.copyWith(
-                                            color: AppColors.whiteColor,
-                                            fontSize: 14),
-                                      ),
-                                      Text(
-                                        ongoingModel[index].delivery_epoch,
-                                        style: nunitoStyle.copyWith(
-                                          color: AppColors.whiteColor,
-                                          fontSize: 14,
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
+                                // Padding(
+                                //   padding: const EdgeInsets.all(8.0),
+                                //   child: Row(
+                                //     mainAxisAlignment:
+                                //         MainAxisAlignment.spaceBetween,
+                                //     children: [
+                                //       Text(
+                                //         'Delivered Date:',
+                                //         style: nunitoStyle.copyWith(
+                                //             color: AppColors.whiteColor,
+                                //             fontSize: 14),
+                                //       ),
+                                //       Text(
+                                //         ongoingModel[index].delivery_epoch,
+                                //         style: nunitoStyle.copyWith(
+                                //           color: AppColors.whiteColor,
+                                //           fontSize: 14,
+                                //         ),
+                                //       ),
+                                //     ],
+                                //   ),
+                                // ),
                                
-                                Padding(
-                                  padding: const EdgeInsets.all(8.0),
-                                  child: Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
-                                    children: [
-                                      Text(
-                                        'Total Amount:',
-                                        style: nunitoStyle.copyWith(
-                                            color: AppColors.whiteColor,
-                                            fontSize: 14),
-                                      ),
-                                      Text(
-                                        '₹ ${ongoingModel[index].totalPrice}/-',
-                                        style: nunitoStyle.copyWith(
-                                          color: AppColors.neonColor,
-                                          fontSize: 14,
-                                          fontWeight: FontWeight.bold,
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
+                                // Padding(
+                                //   padding: const EdgeInsets.all(8.0),
+                                //   child: Row(
+                                //     mainAxisAlignment:
+                                //         MainAxisAlignment.spaceBetween,
+                                //     children: [
+                                //       Text(
+                                //         'Total Amount:',
+                                //         style: nunitoStyle.copyWith(
+                                //             color: AppColors.whiteColor,
+                                //             fontSize: 14),
+                                //       ),
+                                //       Text(
+                                //         '₹ ${ongoingModel[index].totalPrice}/-',
+                                //         style: nunitoStyle.copyWith(
+                                //           color: AppColors.neonColor,
+                                //           fontSize: 14,
+                                //           fontWeight: FontWeight.bold,
+                                //         ),
+                                //       ),
+                                //     ],
+                                //   ),
+                                // ),
                               ],
                             ),
                           ),
@@ -385,35 +390,4 @@ class _CancelledOrdersState extends State<CancelledOrders> {
               );
   }
 
-}
-
-class _OnOrders extends StatelessWidget {
-  const _OnOrders({
-    super.key,
-    required bool noOrders,
-  }) : _noOrders = noOrders;
-
-  final bool _noOrders;
-
-  @override
-  Widget build(BuildContext context) {
-    return Visibility(
-      visible: _noOrders,
-      child: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Text(
-              'There are no order',
-              style: nunitoStyle.copyWith(
-                  fontSize: 16.0, color: AppColors.textColor),
-            ),
-            SizedBox(
-              height: 15.0,
-            ),
-          ],
-        ),
-      ),
-    );
-  }
 }

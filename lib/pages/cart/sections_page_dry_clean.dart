@@ -143,12 +143,13 @@ class _SectionsPageDryCleanState extends State<SectionsPageDryClean> {
 
     var customrid = glb.prefs?.getString('customerid');
     print("customrid::$customrid");
-    if (customrid != null) {
-      customer_id = customrid;
+    if (customrid != null && glb.showPayOption) {
+      glb.customerID = customrid;
     } else {
-      glb.showSnackBar(
-          context, 'Alert', 'Please use valid credentials and Login In Again');
-      return;
+
+      // glb.showSnackBar(
+      //     context, 'Alert', 'Please use valid credentials and Login In Again');
+      // return;
     }
     
     try {
@@ -156,7 +157,7 @@ class _SectionsPageDryCleanState extends State<SectionsPageDryClean> {
       final Map dictMap = {};
 
       dictMap['cat_id'] = widget.catId;
-      dictMap['customer_id'] = customer_id;
+      dictMap['customer_id'] = glb.customerID;
       dictMap['order_id'] = glb.orderid;
       dictMap['order_type'] = "Dry Cleaning";
       dictMap['cat_img'] = widget.catImage;
@@ -666,6 +667,7 @@ class _SectionsPageDryCleanState extends State<SectionsPageDryClean> {
 
 void _showItemDetailsBottomSheet(BuildContext context, DryCleanItemModel item,
     String catID, String categoryName, String categoryImage) {
+
   showModalBottomSheet(
     context: context,
     builder: (BuildContext context) {

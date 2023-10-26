@@ -9,6 +9,7 @@ class OngoingOrdersModel {
   final String house_no;
   final String address;
   final String totalPrice;
+  final String customerID;
   bool showCancelBtn;
   
 
@@ -24,5 +25,6 @@ class OngoingOrdersModel {
       required this.address,
       required this.totalPrice,
       required this.showCancelBtn,
+      required this.customerID,
       });
 }

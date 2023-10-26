@@ -6,6 +6,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get_utils/get_utils.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:url_launcher/url_launcher.dart';
 import 'package:vff_group/animation/fade_animation.dart';
 import 'package:vff_group/animation/rotate_animation.dart';
 import 'package:vff_group/animation/scale_and_revert_animation.dart';
@@ -195,12 +196,18 @@ class _LoginScreenState extends State<LoginScreen> {
                     },
                     child: FadeAnimation(
                       delay: 0.6,
-                      child: Text(
-                        'Terms and Conditions',
-                        style: nunitoStyle.copyWith(
-                            fontSize: 14.0,
-                            color: AppColors.blueDarkColor,
-                            fontWeight: FontWeight.normal),
+                      child: InkWell(
+                        onTap: () {
+                          var url = "https://vffgroup.in/privacy_policy/";
+                          _OpenBrowser(url);
+                        },
+                        child: Text(
+                          'Terms and Conditions',
+                          style: nunitoStyle.copyWith(
+                              fontSize: 14.0,
+                              color: AppColors.blueDarkColor,
+                              fontWeight: FontWeight.normal),
+                        ),
                       ),
                     ),
                   ),
@@ -221,7 +228,13 @@ class _LoginScreenState extends State<LoginScreen> {
                                       'Please Provide Phone Number');
                                   return;
                                 } else {
-                                  loginAsync(phoneNo);
+                                  FocusManager.instance.primaryFocus?.unfocus();
+                                  var isValid = isMobileNumberValid(phoneNo);
+                                  if (isValid) {
+                                    loginAsync(phoneNo);
+                                  }else{
+                                    glb.showSnackBar(context, 'Alert', 'Use a valid mobile Number');
+                                  }
                                 }
                               },
                               borderRadius: BorderRadius.circular(16.0),
@@ -255,6 +268,21 @@ class _LoginScreenState extends State<LoginScreen> {
     );
   }
 
+  Future<void> _OpenBrowser(String url) async {
+    final Uri launchUri = Uri.parse(url);
+    try {
+      await launchUrl(launchUri);
+    } catch (e) {
+      glb.showSnackBar(context, 'Alert', 'Currently under maintenance');
+      print(e);
+    }
+  }
+
+  RegExp mobileNumberPattern = RegExp(r'^[0-9]{10}$');
+  bool isMobileNumberValid(String input) {
+    return mobileNumberPattern.hasMatch(input);
+  }
+
   Future loginAsync(String phoneNo) async {
     setState(() {
       showLoading = true;
@@ -284,7 +312,14 @@ class _LoginScreenState extends State<LoginScreen> {
       var emailStr = _user!.email;
       var name = _user!.displayName;
       var photoUrl = _user!.photoUrl;
-
+      if (name == null || name.isEmpty || name == 'None') {
+        setState(() {
+          showLoading = false;
+        });
+        glb.showSnackBar(context, 'Invalid Credentials',
+            'Please login using your valid Email ID');
+        return;
+      }
       print(name);
       print(emailStr);
       print(photoUrl);

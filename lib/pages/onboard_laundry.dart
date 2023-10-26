@@ -40,24 +40,22 @@ class _OnBoardingScreenState extends State<OnBoardingScreen> {
           padding: const EdgeInsets.all(16.0),
           child: Stack(
             children: [
-              Expanded(
-                child: PageView.builder(
-                    itemCount: data.length,
-                    controller: _pageController,
-                    onPageChanged: (index) {
-                      setState(() {
-                        _pageIndex = index;
-                      });
-                    },
-                    itemBuilder: (context, index) => SlideFromBottomAnimation(
-                          delay: index * 0.5,
-                          child: OnBoardContent(
-                            image: data[index].image,
-                            title: data[index].title,
-                            description: data[index].description,
-                          ),
-                        )),
-              ),
+              PageView.builder(
+                  itemCount: data.length,
+                  controller: _pageController,
+                  onPageChanged: (index) {
+                    setState(() {
+                      _pageIndex = index;
+                    });
+                  },
+                  itemBuilder: (context, index) => SlideFromBottomAnimation(
+                        delay: index * 0.5,
+                        child: OnBoardContent(
+                          image: data[index].image,
+                          title: data[index].title,
+                          description: data[index].description,
+                        ),
+                      )),
               Row(
                 children: [
                   ...List.generate(

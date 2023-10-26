@@ -14,9 +14,9 @@ import 'package:location/location.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-String endPoint = "http://62.72.57.222:8085/"; //8085
-String account_created_date = "", orderid = "",deliveryBoyID="",order_status="0";
-bool addItems = false,hideControls = false;
+String endPoint = "http://62.72.57.222:3000/"; //8085,3000
+String account_created_date = "", orderid = "",deliveryBoyID="",order_status="0",customerID="";
+bool addItems = false,hideControls = false,showPayOption=false;
 String cartQuantity = "", cartCost = "";
 
 void showSnackBar(BuildContext context, String alertTxt, String text) {

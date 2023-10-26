@@ -1,26 +1,27 @@
 import 'dart:convert';
 
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:shimmer/shimmer.dart';
 import 'package:vff_group/modals/ongoing_orders_model.dart';
-import 'package:vff_group/modals/order_detail_item_model.dart';
 import 'package:vff_group/routings/route_names.dart';
 import 'package:vff_group/utils/app_colors.dart';
 import 'package:vff_group/utils/app_styles.dart';
-import 'package:http/http.dart' as http;
 import 'package:vff_group/global/vffglb.dart' as glb;
+import 'package:http/http.dart' as http;
 import 'package:vff_group/widgets/shimmer_card.dart';
 
-class OngoingOrders extends StatefulWidget {
-  const OngoingOrders({super.key});
+
+class CurrentOrdersPage extends StatefulWidget {
+  const CurrentOrdersPage({super.key});
 
   @override
-  State<OngoingOrders> createState() => _OngoingOrdersState();
+  State<CurrentOrdersPage> createState() => _CurrentOrdersPageState();
 }
 
-class _OngoingOrdersState extends State<OngoingOrders> {
+class _CurrentOrdersPageState extends State<CurrentOrdersPage> {
   final bool _noOrders = false;
   bool showLoading = false,showError = false;
 
@@ -32,17 +33,18 @@ class _OngoingOrdersState extends State<OngoingOrders> {
       ongoingModel = [];
     });
     final prefs = await SharedPreferences.getInstance();
-    var customerid = prefs.getString('customerid');
+    var delivery_boy_id = prefs.getString('delivery_boy_id');
 
     var todaysDate = glb.getDateTodays();
     glb.order_status = "0";
     try {
       var url = glb.endPoint;
       final Map dictMap = {};
-
-      dictMap['customer_id'] = customerid;
-      dictMap['order_status'] = glb.order_status;
-      dictMap['pktType'] = "22";
+//select orderid,customerid,quantity,price,pickup_dt,delivery,clat,clng,order_status,delivery_epoch,laundry_ordertbl.epoch,cancel_reason,houseno,address from vff.usertbl,vff.laundry_delivery_boytbl,vff.laundry_ordertbl where usertbl.usrid=laundry_delivery_boytbl.usrid and laundry_delivery_boytbl.delivery_boy_id=laundry_ordertbl.delivery_boyid and delivery_boyid='3' and order_completed='0' and order_status='Accepted'  order by orderid desc
+      dictMap['delivery_boy_id'] = delivery_boy_id;
+      dictMap['order_completed'] = glb.order_status;
+      dictMap['order_status'] = 'Accepted';
+      dictMap['pktType'] = "24";
       dictMap['token'] = "vff";
       dictMap['uid'] = "-1";
 
@@ -76,7 +78,7 @@ class _OngoingOrdersState extends State<OngoingOrders> {
             }
 
             var orderid = onGoingOrdersMap["orderid"];
-            var delivery_boyid = onGoingOrdersMap["delivery_boyid"];
+            var customer_id = onGoingOrdersMap["customer_id"];
             var quantity = onGoingOrdersMap["quantity"];
             var price = onGoingOrdersMap["price"];
             var pickup_date = onGoingOrdersMap["pickup_date"];
@@ -91,7 +93,7 @@ class _OngoingOrdersState extends State<OngoingOrders> {
             var address = onGoingOrdersMap["address"];
 
             List<String> orderIDLst = glb.strToLst2(orderid);
-            List<String> delivery_boyidLst = glb.strToLst2(delivery_boyid);
+            List<String> customer_idLst = glb.strToLst2(customer_id);
             List<String> quantityLst = glb.strToLst2(quantity);
             List<String> priceLst = glb.strToLst2(price);
             List<String> pickup_dateLst = glb.strToLst2(pickup_date);
@@ -105,6 +107,7 @@ class _OngoingOrdersState extends State<OngoingOrders> {
             List<String> cancel_reasonLst = glb.strToLst2(cancel_reason);
             List<String> house_noLst = glb.strToLst2(house_no);
             List<String> addressLst = glb.strToLst2(address);
+            
 
             for (int i = 0; i < orderIDLst.length; i++) {
               var orderID = orderIDLst.elementAt(i).toString();
@@ -117,6 +120,7 @@ class _OngoingOrdersState extends State<OngoingOrders> {
               var house_no = house_noLst.elementAt(i).toString();
               var address = addressLst.elementAt(i).toString();
               var price = priceLst.elementAt(i).toString();
+              var customerid = customer_idLst.elementAt(i).toString();
               var formattedDateTime =
                   glb.doubleEpochToFormattedDateTime(double.parse(orderepoch));
               var deliveryEpochTime =
@@ -147,7 +151,7 @@ class _OngoingOrdersState extends State<OngoingOrders> {
                   address: address,
                   totalPrice: price,
                   showCancelBtn: showCancelBtn,
-                  customerID: customerid.toString()));
+                  customerID: customerid));
             }
 
             setState(() {
@@ -228,7 +232,9 @@ class _OngoingOrdersState extends State<OngoingOrders> {
                       child: InkWell(
                         onTap: () {
                           glb.orderid = ongoingModel[index].orderID;
-                          glb.hideControls = true;
+                          glb.hideControls = false;
+                          glb.showPayOption = false;
+                          glb.customerID = ongoingModel[index].customerID;
                           Navigator.pushNamed(context, OrderDetailsRoute);
                         },
                         borderRadius: BorderRadius.circular(8.0),
@@ -431,7 +437,8 @@ class _OngoingOrdersState extends State<OngoingOrders> {
                                       )
                                     : Container(),
                                 Visibility(
-                                  visible: ongoingModel[index].showCancelBtn,
+                                  // visible: ongoingModel[index].showCancelBtn,
+                                  visible: false,
                                   child: Row(
                                     mainAxisAlignment: MainAxisAlignment.end,
                                     children: [
@@ -515,60 +522,5 @@ class _OngoingOrdersState extends State<OngoingOrders> {
                   );
                 })),
           );
-  }
-}
-
-class _OnOrders extends StatelessWidget {
-  const _OnOrders({
-    super.key,
-    required bool noOrders,
-  }) : _noOrders = noOrders;
-
-  final bool _noOrders;
-
-  @override
-  Widget build(BuildContext context) {
-    return Visibility(
-      visible: _noOrders,
-      child: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Text(
-              'There are no order',
-              style: nunitoStyle.copyWith(
-                  fontSize: 16.0, color: AppColors.textColor),
-            ),
-            SizedBox(
-              height: 15.0,
-            ),
-            Material(
-              color: Colors.transparent,
-              child: InkWell(
-                onTap: () {},
-                borderRadius: BorderRadius.circular(12.0),
-                child: Ink(
-                  decoration: BoxDecoration(
-                    color: AppColors.blueDarkColor,
-                    borderRadius: BorderRadius.circular(12.0),
-                  ),
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 10.0, vertical: 10.0),
-                    child: Text(
-                      'Start Now',
-                      style: nunitoStyle.copyWith(
-                          fontSize: 14.0,
-                          fontWeight: FontWeight.bold,
-                          color: AppColors.backColor),
-                    ),
-                  ),
-                ),
-              ),
-            )
-          ],
-        ),
-      ),
-    );
   }
 }

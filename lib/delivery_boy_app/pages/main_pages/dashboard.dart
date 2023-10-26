@@ -30,14 +30,16 @@ class _DashboardPageState extends State<DashboardPage> {
   List<NewOrders> newOrdersModel = [];
   bool showLoading = true, noOrders = true;
   NotificationServices notificationServices = NotificationServices();
-  var deviceToken = "";
+  var deviceToken = "", myStatus = "";
   bool showProgress = false;
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
+    updateAsOnline();
     loadNewOrders();
     getDefault();
+
     //Set default app
     SharedPreferenceUtils.save_val('AppPreference', 'DMainRoute');
   }
@@ -247,6 +249,74 @@ class _DashboardPageState extends State<DashboardPage> {
     }
   }
 
+  Future updateAsOnline() async {
+    final prefs = await SharedPreferences.getInstance();
+
+    var deliveryBoyId = prefs.getString('delivery_boy_id');
+    var mark_free = prefs.getString('mark_free');
+    if (mark_free == null || mark_free.isEmpty) {
+      mark_free = "";
+    }
+    try {
+      var url = glb.endPoint;
+      final Map dictMap = {};
+
+      dictMap['delivery_boy_id'] = deliveryBoyId;
+      dictMap['set_free'] = mark_free;
+      dictMap['pktType'] = "23";
+      dictMap['token'] = "vff";
+      dictMap['uid'] = "-1";
+      final response = await http.post(Uri.parse(url),
+          headers: <String, String>{
+            "Accept": "application/json",
+            'Content-Type': 'application/json; charset=UTF-8',
+          },
+          body: jsonEncode(dictMap));
+
+      if (response.statusCode == 200) {
+        var res = response.body;
+        if (res.contains("ErrorCode#2")) {
+          // glb.showSnackBar(context, 'Error', 'No New Orders Found');
+          return;
+        } else if (res.contains("ErrorCode#8")) {
+          setState(() {
+            showProgress = false;
+          });
+          glb.showSnackBar(context, 'Error', 'Something Went Wrong');
+          return;
+        } else {
+          try {
+            if(mark_free != null && mark_free.isNotEmpty && mark_free == "Free"){
+              print('Restoring to default status');
+              SharedPreferenceUtils.save_val("mark_free", "");
+            }
+            Map<String, dynamic> statusMap = json.decode(response.body);
+
+            var status = statusMap['status'];
+            print('Delivery Boy Current Status::$status');
+            setState(() {
+              myStatus = status;
+            });
+          } catch (e) {
+            print(e);
+          }
+          //status
+          setState(() {
+            showProgress = false;
+          });
+        }
+      }
+    } catch (e) {
+      if (kDebugMode) {
+        print(e);
+      }
+      setState(() {
+        showProgress = false;
+      });
+      glb.handleErrors(e, context);
+    }
+  }
+
   Future accept_or_rejectOrder(String orderStatus) async {
     //norder_id
     setState(() {
@@ -299,8 +369,8 @@ class _DashboardPageState extends State<DashboardPage> {
           print(e);
         }
         setState(() {
-              showProgress = false;
-            });
+          showProgress = false;
+        });
         glb.handleErrors(e, context);
       }
     }
@@ -736,7 +806,7 @@ class _DashboardPageState extends State<DashboardPage> {
                                             padding: const EdgeInsets.all(26.0),
                                             child: Center(
                                               child: Text(
-                                                'No New Orders',
+                                                'No New Orders\n My Current Status is ${myStatus}',
                                                 style: ralewayStyle.copyWith(
                                                   fontSize: 18.0,
                                                   fontWeight: FontWeight.bold,
