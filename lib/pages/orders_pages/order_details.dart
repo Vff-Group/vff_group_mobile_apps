@@ -376,9 +376,12 @@ class _OrderDetailsPageState extends State<OrderDetailsPage> {
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
                       showLoading
-                          ? const LinearProgressIndicator(
-                              semanticsLabel: 'Linear progress indicator',
-                            )
+                          ? Padding(
+                            padding: const EdgeInsets.fromLTRB(20, kToolbarHeight, 20, 20),
+                            child: const LinearProgressIndicator(
+                                semanticsLabel: 'Linear progress indicator',
+                              ),
+                          )
                           : Column(
                               children: [
                                 SizedBox(
@@ -1192,6 +1195,7 @@ class _OrderDetails extends StatelessWidget {
                     decoration: BoxDecoration(
                         color: orderStatus == "Accepted" ||
                                 orderStatus == "Payment Done" ||
+                                orderStatus == "Pick Up Done" ||
                                 orderStatus == "Processing" ||
                                 orderStatus == "Out for Delivery" ||
                                 orderStatus == "Delivered"
@@ -1204,6 +1208,7 @@ class _OrderDetails extends StatelessWidget {
                         Icons.delivery_dining_sharp,
                         color: orderStatus == "Accepted" ||
                                 orderStatus == "Payment Done" ||
+                                orderStatus == "Pick Up Done" ||
                                 orderStatus == "Processing" ||
                                 orderStatus == "Out for Delivery" ||
                                 orderStatus == "Completed"
@@ -1216,6 +1221,7 @@ class _OrderDetails extends StatelessWidget {
                     width: 100,
                     height: 1,
                     color: orderStatus == "Processing" ||
+                    orderStatus == "Pick Up Done" ||
                             orderStatus == "Out for Delivery" ||
                             orderStatus == "Completed"
                         ? AppColors.neonColor

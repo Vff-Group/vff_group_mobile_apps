@@ -382,7 +382,7 @@ class _HomePageState extends State<HomePage> {
 
     var profile = glb.prefs?.getString('profile_img');
     var usrname = glb.prefs?.getString('usrname');
-  //  SharedPreferenceUtils.save_val("notificationToken", "");
+    //  SharedPreferenceUtils.save_val("notificationToken", "");
     var notificationToken = glb.prefs?.getString('notificationToken');
     print('notificationToken::$notificationToken');
     if (notificationToken == null || notificationToken.isEmpty) {
@@ -543,13 +543,68 @@ class _HomePageState extends State<HomePage> {
       appBar: AppBar(
         automaticallyImplyLeading: false,
         backgroundColor: Colors.transparent,
+        centerTitle: true,
         elevation: 0,
+        actions: [
+          // Positioned(
+          //                       left: 20,
+          //                       child: Container(
+          //                         width: 10,
+          //                         height: 10,
+          //                         decoration: const BoxDecoration(
+          //                           shape: BoxShape.circle,
+          //                           color: Colors.red,
+          //                         ),
+          //                       ),
+          //                     ),
+          InkWell(
+            onTap: () {
+              
+              Navigator.pushNamed(context, CustomerNotificationRoute);
+            },
+            child: Icon(
+              Icons.notifications_none_outlined,
+              color: AppColors.whiteColor,
+              size: 30,
+            ),
+          )
+        ],
+        title: Image.asset(
+          'assets/logo/velvet_2.png',
+          width: 150,
+        ),
         systemOverlayStyle:
             const SystemUiOverlayStyle(statusBarBrightness: Brightness.dark),
+        leading: InkWell(
+          onTap: () {
+            
+          },
+          child: WidgetCircularAnimator(
+            size: 40,
+            innerIconsSize: 3,
+            outerIconsSize: 3,
+            innerAnimation: Curves.easeInOutBack,
+            outerAnimation: Curves.easeInOutBack,
+            innerColor: Colors.deepPurple,
+            outerColor: Colors.orangeAccent,
+            innerAnimationSeconds: 10,
+            outerAnimationSeconds: 10,
+            child: Container(
+                decoration: BoxDecoration(
+                    shape: BoxShape.circle, color: Colors.grey[200]),
+                child: profile_img.isEmpty == false
+                    ? CircleAvatar(
+                        radius: 25.0,
+                        backgroundImage: NetworkImage(profile_img),
+                        backgroundColor: Colors.transparent,
+                      )
+                    : const Icon(Icons.person)),
+          ),
+        ),
       ),
       backgroundColor: Colors.black,
       body: Padding(
-          padding: const EdgeInsets.fromLTRB(20, kToolbarHeight, 20, 20),
+          padding: const EdgeInsets.fromLTRB(20, 1.8 * kToolbarHeight, 20, 20),
           child: RefreshIndicator(
             onRefresh: _handleRefresh,
             child: CustomScrollView(
@@ -565,69 +620,6 @@ class _HomePageState extends State<HomePage> {
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                crossAxisAlignment: CrossAxisAlignment.center,
-                                children: [
-                                  Row(
-                                    children: [
-                                      WidgetCircularAnimator(
-                                        size: 50,
-                                        innerIconsSize: 3,
-                                        outerIconsSize: 3,
-                                        innerAnimation: Curves.easeInOutBack,
-                                        outerAnimation: Curves.easeInOutBack,
-                                        innerColor: Colors.deepPurple,
-                                        outerColor: Colors.orangeAccent,
-                                        innerAnimationSeconds: 10,
-                                        outerAnimationSeconds: 10,
-                                        child: Container(
-                                            decoration: BoxDecoration(
-                                                shape: BoxShape.circle,
-                                                color: Colors.grey[200]),
-                                            child: profile_img.isEmpty == false
-                                                ? CircleAvatar(
-                                                    radius: 25.0,
-                                                    backgroundImage:
-                                                        NetworkImage(
-                                                            profile_img),
-                                                    backgroundColor:
-                                                        Colors.transparent,
-                                                  )
-                                                : const Icon(Icons.person)),
-                                      ),
-                                    ],
-                                  ),
-                                  Image.asset(
-                                    'assets/logo/velvet_2.png',
-                                    width: 150,
-                                  ),
-                                  Stack(
-                                    children: [
-                                      Positioned(
-                                        left: 20,
-                                        child: Container(
-                                          width: 10,
-                                          height: 10,
-                                          decoration: const BoxDecoration(
-                                            shape: BoxShape.circle,
-                                            color: Colors.red,
-                                          ),
-                                        ),
-                                      ),
-                                      const Padding(
-                                        padding: EdgeInsets.only(right: 16.0),
-                                        child: Icon(
-                                          Icons.notifications_none_outlined,
-                                          color: AppColors.whiteColor,
-                                          size: 30,
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ],
-                              ),
                               const SizedBox(
                                 height: 10.0,
                               ),
@@ -857,8 +849,10 @@ class _HomePageState extends State<HomePage> {
                                                         //Send to Order detail Screen
                                                         glb.orderid = "";
                                                         glb.order_status = "0";
-                                                        glb.hideControls = false;
-                                                        glb.showPayOption = true;
+                                                        glb.hideControls =
+                                                            false;
+                                                        glb.showPayOption =
+                                                            true;
                                                         glb.orderid =
                                                             activeOrdersModel[
                                                                     index]

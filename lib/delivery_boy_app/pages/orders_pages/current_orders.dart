@@ -5,6 +5,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:shimmer/shimmer.dart';
+import 'package:vff_group/animation/fade_animation.dart';
 import 'package:vff_group/modals/ongoing_orders_model.dart';
 import 'package:vff_group/routings/route_names.dart';
 import 'package:vff_group/utils/app_colors.dart';
@@ -524,3 +525,4 @@ class _CurrentOrdersPageState extends State<CurrentOrdersPage> {
           );
   }
 }
+

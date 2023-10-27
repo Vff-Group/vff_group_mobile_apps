@@ -36,6 +36,12 @@ class _DashboardPageState extends State<DashboardPage> {
   void initState() {
     // TODO: implement initState
     super.initState();
+    notificationServices.requestNotificationPermissions();
+    notificationServices.foregroundMessage();
+    notificationServices.firebaseInit(context);
+    notificationServices.setupInteractMessage(context);
+    notificationServices.isTokenRefreshed();
+
     updateAsOnline();
     loadNewOrders();
     getDefault();
@@ -61,8 +67,17 @@ class _DashboardPageState extends State<DashboardPage> {
         userName = split[0];
       });
     }
-    // var notificationToken = glb.prefs?.getString('notificationToken');
-    // if (notificationToken == null) {
+    var notificationToken = glb.prefs?.getString('notificationToken');
+    print("DeliveryBoyNotificationToken::$notificationToken");
+    if (notificationToken == null || notificationToken.isEmpty) {
+      notificationServices.getDeviceToken().then((value) => {
+            deviceToken = value.toString().replaceAll(':', '__colon__'),
+            SharedPreferenceUtils.save_val('notificationToken', deviceToken),
+            updateDeviceToken(),
+            print('Delivery Boy DeviceToken:$value')
+          });
+    } 
+    // else {
     //   notificationServices.getDeviceToken().then((value) => {
     //         deviceToken = value.toString().replaceAll(':', '__colon__'),
     //         SharedPreferenceUtils.save_val('notificationToken', deviceToken),
@@ -286,7 +301,9 @@ class _DashboardPageState extends State<DashboardPage> {
           return;
         } else {
           try {
-            if(mark_free != null && mark_free.isNotEmpty && mark_free == "Free"){
+            if (mark_free != null &&
+                mark_free.isNotEmpty &&
+                mark_free == "Free") {
               print('Restoring to default status');
               SharedPreferenceUtils.save_val("mark_free", "");
             }
@@ -398,6 +415,7 @@ class _DashboardPageState extends State<DashboardPage> {
       padding: const EdgeInsets.only(bottom: 8.0),
       child: FloatingActionButton(
         onPressed: () {
+          Navigator.pop(context);
           Navigator.pushReplacementNamed(context, MainRoute);
         },
         backgroundColor: Colors.blue,
@@ -430,13 +448,68 @@ class _DashboardPageState extends State<DashboardPage> {
       extendBodyBehindAppBar: true,
       appBar: AppBar(
         automaticallyImplyLeading: false,
-        elevation: 0,
         backgroundColor: Colors.transparent,
+        elevation: 0,
+        centerTitle: true,
+        actions: [
+          // Positioned(
+          //                       left: 20,
+          //                       child: Container(
+          //                         width: 10,
+          //                         height: 10,
+          //                         decoration: const BoxDecoration(
+          //                           shape: BoxShape.circle,
+          //                           color: Colors.red,
+          //                         ),
+          //                       ),
+          //                     ),
+          InkWell(
+            onTap: () {
+              print('sss');
+              Navigator.pushNamed(context, DeliveryBoyNotificationRoute);
+            },
+            child: Icon(
+              Icons.notifications_none_outlined,
+              color: AppColors.whiteColor,
+              size: 30,
+            ),
+          )
+        ],
+        title: Image.asset(
+          'assets/logo/velvet_2.png',
+          width: 150,
+        ),
         systemOverlayStyle:
-            SystemUiOverlayStyle(statusBarBrightness: Brightness.dark),
+            const SystemUiOverlayStyle(statusBarBrightness: Brightness.dark),
+        leading: InkWell(
+          onTap: () {
+            print('ssss');
+          },
+          child: WidgetCircularAnimator(
+            size: 40,
+            innerIconsSize: 3,
+            outerIconsSize: 3,
+            innerAnimation: Curves.easeInOutBack,
+            outerAnimation: Curves.easeInOutBack,
+            innerColor: Colors.deepPurple,
+            outerColor: Colors.orangeAccent,
+            innerAnimationSeconds: 10,
+            outerAnimationSeconds: 10,
+            child: Container(
+                decoration: BoxDecoration(
+                    shape: BoxShape.circle, color: Colors.grey[200]),
+                child: profile_img.isEmpty == false
+                    ? CircleAvatar(
+                        radius: 25.0,
+                        backgroundImage: NetworkImage(profile_img),
+                        backgroundColor: Colors.transparent,
+                      )
+                    : const Icon(Icons.person)),
+          ),
+        ),
       ),
       body: Padding(
-        padding: const EdgeInsets.fromLTRB(20, 1.2 * kToolbarHeight, 20, 20),
+        padding: const EdgeInsets.fromLTRB(20, 1.8 * kToolbarHeight, 20, 20),
         child: Stack(
           children: [
             CustomScrollView(
@@ -445,72 +518,12 @@ class _DashboardPageState extends State<DashboardPage> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                          Row(
-                            children: [
-                              WidgetCircularAnimator(
-                                size: 50,
-                                innerIconsSize: 3,
-                                outerIconsSize: 3,
-                                innerAnimation: Curves.easeInOutBack,
-                                outerAnimation: Curves.easeInOutBack,
-                                innerColor: Colors.deepPurple,
-                                outerColor: Colors.orangeAccent,
-                                innerAnimationSeconds: 10,
-                                outerAnimationSeconds: 10,
-                                child: Container(
-                                    decoration: BoxDecoration(
-                                        shape: BoxShape.circle,
-                                        color: Colors.grey[200]),
-                                    child: profile_img.isEmpty == false
-                                        ? CircleAvatar(
-                                            radius: 25.0,
-                                            backgroundImage:
-                                                NetworkImage(profile_img),
-                                            backgroundColor: Colors.transparent,
-                                          )
-                                        : const Icon(Icons.person)),
-                              ),
-                            ],
-                          ),
-                          Image.asset(
-                            'assets/logo/velvet_2.png',
-                            width: 150,
-                          ),
-                          Stack(
-                            children: [
-                              Positioned(
-                                left: 20,
-                                child: Container(
-                                  width: 10,
-                                  height: 10,
-                                  decoration: const BoxDecoration(
-                                    shape: BoxShape.circle,
-                                    color: Colors.red,
-                                  ),
-                                ),
-                              ),
-                              const Padding(
-                                padding: EdgeInsets.only(right: 16.0),
-                                child: Icon(
-                                  Icons.notifications_none_outlined,
-                                  color: AppColors.whiteColor,
-                                  size: 30,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ],
-                      ),
                       const SizedBox(
                         height: 10.0,
                       ),
                       Row(
                         children: [
-                          Text('Hey, ',
+                          Text('Hey,',
                               style: ralewayStyle.copyWith(
                                   color: Colors.white,
                                   fontSize: 25.0,

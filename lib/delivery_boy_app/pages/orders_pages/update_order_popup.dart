@@ -4,6 +4,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:vff_group/animation/fade_animation.dart';
 import 'package:vff_group/animation/slide_bottom_animation.dart';
 import 'package:vff_group/delivery_boy_app/pages/main_pages/bottom_page_main.dart';
 import 'package:vff_group/utils/app_colors.dart';
@@ -65,12 +66,15 @@ class _UpdateOrderStatusPopupState extends State<UpdateOrderStatusPopup> {
             return;
           } else {
             //Order Updated Successfully
+            setState(() {
+              showLoading = false;
+            });
             glb.showSnackBar(context, 'Success', 'Order Updated Successfully');
+            Navigator.pop(context);
             Navigator.push(
                 context,
                 MaterialPageRoute(
-                    builder: (context) => BottomBarDeliveryBoy(pageDIndex: 1)));
-            Navigator.pop(context);
+                    builder: (context) => BottomBarDeliveryBoy(pageDIndex: 0)));
           }
         }
       } catch (e) {
@@ -89,17 +93,15 @@ class _UpdateOrderStatusPopupState extends State<UpdateOrderStatusPopup> {
   void initState() {
     // TODO: implement initState
     super.initState();
-
+    print('widget.orderStatus::${widget.orderStatus}');
     setState(() {
-      if (widget.orderStatus == "Accepted") {
+      if (widget.orderStatus == "Payment Done") {
         updateToStatus = "Pick Up Done";
       } else if (widget.orderStatus == "Out for Delivery") {
         updateToStatus = "Completed";
       }
       selectedValue = updateToStatus;
     });
-
-    
   }
 
   @override
@@ -123,6 +125,85 @@ class _UpdateOrderStatusPopupState extends State<UpdateOrderStatusPopup> {
                   ),
                 ),
               ),
+              FadeAnimation(
+                delay: 1,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    Container(
+                      decoration: BoxDecoration(
+                          color: widget.orderStatus == "Accepted" ||
+                                  widget.orderStatus == "Payment Done" ||
+                                  widget.orderStatus == "Pick Up Done" ||
+                                  widget.orderStatus == "Processing" ||
+                                  widget.orderStatus == "Out for Delivery" ||
+                                  widget.orderStatus == "Delivered"
+                              ? AppColors.neonColor
+                              : AppColors.lightBlackColor,
+                          borderRadius: BorderRadius.circular(50.0)),
+                      child: Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Icon(
+                          Icons.delivery_dining_sharp,
+                          color: widget.orderStatus == "Accepted" ||
+                                  widget.orderStatus == "Payment Done" ||
+                                  widget.orderStatus == "Pick Up Done" ||
+                                  widget.orderStatus == "Processing" ||
+                                  widget.orderStatus == "Out for Delivery" ||
+                                  widget.orderStatus == "Completed"
+                              ? AppColors.backColor
+                              : AppColors.whiteColor,
+                        ),
+                      ),
+                    ),
+                    Container(
+                      width: 100,
+                      height: 1,
+                      color: widget.orderStatus == "Processing" ||
+                              widget.orderStatus == "Pick Up Done" ||
+                              widget.orderStatus == "Out for Delivery" ||
+                              widget.orderStatus == "Completed"
+                          ? AppColors.neonColor
+                          : AppColors.whiteColor,
+                    ),
+                    Container(
+                      decoration: BoxDecoration(
+                          color: widget.orderStatus == "Processing" ||
+                                  widget.orderStatus == "Out for Delivery" ||
+                                  widget.orderStatus == "Completed"
+                              ? AppColors.neonColor
+                              : AppColors.lightBlackColor,
+                          borderRadius: BorderRadius.circular(50.0)),
+                      child: Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Icon(
+                          Icons.local_laundry_service_outlined,
+                          color: widget.orderStatus == "Processing" ||
+                                  widget.orderStatus == "Out for Delivery" ||
+                                  widget.orderStatus == "Completed"
+                              ? AppColors.backColor
+                              : AppColors.whiteColor,
+                        ),
+                      ),
+                    ),
+                    Container(
+                        width: 100,
+                        height: 1,
+                        color: widget.orderStatus == "Processing" ||
+                                widget.orderStatus == "Out for Delivery" ||
+                                widget.orderStatus == "Completed"
+                            ? AppColors.neonColor
+                            : AppColors.whiteColor),
+                    Container(
+                      decoration: BoxDecoration(
+                          color: AppColors.lightBlackColor,
+                          borderRadius: BorderRadius.circular(50.0)),
+                      child: const Padding(
+                          padding: EdgeInsets.all(8.0), child: Text('👍')),
+                    ),
+                  ],
+                ),
+              ),
               Container(
                 child: Padding(
                   padding: const EdgeInsets.all(20.0),
@@ -131,23 +212,10 @@ class _UpdateOrderStatusPopupState extends State<UpdateOrderStatusPopup> {
                     children: [
                       Row(
                         children: [
-                          Container(
-                            width: 50,
-                            height: 50,
-                            decoration: BoxDecoration(
-                                color: Colors.green[50],
-                                borderRadius: BorderRadius.circular(16.0)),
-                            child: Padding(
-                              padding: const EdgeInsets.all(16.0),
-                              child: Radio(
-                                value: updateToStatus,
-                                groupValue: selectedValue,
-                                onChanged: (value) {
-                                  // Implement radio button selection logic here
-                                  selectedValue = value!;
-                                },
-                              ),
-                            ),
+                          Switch(
+                            activeColor: AppColors.neonColor,
+                            value: true,
+                            onChanged: (value) {},
                           ),
                           Padding(
                             padding: const EdgeInsets.all(8.0),
@@ -156,7 +224,7 @@ class _UpdateOrderStatusPopupState extends State<UpdateOrderStatusPopup> {
                               children: [
                                 Text(
                                   updateToStatus,
-                                  style: ralewayStyle.copyWith(
+                                  style: nunitoStyle.copyWith(
                                       fontWeight: FontWeight.bold,
                                       color: AppColors.whiteColor),
                                 ),
@@ -168,41 +236,44 @@ class _UpdateOrderStatusPopupState extends State<UpdateOrderStatusPopup> {
                           ),
                         ],
                       ),
-                      SlideFromBottomAnimation(
-                        delay: 0.5,
-                        child: Padding(
-                          padding: const EdgeInsets.all(20.0),
-                          child: Center(
-                            child: Material(
-                              color: Colors.transparent,
-                              child: InkWell(
-                                borderRadius: BorderRadius.circular(12.0),
-                                onTap: () {
-                                  print(
-                                      "updateToStatus::$widget.updateToStatus");
-                                  print("orderID::$widget.orderID");
-                                  updateOrderStatus();
-                                },
-                                child: Ink(
-                                  decoration: BoxDecoration(
+                      showLoading
+                          ? CircularProgressIndicator()
+                          : SlideFromBottomAnimation(
+                              delay: 0.5,
+                              child: Padding(
+                                padding: const EdgeInsets.all(20.0),
+                                child: Center(
+                                  child: Material(
+                                    color: Colors.transparent,
+                                    child: InkWell(
                                       borderRadius: BorderRadius.circular(12.0),
-                                      color: Colors.deepOrange),
-                                  child: Padding(
-                                    padding: const EdgeInsets.all(12.0),
-                                    child: Text(
-                                      'Update Status',
-                                      style: ralewayStyle.copyWith(
-                                          fontSize: 16.0,
-                                          fontWeight: FontWeight.bold,
-                                          color: Colors.white),
+                                      onTap: () {
+                                        print(
+                                            "updateToStatus::$widget.updateToStatus");
+                                        print("orderID::$widget.orderID");
+                                        updateOrderStatus();
+                                      },
+                                      child: Ink(
+                                        decoration: BoxDecoration(
+                                            borderRadius:
+                                                BorderRadius.circular(12.0),
+                                            color: Colors.deepOrange),
+                                        child: Padding(
+                                          padding: const EdgeInsets.all(12.0),
+                                          child: Text(
+                                            'Update Status',
+                                            style: ralewayStyle.copyWith(
+                                                fontSize: 16.0,
+                                                fontWeight: FontWeight.bold,
+                                                color: Colors.white),
+                                          ),
+                                        ),
+                                      ),
                                     ),
                                   ),
                                 ),
                               ),
-                            ),
-                          ),
-                        ),
-                      )
+                            )
                     ],
                   ),
                 ),

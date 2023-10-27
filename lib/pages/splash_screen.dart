@@ -51,8 +51,8 @@ class _SplashScreenState extends State<SplashScreen> {
       } else if (defaultRoute != null &&
           defaultRoute.isEmpty == false &&
           defaultRoute == "DMainRoute") {
-        // Navigator.pushReplacementNamed(context, DMainRoute);
-        Navigator.pushReplacementNamed(context, MainRoute);
+        Navigator.pushReplacementNamed(context, DMainRoute);
+        // Navigator.pushReplacementNamed(context, MainRoute);
       }else{
         Navigator.pushReplacementNamed(context, MainRoute);
       }

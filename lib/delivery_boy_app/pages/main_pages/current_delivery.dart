@@ -11,6 +11,8 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:vff_group/animation/fade_animation.dart';
 import 'package:vff_group/animation/slide_bottom_animation.dart';
+import 'package:vff_group/animation/slide_left_animation.dart';
+import 'package:vff_group/animation/slideright_animation.dart';
 import 'package:vff_group/delivery_boy_app/pages/orders_pages/update_order_popup.dart';
 import 'package:vff_group/utils/SharedPreferencesUtils.dart';
 import 'package:vff_group/utils/app_colors.dart';
@@ -19,6 +21,7 @@ import 'package:vff_group/widgets/dotted_line.dart';
 import 'package:vff_group/widgets/rating_bar.dart';
 import 'package:vff_group/global/vffglb.dart' as glb;
 import 'package:http/http.dart' as http;
+import 'package:widget_circular_animator/widget_circular_animator.dart';
 
 class CurrentDeliveryPage extends StatefulWidget {
   const CurrentDeliveryPage({super.key});
@@ -81,7 +84,7 @@ class _CurrentDeliveryPageState extends State<CurrentDeliveryPage> {
           var res = response.body;
           if (res.contains("ErrorCode#2")) {
             glb.showSnackBar(context, 'Error', 'No New Orders Found');
-            SharedPreferenceUtils.save_val("mark_free","Free");
+            SharedPreferenceUtils.save_val("mark_free", "Free");
             setState(() {
               showLoading = false;
               noOrders = true;
@@ -155,26 +158,6 @@ class _CurrentDeliveryPageState extends State<CurrentDeliveryPage> {
     }
   }
 
-  Future<void> navigateTo(double lat, double lng) async {
-    // Check if the URL can be launched (i.e., if the user has a map app installed).
-    final webMapUrl =
-        "https://www.google.com/maps/dir/?api=1&destination=$lat,$lng";
-    print('webMapUrl::$webMapUrl');
-    try {
-      // Launch the map app with the specified coordinates and mode.
-      await launchUrl(Uri.parse(webMapUrl));
-    } catch (e) {
-      print('Error Opening Map: $e');
-      //     print('Could not launch the map app. Make sure a map app is installed.');
-      // final webMapUrl = "https://www.google.com/maps/dir/?api=1&destination=$lat,$lng";
-
-      // if (await canLaunch(webMapUrl)) {
-      //   await launchUrl(Uri.parse(webMapUrl));
-      // } else {
-      //   print('Could not open the map in a web browser.');
-      // }
-    }
-  }
   // Future<void> navigateTo(double lat, double lng) async {
   //   var uri = Uri.parse("google.navigation:q=$lat,$lng&mode=d");
   //   try {
@@ -240,352 +223,35 @@ class _CurrentDeliveryPageState extends State<CurrentDeliveryPage> {
           : CustomScrollView(
               slivers: [
                 SliverToBoxAdapter(
-                    child: Container(
-                  decoration: const BoxDecoration(
-                    gradient:
-                        LinearGradient(colors: [Colors.green, Colors.blue]),
-                    borderRadius: BorderRadius.only(
-                        topLeft: Radius.circular(26.0),
-                        topRight: Radius.circular(26.0)),
-                  ),
-                  child: Column(
-                    children: [
-                      Container(
-                        decoration: const BoxDecoration(
-                          gradient: LinearGradient(
-                              colors: [Colors.green, Colors.blue]),
-                          borderRadius: BorderRadius.only(
-                              topLeft: Radius.circular(26.0),
-                              topRight: Radius.circular(26.0)),
-                        ),
-                        child: Padding(
-                          padding: const EdgeInsets.all(26.0),
-                          child: Column(
-                            children: [
-                              Row(
-                                children: [
-                                  Text(
-                                    'Customer Details',
-                                    style: ralewayStyle.copyWith(
-                                        color: Colors.white,
-                                        fontWeight: FontWeight.bold,
-                                        fontSize: 18.0),
-                                    overflow: TextOverflow.ellipsis,
-                                    textAlign: TextAlign.left,
-                                  ),
-                                ],
-                              ),
-                             SizedBox(height: 10.0,), 
-                              Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                children: [
-                                  Row(
-                                    children: [
-                                      Container(
-                                          width: 50,
-                                          height: 50,
-                                          decoration: BoxDecoration(
-                                            borderRadius:
-                                                BorderRadius.circular(25.0),
-                                          ),
-                                          child: profileImg.isNotEmpty
-                                              ? ClipRRect(
-                                                  borderRadius:
-                                                      BorderRadius.circular(
-                                                          50.0),
-                                                  child: Image.network(
-                                                    profileImg,
-                                                    fit: BoxFit.fill,
-                                                  ))
-                                              : SizedBox()),
-                                      Padding(
-                                        padding: const EdgeInsets.all(8.0),
-                                        child: Column(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
-                                          children: [
-                                            SizedBox(
-                                              width: width - 200,
-                                              child: Text(
-                                                customerName,
-                                                style: ralewayStyle.copyWith(
-                                                    color: Colors.white,
-                                                    fontWeight: FontWeight.bold,
-                                                    fontSize: 18.0),
-                                                overflow: TextOverflow.ellipsis,
-                                              ),
-                                            ),
-                                            const SizedBox(
-                                              height: 5.0,
-                                            ),
-                                            Text(
-                                              'Velvet Wash Customer',
-                                              style: ralewayStyle.copyWith(
-                                                  color: Colors.white60,
-                                                  fontWeight: FontWeight.normal,
-                                                  fontSize: 14.0),
-                                            ),
-                                            const SizedBox(
-                                              height: 10.0,
-                                            ),
-                                            // const Row(
-                                            //   mainAxisAlignment:
-                                            //       MainAxisAlignment.spaceAround,
-                                            //   children: [
-                                            //     Icon(
-                                            //       Icons.star,
-                                            //       color: Colors.amber,
-                                            //       size: 10,
-                                            //     ),
-                                            //     Icon(
-                                            //       Icons.star,
-                                            //       color: Colors.amber,
-                                            //       size: 10,
-                                            //     ),
-                                            //     Icon(
-                                            //       Icons.star,
-                                            //       color: Colors.amber,
-                                            //       size: 10,
-                                            //     ),
-                                            //     Icon(
-                                            //       Icons.star,
-                                            //       color: Colors.amber,
-                                            //       size: 10,
-                                            //     ),
-                                            //   ],
-                                            // ),
-                                          ],
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                  InkWell(
-                                    onTap: () {
-                                      var latitute = double.parse(cLat);
-                                      var longitute = double.parse(cLng);
-                                      navigateTo(latitute, longitute);
-                                    },
-                                    child: Container(
-                                      decoration: BoxDecoration(
-                                          borderRadius:
-                                              BorderRadius.circular(50.0),
-                                          color: Colors.orange),
-                                      child: const Padding(
-                                        padding: EdgeInsets.all(16.0),
-                                        child: Icon(
-                                          Icons.location_history,
-                                          color: Colors.white,
-                                        ),
-                                      ),
-                                    ),
-                                  )
-                                ],
-                              ),
-                              const Padding(
-                                padding: EdgeInsets.all(8.0),
-                                child: Divider(
-                                  indent: 10.0,
-                                  color: AppColors.whiteColor,
-                                  height: 0.1,
-                                  thickness: 0.1,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                      Container(
-                        decoration: const BoxDecoration(
-                          gradient: LinearGradient(
-                              colors: [Colors.green, Colors.blue]),
-                          // borderRadius: BorderRadius.only(
-                          //     topLeft: Radius.circular(26.0),
-                          //     topRight: Radius.circular(26.0)),
-                        ),
-                        child: Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: Column(
-                            children: [
-                              Row(
-                                children: [
-                                  Container(
-                                    decoration: BoxDecoration(
-                                        borderRadius:
-                                            BorderRadius.circular(25.0),
-                                        color: Colors.green[50]),
-                                    child: const Padding(
-                                      padding: EdgeInsets.all(12.0),
-                                      child: Icon(
-                                        Icons.watch_later_outlined,
-                                        color: Colors.green,
-                                        size: 15,
-                                      ),
-                                    ),
-                                  ),
-                                  Padding(
-                                    padding: const EdgeInsets.all(8.0),
-                                    child: Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        Text(
-                                          'Order Received At ',
-                                          style: ralewayStyle.copyWith(
-                                              fontSize: 12.0,
-                                              color: AppColors.whiteColor,
-                                              fontWeight: FontWeight.normal),
-                                        ),
-                                        const SizedBox(
-                                          height: 5.0,
-                                        ),
-                                        Text(
-                                          orderRecievedDate,
-                                          style: nunitoStyle.copyWith(
-                                              fontSize: 14.0,
-                                              color: AppColors.whiteColor,
-                                              fontWeight: FontWeight.bold),
-                                          overflow: TextOverflow.ellipsis,
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                ],
-                              ),
-                              Row(
-                                children: [
-                                  Container(
-                                    decoration: BoxDecoration(
-                                        borderRadius:
-                                            BorderRadius.circular(25.0),
-                                        color: Colors.orange[50]),
-                                    child: const Padding(
-                                      padding: EdgeInsets.all(12.0),
-                                      child: Icon(
-                                        Icons.location_city,
-                                        color: Colors.orange,
-                                        size: 15,
-                                      ),
-                                    ),
-                                  ),
-                                  Padding(
-                                    padding: const EdgeInsets.all(8.0),
-                                    child: Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        Text(
-                                          'Address',
-                                          style: ralewayStyle.copyWith(
-                                              fontSize: 12.0,
-                                              color: AppColors.whiteColor,
-                                              fontWeight: FontWeight.normal),
-                                        ),
-                                        const SizedBox(
-                                          height: 5.0,
-                                        ),
-                                        SizedBox(
-                                          width: width - 100,
-                                          child: Text(
-                                            '${houseNo} ${addressUser},${cityName}-${pinCode}'
-                                                .toUpperCase(),
-                                            style: nunitoStyle.copyWith(
-                                                fontSize: 14.0,
-                                                color: AppColors.whiteColor,
-                                                fontWeight: FontWeight.bold),
-                                            overflow: TextOverflow.ellipsis,
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                ],
-                              ),
-                              Row(
-                                children: [
-                                  Container(
-                                    decoration: BoxDecoration(
-                                        borderRadius:
-                                            BorderRadius.circular(25.0),
-                                        color: Colors.pink[50]),
-                                    child: const Padding(
-                                      padding: EdgeInsets.all(12.0),
-                                      child: Icon(
-                                        Icons.location_city,
-                                        color: Colors.pink,
-                                        size: 15,
-                                      ),
-                                    ),
-                                  ),
-                                  Padding(
-                                    padding: const EdgeInsets.all(8.0),
-                                    child: Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        Text(
-                                          'Order ID ',
-                                          style: ralewayStyle.copyWith(
-                                              fontSize: 12.0,
-                                              color: AppColors.whiteColor,
-                                              fontWeight: FontWeight.normal),
-                                        ),
-                                        const SizedBox(
-                                          height: 8.0,
-                                        ),
-                                        Text(
-                                          '#${orderID}',
-                                          style: nunitoStyle.copyWith(
-                                              fontSize: 14.0,
-                                              color: AppColors.whiteColor,
-                                              fontWeight: FontWeight.bold),
-                                          overflow: TextOverflow.ellipsis,
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                      Image.asset(
-                        'assets/images/driving.gif',
-                        height: 350,
-                        fit: BoxFit.fill,
-                      ),
-                    ],
-                  ),
+                    child: Column(
+                  children: [
+                    _OrderDetails(
+                        addressClient: addressUser,
+                        orderID: orderID,
+                        orderStatus: orderStatus,
+                        pickUpDateTime: orderRecievedDate,
+                        deliveryDateTime: 'Not Delivered'),
+                    const Divider(
+                      color: AppColors.whiteColor,
+                      thickness: 0.5,
+                    ),
+                    _CustomerDetails(
+                        width: width,
+                        profilePicture: profileImg,
+                        customerName: customerName,
+                        mobileNo: mobileNo,
+                        cLat: cLat,
+                        cLng: cLng,
+                        orderStatus: orderStatus),
+                    const Divider(
+                      color: AppColors.whiteColor,
+                      thickness: 0.5,
+                    ),
+                  ],
                 ))
               ],
             ),
-      floatingActionButton: InkWell(
-        onTap: () {
-          _makePhoneCall(mobileNo);
-        },
-        child: Container(
-          decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(50.0),
-              color: Colors.deepOrange),
-          child: const Padding(
-            padding: EdgeInsets.all(16.0),
-            child: Icon(
-              Icons.phone,
-              color: Colors.white,
-            ),
-          ),
-        ),
-      ),
     );
-  }
-
-  Future<void> _makePhoneCall(String phoneNumber) async {
-    final Uri launchUri = Uri(
-      scheme: 'tel',
-      path: phoneNumber,
-    );
-    await launchUrl(launchUri);
   }
 
   void _showPopup(BuildContext context, String orderID, String orderStatus) {
@@ -723,6 +389,451 @@ class _CurrentDeliveryPageState extends State<CurrentDeliveryPage> {
     //     );
     //   },
     // );
+  }
+}
+
+Future<void> navigateTo(double lat, double lng) async {
+  // Check if the URL can be launched (i.e., if the user has a map app installed).
+  final webMapUrl =
+      "https://www.google.com/maps/dir/?api=1&destination=$lat,$lng";
+  print('webMapUrl::$webMapUrl');
+  try {
+    // Launch the map app with the specified coordinates and mode.
+    await launchUrl(Uri.parse(webMapUrl));
+  } catch (e) {
+    print('Error Opening Map: $e');
+    //     print('Could not launch the map app. Make sure a map app is installed.');
+    // final webMapUrl = "https://www.google.com/maps/dir/?api=1&destination=$lat,$lng";
+
+    // if (await canLaunch(webMapUrl)) {
+    //   await launchUrl(Uri.parse(webMapUrl));
+    // } else {
+    //   print('Could not open the map in a web browser.');
+    // }
+  }
+}
+
+Future<void> _makePhoneCall(String phoneNumber) async {
+  final Uri launchUri = Uri(
+    scheme: 'tel',
+    path: phoneNumber,
+  );
+  await launchUrl(launchUri);
+}
+
+class _CustomerDetails extends StatelessWidget {
+  const _CustomerDetails({
+    super.key,
+    required this.width,
+    required this.profilePicture,
+    required this.customerName,
+    required this.mobileNo,
+    required this.orderStatus,
+    required this.cLat,
+    required this.cLng,
+  });
+
+  final double width;
+  final String? profilePicture;
+  final String customerName;
+  final String mobileNo;
+  final String cLat;
+  final String cLng;
+  final String orderStatus;
+
+  @override
+  Widget build(BuildContext context) {
+    return SlideFromLeftAnimation(
+      delay: 0.8,
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 18.0, vertical: 18.0),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Row(
+              children: [
+                profilePicture!.isEmpty
+                    ? const CircularProgressIndicator()
+                    : WidgetCircularAnimator(
+                        size: 50,
+                        innerIconsSize: 3,
+                        outerIconsSize: 3,
+                        innerAnimation: Curves.easeInOutBack,
+                        outerAnimation: Curves.easeInOutBack,
+                        innerColor: Colors.deepPurple,
+                        outerColor: Colors.orangeAccent,
+                        innerAnimationSeconds: 10,
+                        outerAnimationSeconds: 10,
+                        child: profilePicture != "NA" ? Container(
+                          decoration: BoxDecoration(
+                              shape: BoxShape.circle, color: Colors.grey[200]),
+                          child: CircleAvatar(
+                            radius: 25.0,
+                            backgroundImage: NetworkImage('$profilePicture'),
+                            backgroundColor: Colors.transparent,
+                          ),
+                        ) : Container()
+                      ),
+                SizedBox(
+                  width: width * 0.04,
+                ),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      customerName,
+                      style: nunitoStyle.copyWith(
+                          fontSize: 18.0,
+                          fontWeight: FontWeight.w600,
+                          color: AppColors.neonColor),
+                    ),
+                    Visibility(
+                      visible: false,
+                      child: Text(
+                        mobileNo,
+                        style: nunitoStyle.copyWith(
+                            fontSize: 14.0,
+                            fontWeight: FontWeight.normal,
+                            color: AppColors.whiteColor),
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+            Row(
+              
+              children: [
+                SlideFromRightAnimation(
+                  delay: 0.9,
+                  child: Material(
+                    color: Colors.transparent,
+                    child: InkWell(
+                      onTap: () {
+                        
+                          _makePhoneCall(mobileNo);
+                      
+                      },
+                      borderRadius: BorderRadius.circular(10.0),
+                      child: Ink(
+                        decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(10.0)),
+                        child: Padding(
+                          padding: const EdgeInsets.all(2.0),
+                          child: Row(
+                            children: [
+                              const Icon(
+                                Icons.phone,
+                                color: AppColors.neonColor,
+                                size: 20,
+                              ),
+                              Padding(
+                                padding: const EdgeInsets.all(1.0),
+                                child: Text(
+                                  'Call',
+                                  style: nunitoStyle.copyWith(
+                                      fontSize: 12.0,
+                                      fontWeight: FontWeight.normal,
+                                      color: AppColors.neonColor),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+                 
+                SlideFromRightAnimation(
+                  delay: 0.9,
+                  child: Material(
+                    color: Colors.transparent,
+                    child: InkWell(
+                      onTap: () {
+                        navigateTo(double.parse(cLat), double.parse(cLng));
+                      },
+                      borderRadius: BorderRadius.circular(10.0),
+                      child: Ink(
+                        decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(10.0)),
+                        child: Padding(
+                          padding: const EdgeInsets.all(2.0),
+                          child: Row(
+                            children: [
+                              const Icon(
+                                Icons.location_on,
+                                color: AppColors.neonColor,
+                                size: 20,
+                              ),
+                              Padding(
+                                padding: const EdgeInsets.all(1.0),
+                                child: Text(
+                                  'Navigate',
+                                  style: nunitoStyle.copyWith(
+                                      fontSize: 12.0,
+                                      fontWeight: FontWeight.normal,
+                                      color: AppColors.neonColor),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            )
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _OrderDetails extends StatelessWidget {
+  const _OrderDetails({
+    super.key,
+    required this.orderStatus,
+    required this.orderID,
+    required this.pickUpDateTime,
+    required this.deliveryDateTime,
+    required this.addressClient,
+  });
+  final String orderStatus;
+  final String orderID;
+  final String pickUpDateTime;
+  final String deliveryDateTime;
+  final String addressClient;
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      child: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            FadeAnimation(
+              delay: 1,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  Container(
+                    decoration: BoxDecoration(
+                        color: orderStatus == "Accepted" ||
+                                orderStatus == "Payment Done" ||
+                                orderStatus == "Pick Up Done" ||
+                                orderStatus == "Processing" ||
+                                orderStatus == "Out for Delivery" ||
+                                orderStatus == "Delivered"
+                            ? AppColors.neonColor
+                            : AppColors.lightBlackColor,
+                        borderRadius: BorderRadius.circular(50.0)),
+                    child: Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Icon(
+                        Icons.delivery_dining_sharp,
+                        color: orderStatus == "Accepted" ||
+                                orderStatus == "Payment Done" ||
+                                orderStatus == "Pick Up Done" ||
+                                orderStatus == "Processing" ||
+                                orderStatus == "Out for Delivery" ||
+                                orderStatus == "Completed"
+                            ? AppColors.backColor
+                            : AppColors.whiteColor,
+                      ),
+                    ),
+                  ),
+                  Container(
+                    width: 100,
+                    height: 1,
+                    color: orderStatus == "Processing" ||
+                    orderStatus == "Pick Up Done" ||
+                            orderStatus == "Out for Delivery" ||
+                            orderStatus == "Completed"
+                        ? AppColors.neonColor
+                        : AppColors.whiteColor,
+                  ),
+                  Container(
+                    decoration: BoxDecoration(
+                        color: orderStatus == "Processing" ||
+                                orderStatus == "Out for Delivery" ||
+                                orderStatus == "Completed"
+                            ? AppColors.neonColor
+                            : AppColors.lightBlackColor,
+                        borderRadius: BorderRadius.circular(50.0)),
+                    child: Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Icon(
+                        Icons.local_laundry_service_outlined,
+                        color: orderStatus == "Processing" ||
+                                orderStatus == "Out for Delivery" ||
+                                orderStatus == "Completed"
+                            ? AppColors.backColor
+                            : AppColors.whiteColor,
+                      ),
+                    ),
+                  ),
+                  Container(
+                      width: 100,
+                      height: 1,
+                      color: orderStatus == "Processing" ||
+                              orderStatus == "Out for Delivery" ||
+                              orderStatus == "Completed"
+                          ? AppColors.neonColor
+                          : AppColors.whiteColor),
+                  Container(
+                    decoration: BoxDecoration(
+                        color: AppColors.lightBlackColor,
+                        borderRadius: BorderRadius.circular(50.0)),
+                    child: const Padding(
+                        padding: EdgeInsets.all(8.0), child: Text('👍')),
+                  ),
+                ],
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    'Order',
+                    style: nunitoStyle.copyWith(
+                      color: AppColors.whiteColor,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 18,
+                    ),
+                  ),
+                  orderStatus == "Rejected"
+                      ? Column(
+                          children: [
+                            Padding(
+                              padding: const EdgeInsets.only(bottom: 8.0),
+                              child: Text(
+                                'Assigning',
+                                style: nunitoStyle.copyWith(
+                                    color: AppColors.orangeColor,
+                                    fontSize: 8,
+                                    fontWeight: FontWeight.bold),
+                              ),
+                            ),
+                            const CircularProgressIndicator(
+                              color: Colors.green,
+                              strokeWidth: 1,
+                            )
+                          ],
+                        )
+                      : Text(
+                          orderStatus,
+                          style: nunitoStyle.copyWith(
+                              color: AppColors.orangeColor,
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold),
+                        ),
+                ],
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    'Order ID',
+                    style: nunitoStyle.copyWith(
+                      color: AppColors.whiteColor,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 14,
+                    ),
+                  ),
+                  Text(
+                    '#${orderID}',
+                    style: nunitoStyle.copyWith(
+                      color: AppColors.neonColor,
+                      fontSize: 14,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    'Pick Up:',
+                    style: nunitoStyle.copyWith(
+                      color: AppColors.whiteColor,
+                      fontWeight: FontWeight.normal,
+                      fontSize: 14,
+                    ),
+                  ),
+                  Text(
+                    pickUpDateTime,
+                    style: nunitoStyle.copyWith(
+                      color: AppColors.whiteColor,
+                      fontWeight: FontWeight.w500,
+                      fontSize: 14,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    'Delivered Date:',
+                    style: nunitoStyle.copyWith(
+                      color: AppColors.whiteColor,
+                      fontWeight: FontWeight.normal,
+                      fontSize: 14,
+                    ),
+                  ),
+                  Text(
+                    deliveryDateTime,
+                    style: nunitoStyle.copyWith(
+                      color: AppColors.whiteColor,
+                      fontWeight: FontWeight.w500,
+                      fontSize: 14,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    'Address:',
+                    style: nunitoStyle.copyWith(
+                      color: AppColors.whiteColor,
+                      fontWeight: FontWeight.normal,
+                      fontSize: 14,
+                    ),
+                  ),
+                  Text(
+                    addressClient,
+                    style: nunitoStyle.copyWith(
+                      color: AppColors.whiteColor,
+                      fontWeight: FontWeight.w500,
+                      fontSize: 14,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
   }
 }
 

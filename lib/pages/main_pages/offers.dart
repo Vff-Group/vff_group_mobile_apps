@@ -19,7 +19,7 @@ class _OffersPageState extends State<OffersPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        backgroundColor: AppColors.backColor,
+        backgroundColor: Colors.black,
         extendBodyBehindAppBar: true,
         appBar: AppBar(
           automaticallyImplyLeading: false,
@@ -248,4 +248,5 @@ class _OffersPageState extends State<OffersPage> {
                     )),
         ));
   }
+
 }

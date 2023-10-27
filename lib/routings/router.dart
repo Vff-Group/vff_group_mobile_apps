@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:vff_group/delivery_boy_app/pages/main_pages/bottom_page_main.dart';
+import 'package:vff_group/delivery_boy_app/pages/main_pages/delivery_boy_notification.dart';
 import 'package:vff_group/delivery_boy_app/pages/main_pages/delivery_login.dart';
 import 'package:vff_group/pages/cart/cart_items_page.dart';
 import 'package:vff_group/pages/categories/dry_clean_home.dart';
@@ -11,6 +12,7 @@ import 'package:vff_group/pages/login.dart';
 import 'package:vff_group/pages/main_pages/detailed_pages/all_services_detail.dart';
 import 'package:vff_group/pages/main_pages/detailed_pages/main_category_detailed.dart';
 import 'package:vff_group/pages/main_pages/home.dart';
+import 'package:vff_group/pages/main_pages/notification_customer.dart';
 import 'package:vff_group/pages/main_pages/orders.dart';
 import 'package:vff_group/pages/onboard_laundry.dart';
 import 'package:vff_group/pages/orders_pages/cancel_order_page.dart';
@@ -60,12 +62,16 @@ Route<dynamic> generateRoute(RouteSettings settings) {
       return _getPageRoute(const FeedBackPage());
     case CancelOrderRoute:
       return _getPageRoute(const CancelOrderPage());
+    case CustomerNotificationRoute:
+      return _getPageRoute(const CustomerNotifications());
     case DMainRoute:
       return _getPageRoute(const BottomBarDeliveryBoy(pageDIndex: 0,));
 
 // Delivery Boy Routes
     case DeliveryLoginRoute:
       return _getPageRoute(const DeliveryLoginScreen());
+    case DeliveryBoyNotificationRoute:
+      return _getPageRoute(const DeliveryBoyNotificationsPage());
 
     default:
       return _getPageRoute(const SplashScreen());

@@ -18,6 +18,8 @@ const String MyCartRoute = "my_cart_page";
 const String CheckOutRoute = "check_out";
 const String FeedbackRoute = "feedback";
 const String CancelOrderRoute = "cancel_order";
+const String CustomerNotificationRoute = "customer_notifications";
+const String DeliveryBoyNotificationRoute = "delivery_notifications";
 
 // Delivery_boy Routes
 const String DeliveryLoginRoute = "delivery_login";
