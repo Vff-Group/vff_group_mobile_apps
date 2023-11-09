@@ -45,7 +45,7 @@ class _DeliveryLoginScreenState extends State<DeliveryLoginScreen> {
         FocusManager.instance.primaryFocus?.unfocus();
       },
       child: Scaffold(
-        backgroundColor: Colors.black,
+        backgroundColor: AppColors.whiteColor,
         body: CustomScrollView(
           slivers: [
             SliverToBoxAdapter(
@@ -60,7 +60,7 @@ class _DeliveryLoginScreenState extends State<DeliveryLoginScreen> {
                   ),
                   Text(
                     'DELIVERY BOY',
-                    style: ralewayStyle.copyWith(
+                    style: nunitoStyle.copyWith(
                       color: Colors.deepOrangeAccent,
                       fontSize: 20.0,
                       fontWeight: FontWeight.bold,
@@ -72,7 +72,7 @@ class _DeliveryLoginScreenState extends State<DeliveryLoginScreen> {
                   Text(
                     'Welcome, please use valid login credentials',
                     style: nunitoStyle.copyWith(
-                      color: AppColors.whiteColor,
+                      color: AppColors.backColor,
                       fontSize: 15.0,
                       fontWeight: FontWeight.w500,
                     ),
@@ -88,7 +88,7 @@ class _DeliveryLoginScreenState extends State<DeliveryLoginScreen> {
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(8.0),
                         border: Border.all(
-                          color: AppColors.whiteColor, // Border color
+                          color: Colors.deepOrange, // Border color
                           width: 0.2, // Border width
                         ),
                       ),
@@ -96,25 +96,28 @@ class _DeliveryLoginScreenState extends State<DeliveryLoginScreen> {
                         controller: userNameController,
                         style: nunitoStyle.copyWith(
                             fontWeight: FontWeight.w400,
-                            color: AppColors.whiteColor,
+                            color: AppColors.backColor,
                             fontSize: 14.0),
                         keyboardType: TextInputType.text,
                         decoration: InputDecoration(
                             border: InputBorder.none,
                             prefixIcon: IconButton(
                               onPressed: () {},
-                              icon: const Icon(Icons.person,color: AppColors.whiteColor,),
+                              icon: const Icon(
+                                Icons.person,
+                                color: Colors.deepOrange,
+                              ),
                             ),
                             contentPadding: const EdgeInsets.only(top: 16.0),
                             hintText: 'Username',
-                            hintStyle: ralewayStyle.copyWith(
+                            hintStyle: nunitoStyle.copyWith(
                                 fontWeight: FontWeight.w400,
-                                color: AppColors.whiteColor.withOpacity(0.5),
+                                color: AppColors.backColor.withOpacity(0.5),
                                 fontSize: 12.0)),
                       ),
                     ),
                   ),
-                  
+
                   Padding(
                     padding: const EdgeInsets.all(16.0),
                     child: Container(
@@ -128,15 +131,15 @@ class _DeliveryLoginScreenState extends State<DeliveryLoginScreen> {
                                 width: 0.4, // Border width
                               )
                             : Border.all(
-                                color: AppColors.whiteColor, // Border color
+                                color: Colors.deepOrange, // Border color
                                 width: 0.2, // Border width
                               ),
                       ),
                       child: TextFormField(
                         controller: passwordController,
-                        style: ralewayStyle.copyWith(
+                        style: nunitoStyle.copyWith(
                             fontWeight: FontWeight.w400,
-                            color: AppColors.whiteColor,
+                            color: AppColors.backColor,
                             fontSize: 14.0),
                         keyboardType: TextInputType.text,
                         obscureText: _showPassword,
@@ -155,18 +158,27 @@ class _DeliveryLoginScreenState extends State<DeliveryLoginScreen> {
                                   }
                                 },
                                 icon: _showPassword
-                                    ? const Icon(Icons.remove_red_eye,color: AppColors.whiteColor,)
-                                    : const Icon(Icons
-                                        .no_encryption_gmailerrorred_outlined,color: AppColors.whiteColor,)),
+                                    ? const Icon(
+                                        Icons.remove_red_eye,
+                                        color: Colors.deepOrange,
+                                      )
+                                    : const Icon(
+                                        Icons
+                                            .no_encryption_gmailerrorred_outlined,
+                                        color: Colors.deepOrange,
+                                      )),
                             prefixIcon: IconButton(
                               onPressed: () {},
-                              icon: const Icon(Icons.security,color: AppColors.whiteColor,),
+                              icon: const Icon(
+                                Icons.security,
+                                color: Colors.deepOrange,
+                              ),
                             ),
                             contentPadding: const EdgeInsets.only(top: 16.0),
                             hintText: 'Password',
-                            hintStyle: ralewayStyle.copyWith(
+                            hintStyle: nunitoStyle.copyWith(
                                 fontWeight: FontWeight.w400,
-                                color: AppColors.whiteColor.withOpacity(0.5),
+                                color: AppColors.backColor.withOpacity(0.5),
                                 fontSize: 12.0)),
                       ),
                     ),
@@ -180,7 +192,7 @@ class _DeliveryLoginScreenState extends State<DeliveryLoginScreen> {
                   //       onPressed: () {},
                   //       child: Text(
                   //         'Forgot Password?',
-                  //         style: ralewayStyle.copyWith(
+                  //         style: nunitoStyle.copyWith(
                   //           fontSize: 12.0,
                   //           color: AppColors.mainBlueColor,
                   //           fontWeight: FontWeight.w600,
@@ -244,7 +256,7 @@ class _DeliveryLoginScreenState extends State<DeliveryLoginScreen> {
                                     color: Colors.deepOrange),
                                 child: Text(
                                   'Login',
-                                  style: ralewayStyle.copyWith(
+                                  style: nunitoStyle.copyWith(
                                     fontWeight: FontWeight.w700,
                                     color: AppColors.whiteColor,
                                     fontSize: 16.0,
@@ -263,7 +275,7 @@ class _DeliveryLoginScreenState extends State<DeliveryLoginScreen> {
     );
   }
 
-  Future loginAsync(userName,password) async {
+  Future loginAsync(userName, password) async {
     setState(() {
       showLoading = true;
     });
@@ -272,7 +284,6 @@ class _DeliveryLoginScreenState extends State<DeliveryLoginScreen> {
     var notificationToken = glb.prefs?.getString('notificationToken');
     //notificationToken
     try {
-      
       var url = glb.endPoint;
       final Map dictMap = {};
       dictMap['username'] = userName;
@@ -295,38 +306,41 @@ class _DeliveryLoginScreenState extends State<DeliveryLoginScreen> {
           // Navigator.pop(context);
           glb.showSnackBar(context, 'Error', 'You are not registered');
           setState(() {
-      showLoading = false;
-    });
+            showLoading = false;
+          });
           return;
         } else if (res.contains("ErrorCode#8")) {
           //Navigator.pop(context);
           glb.showSnackBar(context, 'Error', 'Something Went Wrong');
           setState(() {
-      showLoading = false;
-    });
+            showLoading = false;
+          });
           return;
         } else {
           try {
-            Map<String, dynamic> userMap = json.decode(response.body);
-            print("userMap:$userMap");
-            var usrid = userMap['usrid'];
-            var usrname = userMap['usrname'];
-            var mobno = userMap['mobno'];
-            var profile_img = userMap['profile_img'];
-            var device_token = userMap['device_token'];
-            var delivery_boy_id = userMap['delivery_boy_id'];
-           
+            Map<String, dynamic> deliveryLoginMap = json.decode(response.body);
+            print("deliveryLoginMap:$deliveryLoginMap");
+            var usrid = deliveryLoginMap['usrid'];
+            var usrname = deliveryLoginMap['usrname'];
+            var mobno = deliveryLoginMap['mobno'];
+            var profile_img = deliveryLoginMap['profile_img'];
+            var device_token = deliveryLoginMap['device_token'];
+            var delivery_boy_id = deliveryLoginMap['delivery_boy_id'];
+            var branchid = deliveryLoginMap['branchid'];
+
             SharedPreferenceUtils.save_val('dusrid', usrid);
             SharedPreferenceUtils.save_val('dusrname', usrname);
             SharedPreferenceUtils.save_val('dmobno', mobno);
             SharedPreferenceUtils.save_val('dprofile_img', profile_img);
             SharedPreferenceUtils.save_val('delivery_boy_id', delivery_boy_id);
-            Navigator.pushReplacementNamed(context, DMainRoute);
+            SharedPreferenceUtils.save_val('delivery_boy_branch_id', branchid);
+            
+            Navigator.popAndPushNamed(context, DMainRoute);
           } catch (e) {
             print(e);
             setState(() {
-      showLoading = false;
-    });
+              showLoading = false;
+            });
             return "Failed";
           }
         }
@@ -334,6 +348,9 @@ class _DeliveryLoginScreenState extends State<DeliveryLoginScreen> {
     } catch (e) {
       print(e);
       //Navigator.pop(context);
+      setState(() {
+        showLoading = false;
+      });
       glb.handleErrors(e, context);
     }
   }

@@ -30,7 +30,7 @@ class _CancelledOrdersState extends State<CancelledOrders> {
     });
     final prefs = await SharedPreferences.getInstance();
     var customerid = prefs.getString('customerid');
-
+    print('customerid::$customerid');
     var todaysDate = glb.getDateTodays();
     glb.order_status = "2";
     try {
@@ -62,6 +62,7 @@ class _CancelledOrdersState extends State<CancelledOrders> {
         } else if (res.contains("ErrorCode#8")) {
           setState(() {
             showLoading = false;
+            showError = true;
           });
           glb.showSnackBar(context, 'Error', 'Something Went Wrong');
           return;
@@ -209,8 +210,8 @@ class _CancelledOrdersState extends State<CancelledOrders> {
             ? Center(
                 child: Text(
                   'No Order History Found',
-                  style: ralewayStyle.copyWith(
-                      color: AppColors.whiteColor, fontSize: 20.0),
+                  style: nunitoStyle.copyWith(
+                      color: AppColors.backColor, fontSize: 20.0),
                 ),
               )
             : RefreshIndicator(
@@ -239,30 +240,29 @@ class _CancelledOrdersState extends State<CancelledOrders> {
                             padding: const EdgeInsets.all(8.0),
                             child: Column(
                               children: [
-                                  Padding(
-                                      padding: const EdgeInsets.all(8.0),
-                                      child: Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.spaceBetween,
-                                        children: [
-                                          Text(
-                                            'Order Status:',
-                                            style: nunitoStyle.copyWith(
-                                                color: AppColors.whiteColor,
-                                                fontSize: 14),
-                                          ),
-                                          Text(
-                                            '${ongoingModel[index].order_status}',
-                                            style: nunitoStyle.copyWith(
-                                              color: AppColors.dangerColor,
-                                              fontSize: 14,
-                                              fontWeight: FontWeight.bold,
-                                            ),
-                                          ),
-                                        ],
+                                Padding(
+                                  padding: const EdgeInsets.all(8.0),
+                                  child: Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      Text(
+                                        'Order Status:',
+                                        style: nunitoStyle.copyWith(
+                                            color: AppColors.backColor,
+                                            fontSize: 14),
                                       ),
-                                    ),
-                                  
+                                      Text(
+                                        '${ongoingModel[index].order_status}',
+                                        style: nunitoStyle.copyWith(
+                                          color: AppColors.dangerColor,
+                                          fontSize: 14,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
                                 Padding(
                                   padding: const EdgeInsets.all(8.0),
                                   child: Row(
@@ -272,13 +272,13 @@ class _CancelledOrdersState extends State<CancelledOrders> {
                                       Text(
                                         'Order ID:',
                                         style: nunitoStyle.copyWith(
-                                            color: AppColors.whiteColor,
+                                            color: AppColors.backColor,
                                             fontSize: 14),
                                       ),
                                       Text(
                                         '#${ongoingModel[index].orderID}',
                                         style: nunitoStyle.copyWith(
-                                          color: AppColors.whiteColor,
+                                          color: AppColors.backColor,
                                           fontSize: 14,
                                           fontWeight: FontWeight.bold,
                                         ),
@@ -295,13 +295,13 @@ class _CancelledOrdersState extends State<CancelledOrders> {
                                       Text(
                                         'Order Date:',
                                         style: nunitoStyle.copyWith(
-                                            color: AppColors.whiteColor,
+                                            color: AppColors.backColor,
                                             fontSize: 14),
                                       ),
                                       Text(
                                         ongoingModel[index].order_taken_epoch,
                                         style: nunitoStyle.copyWith(
-                                          color: AppColors.whiteColor,
+                                          color: AppColors.backColor,
                                           fontSize: 14,
                                         ),
                                       ),
@@ -317,13 +317,13 @@ class _CancelledOrdersState extends State<CancelledOrders> {
                                       Text(
                                         'Pick Up:',
                                         style: nunitoStyle.copyWith(
-                                            color: AppColors.whiteColor,
+                                            color: AppColors.backColor,
                                             fontSize: 14),
                                       ),
                                       Text(
                                         ongoingModel[index].address,
                                         style: nunitoStyle.copyWith(
-                                          color: AppColors.whiteColor,
+                                          color: AppColors.backColor,
                                           fontSize: 14,
                                         ),
                                       ),
@@ -339,20 +339,19 @@ class _CancelledOrdersState extends State<CancelledOrders> {
                                       Text(
                                         'Delivered Date:',
                                         style: nunitoStyle.copyWith(
-                                            color: AppColors.whiteColor,
+                                            color: AppColors.backColor,
                                             fontSize: 14),
                                       ),
                                       Text(
                                         ongoingModel[index].delivery_epoch,
                                         style: nunitoStyle.copyWith(
-                                          color: AppColors.whiteColor,
+                                          color: AppColors.backColor,
                                           fontSize: 14,
                                         ),
                                       ),
                                     ],
                                   ),
                                 ),
-                               
                                 Padding(
                                   padding: const EdgeInsets.all(8.0),
                                   child: Row(
@@ -362,13 +361,13 @@ class _CancelledOrdersState extends State<CancelledOrders> {
                                       Text(
                                         'Total Amount:',
                                         style: nunitoStyle.copyWith(
-                                            color: AppColors.whiteColor,
+                                            color: AppColors.backColor,
                                             fontSize: 14),
                                       ),
                                       Text(
                                         '₹ ${ongoingModel[index].totalPrice}/-',
                                         style: nunitoStyle.copyWith(
-                                          color: AppColors.neonColor,
+                                          color: AppColors.blueColor,
                                           fontSize: 14,
                                           fontWeight: FontWeight.bold,
                                         ),
@@ -384,7 +383,6 @@ class _CancelledOrdersState extends State<CancelledOrders> {
                     })),
               );
   }
-
 }
 
 class _OnOrders extends StatelessWidget {

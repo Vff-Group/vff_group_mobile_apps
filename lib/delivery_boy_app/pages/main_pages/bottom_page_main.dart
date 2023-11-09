@@ -10,13 +10,13 @@ import 'package:vff_group/utils/app_colors.dart';
 
 class BottomBarDeliveryBoy extends StatefulWidget {
   const BottomBarDeliveryBoy({super.key, required this.pageDIndex});
-final int pageDIndex ;
+  final int pageDIndex;
   @override
   State<BottomBarDeliveryBoy> createState() => _BottomBarDeliveryBoyState();
 }
 
 class _BottomBarDeliveryBoyState extends State<BottomBarDeliveryBoy> {
-   @override
+  @override
   void initState() {
     super.initState();
     glb.pageDIndex = widget.pageDIndex;
@@ -33,8 +33,7 @@ class _BottomBarDeliveryBoyState extends State<BottomBarDeliveryBoy> {
     setState(() {
       //widget.pageIndex = index;
 
-      glb.pageDIndex = index ;
-      
+      glb.pageDIndex = index;
     });
   }
 
@@ -44,26 +43,24 @@ class _BottomBarDeliveryBoyState extends State<BottomBarDeliveryBoy> {
       body: pages[glb.pageDIndex],
       bottomNavigationBar: Container(
         decoration: BoxDecoration(
-          color: AppColors.backColor,
+          color: AppColors.whiteColor,
           boxShadow: [
             BoxShadow(
               blurRadius: 20,
-              color: Colors.black.withOpacity(.1),
+              color: AppColors.whiteColor.withOpacity(.1),
             )
           ],
         ),
         child: SafeArea(
           child: Padding(
-            padding:
-                const EdgeInsets.symmetric(horizontal: 15.0, vertical: 8),
+            padding: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 8),
             child: GNav(
               rippleColor: Colors.grey[300]!,
               hoverColor: Colors.grey[100]!,
-              gap: 8,
+              gap: 4,
               activeColor: Colors.deepOrange,
               iconSize: 24,
-              padding:
-                  const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
               duration: const Duration(milliseconds: 400),
               tabBackgroundColor: AppColors.lightBlackColor,
               color: Colors.deepOrange[300],
@@ -87,10 +84,7 @@ class _BottomBarDeliveryBoyState extends State<BottomBarDeliveryBoy> {
               ],
               selectedIndex: glb.pageDIndex,
               onTabChange: (index) {
-                
                 changeTab(index);
-                
-                
               },
             ),
           ),
@@ -98,5 +92,4 @@ class _BottomBarDeliveryBoyState extends State<BottomBarDeliveryBoy> {
       ),
     );
   }
-
 }

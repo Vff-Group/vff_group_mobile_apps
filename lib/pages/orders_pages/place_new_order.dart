@@ -67,10 +67,10 @@ class _PlaceOrderPageState extends State<PlaceOrderPage> {
     });
     // final prefs = await SharedPreferences.getInstance();
     // var customerid = prefs.getString('customerid');
-    if (glb.orderid.isEmpty) {
-      glb.showSnackBar(context, 'Alert!', 'Please Select the Active Order');
-      return;
-    }
+    // if (glb.orderid.isEmpty) {
+    //   glb.showSnackBar(context, 'Alert!', 'Please Select the Active Order');
+    //   return;
+    // }
     var todaysDate = glb.getDateTodays();
     try {
       var url = glb.endPoint;
@@ -221,7 +221,7 @@ class _PlaceOrderPageState extends State<PlaceOrderPage> {
       dictMap['sub_cat_id'] = sub_cat_id;
       dictMap['quantity'] = total_quantity;
       dictMap['price'] = total_price;
-      dictMap['customer_id'] = customer_id;
+      dictMap['customer_id'] = glb.customerID;
       dictMap['order_id'] = order_id;
       dictMap['order_type'] = order_type;
       dictMap['all_items'] = allItemsJson;
@@ -279,7 +279,7 @@ class _PlaceOrderPageState extends State<PlaceOrderPage> {
         FocusManager.instance.primaryFocus?.unfocus();
       },
       child: Padding(
-        padding: const EdgeInsets.all(8.0),
+        padding: const EdgeInsets.all(4.0),
         child: CustomScrollView(
           slivers: [
             SliverToBoxAdapter(
@@ -293,16 +293,12 @@ class _PlaceOrderPageState extends State<PlaceOrderPage> {
                       : Container(
                           child: Column(
                             children: [
-                              const SizedBox(
-                                height: 10.0,
-                              ),
-                              ClipOval(child: Image.network(categoryImage,width: 200,height: 200,)),
-                              const SizedBox(
-                                height: 10.0,
-                              ),
-                              Padding(
+                              
+                             Row(
+                              children: [
+  Padding(
                                 padding: const EdgeInsets.symmetric(
-                                    vertical: 20.0, horizontal: 12.0),
+                                    vertical: 5.0, horizontal: 8.0),
                                 child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
@@ -315,7 +311,7 @@ class _PlaceOrderPageState extends State<PlaceOrderPage> {
                                           style: nunitoStyle.copyWith(
                                               fontSize: 14.0,
                                               fontWeight: FontWeight.bold,
-                                              color: AppColors.whiteColor),
+                                              color: AppColors.backColor),
                                         ),
                                       ],
                                     ),
@@ -324,13 +320,13 @@ class _PlaceOrderPageState extends State<PlaceOrderPage> {
                                     ),
                                     Container(
                                       height: 50.0,
-                                      width: width,
+                                      width: height / 6,
                                       decoration: BoxDecoration(
                                         borderRadius:
                                             BorderRadius.circular(8.0),
                                         border: Border.all(
                                           color: AppColors
-                                              .whiteColor, // Border color
+                                              .blueColor, // Border color
                                           width: 0.2, // Border width
                                         ),
                                       ),
@@ -353,16 +349,16 @@ class _PlaceOrderPageState extends State<PlaceOrderPage> {
                                               onPressed: () {},
                                               icon: const Icon(
                                                 Icons.local_laundry_service,
-                                                color: Colors.white,
+                                                color: AppColors.blueColor,
                                               ),
                                             ),
                                             contentPadding:
                                                 const EdgeInsets.only(
                                                     top: 16.0),
                                             hintText: 'Quantity in Kgs',
-                                            hintStyle: ralewayStyle.copyWith(
+                                            hintStyle: nunitoStyle.copyWith(
                                                 fontWeight: FontWeight.w400,
-                                                color: AppColors.whiteColor
+                                                color: AppColors.backColor
                                                     .withOpacity(0.5),
                                                 fontSize: 12.0)),
                                       ),
@@ -370,9 +366,7 @@ class _PlaceOrderPageState extends State<PlaceOrderPage> {
                                   ],
                                 ),
                               ),
-                              const SizedBox(
-                                height: 10.0,
-                              ),
+                              
                               Container(
                                 decoration: BoxDecoration(
                                     borderRadius: BorderRadius.circular(12.0)),
@@ -389,10 +383,10 @@ class _PlaceOrderPageState extends State<PlaceOrderPage> {
                                         children: [
                                           Text(
                                             'Laundry Type',
-                                            style: ralewayStyle.copyWith(
+                                            style: nunitoStyle.copyWith(
                                                 fontSize: 14.0,
                                                 fontWeight: FontWeight.bold,
-                                                color: AppColors.whiteColor),
+                                                color: AppColors.backColor),
                                           ),
                                         ],
                                       ),
@@ -401,10 +395,15 @@ class _PlaceOrderPageState extends State<PlaceOrderPage> {
                                       ),
                                       Container(
                                         height: 50.0,
-                                        width: width,
+                                        
                                         decoration: BoxDecoration(
                                           borderRadius:
                                               BorderRadius.circular(8.0),
+                                               border: Border.all(
+                                          color: AppColors
+                                              .blueColor, // Border color
+                                          width: 0.2, // Border width
+                                        ),
                                         ),
                                         child: DropdownButton<String>(
                                           dropdownColor:
@@ -422,7 +421,7 @@ class _PlaceOrderPageState extends State<PlaceOrderPage> {
                                               child: Row(
                                                 children: [
                                                   SizedBox(
-                                                      width: width - 80,
+                                                      width: height / 5,
                                                       child: Text(
                                                         item,
                                                         style: nunitoStyle
@@ -432,7 +431,7 @@ class _PlaceOrderPageState extends State<PlaceOrderPage> {
                                                                         .normal,
                                                                 fontSize: 12.0,
                                                                 color: AppColors
-                                                                    .whiteColor),
+                                                                    .backColor),
                                                       )),
                                                 ],
                                               ),
@@ -445,6 +444,9 @@ class _PlaceOrderPageState extends State<PlaceOrderPage> {
                                 ),
                               ),
 
+                              ],
+                             ),
+                            
                               Padding(
                                 padding: const EdgeInsets.all(12.0),
                                 child: Padding(
@@ -494,14 +496,12 @@ class _PlaceOrderPageState extends State<PlaceOrderPage> {
                                                       vertical: 10.0),
                                                   child: Text(
                                                     'Add To Cart',
-                                                    style: ralewayStyle
-                                                        .copyWith(
-                                                            fontSize: 16.0,
-                                                            color: AppColors
-                                                                .whiteColor,
-                                                            fontWeight:
-                                                                FontWeight
-                                                                    .bold),
+                                                    style: nunitoStyle.copyWith(
+                                                        fontSize: 16.0,
+                                                        color: AppColors
+                                                            .whiteColor,
+                                                        fontWeight:
+                                                            FontWeight.bold),
                                                   ),
                                                 ),
                                               ),
@@ -700,7 +700,7 @@ class _PlaceOrderPageState extends State<PlaceOrderPage> {
                               //                     const EdgeInsets.only(top: 16.0),
                               //                 hintText:
                               //                     'Please provide us with any specific instruction which should be followed by us.',
-                              //                 hintStyle: ralewayStyle.copyWith(
+                              //                 hintStyle: nunitoStyle.copyWith(
                               //                     fontWeight: FontWeight.w400,
                               //                     color: AppColors.textColor,
                               //                     fontSize: 12.0)),

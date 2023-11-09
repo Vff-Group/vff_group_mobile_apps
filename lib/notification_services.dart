@@ -142,9 +142,10 @@ class NotificationServices {
 
   void handleMessage(BuildContext context, RemoteMessage message) {
     if (message.data['intent'] == 'DMainRoute') {
-      var orderid = message.data['orderid'];
-      print('Notification OrderID::$orderid');
-      SharedPreferenceUtils.save_val('norder_id', orderid);
+      var bookingId = message.data['booking_id'];
+      print('Notification For Pickup booking_id::$bookingId');
+      SharedPreferenceUtils.save_val('nbooking_id', bookingId);
+
       Navigator.pushReplacementNamed(context, DMainRoute);
       //Navigator.push(context, MaterialPageRoute(builder: (context)=>LoginScreen()));
     }

@@ -1,3 +1,5 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'dart:convert';
 
 import 'package:animated_floating_buttons/widgets/animated_floating_action_button.dart';
@@ -32,6 +34,10 @@ class _DashboardPageState extends State<DashboardPage> {
   NotificationServices notificationServices = NotificationServices();
   var deviceToken = "", myStatus = "";
   bool showProgress = false;
+  String totalCompletedCount = "0";
+  String totalRejectedCount = "0";
+  String totalOngoingCount = "0";
+  String totalReturned = "0";
   @override
   void initState() {
     // TODO: implement initState
@@ -41,7 +47,7 @@ class _DashboardPageState extends State<DashboardPage> {
     notificationServices.firebaseInit(context);
     notificationServices.setupInteractMessage(context);
     notificationServices.isTokenRefreshed();
-
+    loadStats();
     updateAsOnline();
     loadNewOrders();
     getDefault();
@@ -53,15 +59,21 @@ class _DashboardPageState extends State<DashboardPage> {
   var profile_img = "", userName = "";
   Future getDefault() async {
     var profile = glb.prefs?.getString('dprofile_img');
-    var usrname = glb.prefs?.getString('dusrname');
+    var dusrname = glb.prefs?.getString('dusrname');
+    var dusrid = glb.prefs?.getString('dusrid');
+    // print('dusrid::$dusrid');
+    // if(dusrid == null || dusrid.isEmpty){
+    //   Navigator.popAndPushNamed(context, DeliveryLoginRoute);
+    //   return;
+    // }
     if (profile != null && profile.isNotEmpty) {
       setState(() {
         profile_img = profile;
       });
     }
 
-    if (usrname != null && usrname.isNotEmpty) {
-      var split = userName.split(" ");
+    if (dusrname != null && dusrname.isNotEmpty) {
+      var split = dusrname.split(" ");
 
       setState(() {
         userName = split[0];
@@ -76,7 +88,7 @@ class _DashboardPageState extends State<DashboardPage> {
             updateDeviceToken(),
             print('Delivery Boy DeviceToken:$value')
           });
-    } 
+    }
     // else {
     //   notificationServices.getDeviceToken().then((value) => {
     //         deviceToken = value.toString().replaceAll(':', '__colon__'),
@@ -90,7 +102,7 @@ class _DashboardPageState extends State<DashboardPage> {
   Future updateDeviceToken() async {
     glb.prefs = await SharedPreferences.getInstance();
 
-    var dusrid = glb.prefs?.getString('dusrid');
+    var dclat = glb.prefs?.getString('dclat');
     if (deviceToken.isEmpty) {
       print('DeviceToken is Empty');
       return;
@@ -99,7 +111,7 @@ class _DashboardPageState extends State<DashboardPage> {
       var url = glb.endPoint;
       final Map dictMap = {};
 
-      dictMap['usrid'] = dusrid;
+      dictMap['clat'] = dclat;
       dictMap['deviceToken'] = deviceToken;
       dictMap['pktType'] = "5";
       dictMap['token'] = "vff";
@@ -132,6 +144,83 @@ class _DashboardPageState extends State<DashboardPage> {
     }
   }
 
+  Future loadStats() async {
+    //norder_id
+    setState(() {
+      showLoading = true;
+    });
+    final prefs = await SharedPreferences.getInstance();
+    var delivery_boy_id = prefs.getString('delivery_boy_id');
+    if (true) {
+      try {
+        var url = glb.endPoint;
+        final Map dictMap = {};
+
+        dictMap['deliveryboyid'] = delivery_boy_id;
+        dictMap['pktType'] = "28";
+        dictMap['token'] = "vff";
+        dictMap['uid'] = "-1";
+        final response = await http.post(Uri.parse(url),
+            headers: <String, String>{
+              "Accept": "application/json",
+              'Content-Type': 'application/json; charset=UTF-8',
+            },
+            body: jsonEncode(dictMap));
+
+        if (response.statusCode == 200) {
+          var res = response.body;
+          if (res.contains("ErrorCode#2")) {
+            glb.showSnackBar(context, 'Alert', 'No New Orders Found');
+            setState(() {
+              showLoading = false;
+            });
+            return;
+          } else if (res.contains("ErrorCode#8")) {
+            glb.showSnackBar(context, 'Error', 'Something Went Wrong');
+            setState(() {
+              showLoading = false;
+            });
+            return;
+          } else {
+            try {
+              Map<String, dynamic> statsMap = json.decode(response.body);
+              print("statsMap::$statsMap");
+              var total_pickup = statsMap['total_pickup'];
+              
+              var total_drop = statsMap['total_drop'];
+              var total_returned = statsMap['total_returned'];
+            print('total_drop::$total_drop');
+              setState(() {
+                totalCompletedCount = total_pickup;
+                
+                totalOngoingCount = total_drop;
+                print('totalOngoingCount::$totalOngoingCount');
+                totalReturned = total_returned;
+              });
+//9535934596
+              setState(() {
+                showLoading = false;
+              });
+            } catch (e) {
+              if (kDebugMode) {
+                print(e);
+              }
+              return "Failed";
+            }
+          }
+        }
+      } catch (e) {
+        if (kDebugMode) {
+          print(e);
+        }
+        glb.handleErrors(e, context);
+        setState(() {
+          showLoading = false;
+        });
+      }
+    }
+  }
+
   Future loadNewOrders() async {
     //norder_id
     setState(() {
@@ -139,14 +228,16 @@ class _DashboardPageState extends State<DashboardPage> {
       noOrders = false;
     });
     final prefs = await SharedPreferences.getInstance();
-    var norderId = prefs.getString('norder_id');
-    if (norderId != null && norderId.isNotEmpty) {
-      print('Notification OrderID Dashboard::$norderId');
+    var nbooking_id = prefs.getString('nbooking_id');
+    var delivery_boy_branch_id = prefs.getString('delivery_boy_branch_id');
+    print('Notification OrderID Dashboard::$nbooking_id');
+    if (nbooking_id != null && nbooking_id.isNotEmpty) {
       try {
         var url = glb.endPoint;
         final Map dictMap = {};
 
-        dictMap['order_id'] = norderId;
+        dictMap['booking_id'] = nbooking_id;
+        dictMap['branch_id'] = delivery_boy_branch_id;
         dictMap['pktType'] = "7";
         dictMap['token'] = "vff";
         dictMap['uid'] = "-1";
@@ -160,7 +251,7 @@ class _DashboardPageState extends State<DashboardPage> {
         if (response.statusCode == 200) {
           var res = response.body;
           if (res.contains("ErrorCode#2")) {
-            glb.showSnackBar(context, 'Error', 'No New Orders Found');
+            //glb.showSnackBar(context, 'Error', 'No New Orders Found');
             setState(() {
               showLoading = false;
               noOrders = true;
@@ -176,62 +267,52 @@ class _DashboardPageState extends State<DashboardPage> {
           } else {
             try {
               Map<String, dynamic> orderMap = json.decode(response.body);
-
+              print("OrderNotificationMap::$orderMap");
+              var bookingid = orderMap['bookingid'];
               var customerid = orderMap['customerid'];
-              var epoch = orderMap['epoch'];
-              var pickup_dt = orderMap['pickup_dt'];
-              var clat = orderMap['clat'];
-              var clng = orderMap['clng'];
-              var customer_name = orderMap['customer_name'];
-              var usrid = orderMap['usrid'];
-              var houseno = orderMap['houseno'];
               var address = orderMap['address'];
-              var landmark = orderMap['landmark'];
+              var city = orderMap['city'];
               var pincode = orderMap['pincode'];
+              var landmark = orderMap['landmark'];
+              // var clat = orderMap['clat'];
+              // var clng = orderMap['clng'];
+              var time_at = orderMap['time_at'];
+              var customer_name = orderMap['customer_name'];
 
-              List<String> customerIDLst = glb.strToLst2(customerid);
-              List<String> epochLst = glb.strToLst2(epoch);
-              List<String> pickup_dtLst = glb.strToLst2(pickup_dt);
-              List<String> clatLst = glb.strToLst2(clat);
-              List<String> clngLst = glb.strToLst2(clng);
-              List<String> customer_nameLst = glb.strToLst2(customer_name);
-              List<String> usridLst = glb.strToLst2(usrid);
-              List<String> housenoLst = glb.strToLst2(houseno);
+              List<String> bookingidLst = glb.strToLst2(bookingid);
+              List<String> customeridLst = glb.strToLst2(customerid);
               List<String> addressLst = glb.strToLst2(address);
-              List<String> landmarkLst = glb.strToLst2(landmark);
+              List<String> cityLst = glb.strToLst2(city);
               List<String> pincodeLst = glb.strToLst2(pincode);
+              List<String> landmarkLst = glb.strToLst2(landmark);
+              // List<String> clatLst = glb.strToLst2(clat);
+              // List<String> clngLst = glb.strToLst2(clng);
+              List<String> time_atLst = glb.strToLst2(time_at);
+              List<String> customer_nameLst = glb.strToLst2(customer_name);
 
-              for (int i = 0; i < customerIDLst.length; i++) {
-                var CustomerID = customerIDLst.elementAt(i).toString();
-                var epoch = epochLst.elementAt(i).toString();
-                var PickupDate = pickup_dtLst.elementAt(i).toString();
-                var CLatitute = clatLst.elementAt(i).toString();
-                var CLongitude = clngLst.elementAt(i).toString();
-                var CustomerName = customer_nameLst.elementAt(i).toString();
-                var CUsrid = usridLst.elementAt(i).toString();
-                var Houseno = housenoLst.elementAt(i).toString();
-                var Address = addressLst.elementAt(i).toString();
-                var Landmark = landmarkLst.elementAt(i).toString();
-                var Pincode = pincodeLst.elementAt(i).toString();
-
-                DateTime formattedDateTime =
-                    glb.epochToDateTime(double.parse(epoch));
-                String formattedTime =
-                    DateFormat.jm().format(formattedDateTime);
-
-                print('TIme::$formattedTime');
+              for (int i = 0; i < bookingidLst.length; i++) {
+                var bookingid = bookingidLst.elementAt(i).toString();
+                var customerid = customeridLst.elementAt(i).toString();
+                var address = addressLst.elementAt(i).toString();
+                var city = cityLst.elementAt(i).toString();
+                var pincode = pincodeLst.elementAt(i).toString();
+                var landmark = landmarkLst.elementAt(i).toString();
+                // var clat = clatLst.elementAt(i).toString();
+                // var clng = clngLst.elementAt(i).toString();
+                var time_at = time_atLst.elementAt(i).toString();
+                var customer_name = customer_nameLst.elementAt(i).toString();
+                var time_booking_done =
+                    glb.doubleEpochToFormattedDateTime(double.parse(time_at));
                 newOrdersModel.add(NewOrders(
-                    CustomerID: CustomerID,
-                    CustomerName: CustomerName,
-                    CLatitute: CLatitute,
-                    CLongitude: CLongitude,
-                    Time: formattedTime,
-                    PickupDate: PickupDate,
-                    CUsrid: CUsrid,
-                    HouseNo: Houseno,
-                    Address: Address,
-                    Landmark: Landmark,
-                    Pincode: Pincode));
+                    bookingID: bookingid,
+                    CustomerID: customerid,
+                    CustomerName: customer_name,
+                    // CLatitute: clat,
+                    // CLongitude: clng,
+                    Time: time_booking_done,
+                    Address: address + city,
+                    Landmark: landmark,
+                    Pincode: pincode));
               }
 
               setState(() {
@@ -297,7 +378,7 @@ class _DashboardPageState extends State<DashboardPage> {
           setState(() {
             showProgress = false;
           });
-          glb.showSnackBar(context, 'Error', 'Something Went Wrong');
+          // glb.showSnackBar(context, 'Error', 'Something Went Wrong');
           return;
         } else {
           try {
@@ -334,23 +415,25 @@ class _DashboardPageState extends State<DashboardPage> {
     }
   }
 
-  Future accept_or_rejectOrder(String orderStatus) async {
+  Future accept_or_rejectOrder(String bookingStatus) async {
     //norder_id
     setState(() {
       showProgress = true;
     });
     final prefs = await SharedPreferences.getInstance();
-    var norderId = prefs.getString('norder_id');
+    var nbooking_id = prefs.getString('nbooking_id');
+    var delivery_boy_branch_id = prefs.getString('delivery_boy_branch_id');
     var deliveryBoyId = prefs.getString('delivery_boy_id');
-    if (norderId != null) {
-      print('Notification OrderID Dashboard::$norderId');
+    if (nbooking_id != null) {
+      print('Notification nbooking_id Dashboard::$nbooking_id');
       try {
         var url = glb.endPoint;
         final Map dictMap = {};
 
-        dictMap['order_id'] = norderId;
+        dictMap['booking_id'] = nbooking_id;
         dictMap['delivery_boy_id'] = deliveryBoyId;
-        dictMap['status'] = orderStatus;
+        dictMap['status'] = bookingStatus;
+        dictMap['branch_id'] = delivery_boy_branch_id;
         dictMap['pktType'] = "8";
         dictMap['token'] = "vff";
         dictMap['uid'] = "-1";
@@ -373,11 +456,12 @@ class _DashboardPageState extends State<DashboardPage> {
             glb.showSnackBar(context, 'Error', 'Something Went Wrong');
             return;
           } else {
-            SharedPreferenceUtils.save_val('norder_id', '');
+            SharedPreferenceUtils.save_val('nbooking_id', '');
             setState(() {
               showProgress = false;
             });
             glb.showSnackBar(context, 'Success', 'Order Accepted Successfully');
+
             Navigator.pushReplacementNamed(context, DMainRoute);
           }
         }
@@ -416,7 +500,7 @@ class _DashboardPageState extends State<DashboardPage> {
       child: FloatingActionButton(
         onPressed: () {
           Navigator.pop(context);
-          Navigator.pushReplacementNamed(context, MainRoute);
+          Navigator.pushNamed(context, MainRoute);
         },
         backgroundColor: Colors.blue,
         heroTag: "btn2",
@@ -439,16 +523,27 @@ class _DashboardPageState extends State<DashboardPage> {
     );
   }
 
+  Future<void> _handleRefresh() async {
+    notificationServices.requestNotificationPermissions();
+    notificationServices.foregroundMessage();
+    notificationServices.firebaseInit(context);
+    notificationServices.setupInteractMessage(context);
+    notificationServices.isTokenRefreshed();
+    loadStats();
+    updateAsOnline();
+    loadNewOrders();
+    getDefault();
+  }
+
   @override
   Widget build(BuildContext context) {
     double height = MediaQuery.of(context).size.height;
     double width = MediaQuery.of(context).size.width;
     return Scaffold(
-      backgroundColor: AppColors.backColor,
+      backgroundColor: AppColors.whiteColor,
       extendBodyBehindAppBar: true,
       appBar: AppBar(
         automaticallyImplyLeading: false,
-        backgroundColor: Colors.transparent,
         elevation: 0,
         centerTitle: true,
         actions: [
@@ -465,7 +560,6 @@ class _DashboardPageState extends State<DashboardPage> {
           //                     ),
           InkWell(
             onTap: () {
-              print('sss');
               Navigator.pushNamed(context, DeliveryBoyNotificationRoute);
             },
             child: Icon(
@@ -479,12 +573,8 @@ class _DashboardPageState extends State<DashboardPage> {
           'assets/logo/velvet_2.png',
           width: 150,
         ),
-        systemOverlayStyle:
-            const SystemUiOverlayStyle(statusBarBrightness: Brightness.dark),
         leading: InkWell(
-          onTap: () {
-            print('ssss');
-          },
+          onTap: () {},
           child: WidgetCircularAnimator(
             size: 40,
             innerIconsSize: 3,
@@ -512,537 +602,551 @@ class _DashboardPageState extends State<DashboardPage> {
         padding: const EdgeInsets.fromLTRB(20, 1.8 * kToolbarHeight, 20, 20),
         child: Stack(
           children: [
-            CustomScrollView(
-              slivers: [
-                SliverToBoxAdapter(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      const SizedBox(
-                        height: 10.0,
-                      ),
-                      Row(
-                        children: [
-                          Text('Hey,',
-                              style: ralewayStyle.copyWith(
-                                  color: Colors.white,
-                                  fontSize: 25.0,
-                                  fontWeight: FontWeight.normal)),
-                          Text('${userName} 👋',
-                              style: ralewayStyle.copyWith(
-                                  color: Colors.white,
-                                  fontSize: 25.0,
-                                  fontWeight: FontWeight.bold)),
-                        ],
-                      ),
-                      Text('Delivering Speed and Care',
-                          style: ralewayStyle.copyWith(
-                              color: Colors.white,
-                              fontSize: 18.0,
-                              fontWeight: FontWeight.normal)),
-                      SizedBox(
-                        height: width * 0.02,
-                      ),
-                      Container(
-                        width: width,
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(12.0),
+            RefreshIndicator(
+              onRefresh: _handleRefresh,
+              child: CustomScrollView(
+                slivers: [
+                  SliverToBoxAdapter(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const SizedBox(
+                          height: 10.0,
                         ),
-                        child: Column(
+                        Row(
                           children: [
-                            Padding(
-                              padding: const EdgeInsets.all(8.0),
-                              child: Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceAround,
-                                children: [
-                                  Expanded(
-                                      flex: 1,
-                                      child: Padding(
-                                        padding: const EdgeInsets.all(6.0),
-                                        child: Container(
-                                          decoration: BoxDecoration(
-                                              borderRadius:
-                                                  BorderRadius.circular(12.0),
-                                              color: AppColors.lightBlackColor),
-                                          child: Column(
-                                              crossAxisAlignment:
-                                                  CrossAxisAlignment.center,
-                                              mainAxisAlignment:
-                                                  MainAxisAlignment.center,
-                                              children: [
-                                                Padding(
-                                                  padding:
-                                                      const EdgeInsets.only(
-                                                          top: 30.0,
-                                                          bottom: 10.0),
-                                                  child: Icon(
-                                                    Icons.delivery_dining,
-                                                    color: Colors.green,
-                                                    size: 35.0,
-                                                  ),
-                                                ),
-                                                Text(
-                                                  'Completed Delivery',
-                                                  style: nunitoStyle.copyWith(
-                                                      fontWeight:
-                                                          FontWeight.normal,
-                                                      color:
-                                                          AppColors.whiteColor,
-                                                      fontSize: 16.0),
-                                                  textAlign: TextAlign.center,
-                                                ),
-                                                Padding(
-                                                  padding:
-                                                      const EdgeInsets.only(
-                                                          top: 6.0,
-                                                          bottom: 10.0),
-                                                  child: Text(
-                                                    '0',
-                                                    style: nunitoStyle.copyWith(
-                                                        fontWeight:
-                                                            FontWeight.bold,
-                                                        color: AppColors
-                                                            .whiteColor,
-                                                        fontSize: 25.0),
-                                                    textAlign: TextAlign.center,
-                                                  ),
-                                                )
-                                              ]),
-                                        ),
-                                      )),
-                                  Expanded(
-                                      flex: 1,
-                                      child: Padding(
-                                        padding: const EdgeInsets.all(6.0),
-                                        child: Container(
-                                          decoration: BoxDecoration(
-                                            borderRadius:
-                                                BorderRadius.circular(12.0),
-                                            color: AppColors.lightBlackColor,
-                                          ),
-                                          child: Column(
-                                              crossAxisAlignment:
-                                                  CrossAxisAlignment.center,
-                                              mainAxisAlignment:
-                                                  MainAxisAlignment.center,
-                                              children: [
-                                                Padding(
-                                                  padding:
-                                                      const EdgeInsets.only(
-                                                          top: 30.0,
-                                                          bottom: 10.0),
-                                                  child: Icon(
-                                                    LineIcons.truck,
-                                                    color: Colors.deepOrange,
-                                                    size: 35.0,
-                                                  ),
-                                                ),
-                                                Text(
-                                                  'Pending Delivery',
-                                                  style: nunitoStyle.copyWith(
-                                                      fontWeight:
-                                                          FontWeight.normal,
-                                                      color:
-                                                          AppColors.whiteColor,
-                                                      fontSize: 16.0),
-                                                  textAlign: TextAlign.center,
-                                                ),
-                                                Padding(
-                                                  padding:
-                                                      const EdgeInsets.only(
-                                                          top: 6.0,
-                                                          bottom: 10.0),
-                                                  child: Text(
-                                                    '0',
-                                                    style: nunitoStyle.copyWith(
-                                                        fontWeight:
-                                                            FontWeight.bold,
-                                                        color: AppColors
-                                                            .whiteColor,
-                                                        fontSize: 25.0),
-                                                    textAlign: TextAlign.center,
-                                                  ),
-                                                )
-                                              ]),
-                                        ),
-                                      )),
-                                ],
-                              ),
-                            ),
-                            Padding(
-                              padding: const EdgeInsets.only(
-                                  bottom: 10.0, left: 8.0, right: 8.0, top: 1),
-                              child: Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceAround,
-                                children: [
-                                  Expanded(
-                                      flex: 1,
-                                      child: Padding(
-                                        padding: const EdgeInsets.all(6.0),
-                                        child: Container(
-                                          decoration: BoxDecoration(
-                                            borderRadius:
-                                                BorderRadius.circular(12.0),
-                                            color: AppColors.lightBlackColor,
-                                          ),
-                                          child: Column(
-                                              crossAxisAlignment:
-                                                  CrossAxisAlignment.center,
-                                              mainAxisAlignment:
-                                                  MainAxisAlignment.center,
-                                              children: [
-                                                Padding(
-                                                  padding:
-                                                      const EdgeInsets.only(
-                                                          top: 30.0,
-                                                          bottom: 10.0),
-                                                  child: Icon(
-                                                    Icons.cancel_outlined,
-                                                    color: Colors.red,
-                                                    size: 35.0,
-                                                  ),
-                                                ),
-                                                Text(
-                                                  'Cancelled Delivery',
-                                                  style: nunitoStyle.copyWith(
-                                                      fontWeight:
-                                                          FontWeight.normal,
-                                                      color:
-                                                          AppColors.whiteColor,
-                                                      fontSize: 16.0),
-                                                  textAlign: TextAlign.center,
-                                                ),
-                                                Padding(
-                                                  padding:
-                                                      const EdgeInsets.only(
-                                                          top: 6.0,
-                                                          bottom: 10.0),
-                                                  child: Text(
-                                                    '0',
-                                                    style: nunitoStyle.copyWith(
-                                                        fontWeight:
-                                                            FontWeight.bold,
-                                                        color: AppColors
-                                                            .whiteColor,
-                                                        fontSize: 25.0),
-                                                    textAlign: TextAlign.center,
-                                                  ),
-                                                )
-                                              ]),
-                                        ),
-                                      )),
-                                  Expanded(
-                                      flex: 1,
-                                      child: Padding(
-                                        padding: const EdgeInsets.all(6.0),
-                                        child: Container(
-                                          decoration: BoxDecoration(
-                                            borderRadius:
-                                                BorderRadius.circular(12.0),
-                                            color: AppColors.lightBlackColor,
-                                          ),
-                                          child: Column(
-                                              crossAxisAlignment:
-                                                  CrossAxisAlignment.center,
-                                              mainAxisAlignment:
-                                                  MainAxisAlignment.center,
-                                              children: [
-                                                Padding(
-                                                  padding:
-                                                      const EdgeInsets.only(
-                                                          top: 30.0,
-                                                          bottom: 10.0),
-                                                  child: Icon(
-                                                    Icons.report_rounded,
-                                                    color: Colors.blue,
-                                                    size: 35.0,
-                                                  ),
-                                                ),
-                                                Text(
-                                                  'Return Delivery',
-                                                  style: nunitoStyle.copyWith(
-                                                      fontWeight:
-                                                          FontWeight.normal,
-                                                      color:
-                                                          AppColors.whiteColor,
-                                                      fontSize: 16.0),
-                                                  textAlign: TextAlign.center,
-                                                ),
-                                                Padding(
-                                                  padding:
-                                                      const EdgeInsets.only(
-                                                          top: 6.0,
-                                                          bottom: 10.0),
-                                                  child: Text(
-                                                    '0',
-                                                    style: nunitoStyle.copyWith(
-                                                        fontWeight:
-                                                            FontWeight.bold,
-                                                        color: AppColors
-                                                            .whiteColor,
-                                                        fontSize: 25.0),
-                                                    textAlign: TextAlign.center,
-                                                  ),
-                                                )
-                                              ]),
-                                        ),
-                                      )),
-                                ],
-                              ),
-                            )
+                            Text('Hey,',
+                                style: nunitoStyle.copyWith(
+                                    color: AppColors.backColor,
+                                    fontSize: 25.0,
+                                    fontWeight: FontWeight.normal)),
+                            Text('${userName} 👋',
+                                style: nunitoStyle.copyWith(
+                                    color: AppColors.backColor,
+                                    fontSize: 25.0,
+                                    fontWeight: FontWeight.bold)),
                           ],
                         ),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text('New Orders',
-                                style: ralewayStyle.copyWith(
-                                    fontSize: 20.0,
-                                    color: AppColors.whiteColor,
-                                    fontWeight: FontWeight.bold,
-                                    letterSpacing: 1)),
-                            showLoading
-                                ? Padding(
-                                    padding: const EdgeInsets.all(16.0),
-                                    child: Center(
-                                        child: LinearProgressIndicator()),
-                                  )
-                                : Padding(
-                                    padding: const EdgeInsets.only(top: 8.0),
-                                    child: noOrders
-                                        ? Padding(
-                                            padding: const EdgeInsets.all(26.0),
-                                            child: Center(
-                                              child: Text(
-                                                'No New Orders\n My Current Status is ${myStatus}',
-                                                style: ralewayStyle.copyWith(
-                                                  fontSize: 18.0,
-                                                  fontWeight: FontWeight.bold,
-                                                  color: AppColors.whiteColor,
+                        Text('Delivering Speed and Care',
+                            style: nunitoStyle.copyWith(
+                                color: AppColors.backColor,
+                                fontSize: 18.0,
+                                fontWeight: FontWeight.normal)),
+                        SizedBox(
+                          height: width * 0.02,
+                        ),
+                        Container(
+                          width: width,
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(12.0),
+                          ),
+                          child: Column(
+                            children: [
+                              Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceAround,
+                                  children: [
+                                    Expanded(
+                                        flex: 1,
+                                        child: Padding(
+                                          padding: const EdgeInsets.all(6.0),
+                                          child: Container(
+                                            decoration: BoxDecoration(
+                                                borderRadius:
+                                                    BorderRadius.circular(12.0),
+                                                color:
+                                                    AppColors.lightBlackColor),
+                                            child: Column(
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.center,
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment.center,
+                                                children: [
+                                                  Padding(
+                                                    padding:
+                                                        const EdgeInsets.only(
+                                                            top: 30.0,
+                                                            bottom: 10.0),
+                                                    child: Icon(
+                                                      Icons.delivery_dining,
+                                                      color: Colors.green,
+                                                      size: 35.0,
+                                                    ),
+                                                  ),
+                                                  Text(
+                                                    'Pickups Done',
+                                                    style: nunitoStyle.copyWith(
+                                                        fontWeight:
+                                                            FontWeight.normal,
+                                                        color:
+                                                            AppColors.backColor,
+                                                        fontSize: 16.0),
+                                                    textAlign: TextAlign.center,
+                                                  ),
+                                                  Padding(
+                                                    padding:
+                                                        const EdgeInsets.only(
+                                                            top: 6.0,
+                                                            bottom: 10.0),
+                                                    child: Text(
+                                                      totalCompletedCount,
+                                                      style:
+                                                          nunitoStyle.copyWith(
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .bold,
+                                                              color: AppColors
+                                                                  .backColor,
+                                                              fontSize: 25.0),
+                                                      textAlign:
+                                                          TextAlign.center,
+                                                    ),
+                                                  )
+                                                ]),
+                                          ),
+                                        )),
+                                    Expanded(
+                                        flex: 1,
+                                        child: Padding(
+                                          padding: const EdgeInsets.all(6.0),
+                                          child: Container(
+                                            decoration: BoxDecoration(
+                                              borderRadius:
+                                                  BorderRadius.circular(12.0),
+                                              color: AppColors.lightBlackColor,
+                                            ),
+                                            child: Column(
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.center,
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment.center,
+                                                children: [
+                                                  Padding(
+                                                    padding:
+                                                        const EdgeInsets.only(
+                                                            top: 30.0,
+                                                            bottom: 10.0),
+                                                    child: Icon(
+                                                      LineIcons.truck,
+                                                      color: Colors.deepOrange,
+                                                      size: 35.0,
+                                                    ),
+                                                  ),
+                                                  Text(
+                                                    'Drops Done',
+                                                    style: nunitoStyle.copyWith(
+                                                        fontWeight:
+                                                            FontWeight.normal,
+                                                        color:
+                                                            AppColors.backColor,
+                                                        fontSize: 16.0),
+                                                    textAlign: TextAlign.center,
+                                                  ),
+                                                  Padding(
+                                                    padding:
+                                                        const EdgeInsets.only(
+                                                            top: 6.0,
+                                                            bottom: 10.0),
+                                                    child: Text(
+                                                      totalOngoingCount.toString(),
+                                                      style:
+                                                          nunitoStyle.copyWith(
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .bold,
+                                                              color: AppColors
+                                                                  .backColor,
+                                                              fontSize: 25.0),
+                                                      textAlign:
+                                                          TextAlign.center,
+                                                    ),
+                                                  )
+                                                ]),
+                                          ),
+                                        )),
+                                  ],
+                                ),
+                              ),
+                              Padding(
+                                padding: const EdgeInsets.only(
+                                    bottom: 10.0,
+                                    left: 8.0,
+                                    right: 8.0,
+                                    top: 1),
+                                child: Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceAround,
+                                  children: [
+                                    Expanded(
+                                        flex: 1,
+                                        child: Padding(
+                                          padding: const EdgeInsets.all(6.0),
+                                          child: Container(
+                                            decoration: BoxDecoration(
+                                              borderRadius:
+                                                  BorderRadius.circular(12.0),
+                                              color: AppColors.lightBlackColor,
+                                            ),
+                                            child: Column(
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.center,
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment.center,
+                                                children: [
+                                                  Padding(
+                                                    padding:
+                                                        const EdgeInsets.only(
+                                                            top: 30.0,
+                                                            bottom: 10.0),
+                                                    child: Icon(
+                                                      Icons.cancel_outlined,
+                                                      color: Colors.red,
+                                                      size: 35.0,
+                                                    ),
+                                                  ),
+                                                  Text(
+                                                    'Cancelled Delivery',
+                                                    style: nunitoStyle.copyWith(
+                                                        fontWeight:
+                                                            FontWeight.normal,
+                                                        color:
+                                                            AppColors.backColor,
+                                                        fontSize: 16.0),
+                                                    textAlign: TextAlign.center,
+                                                  ),
+                                                  Padding(
+                                                    padding:
+                                                        const EdgeInsets.only(
+                                                            top: 6.0,
+                                                            bottom: 10.0),
+                                                    child: Text(
+                                                      totalRejectedCount,
+                                                      style:
+                                                          nunitoStyle.copyWith(
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .bold,
+                                                              color: AppColors
+                                                                  .backColor,
+                                                              fontSize: 25.0),
+                                                      textAlign:
+                                                          TextAlign.center,
+                                                    ),
+                                                  )
+                                                ]),
+                                          ),
+                                        )),
+                                    Expanded(
+                                        flex: 1,
+                                        child: Padding(
+                                          padding: const EdgeInsets.all(6.0),
+                                          child: Container(
+                                            decoration: BoxDecoration(
+                                              borderRadius:
+                                                  BorderRadius.circular(12.0),
+                                              color: AppColors.lightBlackColor,
+                                            ),
+                                            child: Column(
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.center,
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment.center,
+                                                children: [
+                                                  Padding(
+                                                    padding:
+                                                        const EdgeInsets.only(
+                                                            top: 30.0,
+                                                            bottom: 10.0),
+                                                    child: Icon(
+                                                      Icons.report_rounded,
+                                                      color: Colors.blue,
+                                                      size: 35.0,
+                                                    ),
+                                                  ),
+                                                  Text(
+                                                    'Return Delivery',
+                                                    style: nunitoStyle.copyWith(
+                                                        fontWeight:
+                                                            FontWeight.normal,
+                                                        color:
+                                                            AppColors.backColor,
+                                                        fontSize: 16.0),
+                                                    textAlign: TextAlign.center,
+                                                  ),
+                                                  Padding(
+                                                    padding:
+                                                        const EdgeInsets.only(
+                                                            top: 6.0,
+                                                            bottom: 10.0),
+                                                    child: Text(
+                                                      totalReturned,
+                                                      style:
+                                                          nunitoStyle.copyWith(
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .bold,
+                                                              color: AppColors
+                                                                  .backColor,
+                                                              fontSize: 25.0),
+                                                      textAlign:
+                                                          TextAlign.center,
+                                                    ),
+                                                  )
+                                                ]),
+                                          ),
+                                        )),
+                                  ],
+                                ),
+                              )
+                            ],
+                          ),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text('New Orders [ ${myStatus}]',
+                                  style: nunitoStyle.copyWith(
+                                      fontSize: 20.0,
+                                      color: AppColors.backColor,
+                                      fontWeight: FontWeight.bold,
+                                      letterSpacing: 1)),
+                              showLoading
+                                  ? Padding(
+                                      padding: const EdgeInsets.all(16.0),
+                                      child: Center(
+                                          child: LinearProgressIndicator()),
+                                    )
+                                  : Padding(
+                                      padding: const EdgeInsets.only(top: 8.0),
+                                      child: noOrders
+                                          ? Padding(
+                                              padding:
+                                                  const EdgeInsets.all(26.0),
+                                              child: Center(
+                                                child: Text(
+                                                  'No New Orders\n My Current Status is ${myStatus}',
+                                                  style: nunitoStyle.copyWith(
+                                                    fontSize: 18.0,
+                                                    fontWeight: FontWeight.bold,
+                                                    color: AppColors.backColor,
+                                                  ),
                                                 ),
                                               ),
-                                            ),
-                                          )
-                                        : showProgress
-                                            ? Center(
-                                                child:
-                                                    CircularProgressIndicator())
-                                            : Container(
-                                                height: 200,
-                                                child: ListView.builder(
-                                                    scrollDirection:
-                                                        Axis.horizontal,
-                                                    itemCount:
-                                                        newOrdersModel.length,
-                                                    itemBuilder:
-                                                        (context, index) {
-                                                      return Padding(
-                                                        padding:
-                                                            const EdgeInsets
-                                                                .all(4.0),
-                                                        child: Container(
-                                                          width: width - 50,
-                                                          decoration:
-                                                              BoxDecoration(
-                                                            color: AppColors
-                                                                .lightBlackColor,
-                                                            borderRadius:
-                                                                BorderRadius
-                                                                    .circular(
-                                                                        12.0),
-                                                          ),
-                                                          child: Padding(
-                                                            padding:
-                                                                const EdgeInsets
-                                                                    .all(8.0),
-                                                            child: Column(
-                                                              crossAxisAlignment:
-                                                                  CrossAxisAlignment
-                                                                      .center,
-                                                              children: [
-                                                                Row(
-                                                                  children: [
-                                                                    Container(
-                                                                      width:
-                                                                          100, // Adjust the width and height as needed
-                                                                      height:
-                                                                          100,
-                                                                      decoration:
-                                                                          BoxDecoration(
-                                                                        shape: BoxShape
-                                                                            .circle,
-                                                                        border:
-                                                                            Border.all(
-                                                                          color:
-                                                                              Colors.black, // Choose your border color
-                                                                          width:
-                                                                              2.0, // Choose your border width
-                                                                        ),
-                                                                      ),
-                                                                      child:
-                                                                          ClipOval(
-                                                                        child: Image
-                                                                            .asset(
-                                                                          'assets/images/delivery.gif',
-                                                                          fit: BoxFit
-                                                                              .cover,
-                                                                        ),
-                                                                      ),
-                                                                    ),
-                                                                    Column(
-                                                                      crossAxisAlignment:
-                                                                          CrossAxisAlignment
-                                                                              .start,
-                                                                      children: [
-                                                                        Padding(
-                                                                          padding:
-                                                                              const EdgeInsets.all(
-                                                                            8.0,
-                                                                          ),
-                                                                          child:
-                                                                              Text(
-                                                                            'Pick Up Request',
-                                                                            style: ralewayStyle.copyWith(
-                                                                                fontWeight: FontWeight.bold,
-                                                                                color: AppColors.whiteColor,
-                                                                                fontSize: 16.0),
+                                            )
+                                          : showProgress
+                                              ? Center(
+                                                  child:
+                                                      CircularProgressIndicator())
+                                              : Container(
+                                                  height: 200,
+                                                  child: ListView.builder(
+                                                      scrollDirection:
+                                                          Axis.horizontal,
+                                                      itemCount:
+                                                          newOrdersModel.length,
+                                                      itemBuilder:
+                                                          (context, index) {
+                                                        return Padding(
+                                                          padding:
+                                                              const EdgeInsets
+                                                                  .all(4.0),
+                                                          child: Container(
+                                                            width: width - 50,
+                                                            decoration:
+                                                                BoxDecoration(
+                                                              color: AppColors
+                                                                  .lightBlackColor,
+                                                              borderRadius:
+                                                                  BorderRadius
+                                                                      .circular(
+                                                                          12.0),
+                                                            ),
+                                                            child: Padding(
+                                                              padding:
+                                                                  const EdgeInsets
+                                                                      .all(8.0),
+                                                              child: Column(
+                                                                crossAxisAlignment:
+                                                                    CrossAxisAlignment
+                                                                        .center,
+                                                                children: [
+                                                                  Row(
+                                                                    children: [
+                                                                      Container(
+                                                                        width:
+                                                                            100, // Adjust the width and height as needed
+                                                                        height:
+                                                                            100,
+                                                                        decoration:
+                                                                            BoxDecoration(
+                                                                          shape:
+                                                                              BoxShape.circle,
+                                                                          border:
+                                                                              Border.all(
+                                                                            color:
+                                                                                AppColors.backColor, // Choose your border color
+                                                                            width:
+                                                                                2.0, // Choose your border width
                                                                           ),
                                                                         ),
-                                                                        Padding(
-                                                                          padding: const EdgeInsets
-                                                                              .all(
-                                                                              5.0),
+                                                                        child:
+                                                                            ClipOval(
                                                                           child:
-                                                                              Row(
+                                                                              Image.asset(
+                                                                            'assets/images/delivery.gif',
+                                                                            fit:
+                                                                                BoxFit.cover,
+                                                                          ),
+                                                                        ),
+                                                                      ),
+                                                                      Column(
+                                                                        crossAxisAlignment:
+                                                                            CrossAxisAlignment.start,
+                                                                        children: [
+                                                                          Padding(
+                                                                            padding:
+                                                                                const EdgeInsets.all(
+                                                                              8.0,
+                                                                            ),
+                                                                            child:
+                                                                                Text(
+                                                                              'Pick Up Request',
+                                                                              style: nunitoStyle.copyWith(fontWeight: FontWeight.bold, color: AppColors.backColor, fontSize: 16.0),
+                                                                            ),
+                                                                          ),
+                                                                          Padding(
+                                                                            padding:
+                                                                                const EdgeInsets.all(5.0),
+                                                                            child:
+                                                                                Row(
+                                                                              children: [
+                                                                                Padding(
+                                                                                  padding: const EdgeInsets.only(right: 8.0),
+                                                                                  child: Icon(
+                                                                                    Icons.location_history_rounded,
+                                                                                    color: Colors.orange,
+                                                                                    size: 18,
+                                                                                  ),
+                                                                                ),
+                                                                                Text(
+                                                                                  "${newOrdersModel[index].Address}-${newOrdersModel[index].Pincode}\n${newOrdersModel[index].Landmark}",
+                                                                                  style: nunitoStyle.copyWith(
+                                                                                    fontSize: 12.0,
+                                                                                    color: AppColors.backColor,
+                                                                                  ),
+                                                                                ),
+                                                                              ],
+                                                                            ),
+                                                                          ),
+                                                                          Row(
                                                                             children: [
                                                                               Padding(
-                                                                                padding: const EdgeInsets.only(right: 8.0),
+                                                                                padding: const EdgeInsets.all(5.0),
                                                                                 child: Icon(
-                                                                                  Icons.location_history_rounded,
+                                                                                  Icons.watch_later_outlined,
                                                                                   color: Colors.orange,
                                                                                   size: 18,
                                                                                 ),
                                                                               ),
                                                                               Text(
-                                                                                "${newOrdersModel[index].Address}-${newOrdersModel[index].Pincode}\n${newOrdersModel[index].Landmark}",
-                                                                                style: nunitoStyle.copyWith(fontSize: 12.0, color: AppColors.whiteColor),
+                                                                                newOrdersModel[index].Time,
+                                                                                style: nunitoStyle.copyWith(
+                                                                                  fontSize: 12.0,
+                                                                                  color: AppColors.backColor,
+                                                                                ),
                                                                               ),
                                                                             ],
                                                                           ),
-                                                                        ),
-                                                                        Row(
-                                                                          children: [
-                                                                            Padding(
-                                                                              padding: const EdgeInsets.all(5.0),
-                                                                              child: Icon(
-                                                                                Icons.watch_later_outlined,
-                                                                                color: Colors.orange,
-                                                                                size: 18,
+                                                                        ],
+                                                                      )
+                                                                    ],
+                                                                  ),
+                                                                  Row(
+                                                                    mainAxisAlignment:
+                                                                        MainAxisAlignment
+                                                                            .spaceEvenly,
+                                                                    children: [
+                                                                      Padding(
+                                                                        padding: const EdgeInsets
+                                                                            .all(
+                                                                            8.0),
+                                                                        child:
+                                                                            Material(
+                                                                          color:
+                                                                              Colors.transparent,
+                                                                          child:
+                                                                              InkWell(
+                                                                            borderRadius:
+                                                                                BorderRadius.circular(12.0),
+                                                                            onTap:
+                                                                                () {
+                                                                              var bookingStatus = "Accepted";
+                                                                              accept_or_rejectOrder(bookingStatus);
+                                                                            },
+                                                                            child:
+                                                                                Ink(
+                                                                              decoration: BoxDecoration(color: Colors.green, borderRadius: BorderRadius.circular(12.0)),
+                                                                              child: Padding(
+                                                                                padding: const EdgeInsets.symmetric(horizontal: 26.0, vertical: 12.0),
+                                                                                child: Text(
+                                                                                  'Accept',
+                                                                                  style: nunitoStyle.copyWith(fontWeight: FontWeight.bold, color: Colors.white),
+                                                                                ),
                                                                               ),
                                                                             ),
-                                                                            Text(
-                                                                              newOrdersModel[index].Time,
-                                                                              style: nunitoStyle.copyWith(fontSize: 12.0, color: AppColors.whiteColor),
-                                                                            ),
-                                                                          ],
+                                                                          ),
                                                                         ),
-                                                                      ],
-                                                                    )
-                                                                  ],
-                                                                ),
-                                                                Row(
-                                                                  mainAxisAlignment:
-                                                                      MainAxisAlignment
-                                                                          .spaceEvenly,
-                                                                  children: [
-                                                                    Padding(
-                                                                      padding: const EdgeInsets
-                                                                          .all(
-                                                                          8.0),
-                                                                      child:
-                                                                          Material(
+                                                                      ),
+                                                                      Material(
                                                                         color: Colors
                                                                             .transparent,
                                                                         child:
                                                                             InkWell(
-                                                                          borderRadius:
-                                                                              BorderRadius.circular(12.0),
                                                                           onTap:
                                                                               () {
-                                                                            var orderStatus =
-                                                                                "Accepted";
-                                                                            accept_or_rejectOrder(orderStatus);
+                                                                            var bookingStatus =
+                                                                                "Rejected";
+                                                                            accept_or_rejectOrder(bookingStatus);
                                                                           },
+                                                                          borderRadius:
+                                                                              BorderRadius.circular(12.0),
                                                                           child:
                                                                               Ink(
                                                                             decoration:
-                                                                                BoxDecoration(color: Colors.green, borderRadius: BorderRadius.circular(12.0)),
+                                                                                BoxDecoration(color: Colors.red, borderRadius: BorderRadius.circular(12.0)),
                                                                             child:
                                                                                 Padding(
                                                                               padding: const EdgeInsets.symmetric(horizontal: 26.0, vertical: 12.0),
                                                                               child: Text(
-                                                                                'Accept',
-                                                                                style: ralewayStyle.copyWith(fontWeight: FontWeight.bold, color: Colors.white),
+                                                                                'Reject',
+                                                                                style: nunitoStyle.copyWith(fontWeight: FontWeight.bold, color: Colors.white),
                                                                               ),
                                                                             ),
                                                                           ),
                                                                         ),
-                                                                      ),
-                                                                    ),
-                                                                    Material(
-                                                                      color: Colors
-                                                                          .transparent,
-                                                                      child:
-                                                                          InkWell(
-                                                                        onTap:
-                                                                            () {
-                                                                          var orderStatus =
-                                                                              "Rejected";
-                                                                          accept_or_rejectOrder(
-                                                                              orderStatus);
-                                                                        },
-                                                                        borderRadius:
-                                                                            BorderRadius.circular(12.0),
-                                                                        child:
-                                                                            Ink(
-                                                                          decoration: BoxDecoration(
-                                                                              color: Colors.red,
-                                                                              borderRadius: BorderRadius.circular(12.0)),
-                                                                          child:
-                                                                              Padding(
-                                                                            padding:
-                                                                                const EdgeInsets.symmetric(horizontal: 26.0, vertical: 12.0),
-                                                                            child:
-                                                                                Text(
-                                                                              'Reject',
-                                                                              style: ralewayStyle.copyWith(fontWeight: FontWeight.bold, color: Colors.white),
-                                                                            ),
-                                                                          ),
-                                                                        ),
-                                                                      ),
-                                                                    )
-                                                                  ],
-                                                                )
-                                                              ],
+                                                                      )
+                                                                    ],
+                                                                  )
+                                                                ],
+                                                              ),
                                                             ),
                                                           ),
-                                                        ),
-                                                      );
-                                                    }),
-                                              ),
-                                  )
-                          ],
+                                                        );
+                                                      }),
+                                                ),
+                                    )
+                            ],
+                          ),
                         ),
-                      ),
-                    ],
-                  ),
-                )
-              ],
+                      ],
+                    ),
+                  )
+                ],
+              ),
             ),
           ],
         ),

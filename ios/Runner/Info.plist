@@ -29,7 +29,7 @@
 			<string>Editor</string>
 			<key>CFBundleURLSchemes</key>
 			<array>
-				<string>***Your bundle ID***</string>
+				<string>com.vffgroup.vffgroup</string>
 			</array>
 		</dict>
 		<dict>
@@ -45,7 +45,7 @@
 			<string>Editor</string>
 			<key>CFBundleURLSchemes</key>
 			<array>
-				<string>***Something here***</string>
+				<string>com.vffgroup.vffgroup</string>
 			</array>
 		</dict>
 	</array>
@@ -59,13 +59,13 @@
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
 	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
-	<string>Always and when in use!</string>
+	<string>We Need Location Permission Always and While the App is in Use To provide Better Service by knowing your exact location for better pickup and drop.!</string>
 	<key>NSLocationAlwaysUsageDescription</key>
-	<string>Can I have location always?</string>
+	<string>Can I have location always for better pickup and delivery service?</string>
 	<key>NSLocationUsageDescription</key>
-	<string>Older devices need location.</string>
+	<string>Older devices need location for better pickup and delivery service.</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
-	<string>Need location when in use</string>
+	<string>We Need Location Permission While the App is in Use To provide Better Service by knowing your exact location for better pickup and drop.</string>
 	<key>NSUserTrackingUsageDescription</key>
 	<string>appTrackingTransparency</string>
 	<key>UIApplicationSupportsIndirectInputEvents</key>

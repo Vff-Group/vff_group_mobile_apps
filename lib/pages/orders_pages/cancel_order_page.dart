@@ -77,7 +77,7 @@ class _CancelOrderPageState extends State<CancelOrderPage> {
           setState(() {
             showLoading = false;
           });
-          glb.showSnackBar(context, 'Error', 'No Order Details Found');
+          glb.showSnackBar(context, 'Alert', 'No Order Details Found');
           return;
         } else if (res.contains("ErrorCode#8")) {
           setState(() {
@@ -86,7 +86,8 @@ class _CancelOrderPageState extends State<CancelOrderPage> {
           glb.showSnackBar(context, 'Error', 'Something Went Wrong');
           return;
         } else {
-          glb.showSnackBar(context, 'Success', 'Thank you we will work on it :)');
+          glb.showSnackBar(
+              context, 'Success', 'Thank you we will work on it :)');
           Navigator.pop(context);
           Navigator.pushNamed(context, MainRoute);
         }
@@ -111,14 +112,14 @@ class _CancelOrderPageState extends State<CancelOrderPage> {
         FocusManager.instance.primaryFocus?.unfocus();
       },
       child: Scaffold(
-          backgroundColor: AppColors.backColor,
+          backgroundColor: AppColors.whiteColor,
           appBar: AppBar(
-              backgroundColor: Colors.transparent,
+              
               elevation: 0,
               title: FadeAnimation(
                 delay: 0.3,
                 child: Text('Cancel Order ',
-                    style: ralewayStyle.copyWith(
+                    style: nunitoStyle.copyWith(
                         fontSize: 20.0,
                         color: AppColors.whiteColor,
                         fontWeight: FontWeight.bold,
@@ -141,9 +142,9 @@ class _CancelOrderPageState extends State<CancelOrderPage> {
                               ),
                               Text(
                                   "At VelVet Wash, your satisfaction is paramount. If you ever need to cancel an order, we've designed a streamlined process to assist you.Your input is valuable as it aids us in improving our services to align with your preferences. ",
-                                  style: ralewayStyle.copyWith(
+                                  style: nunitoStyle.copyWith(
                                     fontSize: 14.0,
-                                    color: AppColors.whiteColor,
+                                    color: AppColors.backColor,
                                     fontWeight: FontWeight.w200,
                                   )),
                               const SizedBox(
@@ -174,7 +175,7 @@ class _CancelOrderPageState extends State<CancelOrderPage> {
                                         height: 5.0,
                                       ),
                                       Text('Cancel',
-                                          style: ralewayStyle.copyWith(
+                                          style: nunitoStyle.copyWith(
                                             fontSize: 20.0,
                                             color: AppColors.whiteColor,
                                             fontWeight: FontWeight.bold,
@@ -187,9 +188,9 @@ class _CancelOrderPageState extends State<CancelOrderPage> {
                                 height: 10.0,
                               ),
                               Text('Enter your the reason',
-                                  style: ralewayStyle.copyWith(
+                                  style: nunitoStyle.copyWith(
                                       fontSize: 20.0,
-                                      color: AppColors.whiteColor,
+                                      color: AppColors.backColor,
                                       fontWeight: FontWeight.bold,
                                       letterSpacing: 1)),
                               const SizedBox(
@@ -211,7 +212,7 @@ class _CancelOrderPageState extends State<CancelOrderPage> {
                                         maxLines: 50,
                                         style: nunitoStyle.copyWith(
                                             fontWeight: FontWeight.w400,
-                                            color: AppColors.whiteColor,
+                                            color: AppColors.backColor,
                                             fontSize: 14.0),
                                         keyboardType: TextInputType.text,
                                         decoration: InputDecoration(
@@ -221,9 +222,9 @@ class _CancelOrderPageState extends State<CancelOrderPage> {
                                                     top: 16.0),
                                             hintText:
                                                 "Let us know why you want to cancel the order?",
-                                            hintStyle: ralewayStyle.copyWith(
+                                            hintStyle: nunitoStyle.copyWith(
                                                 fontWeight: FontWeight.w400,
-                                                color: AppColors.whiteColor,
+                                                color: AppColors.backColor,
                                                 fontSize: 12.0)),
                                       ),
                                     ),

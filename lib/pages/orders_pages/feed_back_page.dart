@@ -110,14 +110,14 @@ class _FeedBackPageState extends State<FeedBackPage> {
         FocusManager.instance.primaryFocus?.unfocus();
       },
       child: Scaffold(
-          backgroundColor: AppColors.backColor,
+          backgroundColor: AppColors.whiteColor,
           appBar: AppBar(
-              backgroundColor: Colors.transparent,
+              
               elevation: 0,
               title: FadeAnimation(
                 delay: 0.3,
                 child: Text('Feedback 😊',
-                    style: ralewayStyle.copyWith(
+                    style: nunitoStyle.copyWith(
                         fontSize: 20.0,
                         color: AppColors.whiteColor,
                         fontWeight: FontWeight.bold,
@@ -140,9 +140,9 @@ class _FeedBackPageState extends State<FeedBackPage> {
                               ),
                               Text(
                                   'At VelVet Wash, we are dedicated to providing you with the best laundry service experience. Your feedback is incredibly important to us, as it helps us enhance our services and better meet your needs',
-                                  style: ralewayStyle.copyWith(
+                                  style: nunitoStyle.copyWith(
                                     fontSize: 14.0,
-                                    color: AppColors.whiteColor,
+                                    color: AppColors.backColor,
                                     fontWeight: FontWeight.w200,
                                   )),
                               const SizedBox(
@@ -173,7 +173,7 @@ class _FeedBackPageState extends State<FeedBackPage> {
                                         height: 5.0,
                                       ),
                                       Text('Feedback',
-                                          style: ralewayStyle.copyWith(
+                                          style: nunitoStyle.copyWith(
                                             fontSize: 20.0,
                                             color: AppColors.whiteColor,
                                             fontWeight: FontWeight.bold,
@@ -186,9 +186,9 @@ class _FeedBackPageState extends State<FeedBackPage> {
                                 height: 10.0,
                               ),
                               Text('Enter your valuable feedback',
-                                  style: ralewayStyle.copyWith(
+                                  style: nunitoStyle.copyWith(
                                       fontSize: 20.0,
-                                      color: AppColors.whiteColor,
+                                      color: AppColors.backColor,
                                       fontWeight: FontWeight.bold,
                                       letterSpacing: 1)),
                               const SizedBox(
@@ -210,7 +210,7 @@ class _FeedBackPageState extends State<FeedBackPage> {
                                         maxLines: 50,
                                         style: nunitoStyle.copyWith(
                                             fontWeight: FontWeight.w400,
-                                            color: AppColors.whiteColor,
+                                            color: AppColors.backColor,
                                             fontSize: 14.0),
                                         keyboardType: TextInputType.text,
                                         decoration: InputDecoration(
@@ -220,9 +220,9 @@ class _FeedBackPageState extends State<FeedBackPage> {
                                                     top: 16.0),
                                             hintText:
                                                 "Let us know how we've met your expectations in terms of laundry quality and cleanliness.",
-                                            hintStyle: ralewayStyle.copyWith(
+                                            hintStyle: nunitoStyle.copyWith(
                                                 fontWeight: FontWeight.w400,
-                                                color: AppColors.whiteColor,
+                                                color: AppColors.backColor,
                                                 fontSize: 12.0)),
                                       ),
                                     ),

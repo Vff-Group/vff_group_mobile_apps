@@ -50,11 +50,13 @@ class _OrderDetailsPageState extends State<OrderDetailsPage> {
   void initState() {
     super.initState();
     loadOrderDetails();
+
   }
 
   Future loadOrderDetails() async {
     setState(() {
       showLoading = true;
+      orderItemModel = [];
     });
     // final prefs = await SharedPreferences.getInstance();
     // var customerid = prefs.getString('customerid');
@@ -66,9 +68,10 @@ class _OrderDetailsPageState extends State<OrderDetailsPage> {
     try {
       var url = glb.endPoint;
       final Map dictMap = {};
-
+//select orderid,customerid,quantity,price,pickup_dt,delivery,clat,clng,order_status,delivery_epoch,laundry_ordertbl.epoch,cancel_reason,houseno,address from vff.laundry_customertbl,vff.usertbl,vff.laundry_delivery_boytbl,vff.laundry_ordertbl where usertbl.usrid=laundry_customertbl.usrid and laundry_ordertbl.customerid=laundry_customertbl.consmrid and(delivery_boyid='3' or drop_delivery_boy_id='3') and order_completed='0' and order_status='Rejected'  order by orderid desc
       dictMap['order_id'] = glb.orderid;
       dictMap['order_status'] = glb.order_status;
+      dictMap['key'] = 1;
       dictMap['pktType'] = "10";
       dictMap['token'] = "vff";
       dictMap['uid'] = "-1";
@@ -118,6 +121,10 @@ class _OrderDetailsPageState extends State<OrderDetailsPage> {
             var profileImg = orderMap['profileImg'];
             var cancel_reason = orderMap['cancel_reason'];
             var feedback = orderMap['feedback'];
+            glb.customerID = orderMap['customer_id'];
+            glb.customer_mobno = orderMap['customer_mobno'];
+            glb.customer_name = orderMap['customer_name'];
+            
             glb.deliveryBoyID = deliveryBoyId;
             var formattedDateTime =
                 glb.doubleEpochToFormattedDateTime(double.parse(epoch));
@@ -128,7 +135,7 @@ class _OrderDetailsPageState extends State<OrderDetailsPage> {
               pickupDate = pickupDt;
 
               deliveryBoyName = delivery_boyName;
-              if (order_status != 'Delivered') {
+              if (order_status != 'Completed') {
                 deliveryDateTime = "Not Delivered yet";
               } else {
                 deliveryDateTime = deliveryEpochTime;
@@ -334,12 +341,14 @@ class _OrderDetailsPageState extends State<OrderDetailsPage> {
 
     return Scaffold(
         extendBodyBehindAppBar: true,
-        backgroundColor: Colors.black,
+        backgroundColor: AppColors.whiteColor,
         appBar: AppBar(
+          foregroundColor: AppColors.backColor,
+          centerTitle: true,
           title: Text(
             'Order Details',
             style: ralewayStyle.copyWith(
-              color: AppColors.whiteColor,
+              color: AppColors.backColor,
               fontSize: 25.0,
               fontWeight: FontWeight.bold,
             ),
@@ -359,7 +368,7 @@ class _OrderDetailsPageState extends State<OrderDetailsPage> {
                         },
                         child: const Icon(
                           Icons.card_giftcard,
-                          color: Colors.white,
+                          color: Colors.blue,
                         )),
                   )
                 : Container()
@@ -384,29 +393,35 @@ class _OrderDetailsPageState extends State<OrderDetailsPage> {
                           )
                           : Column(
                               children: [
-                                SizedBox(
-                                  height: width * 0.06,
-                                ),
+                                
                                 _OrderDetails(
                                     orderStatus: orderStatus,
                                     orderID: glb.orderid,
                                     pickUpDateTime: timeOrderRecieved,
                                     deliveryDateTime: deliveryDateTime,
-                                    addressClient: addressClient),
+                                    addressClient: addressClient,
+                                    width:width,
+                                    height:height),
                                 const Divider(
-                                  color: AppColors.whiteColor,
+                                  color: AppColors.backColor,
                                   thickness: 0.5,
                                 ),
-                                _DeliveryBoyDetails(
-                                    width: width,
-                                    profilePicture: profilePicture,
-                                    deliveryBoyName: deliveryBoyName,
-                                    deliveryMobno: deliveryMobno,
-                                    feedBack: feedBack,
-                                    orderStatus: orderStatus),
-                                const Divider(
-                                  color: AppColors.whiteColor,
-                                  thickness: 0.5,
+                                Visibility(
+                                  visible: glb.showDeliveryBoy,
+                                  child: _DeliveryBoyDetails(
+                                      width: width,
+                                      profilePicture: profilePicture,
+                                      deliveryBoyName: deliveryBoyName,
+                                      deliveryMobno: deliveryMobno,
+                                      feedBack: feedBack,
+                                      orderStatus: orderStatus),
+                                ),
+                                Visibility(
+                                  visible: glb.showDeliveryBoy,
+                                  child: const Divider(
+                                    color: AppColors.backColor,
+                                    thickness: 0.5,
+                                  ),
                                 ),
                                 _TotalClothesCount(
                                     showItemsLoading: showItemsLoading,
@@ -421,7 +436,7 @@ class _OrderDetailsPageState extends State<OrderDetailsPage> {
                                             Text(
                                               'NO LAUNDRY ITEMS FOUND\n Please Add Items',
                                               style: ralewayStyle.copyWith(
-                                                  color: Colors.white,
+                                                  color: AppColors.backColor,
                                                   fontSize: 12.0,
                                                   letterSpacing: 1),
                                               textAlign: TextAlign.center,
@@ -547,7 +562,7 @@ class _OrderDetailsPageState extends State<OrderDetailsPage> {
                                                                     FontWeight
                                                                         .bold,
                                                                 color: AppColors
-                                                                    .neonColor,
+                                                                    .blueColor,
                                                               ),
                                                             ),
                                                           ],
@@ -564,8 +579,8 @@ class _OrderDetailsPageState extends State<OrderDetailsPage> {
                                                               children: [
                                                                 if (orderItemModel[
                                                                             index]
-                                                                        .subCategoryImage ==
-                                                                    'NA')
+                                                                        .typeOf ==
+                                                                    'Kg')
                                                                   ClipRRect(
                                                                     borderRadius:
                                                                         BorderRadius.circular(
@@ -597,15 +612,15 @@ class _OrderDetailsPageState extends State<OrderDetailsPage> {
                                                                       CrossAxisAlignment
                                                                           .start,
                                                                   children: [
-                                                                    orderItemModel[index].subCategoryName ==
-                                                                            'NA'
+                                                                    orderItemModel[index].typeOf ==
+                                                                            'Kg'
                                                                         ? Text(
                                                                             orderItemModel[index].categoryName.toCapitalized(),
                                                                             style:
                                                                                 nunitoStyle.copyWith(
                                                                               fontSize: 14.0,
                                                                               fontWeight: FontWeight.normal,
-                                                                              color: AppColors.whiteColor,
+                                                                              color: AppColors.backColor,
                                                                             ),
                                                                           )
                                                                         : Row(
@@ -615,7 +630,7 @@ class _OrderDetailsPageState extends State<OrderDetailsPage> {
                                                                                 style: nunitoStyle.copyWith(
                                                                                   fontSize: 14.0,
                                                                                   fontWeight: FontWeight.normal,
-                                                                                  color: AppColors.whiteColor,
+                                                                                  color: AppColors.backColor,
                                                                                 ),
                                                                               ),
                                                                               Text(
@@ -623,7 +638,7 @@ class _OrderDetailsPageState extends State<OrderDetailsPage> {
                                                                                 style: nunitoStyle.copyWith(
                                                                                   fontSize: 14.0,
                                                                                   fontWeight: FontWeight.normal,
-                                                                                  color: AppColors.whiteColor,
+                                                                                  color: AppColors.backColor,
                                                                                 ),
                                                                               ),
                                                                             ],
@@ -641,7 +656,7 @@ class _OrderDetailsPageState extends State<OrderDetailsPage> {
                                                                           fontWeight: FontWeight
                                                                               .bold,
                                                                           color:
-                                                                              AppColors.neonColor),
+                                                                              AppColors.blueColor),
                                                                     ),
                                                                   ],
                                                                 )
@@ -658,7 +673,7 @@ class _OrderDetailsPageState extends State<OrderDetailsPage> {
                                                                           FontWeight
                                                                               .bold,
                                                                       color: AppColors
-                                                                          .neonColor),
+                                                                          .blueColor),
                                                                 ),
                                                                 Text(
                                                                   '${orderItemModel[index].totalQuantity} ${orderItemModel[index].typeOf} ',
@@ -669,7 +684,7 @@ class _OrderDetailsPageState extends State<OrderDetailsPage> {
                                                                           FontWeight
                                                                               .bold,
                                                                       color: AppColors
-                                                                          .neonColor),
+                                                                          .blueColor),
                                                                 ),
                                                               ],
                                                             ),
@@ -677,9 +692,17 @@ class _OrderDetailsPageState extends State<OrderDetailsPage> {
                                                         ),
                                                         const Divider(
                                                           color: AppColors
-                                                              .lightGreyColor,
+                                                              .backColor,
                                                           thickness: 0.1,
                                                         ),
+                                                        orderItemModel[index].typeOf == "Kg" ? Text(
+                                                                                orderItemModel[index].subCategoryName.toCapitalized(),
+                                                                                style: nunitoStyle.copyWith(
+                                                                                  fontSize: 14.0,
+                                                                                  fontWeight: FontWeight.normal,
+                                                                                  color: AppColors.backColor,
+                                                                                ),
+                                                                              ):Container()
                                                       ],
                                                     ),
                                                   ),
@@ -687,6 +710,7 @@ class _OrderDetailsPageState extends State<OrderDetailsPage> {
                                               );
                                             })),
                                       )
+                             
                               ],
                             )
                     ],
@@ -954,7 +978,7 @@ class _TotalClothesCount extends StatelessWidget {
             style: nunitoStyle.copyWith(
               fontSize: 14.0,
               fontWeight: FontWeight.normal,
-              color: AppColors.whiteColor,
+              color: AppColors.backColor,
             ),
           ),
           showItemsLoading
@@ -972,7 +996,7 @@ class _TotalClothesCount extends StatelessWidget {
                         style: nunitoStyle.copyWith(
                             fontSize: 15.0,
                             fontWeight: FontWeight.w600,
-                            color: AppColors.neonColor),
+                            color: AppColors.blueColor),
                       ),
                     )
                   : Text(
@@ -980,7 +1004,7 @@ class _TotalClothesCount extends StatelessWidget {
                       style: nunitoStyle.copyWith(
                           fontSize: 14.0,
                           fontWeight: FontWeight.w600,
-                          color: AppColors.neonColor),
+                          color: AppColors.blueColor),
                     )
         ],
       ),
@@ -1050,7 +1074,7 @@ class _DeliveryBoyDetails extends StatelessWidget {
                       style: nunitoStyle.copyWith(
                           fontSize: 18.0,
                           fontWeight: FontWeight.w600,
-                          color: AppColors.neonColor),
+                          color: AppColors.blueColor),
                     ),
                     Visibility(
                       visible: false,
@@ -1066,7 +1090,7 @@ class _DeliveryBoyDetails extends StatelessWidget {
                 ),
               ],
             ),
-            feedBack == "NA" && orderStatus == "Completed"
+            feedBack == "NA" && orderStatus == "Completed" && glb.hideControls == false
                 ? SlideFromRightAnimation(
                     delay: 0.9,
                     child: Material(
@@ -1085,7 +1109,7 @@ class _DeliveryBoyDetails extends StatelessWidget {
                               children: [
                                 const Icon(
                                   Icons.message,
-                                  color: AppColors.neonColor,
+                                  color: AppColors.blueColor,
                                 ),
                                 Padding(
                                   padding: const EdgeInsets.all(1.0),
@@ -1094,7 +1118,7 @@ class _DeliveryBoyDetails extends StatelessWidget {
                                     style: nunitoStyle.copyWith(
                                         fontSize: 12.0,
                                         fontWeight: FontWeight.normal,
-                                        color: AppColors.neonColor),
+                                        color: AppColors.blueColor),
                                   ),
                                 ),
                               ],
@@ -1137,7 +1161,7 @@ class _DeliveryBoyDetails extends StatelessWidget {
                               children: [
                                 const Icon(
                                   Icons.phone,
-                                  color: AppColors.neonColor,
+                                  color: AppColors.blueColor,
                                   size: 20,
                                 ),
                                 Padding(
@@ -1147,7 +1171,7 @@ class _DeliveryBoyDetails extends StatelessWidget {
                                     style: nunitoStyle.copyWith(
                                         fontSize: 12.0,
                                         fontWeight: FontWeight.normal,
-                                        color: AppColors.neonColor),
+                                        color: AppColors.blueColor),
                                   ),
                                 ),
                               ],
@@ -1171,13 +1195,16 @@ class _OrderDetails extends StatelessWidget {
     required this.orderID,
     required this.pickUpDateTime,
     required this.deliveryDateTime,
-    required this.addressClient,
+    required this.addressClient, required this.width, required this.height,
   });
   final String orderStatus;
   final String orderID;
   final String pickUpDateTime;
   final String deliveryDateTime;
   final String addressClient;
+  final double width;
+  final double height;
+
   @override
   Widget build(BuildContext context) {
     return SizedBox(
@@ -1186,6 +1213,7 @@ class _OrderDetails extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            SizedBox(height: width * 0.05,),
             FadeAnimation(
               delay: 1,
               child: Row(
@@ -1218,14 +1246,14 @@ class _OrderDetails extends StatelessWidget {
                     ),
                   ),
                   Container(
-                    width: 100,
+                    width: 80,
                     height: 1,
                     color: orderStatus == "Processing" ||
                     orderStatus == "Pick Up Done" ||
                             orderStatus == "Out for Delivery" ||
                             orderStatus == "Completed"
                         ? AppColors.neonColor
-                        : AppColors.whiteColor,
+                        : AppColors.backColor,
                   ),
                   Container(
                     decoration: BoxDecoration(
@@ -1243,18 +1271,18 @@ class _OrderDetails extends StatelessWidget {
                                 orderStatus == "Out for Delivery" ||
                                 orderStatus == "Completed"
                             ? AppColors.backColor
-                            : AppColors.whiteColor,
+                            : AppColors.blueColor,
                       ),
                     ),
                   ),
                   Container(
-                      width: 100,
+                      width: 80,
                       height: 1,
                       color: orderStatus == "Processing" ||
                               orderStatus == "Out for Delivery" ||
                               orderStatus == "Completed"
                           ? AppColors.neonColor
-                          : AppColors.whiteColor),
+                          : AppColors.backColor),
                   Container(
                     decoration: BoxDecoration(
                         color: AppColors.lightBlackColor,
@@ -1273,7 +1301,7 @@ class _OrderDetails extends StatelessWidget {
                   Text(
                     'Order',
                     style: nunitoStyle.copyWith(
-                      color: AppColors.whiteColor,
+                      color: AppColors.backColor,
                       fontWeight: FontWeight.bold,
                       fontSize: 18,
                     ),
@@ -1286,7 +1314,7 @@ class _OrderDetails extends StatelessWidget {
                               child: Text(
                                 'Assigning',
                                 style: nunitoStyle.copyWith(
-                                    color: AppColors.orangeColor,
+                                    color: AppColors.blueColor,
                                     fontSize: 8,
                                     fontWeight: FontWeight.bold),
                               ),
@@ -1300,7 +1328,7 @@ class _OrderDetails extends StatelessWidget {
                       : Text(
                           orderStatus,
                           style: nunitoStyle.copyWith(
-                              color: AppColors.orangeColor,
+                              color: AppColors.blueColor,
                               fontSize: 16,
                               fontWeight: FontWeight.bold),
                         ),
@@ -1315,7 +1343,7 @@ class _OrderDetails extends StatelessWidget {
                   Text(
                     'Order ID',
                     style: nunitoStyle.copyWith(
-                      color: AppColors.whiteColor,
+                      color: AppColors.backColor,
                       fontWeight: FontWeight.bold,
                       fontSize: 14,
                     ),
@@ -1323,7 +1351,7 @@ class _OrderDetails extends StatelessWidget {
                   Text(
                     '#${orderID}',
                     style: nunitoStyle.copyWith(
-                      color: AppColors.neonColor,
+                      color: AppColors.mainBlueColor,
                       fontSize: 14,
                     ),
                   ),
@@ -1338,7 +1366,7 @@ class _OrderDetails extends StatelessWidget {
                   Text(
                     'Pick Up:',
                     style: nunitoStyle.copyWith(
-                      color: AppColors.whiteColor,
+                      color: AppColors.backColor,
                       fontWeight: FontWeight.normal,
                       fontSize: 14,
                     ),
@@ -1346,7 +1374,7 @@ class _OrderDetails extends StatelessWidget {
                   Text(
                     pickUpDateTime,
                     style: nunitoStyle.copyWith(
-                      color: AppColors.whiteColor,
+                      color: AppColors.backColor,
                       fontWeight: FontWeight.w500,
                       fontSize: 14,
                     ),
@@ -1362,7 +1390,7 @@ class _OrderDetails extends StatelessWidget {
                   Text(
                     'Delivered Date:',
                     style: nunitoStyle.copyWith(
-                      color: AppColors.whiteColor,
+                      color: AppColors.backColor,
                       fontWeight: FontWeight.normal,
                       fontSize: 14,
                     ),
@@ -1370,7 +1398,7 @@ class _OrderDetails extends StatelessWidget {
                   Text(
                     deliveryDateTime,
                     style: nunitoStyle.copyWith(
-                      color: AppColors.whiteColor,
+                      color: AppColors.backColor,
                       fontWeight: FontWeight.w500,
                       fontSize: 14,
                     ),
@@ -1386,7 +1414,7 @@ class _OrderDetails extends StatelessWidget {
                   Text(
                     'Address:',
                     style: nunitoStyle.copyWith(
-                      color: AppColors.whiteColor,
+                      color: AppColors.backColor,
                       fontWeight: FontWeight.normal,
                       fontSize: 14,
                     ),
@@ -1394,7 +1422,7 @@ class _OrderDetails extends StatelessWidget {
                   Text(
                     addressClient,
                     style: nunitoStyle.copyWith(
-                      color: AppColors.whiteColor,
+                      color: AppColors.backColor,
                       fontWeight: FontWeight.w500,
                       fontSize: 14,
                     ),

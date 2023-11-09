@@ -34,10 +34,10 @@ class _TypingTextState extends State<TypingText> {
 
   @override
   Widget build(BuildContext context) {
-    return Text(_displayedText,
-    style: ralewayStyle.copyWith(
-      fontWeight: FontWeight.bold,
-      color: AppColors.titleTxtColor
-    ),);
+    return Text(
+      _displayedText,
+      style: nunitoStyle.copyWith(
+          fontWeight: FontWeight.bold, color: AppColors.titleTxtColor),
+    );
   }
 }

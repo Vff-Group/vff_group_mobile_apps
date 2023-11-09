@@ -72,6 +72,8 @@ dependencies:
   geocoding: ^2.1.0
   cupertino_modal_sheet: ^1.1.0
   intl: ^0.18.1
+  google_maps_flutter: ^2.5.0
+  sign_in_with_apple: ^5.0.0
   
   
 

@@ -14,6 +14,7 @@ import 'package:vff_group/animation/slide_bottom_animation.dart';
 import 'package:vff_group/animation/slide_left_animation.dart';
 import 'package:vff_group/animation/slideright_animation.dart';
 import 'package:vff_group/delivery_boy_app/pages/orders_pages/update_order_popup.dart';
+import 'package:vff_group/routings/route_names.dart';
 import 'package:vff_group/utils/SharedPreferencesUtils.dart';
 import 'package:vff_group/utils/app_colors.dart';
 import 'package:vff_group/utils/app_styles.dart';
@@ -38,6 +39,8 @@ class _CurrentDeliveryPageState extends State<CurrentDeliveryPage> {
   bool showLoading = true, noOrders = true;
   String orderRecievedDate = "",
       orderID = "",
+      bookingID = "",
+      branchID = "",
       customerName = "",
       orderStatus = "",
       cLat = "",
@@ -63,14 +66,15 @@ class _CurrentDeliveryPageState extends State<CurrentDeliveryPage> {
       showLoading = true;
       noOrders = true;
     });
-    // final prefs = await SharedPreferences.getInstance();
-    // var norderId = prefs.getString('norder_id');
+    final prefs = await SharedPreferences.getInstance();
+    var delivery_boy_id = prefs.getString('delivery_boy_id');
     if (true) {
       try {
         var url = glb.endPoint;
         final Map dictMap = {};
 
         dictMap['pktType'] = "25";
+        dictMap['delivery_boy_id'] = delivery_boy_id;
         dictMap['token'] = "vff";
         dictMap['uid'] = "-1";
         final response = await http.post(Uri.parse(url),
@@ -83,7 +87,7 @@ class _CurrentDeliveryPageState extends State<CurrentDeliveryPage> {
         if (response.statusCode == 200) {
           var res = response.body;
           if (res.contains("ErrorCode#2")) {
-            glb.showSnackBar(context, 'Error', 'No New Orders Found');
+            // glb.showSnackBar(context, 'Alert', 'No New Order Assigned');
             SharedPreferenceUtils.save_val("mark_free", "Free");
             setState(() {
               showLoading = false;
@@ -115,6 +119,9 @@ class _CurrentDeliveryPageState extends State<CurrentDeliveryPage> {
               var profile_img = currentOrderMap['profile_img'];
               var device_token = currentOrderMap['device_token'];
               var mobile_no = currentOrderMap['mobile_no'];
+              var booking_id = currentOrderMap['booking_id'];
+              var customer_id = currentOrderMap['customer_id'];
+              var branch_id = currentOrderMap['branch_id'];
 
               setState(() {
                 orderRecievedDate =
@@ -124,7 +131,9 @@ class _CurrentDeliveryPageState extends State<CurrentDeliveryPage> {
                 showLoading = false;
                 noOrders = false;
                 orderID = orderid;
+                bookingID = booking_id;
                 customerName = customer_name;
+                glb.customerID = customer_id;
                 orderStatus = order_status;
                 cLat = clat;
                 cLng = clng;
@@ -136,6 +145,7 @@ class _CurrentDeliveryPageState extends State<CurrentDeliveryPage> {
                 profileImg = profile_img;
                 deviceToken = device_token;
                 mobileNo = mobile_no;
+                branchID = branch_id;
               });
             } catch (e) {
               if (kDebugMode) {
@@ -178,15 +188,17 @@ class _CurrentDeliveryPageState extends State<CurrentDeliveryPage> {
     double width = MediaQuery.of(context).size.width;
 
     return Scaffold(
-      backgroundColor: Colors.black,
+      backgroundColor: AppColors.whiteColor,
       appBar: AppBar(
         automaticallyImplyLeading: false,
         elevation: 0,
-        backgroundColor: Colors.transparent,
+        backgroundColor: Colors.deepOrange,
         systemOverlayStyle:
             SystemUiOverlayStyle(statusBarBrightness: Brightness.dark),
         actions: [
-          orderStatus == "Payment Done" || orderStatus == "Out for Delivery"
+          orderStatus == "Payment Done" ||
+                  orderStatus == "Out for Delivery" ||
+                  orderStatus == "Pick Up Done"
               ? InkWell(
                   onTap: () {
                     _showPopup(context, orderID, orderStatus);
@@ -195,62 +207,107 @@ class _CurrentDeliveryPageState extends State<CurrentDeliveryPage> {
                     padding: const EdgeInsets.all(8.0),
                     child: Icon(
                       Icons.update_outlined,
-                      color: Colors.white,
+                      color: AppColors.whiteColor,
                     ),
                   ),
                 )
               : Container()
         ],
         title: Text(
-          'CURRENT DELIVERY',
-          style: ralewayStyle.copyWith(
-            color: Colors.white,
+          noOrders == false && orderID == '-1'
+              ? 'CURRENT PICKUP'
+              : 'CURRENT DELIVERY',
+          style: nunitoStyle.copyWith(
+            color: AppColors.whiteColor,
             fontSize: 20.0,
             fontWeight: FontWeight.bold,
           ),
         ),
       ),
-      body: noOrders
-          ? Center(
-              child: Text(
-                'No Orders Assigned',
-                style: ralewayStyle.copyWith(
-                    fontWeight: FontWeight.bold,
-                    fontSize: 20.0,
-                    color: AppColors.whiteColor),
-              ),
-            )
-          : CustomScrollView(
-              slivers: [
-                SliverToBoxAdapter(
-                    child: Column(
-                  children: [
-                    _OrderDetails(
-                        addressClient: addressUser,
-                        orderID: orderID,
-                        orderStatus: orderStatus,
-                        pickUpDateTime: orderRecievedDate,
-                        deliveryDateTime: 'Not Delivered'),
-                    const Divider(
-                      color: AppColors.whiteColor,
-                      thickness: 0.5,
+      body: showLoading
+          ? Center(child: CircularProgressIndicator())
+          : noOrders
+              ? Center(
+                  child: Text(
+                    'Not Assigned any Order Pickup / Drop',
+                    style: nunitoStyle.copyWith(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 20.0,
+                      color: AppColors.backColor,
                     ),
-                    _CustomerDetails(
-                        width: width,
-                        profilePicture: profileImg,
-                        customerName: customerName,
-                        mobileNo: mobileNo,
-                        cLat: cLat,
-                        cLng: cLng,
-                        orderStatus: orderStatus),
-                    const Divider(
-                      color: AppColors.whiteColor,
-                      thickness: 0.5,
-                    ),
-                  ],
-                ))
-              ],
-            ),
+                  ),
+                )
+              : RefreshIndicator(
+                  onRefresh: _handleRefresh,
+                  child: CustomScrollView(
+                    slivers: [
+                      SliverToBoxAdapter(
+                          child: Column(
+                        children: [
+                          _OrderDetails(
+                              bookingID: bookingID,
+                              addressClient: addressUser,
+                              orderID: orderID,
+                              orderStatus: orderStatus,
+                              pickUpDateTime: orderRecievedDate,
+                              deliveryDateTime: 'Not Delivered'),
+                          const Divider(
+                            color: AppColors.backColor,
+                            thickness: 0.5,
+                          ),
+                          _CustomerDetails(
+                              width: width,
+                              profilePicture: profileImg,
+                              customerName: customerName,
+                              mobileNo: mobileNo,
+                              cLat: cLat,
+                              cLng: cLng,
+                              orderStatus: orderStatus),
+                          const Divider(
+                            color: AppColors.backColor,
+                            thickness: 0.5,
+                          ),
+                          orderID == '-1'
+                              ? Padding(
+                                  padding: const EdgeInsets.all(12.0),
+                                  child: Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      Text(
+                                        'Total Laundry',
+                                        style: nunitoStyle.copyWith(
+                                          fontSize: 14.0,
+                                          fontWeight: FontWeight.normal,
+                                          color: AppColors.backColor,
+                                        ),
+                                      ),
+                                      InkWell(
+                                        onTap: () {
+                                          glb.addItems = true;
+                                          glb.showPayOption = false;
+                                          glb.booking_id = bookingID;
+                                          glb.branch_id = branchID;
+                                          Navigator.pushNamed(
+                                              context, MyBagRoute);
+                                        },
+                                        child: Text(
+                                          'Add Item',
+                                          style: nunitoStyle.copyWith(
+                                              fontSize: 15.0,
+                                              fontWeight: FontWeight.w600,
+                                              color: AppColors.blueColor),
+                                        ),
+                                      )
+                                    ],
+                                  ),
+                                )
+                              : Container()
+                        ],
+                      ))
+                    ],
+                  ),
+                ),
     );
   }
 
@@ -279,7 +336,7 @@ class _CurrentDeliveryPageState extends State<CurrentDeliveryPage> {
     //         borderRadius: BorderRadius.circular(16.0),
     //       ),
     //       elevation: 5,
-    //       backgroundColor: Colors.black,
+    //       backgroundColor: AppColors.whiteColor,
     //       content: StatefulBuilder(
     //         builder: (context, setState) {
     //           return Container(
@@ -289,7 +346,7 @@ class _CurrentDeliveryPageState extends State<CurrentDeliveryPage> {
     //               children: [
     //                 Text(
     //                   'Update Order Status',
-    //                   style: ralewayStyle.copyWith(
+    //                   style: nunitoStyle.copyWith(
     //                       fontWeight: FontWeight.bold,
     //                       fontSize: 20.0,
     //                       color: AppColors.whiteColor),
@@ -329,7 +386,7 @@ class _CurrentDeliveryPageState extends State<CurrentDeliveryPage> {
     //                                 children: [
     //                                   Text(
     //                                     updateToStatus,
-    //                                     style: ralewayStyle.copyWith(
+    //                                     style: nunitoStyle.copyWith(
     //                                         fontWeight: FontWeight.bold,
     //                                         color: AppColors.whiteColor),
     //                                   ),
@@ -364,7 +421,7 @@ class _CurrentDeliveryPageState extends State<CurrentDeliveryPage> {
     //                                       padding: const EdgeInsets.all(12.0),
     //                                       child: Text(
     //                                         'Update Status',
-    //                                         style: ralewayStyle.copyWith(
+    //                                         style: nunitoStyle.copyWith(
     //                                             fontSize: 16.0,
     //                                             fontWeight: FontWeight.bold,
     //                                             color: Colors.white),
@@ -391,6 +448,8 @@ class _CurrentDeliveryPageState extends State<CurrentDeliveryPage> {
     // );
   }
 }
+
+class _TotalClothesCount {}
 
 Future<void> navigateTo(double lat, double lng) async {
   // Check if the URL can be launched (i.e., if the user has a map app installed).
@@ -464,16 +523,19 @@ class _CustomerDetails extends StatelessWidget {
                         outerColor: Colors.orangeAccent,
                         innerAnimationSeconds: 10,
                         outerAnimationSeconds: 10,
-                        child: profilePicture != "NA" ? Container(
-                          decoration: BoxDecoration(
-                              shape: BoxShape.circle, color: Colors.grey[200]),
-                          child: CircleAvatar(
-                            radius: 25.0,
-                            backgroundImage: NetworkImage('$profilePicture'),
-                            backgroundColor: Colors.transparent,
-                          ),
-                        ) : Container()
-                      ),
+                        child: profilePicture != "NA"
+                            ? Container(
+                                decoration: BoxDecoration(
+                                    shape: BoxShape.circle,
+                                    color: Colors.grey[200]),
+                                child: CircleAvatar(
+                                  radius: 25.0,
+                                  backgroundImage:
+                                      NetworkImage('$profilePicture'),
+                                  backgroundColor: Colors.transparent,
+                                ),
+                              )
+                            : Container()),
                 SizedBox(
                   width: width * 0.04,
                 ),
@@ -485,16 +547,17 @@ class _CustomerDetails extends StatelessWidget {
                       style: nunitoStyle.copyWith(
                           fontSize: 18.0,
                           fontWeight: FontWeight.w600,
-                          color: AppColors.neonColor),
+                          color: AppColors.blueColor),
                     ),
                     Visibility(
                       visible: false,
                       child: Text(
                         mobileNo,
                         style: nunitoStyle.copyWith(
-                            fontSize: 14.0,
-                            fontWeight: FontWeight.normal,
-                            color: AppColors.whiteColor),
+                          fontSize: 14.0,
+                          fontWeight: FontWeight.normal,
+                          color: AppColors.backColor,
+                        ),
                       ),
                     ),
                   ],
@@ -502,7 +565,6 @@ class _CustomerDetails extends StatelessWidget {
               ],
             ),
             Row(
-              
               children: [
                 SlideFromRightAnimation(
                   delay: 0.9,
@@ -510,9 +572,7 @@ class _CustomerDetails extends StatelessWidget {
                     color: Colors.transparent,
                     child: InkWell(
                       onTap: () {
-                        
-                          _makePhoneCall(mobileNo);
-                      
+                        _makePhoneCall(mobileNo);
                       },
                       borderRadius: BorderRadius.circular(10.0),
                       child: Ink(
@@ -524,7 +584,7 @@ class _CustomerDetails extends StatelessWidget {
                             children: [
                               const Icon(
                                 Icons.phone,
-                                color: AppColors.neonColor,
+                                color: AppColors.blueColor,
                                 size: 20,
                               ),
                               Padding(
@@ -534,7 +594,7 @@ class _CustomerDetails extends StatelessWidget {
                                   style: nunitoStyle.copyWith(
                                       fontSize: 12.0,
                                       fontWeight: FontWeight.normal,
-                                      color: AppColors.neonColor),
+                                      color: AppColors.blueColor),
                                 ),
                               ),
                             ],
@@ -544,7 +604,6 @@ class _CustomerDetails extends StatelessWidget {
                     ),
                   ),
                 ),
-                 
                 SlideFromRightAnimation(
                   delay: 0.9,
                   child: Material(
@@ -563,7 +622,7 @@ class _CustomerDetails extends StatelessWidget {
                             children: [
                               const Icon(
                                 Icons.location_on,
-                                color: AppColors.neonColor,
+                                color: AppColors.blueColor,
                                 size: 20,
                               ),
                               Padding(
@@ -573,7 +632,7 @@ class _CustomerDetails extends StatelessWidget {
                                   style: nunitoStyle.copyWith(
                                       fontSize: 12.0,
                                       fontWeight: FontWeight.normal,
-                                      color: AppColors.neonColor),
+                                      color: AppColors.blueColor),
                                 ),
                               ),
                             ],
@@ -600,9 +659,11 @@ class _OrderDetails extends StatelessWidget {
     required this.pickUpDateTime,
     required this.deliveryDateTime,
     required this.addressClient,
+    required this.bookingID,
   });
   final String orderStatus;
   final String orderID;
+  final String bookingID;
   final String pickUpDateTime;
   final String deliveryDateTime;
   final String addressClient;
@@ -641,7 +702,7 @@ class _OrderDetails extends StatelessWidget {
                                 orderStatus == "Out for Delivery" ||
                                 orderStatus == "Completed"
                             ? AppColors.backColor
-                            : AppColors.whiteColor,
+                            : AppColors.blueColor,
                       ),
                     ),
                   ),
@@ -649,11 +710,11 @@ class _OrderDetails extends StatelessWidget {
                     width: 100,
                     height: 1,
                     color: orderStatus == "Processing" ||
-                    orderStatus == "Pick Up Done" ||
+                            orderStatus == "Pick Up Done" ||
                             orderStatus == "Out for Delivery" ||
                             orderStatus == "Completed"
                         ? AppColors.neonColor
-                        : AppColors.whiteColor,
+                        : AppColors.backColor,
                   ),
                   Container(
                     decoration: BoxDecoration(
@@ -671,7 +732,7 @@ class _OrderDetails extends StatelessWidget {
                                 orderStatus == "Out for Delivery" ||
                                 orderStatus == "Completed"
                             ? AppColors.backColor
-                            : AppColors.whiteColor,
+                            : AppColors.blueColor,
                       ),
                     ),
                   ),
@@ -682,7 +743,7 @@ class _OrderDetails extends StatelessWidget {
                               orderStatus == "Out for Delivery" ||
                               orderStatus == "Completed"
                           ? AppColors.neonColor
-                          : AppColors.whiteColor),
+                          : AppColors.backColor),
                   Container(
                     decoration: BoxDecoration(
                         color: AppColors.lightBlackColor,
@@ -699,9 +760,9 @@ class _OrderDetails extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Text(
-                    'Order',
+                    orderID == '-1' ? 'Status' : 'Order',
                     style: nunitoStyle.copyWith(
-                      color: AppColors.whiteColor,
+                      color: AppColors.backColor,
                       fontWeight: FontWeight.bold,
                       fontSize: 18,
                     ),
@@ -714,7 +775,7 @@ class _OrderDetails extends StatelessWidget {
                               child: Text(
                                 'Assigning',
                                 style: nunitoStyle.copyWith(
-                                    color: AppColors.orangeColor,
+                                    color: AppColors.blueColor,
                                     fontSize: 8,
                                     fontWeight: FontWeight.bold),
                               ),
@@ -728,7 +789,7 @@ class _OrderDetails extends StatelessWidget {
                       : Text(
                           orderStatus,
                           style: nunitoStyle.copyWith(
-                              color: AppColors.orangeColor,
+                              color: AppColors.blueColor,
                               fontSize: 16,
                               fontWeight: FontWeight.bold),
                         ),
@@ -741,17 +802,17 @@ class _OrderDetails extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Text(
-                    'Order ID',
+                    orderID == '-1' ? 'Booking ID' : 'Order ID',
                     style: nunitoStyle.copyWith(
-                      color: AppColors.whiteColor,
+                      color: AppColors.backColor,
                       fontWeight: FontWeight.bold,
                       fontSize: 14,
                     ),
                   ),
                   Text(
-                    '#${orderID}',
+                    orderID == '-1' ? '#${bookingID}' : '#${orderID}',
                     style: nunitoStyle.copyWith(
-                      color: AppColors.neonColor,
+                      color: Colors.deepOrange,
                       fontSize: 14,
                     ),
                   ),
@@ -766,7 +827,7 @@ class _OrderDetails extends StatelessWidget {
                   Text(
                     'Pick Up:',
                     style: nunitoStyle.copyWith(
-                      color: AppColors.whiteColor,
+                      color: AppColors.backColor,
                       fontWeight: FontWeight.normal,
                       fontSize: 14,
                     ),
@@ -774,7 +835,7 @@ class _OrderDetails extends StatelessWidget {
                   Text(
                     pickUpDateTime,
                     style: nunitoStyle.copyWith(
-                      color: AppColors.whiteColor,
+                      color: AppColors.backColor,
                       fontWeight: FontWeight.w500,
                       fontSize: 14,
                     ),
@@ -790,7 +851,7 @@ class _OrderDetails extends StatelessWidget {
                   Text(
                     'Delivered Date:',
                     style: nunitoStyle.copyWith(
-                      color: AppColors.whiteColor,
+                      color: AppColors.backColor,
                       fontWeight: FontWeight.normal,
                       fontSize: 14,
                     ),
@@ -798,7 +859,7 @@ class _OrderDetails extends StatelessWidget {
                   Text(
                     deliveryDateTime,
                     style: nunitoStyle.copyWith(
-                      color: AppColors.whiteColor,
+                      color: AppColors.backColor,
                       fontWeight: FontWeight.w500,
                       fontSize: 14,
                     ),
@@ -814,7 +875,7 @@ class _OrderDetails extends StatelessWidget {
                   Text(
                     'Address:',
                     style: nunitoStyle.copyWith(
-                      color: AppColors.whiteColor,
+                      color: AppColors.backColor,
                       fontWeight: FontWeight.normal,
                       fontSize: 14,
                     ),
@@ -822,7 +883,7 @@ class _OrderDetails extends StatelessWidget {
                   Text(
                     addressClient,
                     style: nunitoStyle.copyWith(
-                      color: AppColors.whiteColor,
+                      color: AppColors.backColor,
                       fontWeight: FontWeight.w500,
                       fontSize: 14,
                     ),
@@ -876,7 +937,7 @@ class _OldUI extends StatelessWidget {
                   children: [
                     Text(
                       'Order Recieved',
-                      style: ralewayStyle.copyWith(
+                      style: nunitoStyle.copyWith(
                           fontWeight: FontWeight.bold,
                           color: AppColors.whiteColor),
                     ),
@@ -928,7 +989,7 @@ class _OldUI extends StatelessWidget {
           //         children: [
           //           Text(
           //             'Pickup',
-          //             style: ralewayStyle.copyWith(
+          //             style: nunitoStyle.copyWith(
           //                 fontWeight: FontWeight.bold,
           //                 color: AppColors.whiteColor),
           //           ),
@@ -979,7 +1040,7 @@ class _OldUI extends StatelessWidget {
           //         children: [
           //           Text(
           //             'Processing',
-          //             style: ralewayStyle.copyWith(
+          //             style: nunitoStyle.copyWith(
           //                 fontWeight: FontWeight.bold,
           //                 color: AppColors.whiteColor),
           //           ),
@@ -1031,7 +1092,7 @@ class _OldUI extends StatelessWidget {
           //         children: [
           //           Text(
           //             'Order Delivered',
-          //             style: ralewayStyle.copyWith(
+          //             style: nunitoStyle.copyWith(
           //                 fontWeight: FontWeight.bold,
           //                 color: AppColors.whiteColor),
           //           ),

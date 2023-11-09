@@ -6,6 +6,7 @@ import 'package:flutter/services.dart';
 import 'package:get/get_utils/get_utils.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:shimmer/shimmer.dart';
+import 'package:vff_group/pages/orders_pages/payment_page.dart';
 import 'package:vff_group/routings/route_names.dart';
 import 'package:vff_group/utils/app_colors.dart';
 import 'package:vff_group/utils/app_styles.dart';
@@ -42,6 +43,7 @@ class _CheckOutScreenState extends State<CheckOutScreen> {
   var extraItemPrices = "";
   var razor_pay_id = "";
   var razor_pay_status = "";
+  var payment_type = "";
   var additionalInstruction = "NA";
   TextEditingController additionalInformationController =
       TextEditingController();
@@ -67,7 +69,7 @@ class _CheckOutScreenState extends State<CheckOutScreen> {
       var url = glb.endPoint;
       final Map dictMap = {};
 
-      dictMap['order_id'] = glb.orderid;
+      dictMap['booking_id'] = glb.booking_id;
       dictMap['pktType'] = "17";
       dictMap['token'] = "vff";
       dictMap['uid'] = "-1";
@@ -235,7 +237,7 @@ class _CheckOutScreenState extends State<CheckOutScreen> {
       if (index < itemIDLst.length &&
           index < itemNameLst.length &&
           index < priceLst.length) {
-            extraItemPrices = priceLst.elementAt(index);
+        extraItemPrices = priceLst.elementAt(index);
         selectedItems.add({
           'extra_item_id': itemIDLst.elementAt(index),
           'extra_item_name': itemNameLst.elementAt(index),
@@ -264,23 +266,34 @@ class _CheckOutScreenState extends State<CheckOutScreen> {
     if (additionalInstruction == null || additionalInstruction.isEmpty) {
       additionalInstruction = "NA";
     }
+    var gstamount = 0.0;
+    if(payment_type != "Cash"){
+      gstamount = ((totalPrice * 18) /100);
+    }
     print('TotalCost::$totalPrice');
-    print('deliveryPrice::$deliveryPrice'); 
-    print('FinalTotal::${totalPrice+deliveryPrice}');
-    totalPrice = totalPrice+deliveryPrice;
+    print('deliveryPrice::$deliveryPrice');
+    print('FinalTotal::${totalPrice + deliveryPrice}');
+    totalPrice = totalPrice + deliveryPrice;
     try {
       var url = glb.endPoint;
       final Map dictMap = {};
 
-      dictMap['order_id'] = glb.orderid;
+      dictMap['booking_id'] = glb.booking_id;
       dictMap['customer_id'] = customerid;
       dictMap['total_price'] = totalPrice;
       dictMap['total_items'] = totalQuantity;
       dictMap['order_status'] = "Payment Done";
       dictMap['razor_pay_id'] = razor_pay_id;
       dictMap['payment_status'] = razor_pay_status;
+      dictMap['payment_type'] = glb.paymentType;
+      dictMap['delivery_charges'] = deliveryPrice;
+      dictMap['gstamount'] = gstamount;
       dictMap['additional_instruction'] = additionalInstruction;
       dictMap['extra_items'] = extraItemJson;
+      dictMap['delivery_boy_id'] = glb.delivery_boy_id;
+      dictMap['clat'] = glb.clat;
+      dictMap['clng'] = glb.clng;
+      dictMap['branch_id'] = glb.branch_id;
       dictMap['pktType'] = "18";
       dictMap['token'] = "vff";
       dictMap['uid'] = "-1";
@@ -350,13 +363,15 @@ class _CheckOutScreenState extends State<CheckOutScreen> {
     setState(() {
       showProgress = false;
     });
+    return;
   }
 
   void _handleExternalWallet(ExternalWalletResponse response) {
     // Do something when an external wallet is selected
     print('External Wallet Response::$response');
+    print('response.walletName::${response.walletName}');
     razor_pay_status = "External Wallet";
-    savePaymentAndCartDetails();
+    //savePaymentAndCartDetails();
     setState(() {
       showProgress = false;
     });
@@ -385,13 +400,12 @@ class _CheckOutScreenState extends State<CheckOutScreen> {
     double width = MediaQuery.of(context).size.width;
     return Scaffold(
         extendBodyBehindAppBar: true,
-        backgroundColor: Colors.black,
+        backgroundColor: AppColors.whiteColor,
         appBar: AppBar(
-          backgroundColor: Colors.transparent,
           elevation: 0,
           title: Text(
             'Checkout',
-            style: ralewayStyle.copyWith(
+            style: nunitoStyle.copyWith(
               color: AppColors.whiteColor,
               fontSize: 25.0,
               fontWeight: FontWeight.bold,
@@ -402,18 +416,7 @@ class _CheckOutScreenState extends State<CheckOutScreen> {
         ),
         body: SafeArea(
           child: showProgress
-              ? Shimmer.fromColors(
-                  baseColor: Colors.grey.withOpacity(0.2),
-                  highlightColor: Colors.grey.withOpacity(0.1),
-                  enabled: showLoading,
-                  child: ListView.separated(
-                      itemCount: 10,
-                      separatorBuilder: (context, _) =>
-                          SizedBox(height: height * 0.02),
-                      itemBuilder: ((context, index) {
-                        return const ShimmerCardLayout();
-                      })),
-                )
+              ? Center(child: CircularProgressIndicator())
               : CustomScrollView(
                   slivers: [
                     SliverToBoxAdapter(
@@ -439,11 +442,11 @@ class _CheckOutScreenState extends State<CheckOutScreen> {
                                             CrossAxisAlignment.start,
                                         children: [
                                           Text(
-                                            'Other',
+                                            'Other Addons',
                                             style: nunitoStyle.copyWith(
                                                 fontSize: 20.0,
                                                 fontWeight: FontWeight.bold,
-                                                color: AppColors.whiteColor),
+                                                color: AppColors.backColor),
                                           ),
                                           Column(
                                             children: [
@@ -537,8 +540,7 @@ class _CheckOutScreenState extends State<CheckOutScreen> {
                                                 style: nunitoStyle.copyWith(
                                                     fontSize: 20.0,
                                                     fontWeight: FontWeight.bold,
-                                                    color:
-                                                        AppColors.whiteColor),
+                                                    color: AppColors.backColor),
                                               ),
                                             ],
                                           ),
@@ -555,7 +557,7 @@ class _CheckOutScreenState extends State<CheckOutScreen> {
                                               maxLines: 20,
                                               style: nunitoStyle.copyWith(
                                                   fontWeight: FontWeight.w400,
-                                                  color: AppColors.whiteColor,
+                                                  color: AppColors.backColor,
                                                   fontSize: 14.0),
                                               keyboardType: TextInputType.text,
                                               decoration: InputDecoration(
@@ -566,11 +568,11 @@ class _CheckOutScreenState extends State<CheckOutScreen> {
                                                   hintText:
                                                       'Please provide us with any specific instruction which should be followed by us.',
                                                   hintStyle:
-                                                      ralewayStyle.copyWith(
+                                                      nunitoStyle.copyWith(
                                                           fontWeight:
                                                               FontWeight.w400,
                                                           color: AppColors
-                                                              .whiteColor,
+                                                              .blueColor,
                                                           fontSize: 12.0)),
                                             ),
                                           ),
@@ -599,16 +601,15 @@ class _CheckOutScreenState extends State<CheckOutScreen> {
                                                 'Service Cost',
                                                 style: nunitoStyle.copyWith(
                                                     fontSize: 14.0,
-                                                    fontWeight: FontWeight.w500,
-                                                    color:
-                                                        AppColors.whiteColor),
+                                                    fontWeight: FontWeight.bold,
+                                                    color: AppColors.backColor),
                                               ),
                                               Text(
                                                 '₹.$totalPrice/-',
                                                 style: nunitoStyle.copyWith(
                                                     fontSize: 12.0,
                                                     fontWeight: FontWeight.bold,
-                                                    color: AppColors.neonColor),
+                                                    color: AppColors.blueColor),
                                               ),
                                             ],
                                           ),
@@ -630,7 +631,7 @@ class _CheckOutScreenState extends State<CheckOutScreen> {
                                                         fontWeight:
                                                             FontWeight.w500,
                                                         color: AppColors
-                                                            .whiteColor),
+                                                            .backColor),
                                                   ),
                                                   Text(
                                                     'Free delivery for orders above ₹.$rangeDelivery/- 😊',
@@ -639,7 +640,7 @@ class _CheckOutScreenState extends State<CheckOutScreen> {
                                                         fontWeight:
                                                             FontWeight.normal,
                                                         color: AppColors
-                                                            .whiteColor),
+                                                            .backColor),
                                                   ),
                                                 ],
                                               ),
@@ -648,8 +649,7 @@ class _CheckOutScreenState extends State<CheckOutScreen> {
                                                 style: nunitoStyle.copyWith(
                                                     fontSize: 12.0,
                                                     fontWeight: FontWeight.w500,
-                                                    color:
-                                                        AppColors.whiteColor),
+                                                    color: AppColors.backColor),
                                               ),
                                             ],
                                           ),
@@ -659,7 +659,7 @@ class _CheckOutScreenState extends State<CheckOutScreen> {
                                           const Padding(
                                             padding: EdgeInsets.all(8.0),
                                             child: Divider(
-                                              color: AppColors.whiteColor,
+                                              color: AppColors.backColor,
                                               height: 0.1,
                                               thickness: 0.1,
                                             ),
@@ -673,15 +673,14 @@ class _CheckOutScreenState extends State<CheckOutScreen> {
                                                 style: nunitoStyle.copyWith(
                                                     fontSize: 16.0,
                                                     fontWeight: FontWeight.bold,
-                                                    color:
-                                                        AppColors.whiteColor),
+                                                    color: AppColors.backColor),
                                               ),
                                               Text(
                                                 '₹.${totalPrice + deliveryPrice}/-',
                                                 style: nunitoStyle.copyWith(
                                                     fontSize: 14.0,
                                                     fontWeight: FontWeight.bold,
-                                                    color: AppColors.neonColor),
+                                                    color: AppColors.blueColor),
                                               ),
                                             ],
                                           ),
@@ -692,8 +691,224 @@ class _CheckOutScreenState extends State<CheckOutScreen> {
                                       ),
                                     ),
                                   ),
-                                  const SizedBox(
-                                    height: 30.0,
+                                  Column(
+                                    children: [
+                                      Padding(
+                                        padding: const EdgeInsets.symmetric(
+                                            horizontal: 8.0, vertical: 16.0),
+                                        child: Column(
+                                          children: [
+                                            Padding(
+                                              padding: const EdgeInsets.only(
+                                                  top: 16.0),
+                                              child: Text(
+                                                'Select Payment Method',
+                                                style: nunitoStyle.copyWith(
+                                                  color:
+                                                      AppColors.mainBlueColor,
+                                                  fontSize: 16,
+                                                  fontWeight: FontWeight.bold,
+                                                ),
+                                              ),
+                                            ),
+                                            SizedBox(
+                                              height: 10.0,
+                                            ),
+                                            Column(
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.start,
+                                              children: [
+                                                Padding(
+                                                  padding:
+                                                      const EdgeInsets.only(
+                                                          left: 8.0),
+                                                  child: Text(
+                                                    'Online',
+                                                    style: nunitoStyle.copyWith(
+                                                      color: AppColors
+                                                          .mainBlueColor,
+                                                      fontSize: 16,
+                                                      fontWeight:
+                                                          FontWeight.bold,
+                                                    ),
+                                                  ),
+                                                ),
+                                                SizedBox(
+                                                  height: 10.0,
+                                                ),
+                                                Material(
+                                                  color: Colors.transparent,
+                                                  child: InkWell(
+                                                    onTap: () {
+                                                      setState(() {
+                                                        glb.paymentType =
+                                                            'Online';
+                                                      });
+                                                    },
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            12.0),
+                                                    child: Container(
+                                                      decoration: BoxDecoration(
+                                                          color: glb.paymentType ==
+                                                                  'Online'
+                                                              ? AppColors
+                                                                  .blueColor
+                                                              : AppColors
+                                                                  .secondaryBackColor,
+                                                          borderRadius:
+                                                              BorderRadius
+                                                                  .circular(
+                                                                      12.0)),
+                                                      child: Padding(
+                                                        padding:
+                                                            const EdgeInsets
+                                                                .all(16.0),
+                                                        child: Row(
+                                                          children: [
+                                                            Container(
+                                                                decoration: BoxDecoration(
+                                                                    color: AppColors
+                                                                        .whiteColor,
+                                                                    borderRadius:
+                                                                        BorderRadius.circular(
+                                                                            25.0)),
+                                                                child: Padding(
+                                                                  padding:
+                                                                      const EdgeInsets
+                                                                          .all(
+                                                                          8.0),
+                                                                  child: Icon(
+                                                                    Icons
+                                                                        .payment,
+                                                                    color: AppColors
+                                                                        .blueColor,
+                                                                  ),
+                                                                )),
+                                                            Text(
+                                                              'UPI/Online/Card',
+                                                              style: nunitoStyle
+                                                                  .copyWith(
+                                                                color: glb.paymentType ==
+                                                                        'Online'
+                                                                    ? AppColors
+                                                                        .whiteColor
+                                                                    : AppColors
+                                                                        .backColor,
+                                                                fontSize: 16,
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .bold,
+                                                              ),
+                                                            ),
+                                                          ],
+                                                        ),
+                                                      ),
+                                                    ),
+                                                  ),
+                                                ),
+                                                SizedBox(
+                                                  height: 10.0,
+                                                ),
+                                                Padding(
+                                                  padding:
+                                                      const EdgeInsets.only(
+                                                          left: 8.0),
+                                                  child: Text(
+                                                    'Cash',
+                                                    style: nunitoStyle.copyWith(
+                                                      color: AppColors
+                                                          .mainBlueColor,
+                                                      fontSize: 16,
+                                                      fontWeight:
+                                                          FontWeight.bold,
+                                                    ),
+                                                  ),
+                                                ),
+                                                SizedBox(
+                                                  height: 10.0,
+                                                ),
+                                                Material(
+                                                  color: Colors.transparent,
+                                                  child: InkWell(
+                                                    onTap: () {
+                                                      setState(() {
+                                                        glb.paymentType =
+                                                            'Cash';
+                                                      });
+                                                    },
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            12.0),
+                                                    child: Ink(
+                                                      decoration: BoxDecoration(
+                                                          color: glb.paymentType ==
+                                                                  "Cash"
+                                                              ? AppColors
+                                                                  .blueColor
+                                                              : AppColors
+                                                                  .secondaryBackColor,
+                                                          borderRadius:
+                                                              BorderRadius
+                                                                  .circular(
+                                                                      12.0)),
+                                                      child: Padding(
+                                                        padding:
+                                                            const EdgeInsets
+                                                                .all(16.0),
+                                                        child: Row(
+                                                          children: [
+                                                            Container(
+                                                                decoration: BoxDecoration(
+                                                                    color: AppColors
+                                                                        .whiteColor,
+                                                                    borderRadius:
+                                                                        BorderRadius.circular(
+                                                                            25.0)),
+                                                                child: Padding(
+                                                                  padding:
+                                                                      const EdgeInsets
+                                                                          .all(
+                                                                          8.0),
+                                                                  child: Icon(
+                                                                    Icons.money,
+                                                                    color: AppColors
+                                                                        .blueColor,
+                                                                  ),
+                                                                )),
+                                                            SizedBox(
+                                                              width: 10.0,
+                                                            ),
+                                                            Text(
+                                                              'By Cash Payment',
+                                                              style: nunitoStyle
+                                                                  .copyWith(
+                                                                color: glb
+                                                                            .paymentType ==
+                                                                        "Cash"
+                                                                    ? AppColors
+                                                                        .whiteColor
+                                                                    : AppColors
+                                                                        .backColor,
+                                                                fontSize: 16,
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .bold,
+                                                              ),
+                                                            ),
+                                                          ],
+                                                        ),
+                                                      ),
+                                                    ),
+                                                  ),
+                                                )
+                                              ],
+                                            )
+                                          ],
+                                        ),
+                                      ),
+                                      // Add to cart button
+                                    ],
                                   ),
                                   Visibility(
                                     visible: glb.showPayOption,
@@ -701,43 +916,56 @@ class _CheckOutScreenState extends State<CheckOutScreen> {
                                       color: Colors.transparent,
                                       child: InkWell(
                                         onTap: () {
+                                          if(glb.paymentType.isEmpty){
+                                            glb.showSnackBar(context, 'Alert', 'Please Select Payment Type Above');
+                                            return;
+                                          }
                                           setState(() {
                                             showProgress = true;
                                           });
                                           //Razor Pay Code
-                                          var options = {
-                                            'key': 'rzp_test_qtHIWapeUEAAZO',
-                                            'amount': (totalPrice +
-                                                    deliveryPrice) *
-                                                100, //in the smallest currency sub-unit.
-                                            'name': 'VFF Group',
-                                            'description':
-                                                'Laundry service charge',
-                                            'timeout': 100, // in seconds
-                                          };
-                                  
-                                          //To Open RazorPay Activity
-                                          
-                                          _razorpay.open(options);
+                                          if (glb.paymentType == "Online") {
+                                            var options = {
+                                              'key': 'rzp_test_qtHIWapeUEAAZO',
+                                              'amount': (totalPrice +
+                                                      deliveryPrice) *
+                                                  100, //in the smallest currency sub-unit.
+                                              'name': 'VFF Group',
+                                              'image': 'https://vff-group.com/static/images/logo.png',
+                                              'description':
+                                                  'Laundry service charge',
+                                              'timeout': 100, // in seconds
+                                            };
+
+                                            //To Open RazorPay Activity
+
+                                            _razorpay.open(options);
+                                          } else {
+                                            razor_pay_status = "Cash";
+                                            razor_pay_id = "-1";
+                                            savePaymentAndCartDetails();
+                                          }
                                         },
-                                        borderRadius: BorderRadius.circular(12.0),
+                                        borderRadius:
+                                            BorderRadius.circular(12.0),
                                         child: Ink(
                                             decoration: BoxDecoration(
-                                              borderRadius:
-                                                  BorderRadius.circular(12.0),
-                                                  color: AppColors.blueColor
-                                              // gradient: LinearGradient(colors: [
-                                              //   Colors.green,
-                                              //   Colors.blue,
-                                              // ]),
-                                            ),
+                                                borderRadius:
+                                                    BorderRadius.circular(12.0),
+                                                color: AppColors.blueColor
+                                                // gradient: LinearGradient(colors: [
+                                                //   Colors.green,
+                                                //   Colors.blue,
+                                                // ]),
+                                                ),
                                             child: Padding(
-                                              padding: const EdgeInsets.symmetric(
-                                                  horizontal: 30.0,
-                                                  vertical: 10.0),
+                                              padding:
+                                                  const EdgeInsets.symmetric(
+                                                      horizontal: 30.0,
+                                                      vertical: 10.0),
                                               child: Text(
                                                 'Pay Now',
-                                                style: ralewayStyle.copyWith(
+                                                style: nunitoStyle.copyWith(
                                                     fontWeight: FontWeight.bold,
                                                     color: AppColors.whiteColor,
                                                     fontSize: 18.0),
@@ -754,4 +982,14 @@ class _CheckOutScreenState extends State<CheckOutScreen> {
                 ),
         ));
   }
+}
+
+void _showPaymentOptions(BuildContext context, totalPrice, deliveryPrice) {
+  var totalPayableAmount = (totalPrice + deliveryPrice);
+  showModalBottomSheet(
+    context: context,
+    builder: (BuildContext context) {
+      return SelectPaymentMethod(totalPayable: totalPayableAmount);
+    },
+  );
 }

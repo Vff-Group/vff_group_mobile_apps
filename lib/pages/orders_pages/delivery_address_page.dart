@@ -68,7 +68,7 @@ class _DeliveryAddressPageState extends State<DeliveryAddressPage> {
           setState(() {
             isLoading = false;
           });
-          glb.showSnackBar(context, 'Error', 'No Address Details Found');
+          glb.showSnackBar(context, 'Alert', 'No Address Details Found');
           return;
         } else if (res.contains("ErrorCode#8")) {
           glb.showSnackBar(context, 'Error', 'Something Went Wrong');
@@ -150,6 +150,7 @@ class _DeliveryAddressPageState extends State<DeliveryAddressPage> {
       dictMap['customerUsrid'] = usrid;
       dictMap['clat'] = latitude;
       dictMap['clng'] = longitude;
+      dictMap['branch_id'] = glb.branch_id;
       dictMap['pktType'] = "4";
       dictMap['token'] = "vff";
       dictMap['uid'] = "-1";
@@ -227,7 +228,7 @@ class _DeliveryAddressPageState extends State<DeliveryAddressPage> {
                     children: [
                       Text(
                         'Go Back to Main Screen',
-                        style: ralewayStyle.copyWith(
+                        style: nunitoStyle.copyWith(
                             fontSize: 14.0,
                             fontWeight: FontWeight.bold,
                             color: AppColors.textColor),
@@ -298,14 +299,14 @@ class _DeliveryAddressPageState extends State<DeliveryAddressPage> {
 
   Future<void> _getCurrentPosition() async {
     final hasPermission = await _handleLocationPermission();
-
+    print("hasPermission$hasPermission");
     if (!hasPermission) return;
     await Geolocator.getCurrentPosition(
             desiredAccuracy: geolocator.LocationAccuracy.high)
         .then((Position position) {
       setState(() => _currentPosition = position);
       // _getAddressFromLatLng(_currentPosition!);
-      print(_currentPosition);
+      print('Finding Locations::$_currentPosition');
       if (_currentPosition != null) {
         latitude = _currentPosition!.latitude;
         longitude = _currentPosition!.longitude;
@@ -324,14 +325,13 @@ class _DeliveryAddressPageState extends State<DeliveryAddressPage> {
         FocusManager.instance.primaryFocus?.unfocus();
       },
       child: Scaffold(
-        backgroundColor: AppColors.backColor,
+        backgroundColor: AppColors.whiteColor,
         appBar: AppBar(
-            backgroundColor: Colors.transparent,
             elevation: 0,
             title: FadeAnimation(
               delay: 0.3,
               child: Text('Address Details',
-                  style: ralewayStyle.copyWith(
+                  style: nunitoStyle.copyWith(
                       fontSize: 20.0,
                       color: AppColors.whiteColor,
                       fontWeight: FontWeight.bold,
@@ -351,7 +351,7 @@ class _DeliveryAddressPageState extends State<DeliveryAddressPage> {
                             padding: const EdgeInsets.all(8.0),
                             child: Text(
                               'Pick Up Placed Successfully !',
-                              style: ralewayStyle.copyWith(
+                              style: nunitoStyle.copyWith(
                                   fontSize: 25.0,
                                   fontWeight: FontWeight.bold,
                                   color: AppColors.whiteColor),
@@ -383,10 +383,10 @@ class _DeliveryAddressPageState extends State<DeliveryAddressPage> {
                                               Center(
                                                 child: Text(
                                                   'Add Pick Up & Delivery Address',
-                                                  style: ralewayStyle.copyWith(
+                                                  style: nunitoStyle.copyWith(
                                                       fontSize: 14.0,
                                                       color:
-                                                          AppColors.whiteColor,
+                                                          AppColors.backColor,
                                                       fontWeight:
                                                           FontWeight.bold,
                                                       letterSpacing: 1),
@@ -398,9 +398,9 @@ class _DeliveryAddressPageState extends State<DeliveryAddressPage> {
                                               ),
                                               Text(
                                                   'Our delivery experts will assist you through the process, and payment will be securely processed to ensure a convenient and efficient service experience.',
-                                                  style: ralewayStyle.copyWith(
+                                                  style: nunitoStyle.copyWith(
                                                     fontSize: 14.0,
-                                                    color: AppColors.whiteColor,
+                                                    color: AppColors.backColor,
                                                     fontWeight: FontWeight.w200,
                                                   )),
                                               const SizedBox(
@@ -408,14 +408,14 @@ class _DeliveryAddressPageState extends State<DeliveryAddressPage> {
                                               ),
                                               Container(
                                                 decoration: BoxDecoration(
-                                                  borderRadius:
-                                                      BorderRadius.circular(
-                                                          12.0),
-                                                  gradient:  LinearGradient(colors: [
-                                                          Colors.green,
-                                                          Colors.blue,
-                                                        ])
-                                                ),
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            12.0),
+                                                    gradient:
+                                                        LinearGradient(colors: [
+                                                      Colors.green,
+                                                      Colors.blue,
+                                                    ])),
                                                 child: Padding(
                                                   padding:
                                                       const EdgeInsets.only(
@@ -436,7 +436,7 @@ class _DeliveryAddressPageState extends State<DeliveryAddressPage> {
                                                         height: 5.0,
                                                       ),
                                                       Text('Home',
-                                                          style: ralewayStyle
+                                                          style: nunitoStyle
                                                               .copyWith(
                                                             fontSize: 20.0,
                                                             color: AppColors
@@ -452,10 +452,10 @@ class _DeliveryAddressPageState extends State<DeliveryAddressPage> {
                                                 height: 10.0,
                                               ),
                                               Text('Enter Address Details',
-                                                  style: ralewayStyle.copyWith(
+                                                  style: nunitoStyle.copyWith(
                                                       fontSize: 20.0,
                                                       color:
-                                                          AppColors.whiteColor,
+                                                          AppColors.backColor,
                                                       fontWeight:
                                                           FontWeight.bold,
                                                       letterSpacing: 1)),
@@ -472,7 +472,7 @@ class _DeliveryAddressPageState extends State<DeliveryAddressPage> {
                                                             BorderRadius
                                                                 .circular(8.0),
                                                         color: AppColors
-                                                            .lightBlackColor),
+                                                            .secondaryBackColor),
                                                     child: TextFormField(
                                                       controller:
                                                           buildingNoController,
@@ -482,7 +482,7 @@ class _DeliveryAddressPageState extends State<DeliveryAddressPage> {
                                                                   FontWeight
                                                                       .w400,
                                                               color: AppColors
-                                                                  .whiteColor,
+                                                                  .backColor,
                                                               fontSize: 14.0),
                                                       keyboardType:
                                                           TextInputType.text,
@@ -492,8 +492,8 @@ class _DeliveryAddressPageState extends State<DeliveryAddressPage> {
                                                                   const Icon(
                                                                 Icons
                                                                     .home_work_outlined,
-                                                                color: Colors
-                                                                    .white,
+                                                                color:
+                                                                    Colors.blue,
                                                               ),
                                                               border:
                                                                   InputBorder
@@ -505,12 +505,12 @@ class _DeliveryAddressPageState extends State<DeliveryAddressPage> {
                                                                           16.0),
                                                               hintText:
                                                                   ' Building/Society Name & Number',
-                                                              hintStyle: ralewayStyle.copyWith(
+                                                              hintStyle: nunitoStyle.copyWith(
                                                                   fontWeight:
                                                                       FontWeight
                                                                           .w400,
                                                                   color: AppColors
-                                                                      .whiteColor
+                                                                      .backColor
                                                                       .withOpacity(
                                                                           0.5),
                                                                   fontSize:
@@ -528,7 +528,7 @@ class _DeliveryAddressPageState extends State<DeliveryAddressPage> {
                                                             BorderRadius
                                                                 .circular(8.0),
                                                         color: AppColors
-                                                            .lightBlackColor),
+                                                            .secondaryBackColor),
                                                     child: TextFormField(
                                                       controller:
                                                           streetAddressController,
@@ -538,7 +538,7 @@ class _DeliveryAddressPageState extends State<DeliveryAddressPage> {
                                                                   FontWeight
                                                                       .w400,
                                                               color: AppColors
-                                                                  .whiteColor,
+                                                                  .backColor,
                                                               fontSize: 14.0),
                                                       keyboardType:
                                                           TextInputType.text,
@@ -548,8 +548,8 @@ class _DeliveryAddressPageState extends State<DeliveryAddressPage> {
                                                                   const Icon(
                                                                 Icons
                                                                     .roundabout_right,
-                                                                color: Colors
-                                                                    .white,
+                                                                color:
+                                                                    Colors.blue,
                                                               ),
                                                               border:
                                                                   InputBorder
@@ -561,12 +561,12 @@ class _DeliveryAddressPageState extends State<DeliveryAddressPage> {
                                                                           16.0),
                                                               hintText:
                                                                   ' Street Address, Landmark etc.',
-                                                              hintStyle: ralewayStyle.copyWith(
+                                                              hintStyle: nunitoStyle.copyWith(
                                                                   fontWeight:
                                                                       FontWeight
                                                                           .w400,
                                                                   color: AppColors
-                                                                      .whiteColor
+                                                                      .backColor
                                                                       .withOpacity(
                                                                           0.5),
                                                                   fontSize:
@@ -588,7 +588,7 @@ class _DeliveryAddressPageState extends State<DeliveryAddressPage> {
                                                                       .circular(
                                                                           8.0),
                                                               color: AppColors
-                                                                  .lightBlackColor),
+                                                                  .secondaryBackColor),
                                                           child: TextFormField(
                                                             controller:
                                                                 cityController,
@@ -597,7 +597,7 @@ class _DeliveryAddressPageState extends State<DeliveryAddressPage> {
                                                                     FontWeight
                                                                         .w400,
                                                                 color: AppColors
-                                                                    .whiteColor,
+                                                                    .backColor,
                                                                 fontSize: 14.0),
                                                             keyboardType:
                                                                 TextInputType
@@ -609,7 +609,7 @@ class _DeliveryAddressPageState extends State<DeliveryAddressPage> {
                                                                       Icons
                                                                           .location_city_outlined,
                                                                       color: Colors
-                                                                          .white,
+                                                                          .blue,
                                                                     ),
                                                                     border:
                                                                         InputBorder
@@ -620,12 +620,12 @@ class _DeliveryAddressPageState extends State<DeliveryAddressPage> {
                                                                                 16.0),
                                                                     hintText:
                                                                         ' City',
-                                                                    hintStyle: ralewayStyle.copyWith(
+                                                                    hintStyle: nunitoStyle.copyWith(
                                                                         fontWeight:
                                                                             FontWeight
                                                                                 .w400,
                                                                         color: AppColors
-                                                                            .whiteColor
+                                                                            .backColor
                                                                             .withOpacity(
                                                                                 0.5),
                                                                         fontSize:
@@ -647,7 +647,7 @@ class _DeliveryAddressPageState extends State<DeliveryAddressPage> {
                                                                       .circular(
                                                                           8.0),
                                                               color: AppColors
-                                                                  .lightBlackColor),
+                                                                  .secondaryBackColor),
                                                           child: TextFormField(
                                                             controller:
                                                                 zipCodeController,
@@ -656,7 +656,7 @@ class _DeliveryAddressPageState extends State<DeliveryAddressPage> {
                                                                     FontWeight
                                                                         .w400,
                                                                 color: AppColors
-                                                                    .whiteColor,
+                                                                    .backColor,
                                                                 fontSize: 14.0),
                                                             keyboardType:
                                                                 TextInputType
@@ -679,12 +679,12 @@ class _DeliveryAddressPageState extends State<DeliveryAddressPage> {
                                                                                 16.0),
                                                                     hintText:
                                                                         ' Zip Code',
-                                                                    hintStyle: ralewayStyle.copyWith(
+                                                                    hintStyle: nunitoStyle.copyWith(
                                                                         fontWeight:
                                                                             FontWeight
                                                                                 .w400,
                                                                         color: AppColors
-                                                                            .whiteColor
+                                                                            .backColor
                                                                             .withOpacity(
                                                                                 0.5),
                                                                         fontSize:
@@ -715,7 +715,7 @@ class _DeliveryAddressPageState extends State<DeliveryAddressPage> {
                                                                   FontWeight
                                                                       .w400,
                                                               color: AppColors
-                                                                  .whiteColor,
+                                                                  .backColor,
                                                               fontSize: 14.0),
                                                       keyboardType:
                                                           TextInputType.text,
@@ -725,8 +725,8 @@ class _DeliveryAddressPageState extends State<DeliveryAddressPage> {
                                                                   const Icon(
                                                                 Icons
                                                                     .location_on,
-                                                                color: AppColors
-                                                                    .whiteColor,
+                                                                color:
+                                                                    Colors.blue,
                                                               ),
                                                               border:
                                                                   InputBorder
@@ -738,12 +738,12 @@ class _DeliveryAddressPageState extends State<DeliveryAddressPage> {
                                                                           16.0),
                                                               hintText:
                                                                   'Landmark [ Example:Car Showroom,etc ]',
-                                                              hintStyle: ralewayStyle.copyWith(
+                                                              hintStyle: nunitoStyle.copyWith(
                                                                   fontWeight:
                                                                       FontWeight
                                                                           .w400,
                                                                   color: AppColors
-                                                                      .whiteColor
+                                                                      .backColor
                                                                       .withOpacity(
                                                                           0.5),
                                                                   fontSize:
@@ -758,123 +758,127 @@ class _DeliveryAddressPageState extends State<DeliveryAddressPage> {
                                             ],
                                           ),
                                         ),
-                                        Align(
-                                          alignment: Alignment.bottomCenter,
-                                          child: Padding(
-                                            padding: const EdgeInsets.all(8.0),
-                                            child: SlideFromBottomAnimation(
-                                              delay: 0.5,
-                                              child: Material(
-                                                color: Colors.transparent,
-                                                child: InkWell(
-                                                  onTap: () {
-                                                    var buildingNo =
-                                                        buildingNoController
-                                                            .text
-                                                            .trim();
-                                                    var streetName =
-                                                        streetAddressController
-                                                            .text
-                                                            .trim();
-                                                    var cityName =
-                                                        cityController.text
-                                                            .trim();
-                                                    var zipCode =
-                                                        zipCodeController.text
-                                                            .trim();
-                                                    var landmark =
-                                                        landmarkController.text
-                                                            .trim();
-                                                    if (buildingNo.isEmpty) {
-                                                      glb.showSnackBar(
-                                                          context,
-                                                          'Alert',
-                                                          'Please Add Building/Society Name/House No');
-                                                      return;
-                                                    } else if (streetName
-                                                        .isEmpty) {
-                                                      glb.showSnackBar(
-                                                          context,
-                                                          'Alert',
-                                                          'Please Add Street Address');
-                                                      return;
-                                                    } else if (cityName
-                                                        .isEmpty) {
-                                                      glb.showSnackBar(
-                                                          context,
-                                                          'Alert',
-                                                          'Please Add City Name');
-                                                      return;
-                                                    } else if (zipCode
-                                                        .isEmpty) {
-                                                      glb.showSnackBar(
-                                                          context,
-                                                          'Alert',
-                                                          'Please Add ZipCode');
-                                                      return;
-                                                    } else if (landmark
-                                                        .isEmpty) {
-                                                      glb.showSnackBar(
-                                                          context,
-                                                          'Alert',
-                                                          'Please Provide LandMark');
-                                                      return;
-                                                    } else {
-                                                      if (latitude == 0 ||
-                                                          longitude == 0) {
+                                        Visibility(
+                                          visible: glb.justSaveAddress,
+                                          child: Align(
+                                            alignment: Alignment.bottomCenter,
+                                            child: Padding(
+                                              padding: const EdgeInsets.all(8.0),
+                                              child: SlideFromBottomAnimation(
+                                                delay: 0.5,
+                                                child: Material(
+                                                  color: Colors.transparent,
+                                                  child: InkWell(
+                                                    onTap: () {
+                                                      var buildingNo =
+                                                          buildingNoController
+                                                              .text
+                                                              .trim();
+                                                      var streetName =
+                                                          streetAddressController
+                                                              .text
+                                                              .trim();
+                                                      var cityName =
+                                                          cityController.text
+                                                              .trim();
+                                                      var zipCode =
+                                                          zipCodeController.text
+                                                              .trim();
+                                                      var landmark =
+                                                          landmarkController.text
+                                                              .trim();
+                                                      if (buildingNo.isEmpty) {
                                                         glb.showSnackBar(
                                                             context,
                                                             'Alert',
-                                                            'Please Turn On your location');
+                                                            'Please Add Building/Society Name/House No');
                                                         return;
+                                                      } else if (streetName
+                                                          .isEmpty) {
+                                                        glb.showSnackBar(
+                                                            context,
+                                                            'Alert',
+                                                            'Please Add Street Address');
+                                                        return;
+                                                      } else if (cityName
+                                                          .isEmpty) {
+                                                        glb.showSnackBar(
+                                                            context,
+                                                            'Alert',
+                                                            'Please Add City Name');
+                                                        return;
+                                                      } else if (zipCode
+                                                          .isEmpty) {
+                                                        glb.showSnackBar(
+                                                            context,
+                                                            'Alert',
+                                                            'Please Add ZipCode');
+                                                        return;
+                                                      } else if (landmark
+                                                          .isEmpty) {
+                                                        glb.showSnackBar(
+                                                            context,
+                                                            'Alert',
+                                                            'Please Provide LandMark');
+                                                        return;
+                                                      } else {
+                                                        if (latitude == 0 ||
+                                                            longitude == 0) {
+                                                          _getCurrentPosition();
+                                                          glb.showSnackBar(
+                                                              context,
+                                                              'Alert',
+                                                              'Please Turn On your location');
+                                                          return;
+                                                        }
+                                                        requestPickupAsync(
+                                                            buildingNo,
+                                                            streetName,
+                                                            cityName,
+                                                            zipCode,
+                                                            landmark);
                                                       }
-                                                      requestPickupAsync(
-                                                          buildingNo,
-                                                          streetName,
-                                                          cityName,
-                                                          zipCode,
-                                                          landmark);
-                                                    }
-                                                  },
-                                                  borderRadius:
-                                                      BorderRadius.circular(
-                                                          16.0),
-                                                  child: Ink(
-                                                    padding:
-                                                        const EdgeInsets.all(
-                                                            18.0),
-                                                    decoration: BoxDecoration(
-                                                        borderRadius:
-                                                            BorderRadius
-                                                                .circular(16.0),
-                                                        gradient:
-                                                            LinearGradient(
-                                                                colors: [
-                                                              Colors.green,
-                                                              Colors.blue,
-                                                            ])),
-                                                    child: Row(
-                                                      mainAxisAlignment:
-                                                          MainAxisAlignment
-                                                              .spaceBetween,
-                                                      children: [
-                                                        Text(
-                                                          'Save & Request Pick Up',
-                                                          style: nunitoStyle
-                                                              .copyWith(
-                                                            fontWeight:
-                                                                FontWeight.w700,
-                                                            color: AppColors
-                                                                .whiteColor,
-                                                            fontSize: 16.0,
+                                                    },
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            16.0),
+                                                    child: Ink(
+                                                      padding:
+                                                          const EdgeInsets.all(
+                                                              18.0),
+                                                      decoration: BoxDecoration(
+                                                          borderRadius:
+                                                              BorderRadius
+                                                                  .circular(16.0),
+                                                          gradient:
+                                                              LinearGradient(
+                                                                  colors: [
+                                                                Colors.green,
+                                                                Colors.blue,
+                                                              ])),
+                                                      child: Row(
+                                                        mainAxisAlignment:
+                                                            MainAxisAlignment
+                                                                .spaceBetween,
+                                                        children: [
+                                                          Text(
+                                                            'Save & Request Pick Up',
+                                                            style: nunitoStyle
+                                                                .copyWith(
+                                                              fontWeight:
+                                                                  FontWeight.w700,
+                                                              color: AppColors
+                                                                  .whiteColor,
+                                                              fontSize: 16.0,
+                                                            ),
                                                           ),
-                                                        ),
-                                                        const Icon(
-                                                          Icons
-                                                              .arrow_right_outlined,
-                                                          color: Colors.white,
-                                                        )
-                                                      ],
+                                                          const Icon(
+                                                            Icons
+                                                                .arrow_right_outlined,
+                                                            color: Colors.white,
+                                                          )
+                                                        ],
+                                                      ),
                                                     ),
                                                   ),
                                                 ),

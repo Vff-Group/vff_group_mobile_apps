@@ -17,16 +17,12 @@ import 'package:vff_group/global/vffglb.dart' as glb;
 
 class BottomBarScreen extends StatefulWidget {
   const BottomBarScreen({super.key, required this.pageIndex});
- final int pageIndex ;
+  final int pageIndex;
   @override
   State<BottomBarScreen> createState() => _BottomBarScreenState();
 }
 
 class _BottomBarScreenState extends State<BottomBarScreen> {
-  
-
-  
-
   @override
   void initState() {
     super.initState();
@@ -44,8 +40,7 @@ class _BottomBarScreenState extends State<BottomBarScreen> {
     setState(() {
       //widget.pageIndex = index;
 
-      glb.pageIndex = index ;
-      
+      glb.pageIndex = index;
     });
   }
 
@@ -55,29 +50,27 @@ class _BottomBarScreenState extends State<BottomBarScreen> {
       body: pages[glb.pageIndex],
       bottomNavigationBar: Container(
         decoration: BoxDecoration(
-          color: AppColors.backColor,
+          color: AppColors.whiteColor,
           boxShadow: [
             BoxShadow(
               blurRadius: 20,
-              color: Colors.black.withOpacity(.1),
+              color: AppColors.whiteColor.withOpacity(.1),
             )
           ],
         ),
         child: SafeArea(
           child: Padding(
-            padding:
-                const EdgeInsets.symmetric(horizontal: 15.0, vertical: 8),
+            padding: const EdgeInsets.symmetric(horizontal: 15.0, vertical: 8),
             child: GNav(
               rippleColor: Colors.grey[300]!,
               hoverColor: Colors.grey[100]!,
               gap: 8,
-              activeColor: AppColors.btnColor,
+              activeColor: AppColors.buttonColor,
               iconSize: 24,
-              padding:
-                  const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
               duration: const Duration(milliseconds: 400),
-              tabBackgroundColor: AppColors.lightBlackColor,
-              color: Colors.white,
+              tabBackgroundColor: AppColors.secondaryBackColor,
+              color: AppColors.buttonColor,
               tabs: const [
                 GButton(
                   icon: LineIcons.home,
@@ -98,10 +91,7 @@ class _BottomBarScreenState extends State<BottomBarScreen> {
               ],
               selectedIndex: glb.pageIndex,
               onTabChange: (index) {
-                
                 changeTab(index);
-                
-                
               },
             ),
           ),
@@ -109,6 +99,4 @@ class _BottomBarScreenState extends State<BottomBarScreen> {
       ),
     );
   }
-
-
 }

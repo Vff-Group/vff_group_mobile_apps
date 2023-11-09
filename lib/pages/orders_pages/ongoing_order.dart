@@ -22,7 +22,7 @@ class OngoingOrders extends StatefulWidget {
 
 class _OngoingOrdersState extends State<OngoingOrders> {
   final bool _noOrders = false;
-  bool showLoading = false,showError = false;
+  bool showLoading = false, showError = false;
 
   List<OngoingOrdersModel> ongoingModel = [];
   Future loadOrderDetails() async {
@@ -194,327 +194,343 @@ class _OngoingOrdersState extends State<OngoingOrders> {
     double width = MediaQuery.of(context).size.width;
     return showLoading
         ? Shimmer.fromColors(
-          baseColor: Colors.grey.withOpacity(0.2),
-          highlightColor: Colors.grey.withOpacity(0.1),
-          enabled: showLoading,
-          child: RefreshIndicator(
-            onRefresh: _handleRefresh,
-            child: ListView.separated(
-                itemCount: 10,
-                separatorBuilder: (context, _) =>
-                    SizedBox(height: height * 0.02),
-                itemBuilder: ((context, index) {
-                  return const ShimmerCardLayout();
-                })),
-          ),
-        )
+            baseColor: Colors.grey.withOpacity(0.2),
+            highlightColor: Colors.grey.withOpacity(0.1),
+            enabled: showLoading,
+            child: RefreshIndicator(
+              onRefresh: _handleRefresh,
+              child: ListView.separated(
+                  itemCount: 10,
+                  separatorBuilder: (context, _) =>
+                      SizedBox(height: height * 0.02),
+                  itemBuilder: ((context, index) {
+                    return const ShimmerCardLayout();
+                  })),
+            ),
+          )
         : showError
             ? Center(
                 child: Text(
                   'No Order History Found',
-                  style: ralewayStyle.copyWith(
-                      color: AppColors.whiteColor, fontSize: 20.0),
+                  style: nunitoStyle.copyWith(
+                      color: AppColors.backColor, fontSize: 20.0),
                 ),
               )
             : RefreshIndicator(
-            onRefresh: _handleRefresh,
-            child: ListView.builder(
-                itemCount: ongoingModel.length,
-                itemBuilder: ((context, index) {
-                  return Padding(
-                    padding: const EdgeInsets.all(12.0),
-                    child: Material(
-                      color: Colors.transparent,
-                      child: InkWell(
-                        onTap: () {
-                          glb.orderid = ongoingModel[index].orderID;
-                          glb.hideControls = true;
-                          Navigator.pushNamed(context, OrderDetailsRoute);
-                        },
-                        borderRadius: BorderRadius.circular(8.0),
-                        child: Ink(
-                          decoration: BoxDecoration(
+                onRefresh: _handleRefresh,
+                child: ListView.builder(
+                    itemCount: ongoingModel.length,
+                    itemBuilder: ((context, index) {
+                      return Padding(
+                        padding: const EdgeInsets.all(12.0),
+                        child: Material(
+                          color: Colors.transparent,
+                          child: InkWell(
+                            onTap: () {
+                              glb.orderid = ongoingModel[index].orderID;
+                              glb.hideControls = true;
+                              glb.showDeliveryBoy = true;
+                              glb.showPayOption = true;
+                              Navigator.pushNamed(context, OrderDetailsRoute);
+                            },
                             borderRadius: BorderRadius.circular(8.0),
-                            color: AppColors.lightBlackColor, // Container color
-                            boxShadow: [
-                              BoxShadow(
-                                color: Colors.grey
-                                    .withOpacity(0.1), // Shadow color
-                                spreadRadius: 5,
-                                blurRadius: 7,
-                                offset: const Offset(
-                                    0, 3), // Changes position of shadow
+                            child: Ink(
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(8.0),
+                                color: AppColors
+                                    .lightBlackColor, // Container color
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: Colors.grey
+                                        .withOpacity(0.1), // Shadow color
+                                    spreadRadius: 5,
+                                    blurRadius: 7,
+                                    offset: const Offset(
+                                        0, 3), // Changes position of shadow
+                                  ),
+                                ],
                               ),
-                            ],
-                          ),
-                          child: Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: Column(
-                              children: [
-                                Padding(
-                                  padding: const EdgeInsets.all(8.0),
-                                  child: Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
-                                    children: [
-                                      Text(
-                                        'Order Status:',
-                                        style: nunitoStyle.copyWith(
-                                            color: AppColors.whiteColor,
-                                            fontSize: 14),
-                                      ),
-                                      Text(
-                                        '${ongoingModel[index].order_status}',
-                                        style: nunitoStyle.copyWith(
-                                          color: AppColors.btnColor,
-                                          fontSize: 14,
-                                          fontWeight: FontWeight.bold,
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                                Padding(
-                                  padding: const EdgeInsets.all(8.0),
-                                  child: Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
-                                    children: [
-                                      Text(
-                                        'Order ID:',
-                                        style: nunitoStyle.copyWith(
-                                            color: AppColors.whiteColor,
-                                            fontSize: 14),
-                                      ),
-                                      Text(
-                                        '#${ongoingModel[index].orderID}',
-                                        style: nunitoStyle.copyWith(
-                                          color: AppColors.whiteColor,
-                                          fontSize: 14,
-                                          fontWeight: FontWeight.bold,
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                                Padding(
-                                  padding: const EdgeInsets.all(8.0),
-                                  child: Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
-                                    children: [
-                                      Text(
-                                        'Order Date:',
-                                        style: nunitoStyle.copyWith(
-                                            color: AppColors.whiteColor,
-                                            fontSize: 14),
-                                      ),
-                                      Text(
-                                        ongoingModel[index].order_taken_epoch,
-                                        style: nunitoStyle.copyWith(
-                                          color: AppColors.whiteColor,
-                                          fontSize: 14,
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                                Padding(
-                                  padding: const EdgeInsets.all(8.0),
-                                  child: Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
-                                    children: [
-                                      Text(
-                                        'Pick Up:',
-                                        style: nunitoStyle.copyWith(
-                                            color: AppColors.whiteColor,
-                                            fontSize: 14),
-                                      ),
-                                      Text(
-                                        ongoingModel[index].address,
-                                        style: nunitoStyle.copyWith(
-                                          color: AppColors.whiteColor,
-                                          fontSize: 14,
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                                 Padding(
-                                  padding: const EdgeInsets.all(8.0),
-                                  child: Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
-                                    children: [
-                                      Text(
-                                        'Delivered Date:',
-                                        style: nunitoStyle.copyWith(
-                                            color: AppColors.whiteColor,
-                                            fontSize: 14),
-                                      ),
-                                      Text(
-                                        ongoingModel[index].delivery_epoch,
-                                        style: nunitoStyle.copyWith(
-                                          color: AppColors.whiteColor,
-                                          fontSize: 14,
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                                Padding(
-                                  padding: const EdgeInsets.all(8.0),
-                                  child: Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
-                                    children: [
-                                      Text(
-                                        'Total Amount:',
-                                        style: nunitoStyle.copyWith(
-                                            color: AppColors.whiteColor,
-                                            fontSize: 14),
-                                      ),
-                                      Text(
-                                        '₹ ${ongoingModel[index].totalPrice}/-',
-                                        style: nunitoStyle.copyWith(
-                                          color: AppColors.neonColor,
-                                          fontSize: 14,
-                                          fontWeight: FontWeight.bold,
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                                const Padding(
-                                  padding: EdgeInsets.all(8.0),
-                                  child: Divider(
-                                    color: AppColors.whiteColor,
-                                    height: 0.1,
-                                    thickness: 0.1,
-                                  ),
-                                ),
-                                ongoingModel[index].cancel_reason != "NA"
-                                    ? Padding(
-                                        padding: const EdgeInsets.all(8.0),
-                                        child: Row(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.spaceBetween,
-                                          children: [
-                                            Text(
-                                              'Cancel Reason:',
-                                              style: nunitoStyle.copyWith(
-                                                  color: Colors.red,
-                                                  fontWeight: FontWeight.bold,
-                                                  fontSize: 14),
+                              child: Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: Column(
+                                  children: [
+                                    Padding(
+                                      padding: const EdgeInsets.all(8.0),
+                                      child: Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceBetween,
+                                        children: [
+                                          Text(
+                                            'Order Status:',
+                                            style: nunitoStyle.copyWith(
+                                                color: AppColors.backColor,
+                                                fontSize: 14),
+                                          ),
+                                          Text(
+                                            '${ongoingModel[index].order_status}',
+                                            style: nunitoStyle.copyWith(
+                                              color: AppColors.blueColor,
+                                              fontSize: 14,
+                                              fontWeight: FontWeight.bold,
                                             ),
-                                            Stack(
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                    Padding(
+                                      padding: const EdgeInsets.all(8.0),
+                                      child: Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceBetween,
+                                        children: [
+                                          Text(
+                                            'Order ID:',
+                                            style: nunitoStyle.copyWith(
+                                                color: AppColors.backColor,
+                                                fontSize: 14),
+                                          ),
+                                          Text(
+                                            '#${ongoingModel[index].orderID}',
+                                            style: nunitoStyle.copyWith(
+                                              color: AppColors.backColor,
+                                              fontSize: 14,
+                                              fontWeight: FontWeight.bold,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                    Padding(
+                                      padding: const EdgeInsets.all(8.0),
+                                      child: Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceBetween,
+                                        children: [
+                                          Text(
+                                            'Order Date:',
+                                            style: nunitoStyle.copyWith(
+                                                color: AppColors.backColor,
+                                                fontSize: 14),
+                                          ),
+                                          Text(
+                                            ongoingModel[index]
+                                                .order_taken_epoch,
+                                            style: nunitoStyle.copyWith(
+                                              color: AppColors.backColor,
+                                              fontSize: 14,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                    Padding(
+                                      padding: const EdgeInsets.all(8.0),
+                                      child: Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceBetween,
+                                        children: [
+                                          Text(
+                                            'Pick Up:',
+                                            style: nunitoStyle.copyWith(
+                                                color: AppColors.backColor,
+                                                fontSize: 14),
+                                          ),
+                                          Text(
+                                            ongoingModel[index].address,
+                                            style: nunitoStyle.copyWith(
+                                              color: AppColors.backColor,
+                                              fontSize: 14,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                    Padding(
+                                      padding: const EdgeInsets.all(8.0),
+                                      child: Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceBetween,
+                                        children: [
+                                          Text(
+                                            'Delivered Date:',
+                                            style: nunitoStyle.copyWith(
+                                                color: AppColors.backColor,
+                                                fontSize: 14),
+                                          ),
+                                          Text(
+                                            ongoingModel[index].delivery_epoch,
+                                            style: nunitoStyle.copyWith(
+                                              color: AppColors.backColor,
+                                              fontSize: 14,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                    Padding(
+                                      padding: const EdgeInsets.all(8.0),
+                                      child: Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceBetween,
+                                        children: [
+                                          Text(
+                                            'Total Amount:',
+                                            style: nunitoStyle.copyWith(
+                                                color: AppColors.backColor,
+                                                fontSize: 14),
+                                          ),
+                                          Text(
+                                            '₹ ${ongoingModel[index].totalPrice}/-',
+                                            style: nunitoStyle.copyWith(
+                                              color: AppColors.blueColor,
+                                              fontSize: 14,
+                                              fontWeight: FontWeight.bold,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                    const Padding(
+                                      padding: EdgeInsets.all(8.0),
+                                      child: Divider(
+                                        color: AppColors.secondaryBackColor,
+                                        height: 0.1,
+                                        thickness: 0.1,
+                                      ),
+                                    ),
+                                    ongoingModel[index].cancel_reason != "NA"
+                                        ? Padding(
+                                            padding: const EdgeInsets.all(8.0),
+                                            child: Row(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment
+                                                      .spaceBetween,
                                               children: [
-                                                SizedBox(
-                                                  width: 200,
-                                                  child: Text(
-                                                    ongoingModel[index]
-                                                        .cancel_reason,
-                                                    style: nunitoStyle.copyWith(
-                                                      color:
-                                                          AppColors.neonColor,
-                                                      fontSize: 14,
+                                                Text(
+                                                  'Cancel Reason:',
+                                                  style: nunitoStyle.copyWith(
+                                                      color: Colors.red,
                                                       fontWeight:
                                                           FontWeight.bold,
+                                                      fontSize: 14),
+                                                ),
+                                                Stack(
+                                                  children: [
+                                                    SizedBox(
+                                                      width: 200,
+                                                      child: Text(
+                                                        ongoingModel[index]
+                                                            .cancel_reason,
+                                                        style: nunitoStyle
+                                                            .copyWith(
+                                                          color: AppColors
+                                                              .neonColor,
+                                                          fontSize: 14,
+                                                          fontWeight:
+                                                              FontWeight.bold,
+                                                        ),
+                                                      ),
                                                     ),
-                                                  ),
+                                                  ],
                                                 ),
                                               ],
                                             ),
-                                          ],
-                                        ),
-                                      )
-                                    : Container(),
-                                Visibility(
-                                  visible: ongoingModel[index].showCancelBtn,
-                                  child: Row(
-                                    mainAxisAlignment: MainAxisAlignment.end,
-                                    children: [
-                                      Material(
-                                        color: Colors.transparent,
-                                        child: InkWell(
-                                          onTap: () {
-                                            // TODO:Need To give alert and cancel the order
-                                            glb.orderid =
-                                                ongoingModel[index].orderID;
-                                            Navigator.pushNamed(
-                                                context, CancelOrderRoute);
-                                          },
-                                          borderRadius:
-                                              BorderRadius.circular(12.0),
-                                          child: Ink(
-                                            decoration: BoxDecoration(
-                                                borderRadius:
-                                                    BorderRadius.circular(12.0),
-                                                color: Colors.red),
-                                            child: Padding(
-                                              padding:
-                                                  const EdgeInsets.all(10.0),
-                                              child: Text(
-                                                'Cancel',
-                                                style: nunitoStyle.copyWith(
-                                                  color: AppColors.whiteColor,
-                                                  fontWeight: FontWeight.bold,
-                                                  fontSize: 14.0,
-                                                ),
-                                              ),
-                                            ),
-                                          ),
-                                        ),
-                                      )
-                                    ],
-                                  ),
-                                ),
-                                Row(
-                                  mainAxisAlignment: MainAxisAlignment.end,
-                                  children: [
+                                          )
+                                        : Container(),
                                     Visibility(
-                                      visible: false,
-                                      child: Material(
-                                        color: Colors.transparent,
-                                        child: InkWell(
-                                          onTap: () {
-                                            // TODO: Need To show this only when order is confirmed
-                                          },
-                                          borderRadius:
-                                              BorderRadius.circular(12.0),
-                                          child: Ink(
-                                            decoration: BoxDecoration(
-                                                borderRadius:
-                                                    BorderRadius.circular(12.0),
-                                                color: AppColors.blueDarkColor),
-                                            child: Padding(
-                                              padding:
-                                                  const EdgeInsets.all(10.0),
-                                              child: Text(
-                                                'Confirmed',
-                                                style: nunitoStyle.copyWith(
-                                                  color: AppColors.whiteColor,
-                                                  fontWeight: FontWeight.bold,
-                                                  fontSize: 14.0,
+                                      visible:
+                                          ongoingModel[index].showCancelBtn,
+                                      child: Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.end,
+                                        children: [
+                                          Material(
+                                            color: Colors.transparent,
+                                            child: InkWell(
+                                              onTap: () {
+                                                // TODO:Need To give alert and cancel the order
+                                                glb.orderid =
+                                                    ongoingModel[index].orderID;
+                                                Navigator.pushNamed(
+                                                    context, CancelOrderRoute);
+                                              },
+                                              borderRadius:
+                                                  BorderRadius.circular(12.0),
+                                              child: Ink(
+                                                decoration: BoxDecoration(
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            12.0),
+                                                    color: Colors.red),
+                                                child: Padding(
+                                                  padding: const EdgeInsets.all(
+                                                      10.0),
+                                                  child: Text(
+                                                    'Cancel',
+                                                    style: nunitoStyle.copyWith(
+                                                      color:
+                                                          AppColors.whiteColor,
+                                                      fontWeight:
+                                                          FontWeight.bold,
+                                                      fontSize: 14.0,
+                                                    ),
+                                                  ),
+                                                ),
+                                              ),
+                                            ),
+                                          )
+                                        ],
+                                      ),
+                                    ),
+                                    Row(
+                                      mainAxisAlignment: MainAxisAlignment.end,
+                                      children: [
+                                        Visibility(
+                                          visible: false,
+                                          child: Material(
+                                            color: Colors.transparent,
+                                            child: InkWell(
+                                              onTap: () {
+                                                // TODO: Need To show this only when order is confirmed
+                                              },
+                                              borderRadius:
+                                                  BorderRadius.circular(12.0),
+                                              child: Ink(
+                                                decoration: BoxDecoration(
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            12.0),
+                                                    color: AppColors
+                                                        .blueDarkColor),
+                                                child: Padding(
+                                                  padding: const EdgeInsets.all(
+                                                      10.0),
+                                                  child: Text(
+                                                    'Confirmed',
+                                                    style: nunitoStyle.copyWith(
+                                                      color:
+                                                          AppColors.whiteColor,
+                                                      fontWeight:
+                                                          FontWeight.bold,
+                                                      fontSize: 14.0,
+                                                    ),
+                                                  ),
                                                 ),
                                               ),
                                             ),
                                           ),
-                                        ),
-                                      ),
+                                        )
+                                      ],
                                     )
                                   ],
-                                )
-                              ],
+                                ),
+                              ),
                             ),
                           ),
                         ),
-                      ),
-                    ),
-                  );
-                })),
-          );
+                      );
+                    })),
+              );
   }
 }
 

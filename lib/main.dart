@@ -20,7 +20,7 @@ Future<void> main() async {
   );
 
   FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
- 
+
   //runApp(const MyApp());
   runApp(
     ChangeNotifierProvider(
@@ -38,7 +38,6 @@ Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
   print(message.notification!.body.toString());
   print(message.data.toString());
   print("Handling a background message: ${message.messageId}");
-    
 }
 
 class MyApp extends StatelessWidget {
@@ -64,3 +63,33 @@ class MyApp extends StatelessWidget {
   }
 }
 
+final MaterialColor whiteMaterialColor = MaterialColor(
+  0xFFFFFFFF,
+  <int, Color>{
+    50: Color(0xFFFFFFFF),
+    100: Color(0xFFFFFFFF),
+    200: Color(0xFFFFFFFF),
+    300: Color(0xFFFFFFFF),
+    400: Color(0xFFFFFFFF),
+    500: Color(0xFFFFFFFF),
+    600: Color(0xFFFFFFFF),
+    700: Color(0xFFFFFFFF),
+    800: Color(0xFFFFFFFF),
+    900: Color(0xFFFFFFFF),
+  },
+
+  /*
+  <int, Color>{
+    50: Color(0x1AFFFFFF),
+    100: Color(0x33FFFFFF),
+    200: Color(0x4DFFFFFF),
+    300: Color(0x66FFFFFF),
+    400: Color(0x80FFFFFF),
+    500: Color(0xFFFFFFFF),
+    600: Color(0xC2FFFFFF),
+    700: Color(0x8CFFFFFF),
+    800: Color(0x59FFFFFF),
+    900: Color(0x26FFFFFF),
+  },
+   */
+);

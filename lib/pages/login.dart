@@ -6,12 +6,14 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get_utils/get_utils.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:line_icons/line_icons.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:vff_group/animation/fade_animation.dart';
 import 'package:vff_group/animation/rotate_animation.dart';
 import 'package:vff_group/animation/scale_and_revert_animation.dart';
 import 'package:vff_group/animation/slide_bottom_animation.dart';
 import 'package:vff_group/animation/slide_left_animation.dart';
+import 'package:vff_group/animation/slideright_animation.dart';
 import 'package:vff_group/routings/route_names.dart';
 import 'package:vff_group/utils/SharedPreferencesUtils.dart';
 import 'package:vff_group/utils/app_colors.dart';
@@ -30,6 +32,7 @@ class LoginScreen extends StatefulWidget {
 
 class _LoginScreenState extends State<LoginScreen> {
   TextEditingController phoneController = TextEditingController();
+  TextEditingController nameController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
   final _auth = FirebaseAuth.instance;
   final googleSignIn = GoogleSignIn();
@@ -48,218 +51,356 @@ class _LoginScreenState extends State<LoginScreen> {
   Widget build(BuildContext context) {
     double height = MediaQuery.of(context).size.height;
     double width = MediaQuery.of(context).size.width;
-    return GestureDetector(
-      onTap: () {
-        FocusManager.instance.primaryFocus?.unfocus();
-      },
-      child: Scaffold(
-        backgroundColor: Colors.black,
-        body: CustomScrollView(
+    return SafeArea(
+      left: false,
+      right: false,
+      top: false,
+      bottom: false,
+      child: GestureDetector(
+        onTap: () {
+          FocusManager.instance.primaryFocus?.unfocus();
+        },
+        child: CustomScrollView(
           slivers: [
             SliverToBoxAdapter(
-              child: Column(
-                children: [
-                  SizedBox(height: height * 0.05),
-                  SizedBox(
-                    width: width,
-                    height: 200,
-                    child: FadeAnimation(
-                        delay: 0.1, child: Image.asset('assets/logo/logo.png')),
-                  ),
-                  Text(
-                    'Please enter your valid Mobile Number',
-                    style: nunitoStyle.copyWith(
-                      color: AppColors.whiteColor,
-                      fontSize: 15.0,
-                      fontWeight: FontWeight.w500,
-                    ),
-                  ),
-                  SizedBox(
-                    height: height * 0.014,
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.all(26.0),
-                    child: Container(
-                      height: 50.0,
-                      width: width,
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(8.0),
-                        border: Border.all(
-                          color: AppColors.whiteColor, // Border color
-                          width: 0.2, // Border width
-                        ),
-                      ),
-                      child: TextFormField(
-                        controller: phoneController,
-                        style: nunitoStyle.copyWith(
-                            fontWeight: FontWeight.w400,
-                            color: AppColors.whiteColor,
-                            fontSize: 14.0),
-                        keyboardType: TextInputType.phone,
-                        decoration: InputDecoration(
-                            border: InputBorder.none,
-                            prefixIcon: IconButton(
-                              onPressed: () {},
-                              icon: const Icon(
-                                Icons.phone,
-                                color: Colors.white,
-                              ),
-                            ),
-                            contentPadding: const EdgeInsets.only(top: 16.0),
-                            hintText: 'Mobile Number',
-                            hintStyle: ralewayStyle.copyWith(
-                                fontWeight: FontWeight.w400,
-                                color: AppColors.whiteColor.withOpacity(0.5),
-                                fontSize: 12.0)),
-                      ),
-                    ),
-                  ),
-                  // SizedBox(
-                  //   height: height * 0.04,
-                  // ),
-                  // Container(
-                  //   height: 50.0,
-                  //   width: width - 35.0,
-                  //   decoration: BoxDecoration(
-                  //     borderRadius: BorderRadius.circular(8.0),
-                  //     border: borderDanger ? Border.all(
-                  //       color: Colors.red, // Border color
-                  //       width: 0.4, // Border width
-                  //     ) :Border.all(
-                  //       color: AppColors.textColor, // Border color
-                  //       width: 0.2, // Border width
-                  //     ),
-                  //   ),
-                  //   child: TextFormField(
-                  //     controller: passwordController,
-                  //     style: ralewayStyle.copyWith(
-                  //         fontWeight: FontWeight.w400,
-                  //         color: AppColors.titleTxtColor,
-                  //         fontSize: 14.0),
-                  //     keyboardType: TextInputType.text,
-                  //     obscureText: _showPassword,
-                  //     decoration: InputDecoration(
-                  //         border: InputBorder.none,
-                  //         suffixIcon: IconButton(
-                  //             onPressed: () {
-                  //               if (_showPassword == true) {
-                  //                 setState(() {
-                  //                   _showPassword = false;
-                  //                 });
-                  //               } else {
-                  //                 setState(() {
-                  //                   _showPassword = true;
-                  //                 });
-                  //               }
-                  //             },
-                  //             icon: _showPassword
-                  //                 ? const Icon(Icons.remove_red_eye)
-                  //                 : const Icon(Icons
-                  //                     .no_encryption_gmailerrorred_outlined)),
-                  //         prefixIcon: IconButton(
-                  //           onPressed: () {},
-                  //           icon: const Icon(Icons.security),
-                  //         ),
-                  //         contentPadding: const EdgeInsets.only(top: 16.0),
-                  //         hintText: 'Password',
-                  //         hintStyle: ralewayStyle.copyWith(
-                  //             fontWeight: FontWeight.w400,
-                  //             color: AppColors.textColor.withOpacity(0.5),
-                  //             fontSize: 12.0)),
-                  //   ),
-                  // ),
-                  // Align(
-                  //   alignment: Alignment.centerRight,
-                  //   child: TextButton(
-                  //       onPressed: () {},
-                  //       child: Text(
-                  //         'Forgot Password?',
-                  //         style: ralewayStyle.copyWith(
-                  //           fontSize: 12.0,
-                  //           color: AppColors.mainBlueColor,
-                  //           fontWeight: FontWeight.w600,
-                  //         ),
-                  //       )),
-                  // ),
-                  FadeAnimation(
-                    delay: 0.5,
-                    child: Text(
-                      'By clicking Continue, you agree to ',
-                      style: nunitoStyle.copyWith(
-                          fontSize: 14.0, fontWeight: FontWeight.normal),
-                    ),
-                  ),
-                  SizedBox(height: height * 0.01),
-                  InkWell(
-                    onTap: () {
-                      print('Send to Privacy Policy Page');
-                    },
-                    child: FadeAnimation(
-                      delay: 0.6,
-                      child: InkWell(
-                        onTap: () {
-                          var url = "https://vffgroup.in/privacy_policy/";
-                          _OpenBrowser(url);
-                        },
-                        child: Text(
-                          'Terms and Conditions',
-                          style: nunitoStyle.copyWith(
-                              fontSize: 14.0,
-                              color: AppColors.blueDarkColor,
-                              fontWeight: FontWeight.normal),
-                        ),
-                      ),
-                    ),
-                  ),
-                  SizedBox(height: height * 0.06),
-                  showLoading
-                      ? CircularProgressIndicator()
-                      : SlideFromBottomAnimation(
+              child: Container(
+                width: width,
+                height: height,
+                color: AppColors.loginBackColor,
+                child: Stack(
+                  children: [
+                    Positioned(
+                      child: Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: SlideFromLeftAnimation(
                           delay: 0.5,
+                          child: Image.asset(
+                            'assets/logo/logo.png',
+                            height: 300,
+                            width: MediaQuery.of(context).size.width,
+                          ),
+                        ),
+                      ),
+                    ),
+                    // Positioned(
+                    //   top: 260,
+                    //   left: 0,
+                    //   right: 0,
+                    //   child: SlideFromRightAnimation(
+                    //     delay: 1,
+                    //     child: Text(
+                    //       'Ve7Vet Wash',
+                    //       style: nunitoStyle.copyWith(
+                    //           color: AppColors.backColor,
+                    //           fontSize: 22,
+                    //           letterSpacing: 2,
+                    //           fontWeight: FontWeight.bold,
+                    //           decoration: TextDecoration.none),
+                    //       textAlign: TextAlign.center,
+                    //     ),
+                    //   ),
+                    // ),
+                    Positioned(
+                      top: 260,
+                      child: Container(
+                          color: AppColors.whiteColor,
+                          width: width,
+                          height: 50,
                           child: Material(
-                            color: Colors.transparent,
-                            child: InkWell(
-                              onTap: () {
-                                var phoneNo = phoneController.text.trim();
-                                // var password = passwordController.text.trim();
+                            child: TextFormField(
+                              controller: nameController,
+                              style: nunitoStyle.copyWith(
+                                  fontWeight: FontWeight.w400,
+                                  color: AppColors.backColor,
+                                  fontSize: 14.0),
+                              keyboardType: TextInputType.text,
+                              decoration: InputDecoration(
+                                  border: InputBorder.none,
+                                  prefixIcon: IconButton(
+                                    onPressed: () {},
+                                    icon: const Icon(
+                                      Icons.person,
+                                      color: AppColors.blueColor,
+                                    ),
+                                  ),
+                                  contentPadding:
+                                      const EdgeInsets.only(top: 16.0),
+                                  hintText: 'Display Name',
+                                  hintStyle: nunitoStyle.copyWith(
+                                      fontWeight: FontWeight.w400,
+                                      color:
+                                          AppColors.blueColor.withOpacity(0.5),
+                                      fontSize: 12.0)),
+                            ),
+                          )),
+                    ),
+                    Positioned(
+                      top: 320,
+                      child: Container(
+                        width: width,
+                        height: 50,
+                        color: AppColors.whiteColor,
+                      ),
+                    ),
 
-                                if (phoneNo.isEmpty) {
-                                  glb.showSnackBar(context, 'Alert!',
-                                      'Please Provide Phone Number');
-                                  return;
-                                } else {
-                                  FocusManager.instance.primaryFocus?.unfocus();
-                                  var isValid = isMobileNumberValid(phoneNo);
-                                  if (isValid) {
-                                    loginAsync(phoneNo);
-                                  }else{
-                                    glb.showSnackBar(context, 'Alert', 'Use a valid mobile Number');
-                                  }
-                                }
-                              },
-                              borderRadius: BorderRadius.circular(16.0),
-                              child: Ink(
-                                padding: const EdgeInsets.symmetric(
-                                    horizontal: 70.0, vertical: 18.0),
-                                decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(16.0),
-                                    gradient: LinearGradient(colors: [
-                                      Colors.green,
-                                      Colors.blue,
-                                    ])),
+                    Positioned(
+                      top: 330,
+                      right: 10,
+                      child: Material(
+                        child: InkWell(
+                          onTap: () {
+                            // Navigator.pushNamed(context, RegistationRoute);
+                            var phoneNo = phoneController.text.trim();
+                            var name = nameController.text.trim();
+                            if (name.isEmpty) {
+                              glb.showSnackBar(context, 'Alert',
+                                  'Please provide the Display Name first');
+                              return;
+                            }
+                            if (phoneNo.isEmpty) {
+                              glb.showSnackBar(context, 'Alert',
+                                  'Please provide your valid mobile number');
+                              return;
+                            }
+                            FocusManager.instance.primaryFocus?.unfocus();
+                            setState(() {
+                              showLoading = true;
+                            });
+                            typeLogin = 'Google';
+                            loginAsync(phoneNo,name);
+                          },
+                          borderRadius: BorderRadius.circular(26.0),
+                          child: Container(
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(26.0),
+                              color: AppColors.buttonColor,
+                            ),
+                            child: Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Material(
+                                color: Colors.transparent,
                                 child: Text(
                                   'Continue',
-                                  style: ralewayStyle.copyWith(
-                                    fontWeight: FontWeight.w700,
-                                    color: AppColors.whiteColor,
-                                    fontSize: 16.0,
-                                  ),
+                                  style: nunitoStyle.copyWith(
+                                      fontWeight: FontWeight.w400,
+                                      color: AppColors.whiteColor,
+                                      fontSize: 12.0),
                                 ),
                               ),
                             ),
                           ),
                         ),
-                ],
+                      ),
+                    ),
+
+                    Positioned(
+                      top: 320,
+                      child: Container(
+                          color: AppColors.whiteColor,
+                          width: width - 100,
+                          height: 50,
+                          child: Material(
+                            child: TextFormField(
+                              controller: phoneController,
+                              style: nunitoStyle.copyWith(
+                                  fontWeight: FontWeight.w400,
+                                  color: AppColors.backColor,
+                                  fontSize: 14.0),
+                              keyboardType: TextInputType.phone,
+                              decoration: InputDecoration(
+                                  border: InputBorder.none,
+                                  prefixIcon: IconButton(
+                                    onPressed: () {},
+                                    icon: const Icon(
+                                      Icons.phone,
+                                      color: AppColors.blueColor,
+                                    ),
+                                  ),
+                                  contentPadding:
+                                      const EdgeInsets.only(top: 16.0),
+                                  hintText: 'Mobile Number',
+                                  hintStyle: nunitoStyle.copyWith(
+                                      fontWeight: FontWeight.w400,
+                                      color:
+                                          AppColors.blueColor.withOpacity(0.5),
+                                      fontSize: 12.0)),
+                            ),
+                          )),
+                    ),
+                    showLoading
+                        ? Positioned(
+                            top: 380,
+                            left: 0,
+                            right: 0,
+                            child: LinearProgressIndicator())
+                        : Positioned(
+                            top: 390,
+                            left: 0,
+                            right: 0,
+                            child: Material(
+                              color: Colors.transparent,
+                              child: Text(
+                                'Or',
+                                style: nunitoStyle.copyWith(
+                                    fontWeight: FontWeight.w400,
+                                    color: AppColors.backColor,
+                                    fontSize: 16.0),
+                                textAlign: TextAlign.center,
+                              ),
+                            ),
+                          ),
+
+                    Positioned(
+                      top: 420,
+                      child: Material(
+                        color: Colors.transparent,
+                        child: InkWell(
+                          onTap: () {
+                            var phoneNo = phoneController.text.trim();
+                            var name = nameController.text.trim();
+                            if (name.isEmpty) {
+                              glb.showSnackBar(context, 'Alert',
+                                  'Please provide the Display Name first');
+                              return;
+                            }
+                            if (phoneNo.isEmpty) {
+                              glb.showSnackBar(context, 'Alert',
+                                  'Please provide your valid mobile number');
+                              return;
+                            }
+                            FocusManager.instance.primaryFocus?.unfocus();
+                            setState(() {
+                              showLoading = true;
+                            });
+                            typeLogin = 'Google';
+                            loginAsync(phoneNo,name);
+                            //Navigator.pushNamed(context, GoogleVerificationRoute);
+                          },
+                          child: Container(
+                            width: width,
+                            height: 60,
+                            color: Colors.white,
+                            child: Material(
+                              color: Colors.transparent,
+                              child: Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceEvenly,
+                                children: [
+                                  Row(
+                                    children: [
+                                      Image.asset(
+                                        'assets/logo/google.png',
+                                        height: 30,
+                                      ),
+                                      SizedBox(
+                                        width: 10.0,
+                                      ),
+                                      Text(
+                                        'Continue with',
+                                        style: nunitoStyle.copyWith(
+                                            fontWeight: FontWeight.w300,
+                                            color: AppColors.backColor,
+                                            fontSize: 16.0),
+                                        textAlign: TextAlign.center,
+                                      ),
+                                      Text(
+                                        ' Google',
+                                        style: nunitoStyle.copyWith(
+                                            fontWeight: FontWeight.bold,
+                                            color: AppColors.backColor,
+                                            fontSize: 16.0),
+                                        textAlign: TextAlign.center,
+                                      ),
+                                    ],
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+
+                    Positioned(
+                      top: 500,
+                      child: Material(
+                        color: Colors.transparent,
+                        child: InkWell(
+                          onTap: () {
+                            var phoneNo = phoneController.text.trim();
+                            var name = nameController.text.trim();
+                            if (name.isEmpty) {
+                              glb.showSnackBar(context, 'Alert',
+                                  'Please provide the Display Name first');
+                              return;
+                            }
+                            if (phoneNo.isEmpty) {
+                              glb.showSnackBar(context, 'Alert',
+                                  'Please provide your valid mobile number');
+                              return;
+                            }
+                            FocusManager.instance.primaryFocus?.unfocus();
+                            setState(() {
+                              showLoading = true;
+                            });
+                            typeLogin = 'Apple';
+                            loginAsync(phoneNo,name);
+                            //Navigator.pushNamed(context, GoogleVerificationRoute);
+                          },
+                          child: Container(
+                            width: width,
+                            height: 60,
+                            color: Colors.white,
+                            child: Material(
+                              color: Colors.transparent,
+                              child: Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceEvenly,
+                                children: [
+                                  Row(
+                                    children: [
+                                      Image.asset(
+                                        'assets/logo/apple_logo.png',
+                                        height: 30,
+                                      ),
+                                      SizedBox(
+                                        width: 10.0,
+                                      ),
+                                      Text(
+                                        'Continue with',
+                                        style: nunitoStyle.copyWith(
+                                            fontWeight: FontWeight.w300,
+                                            color: AppColors.backColor,
+                                            fontSize: 16.0),
+                                        textAlign: TextAlign.center,
+                                      ),
+                                      Text(
+                                        ' Apple ID',
+                                        style: nunitoStyle.copyWith(
+                                            fontWeight: FontWeight.bold,
+                                            color: AppColors.backColor,
+                                            fontSize: 16.0),
+                                        textAlign: TextAlign.center,
+                                      ),
+                                    ],
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+
+                    Positioned(
+                      top: 540,
+                      child: Image.asset(
+                        'assets/images/login_illustration.png',
+                        width: width,
+                      ),
+                    ),
+                  ],
+                ),
               ),
             )
           ],
@@ -268,6 +409,7 @@ class _LoginScreenState extends State<LoginScreen> {
     );
   }
 
+  String typeLogin = '';
   Future<void> _OpenBrowser(String url) async {
     final Uri launchUri = Uri.parse(url);
     try {
@@ -283,46 +425,98 @@ class _LoginScreenState extends State<LoginScreen> {
     return mobileNumberPattern.hasMatch(input);
   }
 
-  Future loginAsync(String phoneNo) async {
+  Future<UserCredential> signInWithApple() async {
+    final appleProvider = AppleAuthProvider();
+    return await FirebaseAuth.instance.signInWithProvider(appleProvider);
+  }
+
+  Future<UserCredential> signInWithGoogle() async {
+    final googleUser = await googleSignIn.signIn();
+
+    final googleAuth = await googleUser!.authentication;
+
+    final credentials = GoogleAuthProvider.credential(
+      accessToken: googleAuth.accessToken,
+      idToken: googleAuth.idToken,
+    );
+
+    return await FirebaseAuth.instance.signInWithCredential(credentials);
+  }
+
+  Future loginAsync(String phoneNo,String displayName) async {
+    var emailStr = '';
+    var name = '';
+    var photoUrl = '';
     setState(() {
       showLoading = true;
     });
+
     try {
-      final googleUser = await googleSignIn.signIn();
+       //For Demo Login Purpose
+      if (phoneNo == "8000000000") {
+        name = 'demo';
+        emailStr = 'demo@gmail.com';
+        photoUrl =
+            "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ-UMsxiLO-Otwj6WQczDUlyIa8LpchsSfY-nkzQdJ5TA&s";
+      }else{
+        if (typeLogin == 'Google') {
+        final googleUser = await googleSignIn.signIn();
 
-      if (googleUser == null) {
-        glb.showSnackBar(context, 'Invalid Credentials',
-            'Please login using your valid Email ID');
-        setState(() {
-          showLoading = false;
-        });
-        return;
+        if (googleUser == null) {
+          glb.showSnackBar(context, 'Invalid Credentials',
+              'Please login using your valid Email ID');
+          setState(() {
+            showLoading = false;
+          });
+          return;
+        }
+        _user = googleUser;
+
+        final googleAuth = await googleUser.authentication;
+
+        final credentials = GoogleAuthProvider.credential(
+          accessToken: googleAuth.accessToken,
+          idToken: googleAuth.idToken,
+        );
+
+        await FirebaseAuth.instance.signInWithCredential(credentials);
+
+        emailStr = _user!.email;
+        name = _user!.displayName!;
+        photoUrl = _user!.photoUrl!;
+        if (name == null || name.isEmpty || name == 'None') {
+          setState(() {
+            showLoading = false;
+          });
+          glb.showSnackBar(context, 'Invalid Credentials',
+              'Please login using your valid Email ID');
+          return;
+        }
+        print(name);
+        print(emailStr);
+        print(photoUrl);
+      }else{
+        var auth = await signInWithApple();
+        if (auth.user == null){
+          setState(() {
+            showLoading = false;
+          });
+          glb.showSnackBar(context, 'Invalid Credentials',
+              'Please login using your valid Apple ID');
+          return;
+        }
+
+        if (auth.user!= null){
+          print('auth.user::${auth.user}');
+          name = displayName;
+          emailStr = "appleid@icloud.com";
+          photoUrl = "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ-UMsxiLO-Otwj6WQczDUlyIa8LpchsSfY-nkzQdJ5TA&s";
+        }
       }
-      _user = googleUser;
-
-      final googleAuth = await googleUser.authentication;
-
-      final credentials = GoogleAuthProvider.credential(
-        accessToken: googleAuth.accessToken,
-        idToken: googleAuth.idToken,
-      );
-
-      await FirebaseAuth.instance.signInWithCredential(credentials);
-
-      var emailStr = _user!.email;
-      var name = _user!.displayName;
-      var photoUrl = _user!.photoUrl;
-      if (name == null || name.isEmpty || name == 'None') {
-        setState(() {
-          showLoading = false;
-        });
-        glb.showSnackBar(context, 'Invalid Credentials',
-            'Please login using your valid Email ID');
-        return;
       }
-      print(name);
-      print(emailStr);
-      print(photoUrl);
+      
+     
+
       var url = glb.endPoint;
       final Map dictMap = {};
       // dictMap['mobno'] = "+91$phoneNo";
@@ -369,6 +563,7 @@ class _LoginScreenState extends State<LoginScreen> {
             glb.account_created_date = created_at;
             print("profile_img_url::$profile_img");
             SharedPreferenceUtils.save_val('usrid', usrid);
+            SharedPreferenceUtils.save_val('umobno', phoneNo);
             SharedPreferenceUtils.save_val('usrname', usrname);
             SharedPreferenceUtils.save_val('customerid', customer_id);
             //SharedPreferenceUtils.save_val('notificationToken', user_token);

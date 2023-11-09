@@ -63,13 +63,17 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   var _todaysDate = "";
-  var profile_img = "", userName = "", activeOrdersText = "Active Orders [0]";
+  var profile_img = "",
+      userName = "",
+      activeOrdersText = "Active Orders [0]",
+      activeBookingsText = "Current Bookings [0]";
   Position? _currentPosition;
 
   NotificationServices notificationServices = NotificationServices();
 
   List<MainCategoryModel> categoryModel = [];
   List<ActiveOrders> activeOrdersModel = [];
+  List<ActiveBookings> activeBookingsModel = [];
 
   // Location location = new Location();
 
@@ -82,7 +86,9 @@ class _HomePageState extends State<HomePage> {
       showSuccessGif = false,
       showDefaultPickup = true,
       noOrders = false,
-      activeOrdersLoading = true;
+      noBookings = false,
+      activeOrdersLoading = true,
+      activeBookingsLoading = true;
   var deviceToken = "";
 
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
@@ -102,7 +108,8 @@ class _HomePageState extends State<HomePage> {
     _getCurrentPosition();
 
     allCategoryAsync();
-    loadMyCurrentOrder();
+    loadMyActiveCurrentOrder();
+    loadMyBookingsCurrentOrder();
     //Set default app
     SharedPreferenceUtils.save_val('AppPreference', 'MainRoute');
   }
@@ -211,7 +218,116 @@ class _HomePageState extends State<HomePage> {
     }
   }
 
-  Future loadMyCurrentOrder() async {
+  Future loadMyBookingsCurrentOrder() async {
+    setState(() {
+      activeBookingsLoading = true;
+      noBookings = false;
+      activeBookingsText = "Current Bookings [0]";
+      activeBookingsModel = [];
+    });
+    final prefs = await SharedPreferences.getInstance();
+    var customerid = prefs.getString('customerid');
+
+    var todaysDate = glb.getDateTodays();
+    try {
+      var url = glb.endPoint;
+      final Map dictMap = {};
+
+      dictMap['customer_id'] = customerid;
+      dictMap['key'] = 2;
+      dictMap['pktType'] = "9";
+      dictMap['token'] = "vff";
+      dictMap['uid'] = "-1";
+
+      final response = await http.post(Uri.parse(url),
+          headers: <String, String>{
+            "Accept": "application/json",
+            'Content-Type': 'application/json; charset=UTF-8',
+          },
+          body: jsonEncode(dictMap));
+
+      if (response.statusCode == 200) {
+        var res = response.body;
+        if (res.contains("ErrorCode#2")) {
+          setState(() {
+            activeBookingsLoading = false;
+            noBookings = true;
+          });
+          //glb.showSnackBar(context, 'Error', 'No Active Orders Found');
+          return;
+        } else if (res.contains("ErrorCode#8")) {
+          setState(() {
+            activeBookingsLoading = false;
+            noBookings = true;
+          });
+          glb.showSnackBar(context, 'Error', 'Something Went Wrong');
+          return;
+        } else {
+          try {
+            Map<String, dynamic> orderMap = json.decode(response.body);
+            // if (kDebugMode) {
+            //   print("categoryMap:$catMap");
+            // }
+
+            var booking_id = orderMap['booking_id'];
+            var delivery_boy_id = orderMap['delivery_boy_id'];
+            var booking_status = orderMap['booking_status'];
+            var booking_time = orderMap['booking_time'];
+            var branch_id = orderMap['branch_id'];
+
+            List<String> booking_idLst = glb.strToLst2(booking_id);
+            List<String> delivery_boy_idLst = glb.strToLst2(delivery_boy_id);
+            List<String> booking_statusLst = glb.strToLst2(booking_status);
+            List<String> booking_timeLst = glb.strToLst2(booking_time);
+            List<String> branch_idLst = glb.strToLst2(branch_id);
+
+            for (int i = 0; i < booking_idLst.length; i++) {
+              var booking_id = booking_idLst.elementAt(i).toString();
+              var delivery_boy_id = delivery_boy_idLst.elementAt(i).toString();
+              var booking_status = booking_statusLst.elementAt(i).toString();
+              var booking_time = booking_timeLst.elementAt(i).toString();
+              var branch_id = branch_idLst.elementAt(i).toString();
+              var bookingTime = glb
+                  .doubleEpochToFormattedDateTime(double.parse(booking_time));
+              activeBookingsModel.add(ActiveBookings(
+                  bookingID: booking_id,
+                  deliveryBoyID: delivery_boy_id,
+                  bookingStatus: booking_status,
+                  bookingTime: bookingTime,
+                  branchID: branch_id));
+            }
+
+            setState(() {
+              activeBookingsLoading = false;
+              noBookings = false;
+              activeBookingsText =
+                  "Current Bookings [${activeBookingsModel.length}]";
+            });
+          } catch (e) {
+            if (kDebugMode) {
+              print(e);
+            }
+            setState(() {
+              activeBookingsLoading = false;
+              noBookings = true;
+            });
+            return "Failed";
+          }
+        }
+      }
+    } catch (e) {
+      if (kDebugMode) {
+        print(e);
+      }
+      setState(() {
+        activeOrdersLoading = false;
+        noOrders = true;
+      });
+      glb.handleErrors(e, context);
+    }
+  }
+
+  Future loadMyActiveCurrentOrder() async {
     setState(() {
       activeOrdersLoading = true;
       noOrders = false;
@@ -227,7 +343,8 @@ class _HomePageState extends State<HomePage> {
       final Map dictMap = {};
 
       dictMap['customer_id'] = customerid;
-      dictMap['pickup_date'] = todaysDate;
+      dictMap['key'] = 1;
+      dictMap['branch_id'] = "1";
       dictMap['pktType'] = "9";
       dictMap['token'] = "vff";
       dictMap['uid'] = "-1";
@@ -261,46 +378,42 @@ class _HomePageState extends State<HomePage> {
             // if (kDebugMode) {
             //   print("categoryMap:$catMap");
             // }
-            var orderid = orderMap['orderid'];
+
+            var order_id = orderMap['order_id'];
             var epoch = orderMap['epoch'];
             var pickup_dt = orderMap['pickup_dt'];
             var clat = orderMap['clat'];
             var clng = orderMap['clng'];
             var customer_name = orderMap['customer_name'];
+            var customer_usrid = orderMap['customer_usrid'];
             var delivery_boy_id = orderMap['delivery_boy_id'];
             var delivery_boy_name = orderMap['delivery_boy_name'];
             var order_status = orderMap['order_status'];
+            var branch_id = orderMap['branch_id'];
 
-            List<String> orderidLst = glb.strToLst2(orderid);
+            List<String> order_idLst = glb.strToLst2(order_id);
             List<String> epochLst = glb.strToLst2(epoch);
-            List<String> pickup_dtLst = glb.strToLst2(pickup_dt);
-            List<String> clatLst = glb.strToLst2(clat);
-            List<String> clngLst = glb.strToLst2(clng);
+            List<String> order_statusLst = glb.strToLst2(order_status);
             List<String> delivery_boy_idLst = glb.strToLst2(delivery_boy_id);
+            List<String> branch_idLst = glb.strToLst2(branch_id);
             List<String> delivery_boy_nameLst =
                 glb.strToLst2(delivery_boy_name);
-            List<String> order_statusLst = glb.strToLst2(order_status);
 
-            for (int i = 0; i < orderidLst.length; i++) {
-              var orderID = orderidLst.elementAt(i).toString();
+            for (int i = 0; i < order_idLst.length; i++) {
+              var orderID = order_idLst.elementAt(i).toString();
               var epoch = epochLst.elementAt(i).toString();
-              var PickUpDate = pickup_dtLst.elementAt(i).toString();
-              var cLatitude = clatLst.elementAt(i).toString();
-              var cLongitude = clngLst.elementAt(i).toString();
-              var deliveryBoyID = delivery_boy_idLst.elementAt(i).toString();
-              var order_status = order_statusLst.elementAt(i).toString();
-              var deliveryBoyName =
+              var orderStatus = order_statusLst.elementAt(i).toString();
+              var branch_id = branch_idLst.elementAt(i).toString();
+              var delivery_boy_name =
                   delivery_boy_nameLst.elementAt(i).toString();
-              var formattedDateTime = glb.epochToDateTime(double.parse(epoch));
-              String formattedTime = DateFormat.jm().format(formattedDateTime);
-
+              var time =
+                  glb.doubleEpochToFormattedDateTime(double.parse(epoch));
               activeOrdersModel.add(ActiveOrders(
                   orderID: orderID,
-                  time: formattedTime,
-                  pickUpDate: PickUpDate,
-                  deliveryBoyID: deliveryBoyID,
-                  deliveryBoyName: deliveryBoyName,
-                  orderStatus: order_status));
+                  time: time,
+                  deliveryBoyName: delivery_boy_name,
+                  orderStatus: orderStatus,
+                  branchID: branch_id));
             }
 
             setState(() {
@@ -479,9 +592,12 @@ class _HomePageState extends State<HomePage> {
       padding: const EdgeInsets.only(bottom: 8.0),
       child: FloatingActionButton(
         onPressed: () {},
+        backgroundColor: Colors.deepPurple,
         heroTag: "btn1",
         tooltip: 'VFF Gym',
-        child: const Icon(Icons.fitness_center),
+        child: const Icon(
+          Icons.fitness_center,
+        ),
       ),
     );
   }
@@ -496,7 +612,10 @@ class _HomePageState extends State<HomePage> {
         backgroundColor: Colors.pink,
         heroTag: "btn2",
         tooltip: 'Delivery Boy',
-        child: const Icon(Icons.delivery_dining),
+        child: const Icon(
+          Icons.delivery_dining,
+          color: Colors.white,
+        ),
       ),
     );
   }
@@ -509,7 +628,10 @@ class _HomePageState extends State<HomePage> {
         backgroundColor: Colors.green,
         heroTag: "btn3",
         tooltip: 'Coming Soon',
-        child: const Icon(LineIcons.tShirt),
+        child: const Icon(
+          LineIcons.tShirt,
+          color: Colors.white,
+        ),
       ),
     );
   }
@@ -524,13 +646,16 @@ class _HomePageState extends State<HomePage> {
     notificationServices.setupInteractMessage(context);
     notificationServices.isTokenRefreshed();
     // SharedPreferenceUtils.save_val('notificationToken', '');
-
+    activeBookingsModel = [];
+    activeOrdersModel = [];
+    glb.justSaveAddress = true;
     //Checking Location permission
     getDefaultData();
     _getCurrentPosition();
 
     allCategoryAsync();
-    loadMyCurrentOrder();
+    loadMyActiveCurrentOrder();
+    loadMyBookingsCurrentOrder();
   }
 
   @override
@@ -539,10 +664,8 @@ class _HomePageState extends State<HomePage> {
     double height = MediaQuery.of(context).size.height;
     return Scaffold(
       key: _scaffoldKey,
-      extendBodyBehindAppBar: true,
       appBar: AppBar(
         automaticallyImplyLeading: false,
-        backgroundColor: Colors.transparent,
         centerTitle: true,
         elevation: 0,
         actions: [
@@ -559,7 +682,6 @@ class _HomePageState extends State<HomePage> {
           //                     ),
           InkWell(
             onTap: () {
-              
               Navigator.pushNamed(context, CustomerNotificationRoute);
             },
             child: Icon(
@@ -576,9 +698,7 @@ class _HomePageState extends State<HomePage> {
         systemOverlayStyle:
             const SystemUiOverlayStyle(statusBarBrightness: Brightness.dark),
         leading: InkWell(
-          onTap: () {
-            
-          },
+          onTap: () {},
           child: WidgetCircularAnimator(
             size: 40,
             innerIconsSize: 3,
@@ -592,402 +712,618 @@ class _HomePageState extends State<HomePage> {
             child: Container(
                 decoration: BoxDecoration(
                     shape: BoxShape.circle, color: Colors.grey[200]),
-                child: profile_img.isEmpty == false
+                child: profile_img.isEmpty == false && profile_img != 'NA' && profile_img.isNotEmpty
                     ? CircleAvatar(
                         radius: 25.0,
                         backgroundImage: NetworkImage(profile_img),
                         backgroundColor: Colors.transparent,
                       )
-                    : const Icon(Icons.person)),
+                    : const Icon(
+                        Icons.person,
+                        color: AppColors.blueColor,
+                      )),
           ),
         ),
       ),
-      backgroundColor: Colors.black,
+     
+      backgroundColor: AppColors.whiteColor,
       body: Padding(
-          padding: const EdgeInsets.fromLTRB(20, 1.8 * kToolbarHeight, 20, 20),
-          child: RefreshIndicator(
-            onRefresh: _handleRefresh,
-            child: CustomScrollView(
-              slivers: [
-                SliverToBoxAdapter(
-                  child: SizedBox(
-                    height: MediaQuery.of(context).size.height,
-                    child: Stack(
-                      children: [
-                        SizedBox(
-                          width: MediaQuery.of(context).size.width,
-                          height: MediaQuery.of(context).size.height,
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              const SizedBox(
-                                height: 10.0,
-                              ),
-                              Row(
-                                children: [
-                                  Text('Hey, ',
-                                      style: ralewayStyle.copyWith(
-                                          color: Colors.white,
-                                          fontSize: 25.0,
-                                          fontWeight: FontWeight.normal)),
-                                  Text('${userName} 👋',
-                                      style: ralewayStyle.copyWith(
-                                          color: Colors.white,
-                                          fontSize: 25.0,
-                                          fontWeight: FontWeight.bold)),
-                                ],
-                              ),
-                              Text('Get Smart Experience in Washing',
-                                  style: ralewayStyle.copyWith(
-                                      color: Colors.white,
-                                      fontSize: 18.0,
-                                      fontWeight: FontWeight.normal)),
-                              SizedBox(
-                                height: width * 0.02,
-                              ),
-                              Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  SizedBox(
-                                    height: width * 0.05,
-                                  ),
-                                  _SliderLayout(width: width),
-                                ],
-                              ),
-                              SizedBox(
-                                height: width * 0.01,
-                              ),
-                              Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                crossAxisAlignment: CrossAxisAlignment.center,
-                                children: [
-                                  Text('Services',
-                                      style: ralewayStyle.copyWith(
-                                          fontSize: 20.0,
-                                          color: AppColors.whiteColor,
+        padding: const EdgeInsets.all(8.0),
+        child: RefreshIndicator(
+          color: Colors.blue,
+          onRefresh: _handleRefresh,
+          child: CustomScrollView(
+            slivers: [
+              SliverToBoxAdapter(
+                child: SizedBox(
+                  height: MediaQuery.of(context).size.height,
+                  child: Stack(
+                    children: [
+                      SizedBox(
+                        width: MediaQuery.of(context).size.width,
+                        height: MediaQuery.of(context).size.height,
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            const SizedBox(
+                              height: 10.0,
+                            ),
+                            Row(
+                              children: [
+                                Text('Hey, ',
+                                    style: nunitoStyle.copyWith(
+                                        color: AppColors.backColor,
+                                        fontSize: 25.0,
+                                        fontWeight: FontWeight.normal)),
+                                Text('${userName} 👋',
+                                    style: nunitoStyle.copyWith(
+                                        color: AppColors.backColor,
+                                        fontSize: 25.0,
+                                        fontWeight: FontWeight.bold)),
+                              ],
+                            ),
+                            Text('Get Smart Experience in Washing',
+                                style: nunitoStyle.copyWith(
+                                    color: AppColors.backColor,
+                                    fontSize: 18.0,
+                                    fontWeight: FontWeight.normal)),
+                            SizedBox(
+                              height: width * 0.02,
+                            ),
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                SizedBox(
+                                  height: width * 0.05,
+                                ),
+                                _SliderLayout(width: width),
+                              ],
+                            ),
+                            SizedBox(
+                              height: width * 0.01,
+                            ),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: [
+                                Text('Services',
+                                    style: nunitoStyle.copyWith(
+                                        fontSize: 20.0,
+                                        color: AppColors.backColor,
+                                        fontWeight: FontWeight.bold,
+                                        letterSpacing: 1)),
+                                InkWell(
+                                  onTap: () {
+                                    Navigator.pushNamed(
+                                        context, AllServicesRoute);
+                                  },
+                                  child: Text('See all',
+                                      style: nunitoStyle.copyWith(
+                                          fontSize: 12.0,
+                                          color: AppColors.textColor,
                                           fontWeight: FontWeight.bold,
                                           letterSpacing: 1)),
-                                  InkWell(
-                                    onTap: () {
-                                      Navigator.pushNamed(
-                                          context, AllServicesRoute);
-                                    },
-                                    child: Text('See all',
-                                        style: ralewayStyle.copyWith(
-                                            fontSize: 12.0,
-                                            color: AppColors.whiteColor,
-                                            fontWeight: FontWeight.bold,
-                                            letterSpacing: 1)),
-                                  ),
-                                ],
-                              ),
-                              SizedBox(
-                                height: width * 0.02,
-                              ),
-                              showLoading
-                                  ? const Center(
-                                      child: Padding(
-                                      padding: EdgeInsets.all(8.0),
-                                      child: CircularProgressIndicator(),
-                                    ))
-                                  : SizedBox(
-                                      height: 120,
-                                      child: ListView.builder(
-                                          scrollDirection: Axis.horizontal,
-                                          itemCount: categoryModel.length,
-                                          itemBuilder: (context, index) {
-                                            // Generate a random gradient for each item
-                                            //LinearGradient randomGradient = generateRandomGradient();
-                                            Color randomColor = glb
-                                                .generateRandomColorWithOpacity();
-                                            return Padding(
-                                              padding:
-                                                  const EdgeInsets.all(8.0),
-                                              child: InkWell(
-                                                onTap: () {
-                                                  Navigator.pushNamed(context,
-                                                      DeliveryAddressRoute);
-                                                },
-                                                borderRadius:
-                                                    BorderRadius.circular(12.0),
-                                                child: Column(
-                                                  mainAxisAlignment:
-                                                      MainAxisAlignment.center,
-                                                  children: [
-                                                    Container(
-                                                      decoration: BoxDecoration(
-                                                        color: AppColors
-                                                            .lightBlackColor,
-                                                        borderRadius:
-                                                            BorderRadius
-                                                                .circular(12.0),
-                                                      ),
-                                                      child: Padding(
-                                                        padding:
-                                                            const EdgeInsets
-                                                                .all(8.0),
-                                                        child: Container(
-                                                            width: 60.0,
-                                                            height: 60.0,
-                                                            decoration:
-                                                                BoxDecoration(
+                                ),
+                              ],
+                            ),
+                            SizedBox(
+                              height: width * 0.02,
+                            ),
+                            showLoading
+                                ? const Center(
+                                    child: Padding(
+                                    padding: EdgeInsets.all(8.0),
+                                    child: CircularProgressIndicator(
+                                      color: Colors.blue,
+                                    ),
+                                  ))
+                                : SizedBox(
+                                    height: 120,
+                                    child: ListView.builder(
+                                        scrollDirection: Axis.horizontal,
+                                        itemCount: categoryModel.length,
+                                        itemBuilder: (context, index) {
+                                          // Generate a random gradient for each item
+                                          //LinearGradient randomGradient = generateRandomGradient();
+                                          Color randomColor = glb
+                                              .generateRandomColorWithOpacity();
+                                          return Padding(
+                                            padding: const EdgeInsets.all(8.0),
+                                            child: InkWell(
+                                              onTap: () {
+                                                Navigator.pushNamed(
+                                                    context, AllBranchesRoute);
+                                              },
+                                              borderRadius:
+                                                  BorderRadius.circular(12.0),
+                                              child: Column(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment.center,
+                                                children: [
+                                                  Container(
+                                                    decoration: BoxDecoration(
+                                                      color: AppColors
+                                                          .secondaryBackColor,
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                              12.0),
+                                                    ),
+                                                    child: Padding(
+                                                      padding:
+                                                          const EdgeInsets.all(
+                                                              8.0),
+                                                      child: Container(
+                                                          width: 60.0,
+                                                          height: 60.0,
+                                                          decoration:
+                                                              BoxDecoration(
+                                                            borderRadius:
+                                                                BorderRadius
+                                                                    .circular(
+                                                                        50.0),
+                                                            color: randomColor,
+                                                          ),
+                                                          child: ClipRRect(
                                                               borderRadius:
                                                                   BorderRadius
                                                                       .circular(
                                                                           50.0),
-                                                              color:
-                                                                  randomColor,
-                                                            ),
-                                                            child: ClipRRect(
-                                                                borderRadius:
-                                                                    BorderRadius
-                                                                        .circular(
-                                                                            50.0),
-                                                                child: Image.network(
-                                                                    categoryModel[
-                                                                            index]
-                                                                        .categoryBGUrl))),
-                                                      ),
+                                                              child: Image.network(
+                                                                  categoryModel[
+                                                                          index]
+                                                                      .categoryBGUrl))),
                                                     ),
-                                                    const SizedBox(
-                                                      height: 10.0,
-                                                    ),
-                                                    Text(
-                                                        categoryModel[index]
-                                                            .categoryName
-                                                            .toCapitalized(),
-                                                        style: nunitoStyle
-                                                            .copyWith(
-                                                                fontSize: 10.0,
-                                                                color: Colors
-                                                                    .white,
-                                                                fontWeight:
-                                                                    FontWeight
-                                                                        .bold,
-                                                                letterSpacing:
-                                                                    1)),
-                                                  ],
-                                                ),
+                                                  ),
+                                                  const SizedBox(
+                                                    height: 10.0,
+                                                  ),
+                                                  Text(
+                                                      categoryModel[index]
+                                                          .categoryName
+                                                          .toCapitalized(),
+                                                      style:
+                                                          nunitoStyle.copyWith(
+                                                              fontSize: 10.0,
+                                                              color: AppColors
+                                                                  .backColor,
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .bold,
+                                                              letterSpacing:
+                                                                  1)),
+                                                ],
                                               ),
-                                            );
-                                          }),
-                                    ),
-                              SizedBox(
-                                height: width * 0.05,
-                              ),
-                              Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                crossAxisAlignment: CrossAxisAlignment.center,
-                                children: [
-                                  Text(activeOrdersText,
-                                      style: ralewayStyle.copyWith(
-                                          fontSize: 20.0,
-                                          color: Colors.white,
+                                            ),
+                                          );
+                                        }),
+                                  ),
+                            SizedBox(
+                              height: width * 0.05,
+                            ),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: [
+                                Text(activeOrdersText,
+                                    style: nunitoStyle.copyWith(
+                                        fontSize: 20.0,
+                                        color: AppColors.backColor,
+                                        fontWeight: FontWeight.bold,
+                                        letterSpacing: 1)),
+                                InkWell(
+                                  onTap: () {
+                                    Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                            builder: (context) =>
+                                                const BottomBarScreen(
+                                                    pageIndex: 2)));
+                                    //widget.changeTabBar();
+                                    // Provider.of<TabProvider>(context, listen: false).changeTab(1);
+                                    //Navigator.pushNamed(context, OrderTabRoute);
+                                  },
+                                  child: Text('Previous',
+                                      style: nunitoStyle.copyWith(
+                                          fontSize: 12.0,
+                                          color: AppColors.textColor,
                                           fontWeight: FontWeight.bold,
                                           letterSpacing: 1)),
-                                  InkWell(
-                                    onTap: () {
-                                      Navigator.push(
-                                          context,
-                                          MaterialPageRoute(
-                                              builder: (context) =>
-                                                  const BottomBarScreen(
-                                                      pageIndex: 2)));
-                                      //widget.changeTabBar();
-                                      // Provider.of<TabProvider>(context, listen: false).changeTab(1);
-                                      //Navigator.pushNamed(context, OrderTabRoute);
-                                    },
-                                    child: Text('Previous',
-                                        style: ralewayStyle.copyWith(
-                                            fontSize: 12.0,
-                                            color: AppColors.whiteColor,
-                                            fontWeight: FontWeight.bold,
-                                            letterSpacing: 1)),
-                                  ),
-                                ],
-                              ),
-                              SizedBox(
-                                height: width * 0.02,
-                              ),
-                              activeOrdersLoading
-                                  ? const LinearProgressIndicator()
-                                  : SizedBox(
-                                      height: 105,
-                                      child: noOrders
-                                          ? Padding(
-                                              padding:
-                                                  const EdgeInsets.all(26.0),
-                                              child: Center(
-                                                child: Text(
-                                                  'No Active Order Found\nIf you have Requested a Pickup Request wait until a Delivery boy is assigned to you.',
-                                                  style: ralewayStyle.copyWith(
-                                                      fontSize: 12.0,
-                                                      fontWeight:
-                                                          FontWeight.bold,
-                                                      color:
-                                                          AppColors.whiteColor),
-                                                  textAlign: TextAlign.center,
-                                                ),
+                                ),
+                              ],
+                            ),
+                            SizedBox(
+                              height: width * 0.02,
+                            ),
+                            activeOrdersLoading
+                                ? const LinearProgressIndicator(
+                                    color: Colors.blue,
+                                  )
+                                : SizedBox(
+                                    height: 105,
+                                    child: noOrders
+                                        ? Padding(
+                                            padding: const EdgeInsets.all(26.0),
+                                            child: Center(
+                                              child: Text(
+                                                'No Active Order Found\nIf you have Requested a Pickup Request please check below your booking status.',
+                                                style: nunitoStyle.copyWith(
+                                                    fontSize: 12.0,
+                                                    fontWeight: FontWeight.bold,
+                                                    color: AppColors.backColor),
+                                                textAlign: TextAlign.center,
                                               ),
-                                            )
-                                          : ListView.builder(
-                                              scrollDirection: Axis.horizontal,
-                                              itemCount:
-                                                  activeOrdersModel.length,
-                                              itemBuilder: (context, index) {
-                                                // Generate a random gradient for each item
-                                                //LinearGradient randomGradient = generateRandomGradient();
-                                                return Padding(
-                                                  padding:
-                                                      const EdgeInsets.all(8.0),
-                                                  child: Material(
-                                                    color: Colors.transparent,
-                                                    child: InkWell(
-                                                      onTap: () {
-                                                        //Send to Order detail Screen
-                                                        glb.orderid = "";
-                                                        glb.order_status = "0";
-                                                        glb.hideControls =
-                                                            false;
-                                                        glb.showPayOption =
-                                                            true;
-                                                        glb.orderid =
-                                                            activeOrdersModel[
-                                                                    index]
-                                                                .orderID;
-                                                        Navigator.pushNamed(
-                                                            context,
-                                                            OrderDetailsRoute);
-                                                      },
-                                                      borderRadius:
-                                                          BorderRadius.circular(
-                                                              12.0),
-                                                      child: Ink(
-                                                          width: width - 100,
-                                                          decoration:
-                                                              BoxDecoration(
-                                                            color: AppColors
-                                                                .lightBlackColor,
-                                                            borderRadius:
-                                                                BorderRadius
-                                                                    .circular(
-                                                                        16.0),
-                                                            boxShadow: [
-                                                              BoxShadow(
-                                                                color: Colors
-                                                                    .white
-                                                                    .withOpacity(
-                                                                        0.2), // Shadow color
-                                                                spreadRadius:
-                                                                    1, // Spread radius
-                                                                blurRadius:
-                                                                    5, // Blur radius
-                                                                offset: const Offset(
-                                                                    0,
-                                                                    1), // Offset to control shadow position
+                                            ),
+                                          )
+                                        : ListView.builder(
+                                            scrollDirection: Axis.horizontal,
+                                            itemCount: activeOrdersModel.length,
+                                            itemBuilder: (context, index) {
+                                              // Generate a random gradient for each item
+                                              //LinearGradient randomGradient = generateRandomGradient();
+                                              return Padding(
+                                                padding:
+                                                    const EdgeInsets.all(8.0),
+                                                child: Material(
+                                                  color: Colors.transparent,
+                                                  child: InkWell(
+                                                    onTap: () {
+                                                      //Send to Order detail Screen
+                                                      glb.orderid =
+                                                          activeOrdersModel[
+                                                                  index]
+                                                              .orderID;
+                                                      glb.booking_id = "";
+                                                      glb.branch_id = "";
+                                                      glb.order_status = "0";
+                                                      glb.hideControls = false;
+                                                      glb.showPayOption = true;
+                                                      glb.showDeliveryBoy =
+                                                          true;
+                                                      glb.branch_id =
+                                                          activeOrdersModel[
+                                                                  index]
+                                                              .branchID;
+                                                      Navigator.pushNamed(
+                                                          context,
+                                                          OrderDetailsRoute);
+                                                    },
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            12.0),
+                                                    child: Ink(
+                                                        width: width - 100,
+                                                        decoration:
+                                                            BoxDecoration(
+                                                          color: AppColors
+                                                              .secondaryBackColor,
+                                                          borderRadius:
+                                                              BorderRadius
+                                                                  .circular(
+                                                                      16.0),
+                                                          boxShadow: [
+                                                            BoxShadow(
+                                                              color: Colors
+                                                                  .white
+                                                                  .withOpacity(
+                                                                      0.2), // Shadow color
+                                                              spreadRadius:
+                                                                  1, // Spread radius
+                                                              blurRadius:
+                                                                  5, // Blur radius
+                                                              offset: const Offset(
+                                                                  0,
+                                                                  1), // Offset to control shadow position
+                                                            ),
+                                                          ],
+                                                        ),
+                                                        child: Padding(
+                                                          padding:
+                                                              const EdgeInsets
+                                                                  .all(8.0),
+                                                          child: Row(
+                                                            crossAxisAlignment:
+                                                                CrossAxisAlignment
+                                                                    .center,
+                                                            children: [
+                                                              Container(
+                                                                decoration: const BoxDecoration(
+                                                                    shape: BoxShape
+                                                                        .circle,
+                                                                    color: Colors
+                                                                        .blue),
+                                                                child: Padding(
+                                                                  padding:
+                                                                      const EdgeInsets
+                                                                          .all(
+                                                                          2.0),
+                                                                  child: Container(
+                                                                      decoration: const BoxDecoration(shape: BoxShape.circle, color: AppColors.lightBlackColor),
+                                                                      child: Padding(
+                                                                        padding:
+                                                                            EdgeInsets.all(8.0),
+                                                                        child:
+                                                                            Icon(
+                                                                          Icons
+                                                                              .local_laundry_service_outlined,
+                                                                          color:
+                                                                              Colors.green[900],
+                                                                        ),
+                                                                      )),
+                                                                ),
+                                                              ),
+                                                              Padding(
+                                                                padding:
+                                                                    const EdgeInsets
+                                                                        .only(
+                                                                        left:
+                                                                            20.0),
+                                                                child: Column(
+                                                                  mainAxisAlignment:
+                                                                      MainAxisAlignment
+                                                                          .center,
+                                                                  crossAxisAlignment:
+                                                                      CrossAxisAlignment
+                                                                          .start,
+                                                                  children: [
+                                                                    SizedBox(
+                                                                      child:
+                                                                          Text(
+                                                                        'Order ID: #${activeOrdersModel[index].orderID}',
+                                                                        style: nunitoStyle.copyWith(
+                                                                            fontSize:
+                                                                                16.0,
+                                                                            color:
+                                                                                AppColors.backColor,
+                                                                            fontWeight: FontWeight.bold,
+                                                                            letterSpacing: 1),
+                                                                        overflow:
+                                                                            TextOverflow.ellipsis,
+                                                                        softWrap:
+                                                                            true,
+                                                                      ),
+                                                                    ),
+                                                                    Padding(
+                                                                      padding: const EdgeInsets
+                                                                          .only(
+                                                                          top:
+                                                                              6.0),
+                                                                      child: Text(
+                                                                          activeOrdersModel[index]
+                                                                              .orderStatus,
+                                                                          style: nunitoStyle.copyWith(
+                                                                              fontSize: 14.0,
+                                                                              color: AppColors.blueColor,
+                                                                              fontWeight: FontWeight.w500,
+                                                                              letterSpacing: 1)),
+                                                                    ),
+                                                                  ],
+                                                                ),
                                                               ),
                                                             ],
                                                           ),
-                                                          child: Padding(
-                                                            padding:
-                                                                const EdgeInsets
-                                                                    .all(8.0),
-                                                            child: Row(
-                                                              crossAxisAlignment:
-                                                                  CrossAxisAlignment
-                                                                      .center,
-                                                              children: [
-                                                                Container(
-                                                                  decoration: const BoxDecoration(
-                                                                      shape: BoxShape
-                                                                          .circle,
-                                                                      color: Colors
-                                                                          .white),
-                                                                  child:
-                                                                      Padding(
-                                                                    padding:
-                                                                        const EdgeInsets
-                                                                            .all(
-                                                                            2.0),
-                                                                    child: Container(
-                                                                        decoration: const BoxDecoration(shape: BoxShape.circle, color: AppColors.lightBlackColor),
-                                                                        child: const Padding(
-                                                                          padding:
-                                                                              EdgeInsets.all(8.0),
-                                                                          child:
-                                                                              Icon(
-                                                                            Icons.local_laundry_service_outlined,
-                                                                            color:
-                                                                                Colors.white,
-                                                                          ),
-                                                                        )),
-                                                                  ),
-                                                                ),
-                                                                Padding(
+                                                        )),
+                                                  ),
+                                                ),
+                                              );
+                                            }),
+                                  ),
+                            SizedBox(
+                              height: width * 0.05,
+                            ),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: [
+                                Text(activeBookingsText,
+                                    style: nunitoStyle.copyWith(
+                                        fontSize: 20.0,
+                                        color: AppColors.backColor,
+                                        fontWeight: FontWeight.bold,
+                                        letterSpacing: 1)),
+                              ],
+                            ),
+                            SizedBox(
+                              height: width * 0.02,
+                            ),
+                            activeBookingsLoading
+                                ? const LinearProgressIndicator(
+                                    color: Colors.blue,
+                                  )
+                                : SizedBox(
+                                    height: 105,
+                                    child: noBookings
+                                        ? Padding(
+                                            padding: const EdgeInsets.all(26.0),
+                                            child: Center(
+                                              child: Text(
+                                                'No Bookings Found',
+                                                style: nunitoStyle.copyWith(
+                                                    fontSize: 12.0,
+                                                    fontWeight: FontWeight.bold,
+                                                    color: AppColors.backColor),
+                                                textAlign: TextAlign.center,
+                                              ),
+                                            ),
+                                          )
+                                        : ListView.builder(
+                                            scrollDirection: Axis.horizontal,
+                                            itemCount:
+                                                activeBookingsModel.length,
+                                            itemBuilder: (context, index) {
+                                              // Generate a random gradient for each item
+                                              //LinearGradient randomGradient = generateRandomGradient();
+                                              return Padding(
+                                                padding:
+                                                    const EdgeInsets.all(8.0),
+                                                child: Material(
+                                                  color: Colors.transparent,
+                                                  child: InkWell(
+                                                    onTap: () {
+                                                      //Send to Order detail Screen
+                                                      glb.orderid = "";
+                                                      glb.booking_id = "";
+                                                      glb.branch_id = "";
+                                                      glb.order_status = "0";
+                                                      glb.hideControls = false;
+                                                      glb.showPayOption = true;
+                                                      glb.showDeliveryBoy =
+                                                          true;
+
+                                                      if (activeBookingsModel
+                                                          .isNotEmpty) {
+                                                        if (activeBookingsModel[
+                                                                    index]
+                                                                .bookingStatus ==
+                                                            "NA") {
+                                                          glb.showSnackBar(
+                                                              context,
+                                                              'Alert',
+                                                              "Please wait until a Delivery Boy is Assigned To You.\nThank You");
+                                                          return;
+                                                        }
+                                                        glb.booking_id =
+                                                            activeBookingsModel[
+                                                                    index]
+                                                                .bookingID;
+                                                        glb.branch_id = activeBookingsModel[index].branchID;
+                                                        Navigator.pushNamed(
+                                                            context,
+                                                            BookingDetailsRoute);
+                                                      }
+                                                    },
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            12.0),
+                                                    child: Ink(
+                                                        width: width - 100,
+                                                        decoration:
+                                                            BoxDecoration(
+                                                          color: AppColors
+                                                              .secondaryBackColor,
+                                                          borderRadius:
+                                                              BorderRadius
+                                                                  .circular(
+                                                                      16.0),
+                                                          boxShadow: [
+                                                            BoxShadow(
+                                                              color: Colors
+                                                                  .white
+                                                                  .withOpacity(
+                                                                      0.2), // Shadow color
+                                                              spreadRadius:
+                                                                  1, // Spread radius
+                                                              blurRadius:
+                                                                  5, // Blur radius
+                                                              offset: const Offset(
+                                                                  0,
+                                                                  1), // Offset to control shadow position
+                                                            ),
+                                                          ],
+                                                        ),
+                                                        child: Padding(
+                                                          padding:
+                                                              const EdgeInsets
+                                                                  .all(8.0),
+                                                          child: Row(
+                                                            crossAxisAlignment:
+                                                                CrossAxisAlignment
+                                                                    .center,
+                                                            children: [
+                                                              Container(
+                                                                decoration: const BoxDecoration(
+                                                                    shape: BoxShape
+                                                                        .circle,
+                                                                    color: Colors
+                                                                        .deepPurple),
+                                                                child: Padding(
                                                                   padding:
                                                                       const EdgeInsets
-                                                                          .only(
-                                                                          left:
-                                                                              20.0),
-                                                                  child: Column(
-                                                                    mainAxisAlignment:
-                                                                        MainAxisAlignment
-                                                                            .center,
-                                                                    crossAxisAlignment:
-                                                                        CrossAxisAlignment
-                                                                            .start,
-                                                                    children: [
-                                                                      SizedBox(
+                                                                          .all(
+                                                                          2.0),
+                                                                  child: Container(
+                                                                      decoration: const BoxDecoration(shape: BoxShape.circle, color: AppColors.lightBlackColor),
+                                                                      child: const Padding(
+                                                                        padding:
+                                                                            EdgeInsets.all(8.0),
                                                                         child:
-                                                                            Text(
-                                                                          'Order ID: #${activeOrdersModel[index].orderID}',
-                                                                          style: nunitoStyle.copyWith(
-                                                                              fontSize: 16.0,
-                                                                              color: Colors.white,
-                                                                              fontWeight: FontWeight.bold,
-                                                                              letterSpacing: 1),
-                                                                          overflow:
-                                                                              TextOverflow.ellipsis,
-                                                                          softWrap:
-                                                                              true,
+                                                                            Icon(
+                                                                          Icons
+                                                                              .delivery_dining_sharp,
+                                                                          color:
+                                                                              Colors.deepOrange,
                                                                         ),
-                                                                      ),
-                                                                      Padding(
-                                                                        padding: const EdgeInsets
-                                                                            .only(
-                                                                            top:
-                                                                                6.0),
-                                                                        child: Text(
-                                                                            'Order Confirmed',
-                                                                            style: ralewayStyle.copyWith(
-                                                                                fontSize: 14.0,
-                                                                                color: Colors.green,
-                                                                                fontWeight: FontWeight.w500,
-                                                                                letterSpacing: 1)),
-                                                                      ),
-                                                                    ],
-                                                                  ),
+                                                                      )),
                                                                 ),
-                                                              ],
-                                                            ),
-                                                          )),
-                                                    ),
+                                                              ),
+                                                              Padding(
+                                                                padding:
+                                                                    const EdgeInsets
+                                                                        .only(
+                                                                        left:
+                                                                            20.0),
+                                                                child: Column(
+                                                                  mainAxisAlignment:
+                                                                      MainAxisAlignment
+                                                                          .center,
+                                                                  crossAxisAlignment:
+                                                                      CrossAxisAlignment
+                                                                          .start,
+                                                                  children: [
+                                                                    SizedBox(
+                                                                      child:
+                                                                          Text(
+                                                                        'Booking ID: #${activeBookingsModel[index].bookingID}',
+                                                                        style: nunitoStyle.copyWith(
+                                                                            fontSize:
+                                                                                16.0,
+                                                                            color:
+                                                                                AppColors.backColor,
+                                                                            fontWeight: FontWeight.bold,
+                                                                            letterSpacing: 1),
+                                                                        overflow:
+                                                                            TextOverflow.ellipsis,
+                                                                        softWrap:
+                                                                            true,
+                                                                      ),
+                                                                    ),
+                                                                    Padding(
+                                                                      padding: const EdgeInsets
+                                                                          .only(
+                                                                          top:
+                                                                              6.0),
+                                                                      child: Text(
+                                                                          activeBookingsModel[index].bookingStatus == "NA"
+                                                                              ? "Assiging Delivery Boy"
+                                                                              : activeBookingsModel[index]
+                                                                                  .bookingStatus,
+                                                                          style: nunitoStyle.copyWith(
+                                                                              fontSize: 14.0,
+                                                                              color: AppColors.blueColor,
+                                                                              fontWeight: FontWeight.w500,
+                                                                              letterSpacing: 1)),
+                                                                    ),
+                                                                  ],
+                                                                ),
+                                                              ),
+                                                            ],
+                                                          ),
+                                                        )),
                                                   ),
-                                                );
-                                              }),
-                                    ),
-                            ],
-                          ),
-                        )
-                      ],
-                    ),
+                                                ),
+                                              );
+                                            }),
+                                  ),
+                          ],
+                        ),
+                      )
+                    ],
                   ),
-                )
-              ],
-            ),
-          )),
+                ),
+              )
+            ],
+          ),
+        ),
+      ),
       floatingActionButton: SlideFromLeftAnimation(
         delay: 1.2,
         child: AnimatedFloatingActionButton(
@@ -1095,7 +1431,7 @@ class _SliderLayout extends StatelessWidget {
                   width: width - 50,
                   child: Text(
                     '20% OFF on Dry Cleaning ',
-                    style: ralewayStyle.copyWith(
+                    style: nunitoStyle.copyWith(
                         fontSize: 25.0,
                         fontWeight: FontWeight.bold,
                         letterSpacing: 0.5,
@@ -1148,7 +1484,7 @@ class _SliderLayout extends StatelessWidget {
                   width: width - 50,
                   child: Text(
                     'Wash and Fold',
-                    style: ralewayStyle.copyWith(
+                    style: nunitoStyle.copyWith(
                         fontSize: 25.0,
                         fontWeight: FontWeight.bold,
                         letterSpacing: 0.5,
@@ -1186,9 +1522,9 @@ class _NavBar extends StatelessWidget {
               height: 50,
             ),
             Text('VFF Group',
-                style: ralewayStyle.copyWith(
+                style: nunitoStyle.copyWith(
                   fontSize: 25.0,
-                  color: AppColors.whiteColor,
+                  color: AppColors.backColor,
                   fontWeight: FontWeight.bold,
                 )),
           ],
@@ -1203,7 +1539,7 @@ class _NavBar extends StatelessWidget {
                 },
                 child: const Icon(
                   Icons.phone,
-                  color: Colors.white,
+                  color: AppColors.backColor,
                 ),
               ),
             ),
@@ -1211,7 +1547,7 @@ class _NavBar extends StatelessWidget {
               padding: EdgeInsets.only(right: 16.0),
               child: Icon(
                 Icons.notifications,
-                color: AppColors.whiteColor,
+                color: AppColors.backColor,
               ),
             ),
             WidgetCircularAnimator(
@@ -1310,7 +1646,7 @@ class Main_Category_Layout extends StatelessWidget {
                             categorymodel.categoryName,
                             style: nunitoStyle.copyWith(
                                 fontWeight: FontWeight.bold,
-                                color: Colors.white,
+                                color: AppColors.backColor,
                                 fontSize: 30.0),
                             overflow: TextOverflow.ellipsis,
                             softWrap: true,
@@ -1325,7 +1661,7 @@ class Main_Category_Layout extends StatelessWidget {
                           "Regular Price : ${categorymodel.regularPrice}/${categorymodel.regularPriceType}",
                           style: nunitoStyle.copyWith(
                               fontWeight: FontWeight.bold,
-                              color: Colors.white,
+                              color: AppColors.backColor,
                               fontSize: 14.0),
                           overflow: TextOverflow.ellipsis,
                           softWrap: true,
@@ -1341,7 +1677,7 @@ class Main_Category_Layout extends StatelessWidget {
                           'Express Price : ${categorymodel.expressPrice}/${categorymodel.expressPriceType}',
                           style: nunitoStyle.copyWith(
                               fontWeight: FontWeight.bold,
-                              color: Colors.white,
+                              color: AppColors.backColor,
                               fontSize: 14.0),
                           overflow: TextOverflow.ellipsis,
                           softWrap: true,
@@ -1357,7 +1693,7 @@ class Main_Category_Layout extends StatelessWidget {
                           'Offer Price : ${categorymodel.offerPrice}/${categorymodel.offerPriceType}',
                           style: nunitoStyle.copyWith(
                               fontWeight: FontWeight.bold,
-                              color: Colors.white,
+                              color: AppColors.backColor,
                               fontSize: 14.0),
                           overflow: TextOverflow.ellipsis,
                           softWrap: true,
@@ -1396,14 +1732,14 @@ class Main_Category_Layout extends StatelessWidget {
                                         'Continue',
                                         style: nunitoStyle.copyWith(
                                             fontWeight: FontWeight.w600,
-                                            color: AppColors.whiteColor,
+                                            color: AppColors.backColor,
                                             fontSize: 16.0),
                                       ),
                                       const Padding(
                                         padding: EdgeInsets.only(left: 8.0),
                                         child: Icon(
                                           Icons.arrow_right_alt,
-                                          color: AppColors.whiteColor,
+                                          color: AppColors.backColor,
                                         ),
                                       )
                                     ],

@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 import 'package:vff_group/utils/app_styles.dart';
 
@@ -21,7 +20,7 @@ class EmotionFace extends StatelessWidget {
           padding: const EdgeInsets.all(16.0),
           child: Text(
             emotionFace,
-            style: ralewayStyle.copyWith(
+            style: nunitoStyle.copyWith(
               fontSize: 28,
             ),
           ),

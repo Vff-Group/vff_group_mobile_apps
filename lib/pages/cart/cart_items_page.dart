@@ -38,8 +38,8 @@ class _AddToCartItemState extends State<AddToCartItem> {
       var url = glb.endPoint;
       final Map dictMap = {};
 
-      dictMap['customer_id'] = customerid;
-      dictMap['order_id'] = glb.orderid;
+      dictMap['customer_id'] = glb.customerID;
+      dictMap['booking_id'] = glb.booking_id;
       dictMap['pktType'] = "15";
       dictMap['token'] = "vff";
       dictMap['uid'] = "-1";
@@ -76,10 +76,10 @@ class _AddToCartItemState extends State<AddToCartItem> {
             var categoryID = cartMap['catid'];
             var subCategoryID = cartMap['subcatid'];
 
-            var orderID = cartMap['order_id'];
+            var bookingID = cartMap['order_id'];
             var date = cartMap['date'];
             var time = cartMap['time'];
-            var orderType = cartMap['order_type'];
+            var bookingType = cartMap['order_type'];
             var itemCost = cartMap['item_cost'];
             var itemQuantity = cartMap['item_quantity'];
             var typeOf = cartMap['type_of'];
@@ -94,10 +94,10 @@ class _AddToCartItemState extends State<AddToCartItem> {
             List<String> categoryIDst = glb.strToLst2(categoryID);
             List<String> subCategoryIDlst = glb.strToLst2(subCategoryID);
 
-            List<String> orderIDlst = glb.strToLst2(orderID);
+            List<String> bookingIDlst = glb.strToLst2(bookingID);
             List<String> datelst = glb.strToLst2(date);
             List<String> timelst = glb.strToLst2(time);
-            List<String> orderTypelst = glb.strToLst2(orderType);
+            List<String> bookingTypelst = glb.strToLst2(bookingType);
             List<String> itemCostlst = glb.strToLst2(itemCost);
             List<String> itemQuantitylst = glb.strToLst2(itemQuantity);
             List<String> typeOflst = glb.strToLst2(typeOf);
@@ -114,10 +114,10 @@ class _AddToCartItemState extends State<AddToCartItem> {
               var categoryID = categoryIDst.elementAt(i).toString();
               var subCategoryID = subCategoryIDlst.elementAt(i).toString();
 
-              var orderID = orderIDlst.elementAt(i).toString();
+              var bookingID = bookingIDlst.elementAt(i).toString();
               var date = datelst.elementAt(i).toString();
               var time = timelst.elementAt(i).toString();
-              var orderType = orderTypelst.elementAt(i).toString();
+              var bookingType = bookingTypelst.elementAt(i).toString();
               var itemCost = itemCostlst.elementAt(i).toString();
               var itemQuantity = itemQuantitylst.elementAt(i).toString();
               var typeOf = typeOflst.elementAt(i).toString();
@@ -138,10 +138,10 @@ class _AddToCartItemState extends State<AddToCartItem> {
                   itemCost: itemCost,
                   itemQuantity: itemQuantity,
                   typeOf: typeOf,
-                  orderID: orderID,
+                  orderID: bookingID,
                   date: date,
                   time: timeFormatted,
-                  orderType: orderType,
+                  orderType: bookingType,
                   categoryImage: categoryImage,
                   categoryName: categoryName,
                   subCategoryName: subCategoryName,
@@ -241,13 +241,13 @@ class _AddToCartItemState extends State<AddToCartItem> {
     double width = MediaQuery.of(context).size.width;
     return Scaffold(
       extendBodyBehindAppBar: true,
-      backgroundColor: Colors.black,
+      backgroundColor: AppColors.whiteColor,
       appBar: AppBar(
-        backgroundColor: Colors.transparent,
+     
         elevation: 0,
         title: Text(
           'Cart',
-          style: ralewayStyle.copyWith(
+          style: nunitoStyle.copyWith(
             color: AppColors.whiteColor,
             fontSize: 25.0,
             fontWeight: FontWeight.bold,
@@ -263,10 +263,10 @@ class _AddToCartItemState extends State<AddToCartItem> {
                   Center(
                     child: Text(
                       'No Laundry Items Added Yet',
-                      style: ralewayStyle.copyWith(
+                      style: nunitoStyle.copyWith(
                           fontWeight: FontWeight.bold,
                           fontSize: 16.0,
-                          color: AppColors.whiteColor),
+                          color: AppColors.backColor),
                     ),
                   ),
                 ],
@@ -316,10 +316,10 @@ class _AddToCartItemState extends State<AddToCartItem> {
                                                   cartItemModel[index]
                                                       .categoryName
                                                       .toCapitalized(),
-                                                  style: ralewayStyle.copyWith(
+                                                  style: nunitoStyle.copyWith(
                                                     fontSize: 14.0,
                                                     fontWeight: FontWeight.bold,
-                                                    color: AppColors.neonColor,
+                                                    color: AppColors.blueColor,
                                                   ),
                                                 ),
                                                 InkWell(
@@ -348,8 +348,8 @@ class _AddToCartItemState extends State<AddToCartItem> {
                                                 Row(
                                                   children: [
                                                     if (cartItemModel[index]
-                                                            .subCategoryImage ==
-                                                        'NA')
+                                                            .typeOf ==
+                                                        'Kg')
                                                       ClipRRect(
                                                         borderRadius:
                                                             BorderRadius
@@ -377,8 +377,8 @@ class _AddToCartItemState extends State<AddToCartItem> {
                                                               .start,
                                                       children: [
                                                         cartItemModel[index]
-                                                                    .subCategoryName ==
-                                                                'NA'
+                                                                    .typeOf ==
+                                                                'Kg'
                                                             ? Text(
                                                                 cartItemModel[
                                                                         index]
@@ -392,7 +392,7 @@ class _AddToCartItemState extends State<AddToCartItem> {
                                                                       FontWeight
                                                                           .bold,
                                                                   color: AppColors
-                                                                      .whiteColor,
+                                                                      .backColor,
                                                                 ),
                                                               )
                                                             : Row(
@@ -410,7 +410,7 @@ class _AddToCartItemState extends State<AddToCartItem> {
                                                                           FontWeight
                                                                               .bold,
                                                                       color: AppColors
-                                                                          .whiteColor,
+                                                                          .backColor,
                                                                     ),
                                                                   ),
                                                                   Text(
@@ -441,7 +441,7 @@ class _AddToCartItemState extends State<AddToCartItem> {
                                                                       FontWeight
                                                                           .bold,
                                                                   color: AppColors
-                                                                      .neonColor),
+                                                                      .blueColor),
                                                         ),
                                                       ],
                                                     )
@@ -458,7 +458,7 @@ class _AddToCartItemState extends State<AddToCartItem> {
                                                                   FontWeight
                                                                       .bold,
                                                               color: AppColors
-                                                                  .neonColor),
+                                                                  .blueColor),
                                                     ),
                                                     Text(
                                                       '${cartItemModel[index].itemQuantity}  ${cartItemModel[index].typeOf}',
@@ -469,7 +469,7 @@ class _AddToCartItemState extends State<AddToCartItem> {
                                                                   FontWeight
                                                                       .bold,
                                                               color: AppColors
-                                                                  .neonColor),
+                                                                  .blueColor),
                                                     ),
                                                   ],
                                                 ),
@@ -488,52 +488,59 @@ class _AddToCartItemState extends State<AddToCartItem> {
                           ),
                   ],
                 ),
-                Positioned(
-                  bottom: 30.0,
-                  left: 0,
-                  right: 0,
-                  child: Padding(
-                    padding: const EdgeInsets.all(12.0),
+                Visibility(
+                  visible: glb.showPayOption,
+                  child: Positioned(
+                    bottom: 30.0,
+                    left: 0,
+                    right: 0,
                     child: Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Column(
-                        children: [
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Material(
-                                color: Colors.transparent,
-                                child: InkWell(
-                                  onTap: () {
-                                    Navigator.pushNamed(context, CheckOutRoute);
-                                  },
-                                  borderRadius: BorderRadius.circular(12.0),
-                                  child: Ink(
-                                    decoration: BoxDecoration(
-                                      gradient: LinearGradient(colors: [
-                                        Colors.green,
-                                      Colors.blue,
-                                      ]),
-                                      borderRadius: BorderRadius.circular(12.0),
-                                    ),
-                                    child: Padding(
-                                      padding: const EdgeInsets.symmetric(
-                                          horizontal: 50.0, vertical: 10.0),
-                                      child: Text(
-                                        'Proceed',
-                                        style: ralewayStyle.copyWith(
-                                            fontSize: 16.0,
-                                            letterSpacing: 1,
-                                            color: AppColors.whiteColor,
-                                            fontWeight: FontWeight.bold),
+                      padding: const EdgeInsets.all(12.0),
+                      child: Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Column(
+                          children: [
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Material(
+                                  color: Colors.transparent,
+                                  child: InkWell(
+                                    onTap: () {
+                                      glb.paymentType = "";
+                                      Navigator.pushNamed(
+                                          context, CheckOutRoute);
+                                    },
+                                    borderRadius: BorderRadius.circular(12.0),
+                                    child: Ink(
+                                      decoration: BoxDecoration(
+                                        // gradient: LinearGradient(colors: [
+                                        //   Colors.green,
+                                        // Colors.blue,
+                                        // ]),
+                                        color: AppColors.blueColor,
+                                        borderRadius:
+                                            BorderRadius.circular(12.0),
+                                      ),
+                                      child: Padding(
+                                        padding: const EdgeInsets.symmetric(
+                                            horizontal: 50.0, vertical: 10.0),
+                                        child: Text(
+                                          'Proceed',
+                                          style: nunitoStyle.copyWith(
+                                              fontSize: 16.0,
+                                              letterSpacing: 1,
+                                              color: AppColors.whiteColor,
+                                              fontWeight: FontWeight.bold),
+                                        ),
                                       ),
                                     ),
                                   ),
-                                ),
-                              )
-                            ],
-                          )
-                        ],
+                                )
+                              ],
+                            )
+                          ],
+                        ),
                       ),
                     ),
                   ),

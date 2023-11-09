@@ -2,8 +2,13 @@ import 'package:flutter/material.dart';
 
 class AppColors {
   // static const Color backColor = Color(0xffF6F6F6);
+  //backColor = Color(0xffEAF3F8)
+   static const Color  secondaryBackColor = Color(0xffF8F9FD);
+  static const Color buttonColor = Color(0xff6FC8FF);
   static const Color backColor = Color(0xff141414);
-  static const Color lightBlackColor = Color(0xff212121);
+  static const Color loginBackColor = Color(0xffEAF3F8);
+  // static const Color lightBlackColor = Color(0xff212121);
+  static const Color lightBlackColor = Color(0xffF8F9FD);
   static const Color btnColor = Color(0xffF1D058);
   static const Color sliderBGColor = Color(0xff136756);
   static const Color mainBlueColor = Color(0xff1398DB);

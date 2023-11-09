@@ -148,14 +148,14 @@ class _AllServicesPageState extends State<AllServicesPage> {
     double height = MediaQuery.of(context).size.height;
     double width = MediaQuery.of(context).size.width;
     return Scaffold(
-      backgroundColor: AppColors.backColor,
+      backgroundColor: AppColors.whiteColor,
       appBar: AppBar(
-          backgroundColor: Colors.transparent,
+          backgroundColor: Colors.blue,
           elevation: 0,
           title: FadeAnimation(
             delay: 0.3,
             child: Text('Our Services',
-                style: ralewayStyle.copyWith(
+                style: nunitoStyle.copyWith(
                     fontSize: 20.0,
                     color: AppColors.whiteColor,
                     fontWeight: FontWeight.bold,
@@ -204,7 +204,7 @@ class _AllServicesPageState extends State<AllServicesPage> {
                                       //Send to Request PickUp Page
 
                                       Navigator.pushNamed(
-                                          context, DeliveryAddressRoute);
+                                          context, AllBranchesRoute);
                                     },
                                     borderRadius: BorderRadius.circular(12.0),
                                     child: Ink(
@@ -253,12 +253,11 @@ class _AllServicesPageState extends State<AllServicesPage> {
                                                           categoryModel[
                                                                   index]
                                                               .categoryName,
-                                                          style: ralewayStyle
+                                                          style: nunitoStyle
                                                               .copyWith(
                                                                   fontSize:
                                                                       14.0,
-                                                                  color: Colors
-                                                                      .white,
+                                                                  color: AppColors.backColor,
                                                                   fontWeight:
                                                                       FontWeight
                                                                           .bold,
@@ -270,10 +269,9 @@ class _AllServicesPageState extends State<AllServicesPage> {
                                                                 .only(top: 8.0),
                                                         child: Text(
                                                             'Min ${categoryModel[index].minHours}Hours',
-                                                            style: ralewayStyle.copyWith(
+                                                            style: nunitoStyle.copyWith(
                                                                 fontSize: 10.0,
-                                                                color: AppColors
-                                                                    .whiteColor,
+                                                                color: AppColors.backColor,
                                                                 fontWeight:
                                                                     FontWeight
                                                                         .bold,
@@ -296,7 +294,7 @@ class _AllServicesPageState extends State<AllServicesPage> {
                                                   borderRadius:
                                                       BorderRadius.circular(
                                                           12.0),
-                                                  color: AppColors.whiteColor
+                                                  color: AppColors.backColor
                                                       .withOpacity(0.5)),
                                             ),
                                           ),
@@ -314,11 +312,10 @@ class _AllServicesPageState extends State<AllServicesPage> {
                                                               4.0),
                                                       child: Text(
                                                           'Regular Price',
-                                                          style: ralewayStyle
+                                                          style: nunitoStyle
                                                               .copyWith(
                                                                   fontSize: 8.0,
-                                                                  color: Colors
-                                                                      .white,
+                                                                  color: AppColors.backColor,
                                                                   fontWeight:
                                                                       FontWeight
                                                                           .bold,
@@ -330,7 +327,8 @@ class _AllServicesPageState extends State<AllServicesPage> {
                                                         style: nunitoStyle
                                                             .copyWith(
                                                                 fontSize: 12.0,
-                                                                color: AppColors.neonColor,
+                                                                color: AppColors
+                                                                    .blueColor,
                                                                 fontWeight:
                                                                     FontWeight
                                                                         .bold,
@@ -356,11 +354,10 @@ class _AllServicesPageState extends State<AllServicesPage> {
                                                               4.0),
                                                       child: Text(
                                                           'Express Price',
-                                                          style: ralewayStyle
+                                                          style: nunitoStyle
                                                               .copyWith(
                                                                   fontSize: 8.0,
-                                                                  color: Colors
-                                                                      .white,
+                                                                  color: AppColors.backColor,
                                                                   fontWeight:
                                                                       FontWeight
                                                                           .bold,
@@ -372,7 +369,8 @@ class _AllServicesPageState extends State<AllServicesPage> {
                                                         style: nunitoStyle
                                                             .copyWith(
                                                                 fontSize: 12.0,
-                                                                color: AppColors.neonColor,
+                                                                color: AppColors
+                                                                    .blueColor,
                                                                 fontWeight:
                                                                     FontWeight
                                                                         .bold,
@@ -397,11 +395,10 @@ class _AllServicesPageState extends State<AllServicesPage> {
                                                           const EdgeInsets.all(
                                                               4.0),
                                                       child: Text('Offer Price',
-                                                          style: ralewayStyle
+                                                          style: nunitoStyle
                                                               .copyWith(
                                                                   fontSize: 8.0,
-                                                                  color: Colors
-                                                                      .white,
+                                                                  color: AppColors.backColor,
                                                                   fontWeight:
                                                                       FontWeight
                                                                           .bold,
@@ -413,7 +410,8 @@ class _AllServicesPageState extends State<AllServicesPage> {
                                                         style: nunitoStyle
                                                             .copyWith(
                                                                 fontSize: 12.0,
-                                                                color: AppColors.neonColor,
+                                                                color: AppColors
+                                                                    .blueColor,
                                                                 fontWeight:
                                                                     FontWeight
                                                                         .bold,

@@ -6,6 +6,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:line_icons/line_icons.dart';
 import 'package:vff_group/pages/cart/dry_clean_cart_page.dart';
+
+import 'package:vff_group/pages/cart/other_services_section_page.dart';
 import 'package:vff_group/pages/orders_pages/cancelled_order.dart';
 import 'package:vff_group/pages/orders_pages/completed_order.dart';
 import 'package:vff_group/pages/orders_pages/ongoing_order.dart';
@@ -146,14 +148,12 @@ class _MyBagPageState extends State<MyBagPage> {
     double height = MediaQuery.of(context).size.height;
     double width = MediaQuery.of(context).size.width;
     return Scaffold(
-      backgroundColor: Colors.black,
-      extendBodyBehindAppBar: true,
+      backgroundColor: AppColors.whiteColor,
       appBar: AppBar(
-        backgroundColor: Colors.transparent,
         elevation: 0,
         title: Text(
           'My Bag',
-          style: ralewayStyle.copyWith(
+          style: nunitoStyle.copyWith(
             color: AppColors.whiteColor,
             fontSize: 25.0,
             fontWeight: FontWeight.bold,
@@ -165,6 +165,7 @@ class _MyBagPageState extends State<MyBagPage> {
             child: InkWell(
                 onTap: () {
                   //Navigator.pushNamed(context, CheckOutRoute);
+
                   Navigator.pushNamed(context, MyCartRoute);
                 },
                 child: const Icon(
@@ -190,8 +191,9 @@ class _MyBagPageState extends State<MyBagPage> {
                       backgroundColor: AppColors.blueColor,
                       unselectedBackgroundColor: AppColors.lightBlackColor,
                       unselectedLabelStyle:
+                          nunitoStyle.copyWith(color: AppColors.textColor),
+                      labelStyle:
                           nunitoStyle.copyWith(color: AppColors.whiteColor),
-                      labelStyle: nunitoStyle.copyWith(color: AppColors.whiteColor),
                       tabs: catNameLst.asMap().entries.map((entry) {
                         int index = entry.key;
                         String catName = entry.value;
@@ -250,17 +252,20 @@ class _MyBagPageState extends State<MyBagPage> {
                                 catName: catName,
                                 catImage: catImage);
                           } else {
-                            categoryScreen = PlaceOrderPage(
-                              updateQuantity: updateQuantity,
-                              catId: catId,
-                            );
+                             categoryScreen = SectionPageOtherService(
+                                catId: catId,
+                                catName: catName,
+                                catImage: catImage);
+                            // categoryScreen = PlaceOrderPage(
+                            //   updateQuantity: updateQuantity,
+                            //   catId: catId,
+                            // );
                           }
 
                           return categoryScreen;
                         }).toList(),
                       ),
                     ),
-                  
                   ],
                 ),
               ),

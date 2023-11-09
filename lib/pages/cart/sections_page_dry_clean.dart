@@ -45,7 +45,7 @@ class _SectionsPageDryCleanState extends State<SectionsPageDryClean> {
   String dryCleanItemModelToJson(DryCleanItemModel item, int itemCount) {
     var totalCost = item.cost * itemCount;
     print('TotalCost::$totalCost');
-   
+
     return jsonEncode({
       'sub_cat_name': item.subCategoryName,
       'item_quantity': item.itemCount,
@@ -143,25 +143,18 @@ class _SectionsPageDryCleanState extends State<SectionsPageDryClean> {
 
     var customrid = glb.prefs?.getString('customerid');
     print("customrid::$customrid");
-    if (customrid != null && glb.showPayOption) {
-      glb.customerID = customrid;
-    } else {
 
-      // glb.showSnackBar(
-      //     context, 'Alert', 'Please use valid credentials and Login In Again');
-      // return;
-    }
-    
     try {
       var url = glb.endPoint;
       final Map dictMap = {};
 
       dictMap['cat_id'] = widget.catId;
       dictMap['customer_id'] = glb.customerID;
-      dictMap['order_id'] = glb.orderid;
-      dictMap['order_type'] = "Dry Cleaning";
+      dictMap['booking_id'] = glb.booking_id;
+      dictMap['booking_type'] = "Dry Cleaning";
       dictMap['cat_img'] = widget.catImage;
       dictMap['cat_name'] = widget.catName;
+      dictMap['key'] = 1;
       dictMap['all_items'] = selectedItems;
       dictMap['pktType'] = "14";
       dictMap['token'] = "vff";
@@ -205,11 +198,11 @@ class _SectionsPageDryCleanState extends State<SectionsPageDryClean> {
     });
     // final prefs = await SharedPreferences.getInstance();
     // var customerid = prefs.getString('customerid');
-    if (glb.orderid.isEmpty) {
-      glb.showSnackBar(context, 'Alert!', 'Please Select the Active Order');
-      Navigator.pop(context);
-      return;
-    }
+    // if (glb.orderid.isEmpty) {
+    //   glb.showSnackBar(context, 'Alert!', 'Please Select the Active Order');
+    //   Navigator.pop(context);
+    //   return;
+    // }
     var todaysDate = glb.getDateTodays();
     try {
       var url = glb.endPoint;
@@ -345,9 +338,9 @@ class _SectionsPageDryCleanState extends State<SectionsPageDryClean> {
                       filterSearchResults(value);
                     }),
                     controller: searchController,
-                    style: ralewayStyle.copyWith(
+                    style: nunitoStyle.copyWith(
                         fontWeight: FontWeight.w400,
-                        color: AppColors.whiteColor,
+                        color: AppColors.backColor,
                         fontSize: 14.0),
                     keyboardType: TextInputType.name,
                     decoration: InputDecoration(
@@ -356,14 +349,14 @@ class _SectionsPageDryCleanState extends State<SectionsPageDryClean> {
                           onPressed: () {},
                           icon: const Icon(
                             Icons.search,
-                            color: Colors.white,
+                            color: AppColors.blueColor,
                           ),
                         ),
                         contentPadding: const EdgeInsets.only(top: 16.0),
-                        hintText: 'Search',
-                        hintStyle: ralewayStyle.copyWith(
+                        hintText: 'Search Item To Dry Clean',
+                        hintStyle: nunitoStyle.copyWith(
                             fontWeight: FontWeight.w400,
-                            color: AppColors.whiteColor.withOpacity(0.5),
+                            color: AppColors.backColor.withOpacity(0.5),
                             fontSize: 12.0)),
                   ),
                 ),
@@ -392,9 +385,9 @@ class _SectionsPageDryCleanState extends State<SectionsPageDryClean> {
                           child: Center(
                               child: Text(
                             'NO Laundry Items found for [${widget.sectionType}]',
-                            style: ralewayStyle.copyWith(
+                            style: nunitoStyle.copyWith(
                               fontWeight: FontWeight.bold,
-                              color: AppColors.whiteColor,
+                              color: AppColors.backColor,
                             ),
                           )),
                         )
@@ -467,10 +460,10 @@ class _SectionsPageDryCleanState extends State<SectionsPageDryClean> {
                                                                           index]
                                                                       .subCategoryName
                                                                       .toCapitalized(),
-                                                                  style: ralewayStyle
+                                                                  style: nunitoStyle
                                                                       .copyWith(
                                                                     color: AppColors
-                                                                        .whiteColor,
+                                                                        .backColor,
                                                                     fontSize:
                                                                         14,
                                                                     fontWeight:
@@ -486,7 +479,7 @@ class _SectionsPageDryCleanState extends State<SectionsPageDryClean> {
                                                                   style: nunitoStyle
                                                                       .copyWith(
                                                                     color: AppColors
-                                                                        .neonColor,
+                                                                        .blueColor,
                                                                     fontSize:
                                                                         12,
                                                                     fontWeight:
@@ -551,7 +544,8 @@ class _SectionsPageDryCleanState extends State<SectionsPageDryClean> {
                                                         style: nunitoStyle
                                                             .copyWith(
                                                           fontSize: 14.0,
-                                                          color: Colors.white,
+                                                          color: AppColors
+                                                              .blueColor,
                                                           fontWeight:
                                                               FontWeight.bold,
                                                         ),
@@ -638,10 +632,11 @@ class _SectionsPageDryCleanState extends State<SectionsPageDryClean> {
                 borderRadius: BorderRadius.circular(12.0),
                 child: Ink(
                   decoration: BoxDecoration(
-                    gradient: LinearGradient(colors: [
-                      Colors.green,
-                      Colors.blue,
-                    ]),
+                    // gradient: LinearGradient(colors: [
+                    //   Colors.green,
+                    //   Colors.blue,
+                    // ]),
+                    color: AppColors.blueColor,
                     borderRadius: BorderRadius.circular(12.0),
                   ),
                   child: Padding(
@@ -649,7 +644,7 @@ class _SectionsPageDryCleanState extends State<SectionsPageDryClean> {
                         horizontal: 50.0, vertical: 10.0),
                     child: Text(
                       'Add To Cart',
-                      style: ralewayStyle.copyWith(
+                      style: nunitoStyle.copyWith(
                           fontSize: 16.0,
                           color: AppColors.whiteColor,
                           fontWeight: FontWeight.bold),
@@ -667,7 +662,6 @@ class _SectionsPageDryCleanState extends State<SectionsPageDryClean> {
 
 void _showItemDetailsBottomSheet(BuildContext context, DryCleanItemModel item,
     String catID, String categoryName, String categoryImage) {
-
   showModalBottomSheet(
     context: context,
     builder: (BuildContext context) {

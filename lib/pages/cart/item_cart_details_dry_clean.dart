@@ -171,7 +171,7 @@ class _ItemDetailsBottomSheetState extends State<ItemDetailsBottomSheet> {
                   padding: const EdgeInsets.all(16.0),
                   child: Text(
                     widget.item.subCategoryName,
-                    style: ralewayStyle.copyWith(
+                    style: nunitoStyle.copyWith(
                       color: AppColors.mainBlueColor,
                       fontSize: 16,
                       fontWeight: FontWeight.bold,
@@ -405,7 +405,7 @@ class _ItemDetailsBottomSheetState extends State<ItemDetailsBottomSheet> {
                                   horizontal: 50.0, vertical: 10.0),
                               child: Text(
                                 'Add To Cart',
-                                style: ralewayStyle.copyWith(
+                                style: nunitoStyle.copyWith(
                                     fontSize: 16.0,
                                     color: AppColors.whiteColor,
                                     fontWeight: FontWeight.bold),

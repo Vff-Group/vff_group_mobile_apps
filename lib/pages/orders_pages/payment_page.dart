@@ -1,279 +1,205 @@
+// ignore_for_file: use_build_context_synchronously
+
+import 'dart:convert';
+
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:vff_group/animation/fade_animation.dart';
-import 'package:vff_group/animation/slide_bottom_animation.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:vff_group/modals/dry_clean_items_model.dart';
+import 'package:vff_group/routings/route_names.dart';
 import 'package:vff_group/utils/app_colors.dart';
 import 'package:vff_group/utils/app_styles.dart';
+import 'package:vff_group/global/vffglb.dart' as glb;
+import 'package:http/http.dart' as http;
 
-class PaymentPage extends StatefulWidget {
-  const PaymentPage({super.key});
+class SelectPaymentMethod extends StatefulWidget {
+  final double totalPayable;
+
+  SelectPaymentMethod({required this.totalPayable});
 
   @override
-  State<PaymentPage> createState() => _PaymentPageState();
+  State<SelectPaymentMethod> createState() => _SelectPaymentMethodState();
 }
 
-class _PaymentPageState extends State<PaymentPage> {
+class _SelectPaymentMethodState extends State<SelectPaymentMethod> {
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
-    double height = MediaQuery.of(context).size.height;
-    double width = MediaQuery.of(context).size.width;
-    return Scaffold(
-      backgroundColor: AppColors.backColor,
-      appBar: AppBar(
-          backgroundColor: AppColors.blueColor,
-          title: FadeAnimation(
-            delay: 0.3,
-            child: Text('Payment',
-                style: ralewayStyle.copyWith(
-                    fontSize: 20.0,
-                    color: AppColors.whiteColor,
-                    fontWeight: FontWeight.bold,
-                    letterSpacing: 1)),
-          )),
-      body: SafeArea(
-          child: Padding(
-        padding: const EdgeInsets.all(8.0),
-        child: CustomScrollView(
-          slivers: [
-            SliverToBoxAdapter(
-              child: Column(
-                children: [
-                  Container(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        const SizedBox(
-                          height: 10.0,
-                        ),
-                        Text('Select Pick Up & Delivery Address',
-                            style: ralewayStyle.copyWith(
-                                fontSize: 14.0,
-                                color: AppColors.textColor,
-                                fontWeight: FontWeight.w200,
-                                letterSpacing: 1)),
-                        const SizedBox(
-                          height: 10.0,
-                        ),
-                        Container(
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(12.0),
-                            color: AppColors.blueColor,
-                          ),
-                          child: Padding(
-                            padding: const EdgeInsets.only(
-                                right: 45.0,
-                                top: 22.0,
-                                bottom: 22.0,
-                                left: 20.0),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Icon(
-                                  Icons.home_filled,
-                                  color: Colors.white,
-                                ),
-                                const SizedBox(
-                                  height: 5.0,
-                                ),
-                                Text('Home',
-                                    style: ralewayStyle.copyWith(
-                                      fontSize: 20.0,
-                                      color: AppColors.whiteColor,
-                                      fontWeight: FontWeight.bold,
-                                    ))
-                              ],
-                            ),
-                          ),
-                        ),
-                        const SizedBox(
-                          height: 10.0,
-                        ),
-                        Text('Enter Address Details',
-                            style: ralewayStyle.copyWith(
-                                fontSize: 20.0,
-                                color: AppColors.titleTxtColor,
-                                fontWeight: FontWeight.bold,
-                                letterSpacing: 1)),
-                        const SizedBox(
-                          height: 15.0,
-                        ),
-                        Column(
-                          children: [
-                            Container(
-                              height: 60.0,
-                              width: width,
-                              decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(8.0),
-                                  color: AppColors.whiteColor),
-                              child: TextFormField(
-                                style: nunitoStyle.copyWith(
-                                    fontWeight: FontWeight.w400,
-                                    color: AppColors.titleTxtColor,
-                                    fontSize: 14.0),
-                                keyboardType: TextInputType.text,
-                                decoration: InputDecoration(
-                                    border: InputBorder.none,
-                                    contentPadding:
-                                        const EdgeInsets.only(top: 16.0),
-                                    hintText: ' Building/Society Name & Number',
-                                    hintStyle: ralewayStyle.copyWith(
-                                        fontWeight: FontWeight.w400,
-                                        color: AppColors.textColor
-                                            .withOpacity(0.5),
-                                        fontSize: 14.0)),
-                              ),
-                            ),
-                            const SizedBox(
-                              height: 15.0,
-                            ),
-                            Container(
-                              height: 60.0,
-                              width: width,
-                              decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(8.0),
-                                  color: AppColors.whiteColor),
-                              child: TextFormField(
-                                style: nunitoStyle.copyWith(
-                                    fontWeight: FontWeight.w400,
-                                    color: AppColors.titleTxtColor,
-                                    fontSize: 14.0),
-                                keyboardType: TextInputType.text,
-                                decoration: InputDecoration(
-                                    border: InputBorder.none,
-                                    contentPadding:
-                                        const EdgeInsets.only(top: 16.0),
-                                    hintText: ' Street Address, Landmark etc.',
-                                    hintStyle: ralewayStyle.copyWith(
-                                        fontWeight: FontWeight.w400,
-                                        color: AppColors.textColor
-                                            .withOpacity(0.5),
-                                        fontSize: 14.0)),
-                              ),
-                            ),
-                            const SizedBox(
-                              height: 15.0,
-                            ),
-                            Row(
-                              children: [
-                                Expanded(
-                                  flex: 1,
-                                  child: Container(
-                                    height: 60.0,
-                                    decoration: BoxDecoration(
-                                        borderRadius:
-                                            BorderRadius.circular(8.0),
-                                        color: AppColors.whiteColor),
-                                    child: TextFormField(
-                                      style: nunitoStyle.copyWith(
-                                          fontWeight: FontWeight.w400,
-                                          color: AppColors.titleTxtColor,
-                                          fontSize: 14.0),
-                                      keyboardType: TextInputType.text,
-                                      decoration: InputDecoration(
-                                          border: InputBorder.none,
-                                          contentPadding:
-                                              const EdgeInsets.only(top: 16.0),
-                                          hintText: ' City',
-                                          hintStyle: ralewayStyle.copyWith(
-                                              fontWeight: FontWeight.w400,
-                                              color: AppColors.textColor
-                                                  .withOpacity(0.5),
-                                              fontSize: 14.0)),
-                                    ),
-                                  ),
-                                ),
-                                SizedBox(
-                                  width: 10.0,
-                                ),
-                                Expanded(
-                                  flex: 1,
-                                  child: Container(
-                                    height: 60.0,
-                                    width: width,
-                                    decoration: BoxDecoration(
-                                        borderRadius:
-                                            BorderRadius.circular(8.0),
-                                        color: AppColors.whiteColor),
-                                    child: TextFormField(
-                                      style: nunitoStyle.copyWith(
-                                          fontWeight: FontWeight.w400,
-                                          color: AppColors.titleTxtColor,
-                                          fontSize: 14.0),
-                                      keyboardType: TextInputType.number,
-                                      decoration: InputDecoration(
-                                          border: InputBorder.none,
-                                          contentPadding:
-                                              const EdgeInsets.only(top: 16.0),
-                                          hintText: ' Zip Code',
-                                          hintStyle: ralewayStyle.copyWith(
-                                              fontWeight: FontWeight.w400,
-                                              color: AppColors.textColor
-                                                  .withOpacity(0.5),
-                                              fontSize: 14.0)),
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            ),
-                            const SizedBox(
-                              height: 15.0,
-                            ),
-                          ],
-                        ),
-                      ],
+    return Container(
+      decoration: BoxDecoration(
+        color: AppColors.secondaryBackColor,
+      ),
+      child: Column(
+        children: [
+          Padding(
+            padding:
+                const EdgeInsets.symmetric(horizontal: 8.0, vertical: 16.0),
+            child: Column(
+              children: [
+                Container(
+                  width: 50,
+                  height: 5,
+                  decoration: BoxDecoration(
+                      color: AppColors.greyColor,
+                      borderRadius: BorderRadius.circular(12.0)),
+                ),
+                Padding(
+                  padding: const EdgeInsets.only(top: 16.0),
+                  child: Text(
+                    'Select Payment Method',
+                    style: nunitoStyle.copyWith(
+                      color: AppColors.mainBlueColor,
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
                     ),
                   ),
-                  Align(
-                    alignment: Alignment.bottomCenter,
-                    child: Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: SlideFromBottomAnimation(
-                        delay: 0.5,
-                        child: Material(
-                          color: Colors.transparent,
-                          child: InkWell(
-                            onTap: () {
-                              //Send to Address Page
-                            },
-                            borderRadius: BorderRadius.circular(16.0),
-                            child: Ink(
-                              padding: const EdgeInsets.all(18.0),
-                              decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(16.0),
-                                  gradient: LinearGradient(colors: [
-                                    AppColors.blueColor,
-                                    Colors.blue
-                                  ])),
-                              child: Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                children: [
-                                  Text(
-                                    'Continue',
-                                    style: nunitoStyle.copyWith(
-                                      fontWeight: FontWeight.w700,
-                                      color: AppColors.whiteColor,
-                                      fontSize: 16.0,
-                                    ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.only(bottom: 6.0),
+                  child: Text(
+                    'Amount to pay ₹.${widget.totalPayable}/-',
+                    style: nunitoStyle.copyWith(
+                      color: AppColors.textColor,
+                      fontSize: 10,
+                      fontWeight: FontWeight.normal,
+                    ),
+                  ),
+                ),
+                SizedBox(
+                  height: 20.0,
+                ),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.only(left: 8.0),
+                      child: Text(
+                        'Online',
+                        style: nunitoStyle.copyWith(
+                          color: AppColors.mainBlueColor,
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
+                    SizedBox(
+                      height: 10.0,
+                    ),
+                    Material(
+                      color: Colors.transparent,
+                      child: InkWell(
+                        onTap: () {
+                          glb.paymentType = 'Online';
+                          Navigator.pop(context);
+                        },
+                        borderRadius: BorderRadius.circular(12.0),
+                        child: Container(
+                          decoration: BoxDecoration(
+                              color: AppColors.whiteColor,
+                              borderRadius: BorderRadius.circular(12.0)),
+                          child: Padding(
+                            padding: const EdgeInsets.all(16.0),
+                            child: Row(
+                              children: [
+                                Container(
+                                    decoration: BoxDecoration(
+                                        color: AppColors.secondaryBackColor,
+                                        borderRadius:
+                                            BorderRadius.circular(25.0)),
+                                    child: Padding(
+                                      padding: const EdgeInsets.all(8.0),
+                                      child: Icon(
+                                        Icons.payment,
+                                        color: AppColors.blueColor,
+                                      ),
+                                    )),
+                                Text(
+                                  'UPI/Online/Card',
+                                  style: nunitoStyle.copyWith(
+                                    color: AppColors.backColor,
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.bold,
                                   ),
-                                  Icon(
-                                    Icons.arrow_right_outlined,
-                                    color: Colors.white,
-                                  )
-                                ],
-                              ),
+                                ),
+                              ],
                             ),
                           ),
                         ),
                       ),
                     ),
-                  ),
-                ],
-              ),
+                    SizedBox(
+                      height: 10.0,
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.only(left:8.0),
+                      child: Text(
+                        'Cash',
+                        style: nunitoStyle.copyWith(
+                          color: AppColors.mainBlueColor,
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
+                    SizedBox(
+                      height: 10.0,
+                    ),
+                    Material(
+                      color: Colors.transparent,
+                      child: InkWell(
+                        onTap: () {
+                          glb.paymentType = 'Cash';
+                          Navigator.pop(context);
+                        },
+                        borderRadius: BorderRadius.circular(12.0),
+                        child: Ink(
+                          decoration: BoxDecoration(
+                              color: AppColors.whiteColor,
+                              borderRadius: BorderRadius.circular(12.0)),
+                          child: Padding(
+                            padding: const EdgeInsets.all(16.0),
+                            child: Row(
+                              children: [
+                                Container(
+                                    decoration: BoxDecoration(
+                                        color: AppColors.secondaryBackColor,
+                                        borderRadius:
+                                            BorderRadius.circular(25.0)),
+                                    child: Padding(
+                                      padding: const EdgeInsets.all(8.0),
+                                      child: Icon(
+                                        Icons.payment,
+                                        color: AppColors.blueColor,
+                                      ),
+                                    )),
+                                Text(
+                                  'By Cash Payment',
+                                  style: nunitoStyle.copyWith(
+                                    color: AppColors.backColor,
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ),
+                    )
+                  ],
+                )
+              ],
             ),
-          ],
-        ),
-      )),
+          ),
+          // Add to cart button
+        ],
+      ),
+    
     );
   }
 }

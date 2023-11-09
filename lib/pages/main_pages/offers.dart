@@ -19,14 +19,14 @@ class _OffersPageState extends State<OffersPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        backgroundColor: Colors.black,
+        backgroundColor: AppColors.whiteColor,
         extendBodyBehindAppBar: true,
         appBar: AppBar(
           automaticallyImplyLeading: false,
-          backgroundColor: Colors.transparent,
+          centerTitle: true,
           elevation: 0,
           title: Text('Offers ✨',
-              style: ralewayStyle.copyWith(
+              style: nunitoStyle.copyWith(
                   fontSize: 25.0,
                   color: AppColors.whiteColor,
                   fontWeight: FontWeight.bold,
@@ -75,7 +75,7 @@ class _OffersPageState extends State<OffersPage> {
                                                               12.0),
                                                       child: Text(
                                                         'WF',
-                                                        style: ralewayStyle
+                                                        style: nunitoStyle
                                                             .copyWith(
                                                                 fontWeight:
                                                                     FontWeight
@@ -96,7 +96,7 @@ class _OffersPageState extends State<OffersPage> {
                                                       children: [
                                                         Text(
                                                           'Wash and Fold laundry',
-                                                          style: ralewayStyle
+                                                          style: nunitoStyle
                                                               .copyWith(
                                                                   fontWeight:
                                                                       FontWeight
@@ -137,7 +137,7 @@ class _OffersPageState extends State<OffersPage> {
                                                     child: Text(
                                                       'In Progress',
                                                       style:
-                                                          ralewayStyle.copyWith(
+                                                          nunitoStyle.copyWith(
                                                               fontWeight:
                                                                   FontWeight
                                                                       .bold,
@@ -164,7 +164,7 @@ class _OffersPageState extends State<OffersPage> {
                                                     child: Text(
                                                       'Completed',
                                                       style:
-                                                          ralewayStyle.copyWith(
+                                                          nunitoStyle.copyWith(
                                                               fontWeight:
                                                                   FontWeight
                                                                       .bold,
@@ -191,7 +191,7 @@ class _OffersPageState extends State<OffersPage> {
                                                     child: Text(
                                                       'Cancelled',
                                                       style:
-                                                          ralewayStyle.copyWith(
+                                                          nunitoStyle.copyWith(
                                                               fontWeight:
                                                                   FontWeight
                                                                       .bold,
@@ -242,8 +242,8 @@ class _OffersPageState extends State<OffersPage> {
                   : Center(
                       child: Text(
                         'No Offers Found',
-                        style: ralewayStyle.copyWith(
-                            color: AppColors.whiteColor, fontSize: 20.0),
+                        style: nunitoStyle.copyWith(
+                            color: AppColors.backColor, fontSize: 20.0),
                       ),
                     )),
         ));

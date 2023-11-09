@@ -14,14 +14,38 @@ import 'package:location/location.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-String endPoint = "http://62.72.57.222:3000/"; //8085,3000
-String account_created_date = "", orderid = "",deliveryBoyID="",order_status="0",customerID="";
-bool addItems = false,hideControls = false,showPayOption=false;
-String cartQuantity = "", cartCost = "";
+String endPoint = "http://62.72.57.222:8085/"; //8085,3000
+String account_created_date = "",
+    orderid = "",
+    booking_id = "",
+    deliveryBoyID = "",
+    order_status = "0",
+    customerID = "",
+    customer_mobno = "",
+    customer_name = "";
+bool addItems = false,
+    hideControls = false,
+    showPayOption = false,
+    justSaveAddress = true,
+    showDeliveryBoy = false;
+String cartQuantity = "",
+    cartCost = "",
+    paymentType = "",
+    delivery_boy_id = "",
+    branch_id = "",
+    clat = "",
+    clng = "";
 
 void showSnackBar(BuildContext context, String alertTxt, String text) {
-  Get.snackbar(
-    alertTxt, text, snackPosition: SnackPosition.TOP,colorText: Colors.white,icon: Image.asset('assets/logo/logo.png'));
+  Get.snackbar(alertTxt, text,
+      snackPosition: SnackPosition.TOP,
+      colorText: Colors.black,
+      icon: Image.asset('assets/logo/logo.png'));
+}
+
+String makeCommaSepatedList(subCategoryNameList) {
+  String subCategoryName = subCategoryNameList.join(', ');
+  return subCategoryName;
 }
 
 DateTime epochToDateTime(double epoch) {
@@ -255,7 +279,6 @@ Color randomColor = generateRandomColorWithOpacity();
 //     }
 //   }
 // }
-
 
 void makePhoneCall(String phoneNumber) async {
   final url = 'tel:$phoneNumber';

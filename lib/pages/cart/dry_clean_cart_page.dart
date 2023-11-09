@@ -53,11 +53,11 @@ class _DryCleaningCartState extends State<DryCleaningCart> {
       sub_categorynameLst = [];
     });
 
-    if (glb.orderid.isEmpty) {
-      glb.showSnackBar(context, 'Alert!', 'Please Select the Active Order');
-      Navigator.pop(context);
-      return;
-    }
+    // if (glb.orderid.isEmpty) {
+    //   glb.showSnackBar(context, 'Alert!', 'Please Select the Active Order');
+    //   Navigator.pop(context);
+    //   return;
+    // }
 
     try {
       var url = glb.endPoint;
@@ -89,7 +89,7 @@ class _DryCleaningCartState extends State<DryCleaningCart> {
             showLoading = false;
           });
           glb.showSnackBar(context, 'Error', 'Something Went Wrong');
-          Navigator.pop(context);
+          //Navigator.pop(context);
           return;
         } else {
           try {
@@ -154,7 +154,7 @@ class _DryCleaningCartState extends State<DryCleaningCart> {
     double height = MediaQuery.of(context).size.height;
     double width = MediaQuery.of(context).size.width;
     return Scaffold(
-      backgroundColor: Colors.black,
+      backgroundColor: AppColors.whiteColor,
       extendBodyBehindAppBar: true,
       body: SafeArea(
         child: DefaultTabController(
@@ -169,7 +169,7 @@ class _DryCleaningCartState extends State<DryCleaningCart> {
                 backgroundColor: AppColors.blueColor,
                 unselectedBackgroundColor: AppColors.lightBlackColor,
                 unselectedLabelStyle:
-                    nunitoStyle.copyWith(color: AppColors.whiteColor),
+                    nunitoStyle.copyWith(color: AppColors.textColor),
                 labelStyle: nunitoStyle.copyWith(color: AppColors.whiteColor),
                 tabs: section_typeLst.asMap().entries.map((entry) {
                   int index = entry.key;

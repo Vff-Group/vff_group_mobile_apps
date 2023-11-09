@@ -3,7 +3,6 @@ import 'package:scroll_snap_list/scroll_snap_list.dart';
 import 'package:vff_group/utils/app_colors.dart';
 import 'package:vff_group/utils/app_styles.dart';
 
-
 class SnapShotWidget extends StatefulWidget {
   const SnapShotWidget({super.key});
 
@@ -84,14 +83,14 @@ class _TodoContainer extends StatelessWidget {
                           children: [
                             Text(
                               'Setup PC',
-                              style: ralewayStyle.copyWith(
+                              style: nunitoStyle.copyWith(
                                   fontWeight: FontWeight.bold,
                                   fontSize: 14.0,
                                   color: AppColors.blueDarkColor),
                             ),
                             Text(
                               'Need to do this on Top Priority',
-                              style: ralewayStyle.copyWith(
+                              style: nunitoStyle.copyWith(
                                   fontWeight: FontWeight.bold,
                                   fontSize: 10.0,
                                   color: AppColors.textColor),
@@ -121,7 +120,7 @@ class _TodoContainer extends StatelessWidget {
                     ),
                     Text(
                       'Go To Task - >',
-                      style: ralewayStyle.copyWith(
+                      style: nunitoStyle.copyWith(
                           fontSize: 14.0,
                           fontWeight: FontWeight.bold,
                           color: AppColors.mainBlueColor),

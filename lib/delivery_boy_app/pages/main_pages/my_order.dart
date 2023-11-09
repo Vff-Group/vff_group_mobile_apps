@@ -23,18 +23,31 @@ class _MyOrdersPageState extends State<MyOrdersPage> {
     _controller = TabContainerController(length: 3);
   }
 
-    @override
+  @override
   void dispose() {
     _controller.dispose();
     super.dispose();
   }
 
- @override
+  @override
   Widget build(BuildContext context) {
     double height = MediaQuery.of(context).size.height;
     double width = MediaQuery.of(context).size.width;
-    return  Scaffold(
-      backgroundColor: Colors.black,
+    return Scaffold(
+      backgroundColor: AppColors.whiteColor,
+      appBar: AppBar(
+        automaticallyImplyLeading: false,
+        backgroundColor: Colors.deepOrange,
+        title: Text(
+          'ORDERS',
+          style: nunitoStyle.copyWith(
+            color: AppColors.whiteColor,
+            fontSize: 20.0,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        centerTitle: true,
+      ),
       body: SafeArea(
         child: DefaultTabController(
           length: 3,
@@ -46,7 +59,7 @@ class _MyOrdersPageState extends State<MyOrdersPage> {
               ButtonsTabBar(
                 backgroundColor: Colors.deepOrange,
                 unselectedBackgroundColor: AppColors.lightBlackColor,
-                unselectedLabelStyle: TextStyle(color: AppColors.whiteColor),
+                unselectedLabelStyle: TextStyle(color: AppColors.textColor),
                 labelStyle:
                     TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
                 tabs: [
@@ -86,7 +99,6 @@ class _MyOrdersPageState extends State<MyOrdersPage> {
           ),
         ),
       ),
-    
-      );
+    );
   }
 }

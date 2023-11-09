@@ -32,9 +32,8 @@ class _OnBoardingScreenState extends State<OnBoardingScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.black,
+      backgroundColor: AppColors.loginBackColor,
       extendBodyBehindAppBar: true,
-     
       body: SafeArea(
         child: Padding(
           padding: const EdgeInsets.all(16.0),
@@ -86,8 +85,8 @@ class _OnBoardingScreenState extends State<OnBoardingScreen> {
                             Navigator.pushReplacementNamed(context, LoginRoute);
                           }
                         },
-                        style:
-                            ElevatedButton.styleFrom(shape: const CircleBorder()),
+                        style: ElevatedButton.styleFrom(
+                            shape: const CircleBorder()),
                         child: const Icon(Icons.keyboard_arrow_right),
                       ),
                     ),
@@ -118,8 +117,8 @@ class DotIndicator extends StatelessWidget {
       height: isActive ? 12 : 4,
       decoration: BoxDecoration(
         color: isActive
-            ? AppColors.blueDarkColor
-            : AppColors.blueDarkColor.withOpacity(0.4),
+            ? AppColors.blueColor
+            : AppColors.blueColor.withOpacity(0.4),
         borderRadius: const BorderRadius.all(Radius.circular(12)),
       ),
     );
@@ -180,10 +179,10 @@ class OnBoardContent extends StatelessWidget {
               },
               child: Text(
                 'Skip',
-                style: ralewayStyle.copyWith(
+                style: nunitoStyle.copyWith(
                   fontSize: 18.0,
-                  fontWeight: FontWeight.w400,
-                  color: AppColors.neonColor,
+                  fontWeight: FontWeight.bold,
+                  color: AppColors.blueColor,
                 ),
               ),
             ),
@@ -198,10 +197,9 @@ class OnBoardContent extends StatelessWidget {
           title,
           textAlign: TextAlign.center,
           style: nunitoStyle.copyWith(
-            fontWeight: FontWeight.bold,
-            color: AppColors.neonColor,
-            fontSize: 24.0
-            ),
+              fontWeight: FontWeight.bold,
+              color: AppColors.backColor,
+              fontSize: 24.0),
         ),
         const SizedBox(
           height: 16,
@@ -209,11 +207,8 @@ class OnBoardContent extends StatelessWidget {
         Text(
           description,
           textAlign: TextAlign.center,
-          style: nunitoStyle.copyWith(
-            color: AppColors.whiteColor,
-            
-            fontSize: 12.0
-            ),
+          style:
+              nunitoStyle.copyWith(color: AppColors.textColor, fontSize: 12.0),
         ),
         const Spacer()
       ],

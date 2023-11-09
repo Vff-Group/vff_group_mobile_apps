@@ -3,10 +3,12 @@ import 'package:flutter/material.dart';
 import 'package:vff_group/delivery_boy_app/pages/main_pages/bottom_page_main.dart';
 import 'package:vff_group/delivery_boy_app/pages/main_pages/delivery_boy_notification.dart';
 import 'package:vff_group/delivery_boy_app/pages/main_pages/delivery_login.dart';
+import 'package:vff_group/pages/booking_pages/booking_details_page.dart';
 import 'package:vff_group/pages/cart/cart_items_page.dart';
 import 'package:vff_group/pages/categories/dry_clean_home.dart';
 import 'package:vff_group/pages/categories/wash_fold_home.dart';
 import 'package:vff_group/pages/categories/wash_iron_home.dart';
+import 'package:vff_group/pages/google_verification.dart';
 import 'package:vff_group/pages/main_pages/bottom_bar.dart';
 import 'package:vff_group/pages/login.dart';
 import 'package:vff_group/pages/main_pages/detailed_pages/all_services_detail.dart';
@@ -15,14 +17,19 @@ import 'package:vff_group/pages/main_pages/home.dart';
 import 'package:vff_group/pages/main_pages/notification_customer.dart';
 import 'package:vff_group/pages/main_pages/orders.dart';
 import 'package:vff_group/pages/onboard_laundry.dart';
+import 'package:vff_group/pages/orders_pages/all_branches_page.dart';
 import 'package:vff_group/pages/orders_pages/cancel_order_page.dart';
 import 'package:vff_group/pages/orders_pages/checkout_page.dart';
 import 'package:vff_group/pages/orders_pages/delivery_address_page.dart';
 import 'package:vff_group/pages/orders_pages/feed_back_page.dart';
 import 'package:vff_group/pages/orders_pages/my_bag_page.dart';
 import 'package:vff_group/pages/orders_pages/order_details.dart';
+import 'package:vff_group/pages/orders_pages/payment_page.dart';
 import 'package:vff_group/pages/orders_pages/place_new_order.dart';
+import 'package:vff_group/pages/registration_login.dart';
+import 'package:vff_group/pages/set_delivery_location.dart';
 import 'package:vff_group/pages/splash_screen.dart';
+import 'package:vff_group/pages/verification_code_page.dart';
 import 'package:vff_group/routings/route_names.dart';
 
 Route<dynamic> generateRoute(RouteSettings settings) {
@@ -30,12 +37,22 @@ Route<dynamic> generateRoute(RouteSettings settings) {
   switch (settings.name) {
     case LoginRoute:
       return _getPageRoute(const LoginScreen());
+    case RegistationRoute:
+      return _getPageRoute(const RegistrationLoginPage());
+    case VerificationRoute:
+      return _getPageRoute(const VerificationPage());
+    case GoogleVerificationRoute:
+      return _getPageRoute(const GoogleVerificationPage());
+    case SetDeliveryLocationRoute:
+      return _getPageRoute(const SetDeliveryLocationPage());
+    case BookingDetailsRoute:
+      return _getPageRoute(const BookingDetailsPage());
     case SplashRoute:
       return _getPageRoute(const SplashScreen());
     case OnBoardRoute:
       return _getPageRoute(const OnBoardingScreen());
     case MainRoute:
-      return _getPageRoute( const BottomBarScreen(pageIndex: 0));
+      return _getPageRoute(const BottomBarScreen(pageIndex: 0));
     case MainCategoryDetailsRoute:
       return _getPageRoute(const MainCategoryDetailedScreen());
     case WashAndIronRoute:
@@ -52,12 +69,15 @@ Route<dynamic> generateRoute(RouteSettings settings) {
       return _getPageRoute(const DeliveryAddressPage());
     case AllServicesRoute:
       return _getPageRoute(const AllServicesPage());
+    case AllBranchesRoute:
+      return _getPageRoute(const AllBranchesPage());
     case MyBagRoute:
       return _getPageRoute(const MyBagPage());
     case MyCartRoute:
       return _getPageRoute(const AddToCartItem());
     case CheckOutRoute:
       return _getPageRoute(const CheckOutScreen());
+  
     case FeedbackRoute:
       return _getPageRoute(const FeedBackPage());
     case CancelOrderRoute:
@@ -65,7 +85,9 @@ Route<dynamic> generateRoute(RouteSettings settings) {
     case CustomerNotificationRoute:
       return _getPageRoute(const CustomerNotifications());
     case DMainRoute:
-      return _getPageRoute(const BottomBarDeliveryBoy(pageDIndex: 0,));
+      return _getPageRoute(const BottomBarDeliveryBoy(
+        pageDIndex: 0,
+      ));
 
 // Delivery Boy Routes
     case DeliveryLoginRoute:

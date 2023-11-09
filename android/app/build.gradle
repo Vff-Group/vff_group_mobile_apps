@@ -52,10 +52,12 @@ android {
         applicationId "com.vffgroup.vffgroup"
         // You can update the following values to match your application needs.
         // For more information, see: https://docs.flutter.dev/deployment/android#reviewing-the-gradle-build-configuration.
-        minSdkVersion 19 //flutter.minSdkVersion
+        minSdkVersion 22 //flutter.minSdkVersion
         targetSdkVersion flutter.targetSdkVersion
-        versionCode flutterVersionCode.toInteger()
-        versionName flutterVersionName
+        versionCode 2
+        versionName "0.0.1"
+        //versionCode flutterVersionCode.toInteger()
+        //versionName flutterVersionName
         multiDexEnabled true
     }
 

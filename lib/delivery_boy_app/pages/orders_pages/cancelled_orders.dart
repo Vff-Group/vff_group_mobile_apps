@@ -11,6 +11,7 @@ import 'package:vff_group/utils/app_styles.dart';
 import 'package:http/http.dart' as http;
 import 'package:vff_group/global/vffglb.dart' as glb;
 import 'package:vff_group/widgets/shimmer_card.dart';
+
 class CancelledOrderPage extends StatefulWidget {
   const CancelledOrderPage({super.key});
 
@@ -19,7 +20,7 @@ class CancelledOrderPage extends StatefulWidget {
 }
 
 class _CancelledOrderPageState extends State<CancelledOrderPage> {
-    bool showLoading = false, showError = false;
+  bool showLoading = false, showError = false;
 
   List<OngoingOrdersModel> ongoingModel = [];
   Future loadOrderDetails() async {
@@ -69,9 +70,6 @@ class _CancelledOrderPageState extends State<CancelledOrderPage> {
         } else {
           try {
             Map<String, dynamic> cancelOrdersMap = json.decode(response.body);
-            if (kDebugMode) {
-              print("cancelOrdersMap:$cancelOrdersMap");
-            }
 
             var orderid = cancelOrdersMap["orderid"];
             var customer_id = cancelOrdersMap["customer_id"];
@@ -119,8 +117,8 @@ class _CancelledOrderPageState extends State<CancelledOrderPage> {
               var rejected_time = rejected_timeLst.elementAt(i).toString();
               var price = priceLst.elementAt(i).toString();
               var customerid = customer_idLst.elementAt(i).toString();
-              var formattedDateTime =
-                  glb.doubleEpochToFormattedDateTime(double.parse(rejected_time));
+              var formattedDateTime = glb
+                  .doubleEpochToFormattedDateTime(double.parse(rejected_time));
               var deliveryEpochTime =
                   glb.doubleEpochToFormattedDateTime(double.parse(depoch));
 
@@ -214,8 +212,8 @@ class _CancelledOrderPageState extends State<CancelledOrderPage> {
             ? Center(
                 child: Text(
                   'No Order History Found',
-                  style: ralewayStyle.copyWith(
-                      color: AppColors.whiteColor, fontSize: 20.0),
+                  style: nunitoStyle.copyWith(
+                      color: AppColors.backColor, fontSize: 20.0),
                 ),
               )
             : RefreshIndicator(
@@ -244,30 +242,30 @@ class _CancelledOrderPageState extends State<CancelledOrderPage> {
                             padding: const EdgeInsets.all(8.0),
                             child: Column(
                               children: [
-                                  Padding(
-                                      padding: const EdgeInsets.all(8.0),
-                                      child: Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.spaceBetween,
-                                        children: [
-                                          Text(
-                                            'Order Status:',
-                                            style: nunitoStyle.copyWith(
-                                                color: AppColors.whiteColor,
-                                                fontSize: 14),
-                                          ),
-                                          Text(
-                                            '${ongoingModel[index].order_status}',
-                                            style: nunitoStyle.copyWith(
-                                              color: AppColors.dangerColor,
-                                              fontSize: 14,
-                                              fontWeight: FontWeight.bold,
-                                            ),
-                                          ),
-                                        ],
+                                Padding(
+                                  padding: const EdgeInsets.all(8.0),
+                                  child: Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      Text(
+                                        'Order Status:',
+                                        style: nunitoStyle.copyWith(
+                                            color: AppColors.backColor,
+                                            fontSize: 14),
                                       ),
-                                    ),
-                                  
+                                      Text(
+                                        '${ongoingModel[index].order_status}',
+                                        style: nunitoStyle.copyWith(
+                                          color: AppColors.dangerColor,
+                                          fontSize: 14,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+
                                 Padding(
                                   padding: const EdgeInsets.all(8.0),
                                   child: Row(
@@ -277,13 +275,13 @@ class _CancelledOrderPageState extends State<CancelledOrderPage> {
                                       Text(
                                         'Booking ID:',
                                         style: nunitoStyle.copyWith(
-                                            color: AppColors.whiteColor,
+                                            color: AppColors.backColor,
                                             fontSize: 14),
                                       ),
                                       Text(
                                         '#${ongoingModel[index].orderID}',
                                         style: nunitoStyle.copyWith(
-                                          color: AppColors.whiteColor,
+                                          color: AppColors.blueColor,
                                           fontSize: 14,
                                           fontWeight: FontWeight.bold,
                                         ),
@@ -300,13 +298,13 @@ class _CancelledOrderPageState extends State<CancelledOrderPage> {
                                       Text(
                                         'Order Date:',
                                         style: nunitoStyle.copyWith(
-                                            color: AppColors.whiteColor,
+                                            color: AppColors.backColor,
                                             fontSize: 14),
                                       ),
                                       Text(
                                         ongoingModel[index].order_taken_epoch,
                                         style: nunitoStyle.copyWith(
-                                          color: AppColors.whiteColor,
+                                          color: AppColors.backColor,
                                           fontSize: 14,
                                         ),
                                       ),
@@ -322,13 +320,13 @@ class _CancelledOrderPageState extends State<CancelledOrderPage> {
                                       Text(
                                         'Pick Up:',
                                         style: nunitoStyle.copyWith(
-                                            color: AppColors.whiteColor,
+                                            color: AppColors.backColor,
                                             fontSize: 14),
                                       ),
                                       Text(
                                         ongoingModel[index].address,
                                         style: nunitoStyle.copyWith(
-                                          color: AppColors.whiteColor,
+                                          color: AppColors.backColor,
                                           fontSize: 14,
                                         ),
                                       ),
@@ -344,20 +342,20 @@ class _CancelledOrderPageState extends State<CancelledOrderPage> {
                                 //       Text(
                                 //         'Delivered Date:',
                                 //         style: nunitoStyle.copyWith(
-                                //             color: AppColors.whiteColor,
+                                //             color: AppColors.backColor,
                                 //             fontSize: 14),
                                 //       ),
                                 //       Text(
                                 //         ongoingModel[index].delivery_epoch,
                                 //         style: nunitoStyle.copyWith(
-                                //           color: AppColors.whiteColor,
+                                //           color: AppColors.backColor,
                                 //           fontSize: 14,
                                 //         ),
                                 //       ),
                                 //     ],
                                 //   ),
                                 // ),
-                               
+
                                 // Padding(
                                 //   padding: const EdgeInsets.all(8.0),
                                 //   child: Row(
@@ -367,7 +365,7 @@ class _CancelledOrderPageState extends State<CancelledOrderPage> {
                                 //       Text(
                                 //         'Total Amount:',
                                 //         style: nunitoStyle.copyWith(
-                                //             color: AppColors.whiteColor,
+                                //             color: AppColors.backColor,
                                 //             fontSize: 14),
                                 //       ),
                                 //       Text(
@@ -389,5 +387,4 @@ class _CancelledOrderPageState extends State<CancelledOrderPage> {
                     })),
               );
   }
-
 }

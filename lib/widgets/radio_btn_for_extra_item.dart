@@ -36,12 +36,12 @@ class CustomRadioButton2 extends StatelessWidget {
                 padding: EdgeInsets.symmetric(horizontal: 2, vertical: 2),
                 decoration: BoxDecoration(
                   border: Border.all(
-                    color: isSelected ? AppColors.neonColor : Colors.white,
+                    color: isSelected ? AppColors.blueColor : Colors.grey,
                   ),
                   borderRadius: BorderRadius.circular(50),
-                  color: isSelected ? AppColors.neonColor : Colors.white,
+                  color: isSelected ? AppColors.blueColor : Colors.grey,
                 ),
-                child: Icon(Icons.done_rounded, color: Colors.white),
+                child: Icon(Icons.done_rounded, color: isSelected ? Colors.white : Colors.grey),
               ),
               Padding(
                 padding: const EdgeInsets.only(left: 8.0),
@@ -50,8 +50,8 @@ class CustomRadioButton2 extends StatelessWidget {
                         fontSize: 12.0,
                         fontWeight: FontWeight.bold,
                         color: isSelected
-                            ? AppColors.neonColor
-                            : AppColors.whiteColor)),
+                            ? AppColors.blueColor
+                            : AppColors.textColor)),
               )
             
               ],
@@ -63,8 +63,8 @@ class CustomRadioButton2 extends StatelessWidget {
                         fontSize: 12.0,
                         fontWeight: FontWeight.bold,
                         color: isSelected
-                            ? AppColors.neonColor
-                            : AppColors.whiteColor)),
+                            ? AppColors.blueColor
+                            : AppColors.textColor)),
               )
             ],
           ),

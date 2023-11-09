@@ -36,16 +36,17 @@ class _OrdersPageState extends State<OrdersPage> {
     double height = MediaQuery.of(context).size.height;
     double width = MediaQuery.of(context).size.width;
     return Scaffold(
-      backgroundColor: Colors.black,
+      backgroundColor: AppColors.whiteColor,
       appBar: AppBar(
         automaticallyImplyLeading: false,
-        backgroundColor: Colors.transparent,
+        
         title: Text('Orders',
-            style: ralewayStyle.copyWith(
+            style: nunitoStyle.copyWith(
                 fontSize: 25.0,
                 color: AppColors.whiteColor,
                 fontWeight: FontWeight.bold,
                 letterSpacing: 1)),
+                centerTitle: true,
       ),
       body: SafeArea(
         child: DefaultTabController(
@@ -56,9 +57,9 @@ class _OrdersPageState extends State<OrdersPage> {
                 height: width * 0.03,
               ),
               ButtonsTabBar(
-                backgroundColor: AppColors.blueColor,
+                backgroundColor: Colors.blue,
                 unselectedBackgroundColor: AppColors.lightBlackColor,
-                unselectedLabelStyle: TextStyle(color: AppColors.whiteColor),
+                unselectedLabelStyle: TextStyle(color: AppColors.textColor),
                 labelStyle:
                     TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
                 tabs: [

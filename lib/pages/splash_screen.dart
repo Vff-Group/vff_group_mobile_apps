@@ -8,6 +8,7 @@ import 'package:vff_group/animation/fade_animation.dart';
 import 'package:vff_group/animation/rotate_animation.dart';
 import 'package:vff_group/animation/scale_and_revert_animation.dart';
 import 'package:vff_group/animation/slide_bottom_animation.dart';
+import 'package:vff_group/animation/slide_left_animation.dart';
 import 'package:vff_group/routings/route_names.dart';
 import 'package:vff_group/utils/app_colors.dart';
 import 'package:vff_group/utils/app_styles.dart';
@@ -53,7 +54,7 @@ class _SplashScreenState extends State<SplashScreen> {
           defaultRoute == "DMainRoute") {
         Navigator.pushReplacementNamed(context, DMainRoute);
         // Navigator.pushReplacementNamed(context, MainRoute);
-      }else{
+      } else {
         Navigator.pushReplacementNamed(context, MainRoute);
       }
     } else if (firstRun != null && firstRun.toString().isEmpty == false) {
@@ -73,58 +74,58 @@ class _SplashScreenState extends State<SplashScreen> {
       top: false,
       bottom: false,
       child: Container(
-        color: AppColors.backColor,
+        color: AppColors.loginBackColor,
         child: Stack(
           alignment: Alignment.center,
           children: [
-             Align(
-                alignment: AlignmentDirectional(1, -0.3),
-                child: Container(
-                  height: 300,
-                  width: 300,
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    color: Colors.deepPurple
-                  ),
-                ),
-              ),
-              Align(
-                alignment: AlignmentDirectional(-1, -0.3),
-                child: Container(
-                  height: 300,
-                  width: 300,
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    color: Colors.deepPurple
-                  ),
-                ),
-              ),
-              Align(
-                alignment: AlignmentDirectional(0, -1.3),
-                child: Container(
-                  height: 300,
-                  width: 300,
-                  decoration: BoxDecoration(
-                    
-                    color: Colors.amber
-                  ),
-                ),
-              ),
-              BackdropFilter(filter: ImageFilter.blur(
-                sigmaX: 100.0,
-                sigmaY: 100.0
-              ),
-              child: Container(
-                decoration: BoxDecoration(
-                  color: Colors.transparent
-                ),
-              ),),
-                
+            //  Align(
+            //     alignment: AlignmentDirectional(1, -0.3),
+            //     child: Container(
+            //       height: 300,
+            //       width: 300,
+            //       decoration: BoxDecoration(
+            //         shape: BoxShape.circle,
+            //         color: Colors.deepPurple
+            //       ),
+            //     ),
+            //   ),
+            //   Align(
+            //     alignment: AlignmentDirectional(-1, -0.3),
+            //     child: Container(
+            //       height: 300,
+            //       width: 300,
+            //       decoration: BoxDecoration(
+            //         shape: BoxShape.circle,
+            //         color: Colors.deepPurple
+            //       ),
+            //     ),
+            //   ),
+            //   Align(
+            //     alignment: AlignmentDirectional(0, -1.3),
+            //     child: Container(
+            //       height: 300,
+            //       width: 300,
+            //       decoration: BoxDecoration(
+
+            //         color: Colors.amber
+            //       ),
+            //     ),
+            //   ),
+            //   BackdropFilter(filter: ImageFilter.blur(
+            //     sigmaX: 100.0,
+            //     sigmaY: 100.0
+            //   ),
+            //   child: Container(
+            //     decoration: BoxDecoration(
+            //       color: Colors.transparent
+            //     ),
+            //   ),),
+
             Positioned(
               child: Padding(
                 padding: const EdgeInsets.all(8.0),
-                child: RotateAndScaleAnimation(
-                  delay: 0.1,
+                child: SlideFromLeftAnimation(
+                  delay: 0.5,
                   child: Image.asset(
                     'assets/logo/logo.png',
                     height: 500,
@@ -139,7 +140,7 @@ class _SplashScreenState extends State<SplashScreen> {
                 delay: 1,
                 child: Text(
                   'Copyright © VFF Group',
-                  style: ralewayStyle.copyWith(
+                  style: nunitoStyle.copyWith(
                       color: AppColors.greyColor,
                       fontSize: 18,
                       decoration: TextDecoration.none),

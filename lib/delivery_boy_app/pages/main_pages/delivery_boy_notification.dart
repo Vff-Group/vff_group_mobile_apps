@@ -62,7 +62,7 @@ class _DeliveryBoyNotificationsPageState
             noNotification = true;
           });
           glb.showSnackBar(
-              context, 'Error', 'No New Notifications Found For Today');
+              context, 'Alert', 'No New Notifications Found For Today');
           return;
         } else if (res.contains("ErrorCode#8")) {
           setState(() {
@@ -83,6 +83,7 @@ class _DeliveryBoyNotificationsPageState
             var epoch_time = notifyMap['epoch_time'];
             var order_id = notifyMap['order_id'];
             var intent = notifyMap['intent'];
+            var booking_id = notifyMap['booking_id'];
 
             List<String> notify_idLst = glb.strToLst2(notify_id);
             List<String> titleLst = glb.strToLst2(title);
@@ -90,14 +91,16 @@ class _DeliveryBoyNotificationsPageState
             List<String> epoch_timeLst = glb.strToLst2(epoch_time);
             List<String> order_idLst = glb.strToLst2(order_id);
             List<String> intentLst = glb.strToLst2(intent);
+            List<String> bookingIdLst = glb.strToLst2(booking_id);
 
             for (int i = 0; i < notify_idLst.length; i++) {
               var notify_id = notify_idLst.elementAt(i).toString();
               var title = titleLst.elementAt(i).toString();
-              var PickUpDate = bodyLst.elementAt(i).toString();
+              var bodyMsg = bodyLst.elementAt(i).toString();
               var epoch_time = epoch_timeLst.elementAt(i).toString();
               var order_id = order_idLst.elementAt(i).toString();
               var intent = intentLst.elementAt(i).toString();
+              var bookingid = bookingIdLst.elementAt(i).toString();
 
               var formattedDateTime =
                   glb.doubleEpochToFormattedDateTime(double.parse(epoch_time));
@@ -105,10 +108,11 @@ class _DeliveryBoyNotificationsPageState
               notifyModel.add(NotifyModel(
                   notifyID: notify_id,
                   title: title,
-                  body: body,
+                  body: bodyMsg,
                   time: formattedDateTime,
                   orderID: order_id,
-                  intentScreen: intent));
+                  intentScreen: intent,
+                  bookingID: bookingid));
             }
 
             setState(() {
@@ -149,13 +153,13 @@ class _DeliveryBoyNotificationsPageState
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        backgroundColor: Colors.black,
-        extendBodyBehindAppBar: true,
+        backgroundColor: AppColors.whiteColor,
+        
         appBar: AppBar(
-          backgroundColor: Colors.transparent,
+          
           elevation: 0,
           title: Text('Notifications 📬',
-              style: ralewayStyle.copyWith(
+              style: nunitoStyle.copyWith(
                   fontSize: 25.0,
                   color: AppColors.whiteColor,
                   fontWeight: FontWeight.bold,
@@ -163,260 +167,259 @@ class _DeliveryBoyNotificationsPageState
           systemOverlayStyle:
               SystemUiOverlayStyle(statusBarBrightness: Brightness.dark),
         ),
-        body: Padding(
-          padding: EdgeInsets.fromLTRB(0, 0.1 * kToolbarHeight, 0, 20),
-          child: RefreshIndicator(
-            onRefresh: _handleRefresh,
-            child: showLoading
-                ? Center(
-                    child: CircularProgressIndicator(),
-                  )
-                : noNotification
-                    ? Center(
-                        child: Text(
-                          'No New Notifications Found For Today',
-                          style: ralewayStyle.copyWith(
-                              color: AppColors.whiteColor, fontSize: 20.0),
-                        ),
-                      )
-                    : Column(
-                        children: [
-                          Expanded(
-                            child: ListView.builder(
-                                itemCount: notifyModel.length,
-                                itemBuilder: ((context, index) {
-                                  return Padding(
-                                    padding: const EdgeInsets.all(8.0),
-                                    child: InkWell(
-                                      onTap: () {
-                                        print(
-                                            'NotifyRoute::${notifyModel[index].intentScreen}');
-                                            SharedPreferenceUtils.save_val('norder_id', notifyModel[index].orderID);
-                                            Navigator.pop(context);
-                                        Navigator.pushReplacementNamed(context,
-                                            notifyModel[index].intentScreen);
-                                      },
-                                      child: Container(
-                                        decoration: BoxDecoration(
-                                            borderRadius:
-                                                BorderRadius.circular(12.0),
-                                            color: AppColors.lightBlackColor),
-                                        child: Padding(
-                                          padding: const EdgeInsets.all(8.0),
-                                          child: Column(
-                                            children: [
-                                              Row(
-                                                mainAxisAlignment:
-                                                    MainAxisAlignment
-                                                        .spaceBetween,
-                                                children: [
-                                                  Row(
-                                                    children: [
-                                                      Container(
-                                                        decoration:
-                                                            BoxDecoration(
-                                                          borderRadius:
-                                                              BorderRadius
-                                                                  .circular(
-                                                                      8.0),
-                                                          color: glb
-                                                              .generateRandomColorWithOpacity(),
-                                                        ),
-                                                        child: Padding(
-                                                          padding:
-                                                              const EdgeInsets
-                                                                  .all(12.0),
-                                                          child: Text(
-                                                            notifyModel[index]
-                                                                .notifyID,
-                                                            style: nunitoStyle
-                                                                .copyWith(
-                                                                    fontWeight:
-                                                                        FontWeight
-                                                                            .bold,
-                                                                    color: Colors
-                                                                        .white),
-                                                          ),
-                                                        ),
+        body: RefreshIndicator(
+          onRefresh: _handleRefresh,
+          child: showLoading
+              ? Center(
+                  child: CircularProgressIndicator(),
+                )
+              : noNotification
+                  ? Center(
+                      child: Text(
+                        'No New Notifications Found For Today',
+                        style: nunitoStyle.copyWith(
+                            color: AppColors.backColor, fontSize: 20.0),
+                      ),
+                    )
+                  : Column(
+                      children: [
+                        Expanded(
+                          child: ListView.builder(
+                              itemCount: notifyModel.length,
+                              itemBuilder: ((context, index) {
+                                return Padding(
+                                  padding: const EdgeInsets.all(8.0),
+                                  child: InkWell(
+                                    onTap: () {
+                                      print(
+                                          'NotifyRoute::${notifyModel[index].intentScreen}');
+                                      SharedPreferenceUtils.save_val(
+                                          'nbooking_id',
+                                          notifyModel[index].bookingID);
+                                      Navigator.pop(context);
+                                      Navigator.pushReplacementNamed(context,
+                                          notifyModel[index].intentScreen);
+                                    },
+                                    child: Container(
+                                      decoration: BoxDecoration(
+                                          borderRadius:
+                                              BorderRadius.circular(12.0),
+                                          color: AppColors.lightBlackColor),
+                                      child: Padding(
+                                        padding: const EdgeInsets.all(8.0),
+                                        child: Column(
+                                          children: [
+                                            Row(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment
+                                                      .spaceBetween,
+                                              children: [
+                                                Row(
+                                                  children: [
+                                                    Container(
+                                                      decoration:
+                                                          BoxDecoration(
+                                                        borderRadius:
+                                                            BorderRadius
+                                                                .circular(
+                                                                    8.0),
+                                                        color: glb
+                                                            .generateRandomColorWithOpacity(),
                                                       ),
-                                                      Padding(
+                                                      child: Padding(
                                                         padding:
                                                             const EdgeInsets
                                                                 .all(12.0),
-                                                        child: Column(
-                                                          crossAxisAlignment:
-                                                              CrossAxisAlignment
-                                                                  .start,
-                                                          children: [
-                                                            Text(
-                                                              notifyModel[index]
-                                                                  .title,
-                                                              style: ralewayStyle.copyWith(
-                                                                  fontWeight:
-                                                                      FontWeight
-                                                                          .bold,
-                                                                  color: AppColors
-                                                                      .whiteColor),
-                                                            ),
-                                                            SizedBox(
-                                                              height: 2.0,
-                                                            ),
-                                                            SizedBox(
-                                                              width: 200,
-                                                              child: Text(
-                                                                notifyModel[
-                                                                        index]
-                                                                    .body,
-                                                                style: nunitoStyle.copyWith(
-                                                                    color: AppColors
-                                                                        .whiteColor,
-                                                                    fontSize:
-                                                                        10.0),
-                                                                maxLines: 3,
-                                                                overflow:
-                                                                    TextOverflow
-                                                                        .ellipsis,
-                                                              ),
-                                                            ),
-                                                          ],
-                                                        ),
-                                                      ),
-                                                    ],
-                                                  ),
-                                                  Visibility(
-                                                    visible: false,
-                                                    child: Container(
-                                                      decoration: BoxDecoration(
-                                                          color: Colors.amber,
-                                                          borderRadius:
-                                                              BorderRadius
-                                                                  .circular(
-                                                                      4.0)),
-                                                      child: Padding(
-                                                        padding:
-                                                            const EdgeInsets
-                                                                .symmetric(
-                                                                horizontal:
-                                                                    18.0,
-                                                                vertical: 4.0),
                                                         child: Text(
-                                                          'In Progress',
-                                                          style: ralewayStyle
+                                                          notifyModel[index]
+                                                              .notifyID,
+                                                          style: nunitoStyle
                                                               .copyWith(
                                                                   fontWeight:
                                                                       FontWeight
                                                                           .bold,
                                                                   color: AppColors
-                                                                      .whiteColor,
-                                                                  fontSize:
-                                                                      10.0),
+                                                                      .backColor),
                                                         ),
                                                       ),
                                                     ),
-                                                  ),
-                                                  Visibility(
-                                                    visible: false,
-                                                    child: Container(
-                                                      decoration: BoxDecoration(
-                                                          color: Colors.green,
-                                                          borderRadius:
-                                                              BorderRadius
-                                                                  .circular(
-                                                                      4.0)),
-                                                      child: Padding(
-                                                        padding:
-                                                            const EdgeInsets
-                                                                .symmetric(
-                                                                horizontal:
-                                                                    18.0,
-                                                                vertical: 4.0),
-                                                        child: Text(
-                                                          'Completed',
-                                                          style: ralewayStyle
-                                                              .copyWith(
-                                                                  fontWeight:
-                                                                      FontWeight
-                                                                          .bold,
+                                                    Padding(
+                                                      padding:
+                                                          const EdgeInsets
+                                                              .all(12.0),
+                                                      child: Column(
+                                                        crossAxisAlignment:
+                                                            CrossAxisAlignment
+                                                                .start,
+                                                        children: [
+                                                          Text(
+                                                            notifyModel[index]
+                                                                .title,
+                                                            style: nunitoStyle.copyWith(
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .bold,
+                                                                color: AppColors
+                                                                    .backColor),
+                                                          ),
+                                                          SizedBox(
+                                                            height: 2.0,
+                                                          ),
+                                                          SizedBox(
+                                                            width: 200,
+                                                            child: Text(
+                                                              notifyModel[
+                                                                      index]
+                                                                  .body,
+                                                              style: nunitoStyle.copyWith(
                                                                   color: AppColors
-                                                                      .whiteColor,
+                                                                      .backColor,
                                                                   fontSize:
                                                                       10.0),
-                                                        ),
+                                                              maxLines: 3,
+                                                              overflow:
+                                                                  TextOverflow
+                                                                      .ellipsis,
+                                                            ),
+                                                          ),
+                                                        ],
                                                       ),
                                                     ),
-                                                  ),
-                                                  Visibility(
-                                                    visible: false,
-                                                    child: Container(
-                                                      decoration: BoxDecoration(
-                                                          color: Colors.red,
-                                                          borderRadius:
-                                                              BorderRadius
-                                                                  .circular(
-                                                                      4.0)),
-                                                      child: Padding(
-                                                        padding:
-                                                            const EdgeInsets
-                                                                .symmetric(
-                                                                horizontal:
-                                                                    18.0,
-                                                                vertical: 4.0),
-                                                        child: Text(
-                                                          'Cancelled',
-                                                          style: ralewayStyle
-                                                              .copyWith(
-                                                                  fontWeight:
-                                                                      FontWeight
-                                                                          .bold,
-                                                                  color: AppColors
-                                                                      .whiteColor,
-                                                                  fontSize:
-                                                                      10.0),
-                                                        ),
-                                                      ),
-                                                    ),
-                                                  )
-                                                ],
-                                              ),
-                                              const Padding(
-                                                padding: EdgeInsets.all(6.0),
-                                                child: Divider(
-                                                  color: AppColors.whiteColor,
-                                                  height: 0.2,
-                                                  thickness: 0.2,
+                                                  ],
                                                 ),
-                                              ),
-                                              Row(
-                                                mainAxisAlignment:
-                                                    MainAxisAlignment
-                                                        .spaceBetween,
-                                                children: [
-                                                  Text(
-                                                    notifyModel[index].time,
-                                                    style: nunitoStyle.copyWith(
-                                                        fontWeight:
-                                                            FontWeight.bold,
-                                                        fontSize: 12.0,
-                                                        color: AppColors
-                                                            .whiteColor),
+                                                Visibility(
+                                                  visible: false,
+                                                  child: Container(
+                                                    decoration: BoxDecoration(
+                                                        color: Colors.amber,
+                                                        borderRadius:
+                                                            BorderRadius
+                                                                .circular(
+                                                                    4.0)),
+                                                    child: Padding(
+                                                      padding:
+                                                          const EdgeInsets
+                                                              .symmetric(
+                                                              horizontal:
+                                                                  18.0,
+                                                              vertical: 4.0),
+                                                      child: Text(
+                                                        'In Progress',
+                                                        style: nunitoStyle
+                                                            .copyWith(
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .bold,
+                                                                color: AppColors
+                                                                    .whiteColor,
+                                                                fontSize:
+                                                                    10.0),
+                                                      ),
+                                                    ),
                                                   ),
-                                                  Icon(
-                                                    Icons.more_horiz,
-                                                    color: Colors.white,
-                                                  )
-                                                ],
-                                              )
-                                            ],
-                                          ),
+                                                ),
+                                                Visibility(
+                                                  visible: false,
+                                                  child: Container(
+                                                    decoration: BoxDecoration(
+                                                        color: Colors.green,
+                                                        borderRadius:
+                                                            BorderRadius
+                                                                .circular(
+                                                                    4.0)),
+                                                    child: Padding(
+                                                      padding:
+                                                          const EdgeInsets
+                                                              .symmetric(
+                                                              horizontal:
+                                                                  18.0,
+                                                              vertical: 4.0),
+                                                      child: Text(
+                                                        'Completed',
+                                                        style: nunitoStyle
+                                                            .copyWith(
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .bold,
+                                                                color: AppColors
+                                                                    .whiteColor,
+                                                                fontSize:
+                                                                    10.0),
+                                                      ),
+                                                    ),
+                                                  ),
+                                                ),
+                                                Visibility(
+                                                  visible: false,
+                                                  child: Container(
+                                                    decoration: BoxDecoration(
+                                                        color: Colors.red,
+                                                        borderRadius:
+                                                            BorderRadius
+                                                                .circular(
+                                                                    4.0)),
+                                                    child: Padding(
+                                                      padding:
+                                                          const EdgeInsets
+                                                              .symmetric(
+                                                              horizontal:
+                                                                  18.0,
+                                                              vertical: 4.0),
+                                                      child: Text(
+                                                        'Cancelled',
+                                                        style: nunitoStyle
+                                                            .copyWith(
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .bold,
+                                                                color: AppColors
+                                                                    .whiteColor,
+                                                                fontSize:
+                                                                    10.0),
+                                                      ),
+                                                    ),
+                                                  ),
+                                                )
+                                              ],
+                                            ),
+                                            const Padding(
+                                              padding: EdgeInsets.all(6.0),
+                                              child: Divider(
+                                                color: AppColors.backColor,
+                                                height: 0.2,
+                                                thickness: 0.2,
+                                              ),
+                                            ),
+                                            Row(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment
+                                                      .spaceBetween,
+                                              children: [
+                                                Text(
+                                                  notifyModel[index].time,
+                                                  style: nunitoStyle.copyWith(
+                                                      fontWeight:
+                                                          FontWeight.bold,
+                                                      fontSize: 12.0,
+                                                      color: AppColors
+                                                          .backColor),
+                                                ),
+                                                Icon(
+                                                  Icons.more_horiz,
+                                                  color: AppColors.blueColor,
+                                                )
+                                              ],
+                                            )
+                                          ],
                                         ),
                                       ),
                                     ),
-                                  );
-                                })),
-                          ),
-                        ],
-                      ),
-          ),
+                                  ),
+                                );
+                              })),
+                        ),
+                      ],
+                    ),
         ));
   }
 }

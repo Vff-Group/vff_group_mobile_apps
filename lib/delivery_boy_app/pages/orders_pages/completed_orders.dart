@@ -21,15 +21,15 @@ class CompletedOrdersPage extends StatefulWidget {
 }
 
 class _CompletedOrdersPageState extends State<CompletedOrdersPage> {
-    final bool _noOrders = false;
+  final bool _noOrders = false;
   bool showLoading = false, showError = false;
 
-  List<OngoingOrdersModel> ongoingModel = [];
+  List<OngoingOrdersModel> completeOrdersModel = [];
   Future loadOrderDetails() async {
     setState(() {
       showLoading = true;
       showError = false;
-      ongoingModel = [];
+      completeOrdersModel = [];
     });
     final prefs = await SharedPreferences.getInstance();
     var delivery_boy_id = prefs.getString('delivery_boy_id');
@@ -71,29 +71,29 @@ class _CompletedOrdersPageState extends State<CompletedOrdersPage> {
           return;
         } else {
           try {
-            Map<String, dynamic> onGoingOrdersMap = json.decode(response.body);
+            Map<String, dynamic> completedMap = json.decode(response.body);
             if (kDebugMode) {
-              print("onGoingOrdersMap:$onGoingOrdersMap");
+              print("completedMap:$completedMap");
             }
 
-            var orderid = onGoingOrdersMap["orderid"];
-            var delivery_boyid = onGoingOrdersMap["delivery_boyid"];
-            var customer_id = onGoingOrdersMap["customer_id"];
-            var quantity = onGoingOrdersMap["quantity"];
-            var price = onGoingOrdersMap["price"];
-            var pickup_date = onGoingOrdersMap["pickup_date"];
-            var delivery_date = onGoingOrdersMap["delivery_date"];
-            var clat = onGoingOrdersMap["clat"];
-            var clng = onGoingOrdersMap["clng"];
-            var order_status = onGoingOrdersMap["order_status"];
-            var delivery_epoch = onGoingOrdersMap["delivery_epoch"];
-            var order_taken_epoch = onGoingOrdersMap["order_taken_epoch"];
-            var cancel_reason = onGoingOrdersMap["cancel_reason"];
-            var house_no = onGoingOrdersMap["house_no"];
-            var address = onGoingOrdersMap["address"];
+            var orderid = completedMap["orderid"];
+
+            var customer_id = completedMap["customer_id"];
+            var quantity = completedMap["quantity"];
+            var price = completedMap["price"];
+            var pickup_date = completedMap["pickup_date"];
+            var delivery_date = completedMap["delivery_date"];
+            var clat = completedMap["clat"];
+            var clng = completedMap["clng"];
+            var order_status = completedMap["order_status"];
+            var delivery_epoch = completedMap["delivery_epoch"];
+            var order_taken_epoch = completedMap["order_taken_epoch"];
+            var cancel_reason = completedMap["cancel_reason"];
+            var house_no = completedMap["house_no"];
+            var address = completedMap["address"];
 
             List<String> orderIDLst = glb.strToLst2(orderid);
-            List<String> delivery_boyidLst = glb.strToLst2(delivery_boyid);
+
             List<String> quantityLst = glb.strToLst2(quantity);
             List<String> priceLst = glb.strToLst2(price);
             List<String> pickup_dateLst = glb.strToLst2(pickup_date);
@@ -139,7 +139,7 @@ class _CompletedOrdersPageState extends State<CompletedOrdersPage> {
               if (order_status == "Accepted") {
                 showCancelBtn = true;
               }
-              ongoingModel.add(OngoingOrdersModel(
+              completeOrdersModel.add(OngoingOrdersModel(
                   orderID: orderID,
                   pickup_date: pickup_date,
                   delivery_date: delivery_date,
@@ -204,7 +204,7 @@ class _CompletedOrdersPageState extends State<CompletedOrdersPage> {
             child: RefreshIndicator(
               onRefresh: _handleRefresh,
               child: ListView.separated(
-                  itemCount: 10,
+                  itemCount: completeOrdersModel.length,
                   separatorBuilder: (context, _) =>
                       SizedBox(height: height * 0.02),
                   itemBuilder: ((context, index) {
@@ -216,14 +216,14 @@ class _CompletedOrdersPageState extends State<CompletedOrdersPage> {
             ? Center(
                 child: Text(
                   'No Order History Found',
-                  style: ralewayStyle.copyWith(
-                      color: AppColors.whiteColor, fontSize: 20.0),
+                  style: nunitoStyle.copyWith(
+                      color: AppColors.backColor, fontSize: 20.0),
                 ),
               )
             : RefreshIndicator(
                 onRefresh: _handleRefresh,
                 child: ListView.builder(
-                    itemCount: ongoingModel.length,
+                    itemCount: completeOrdersModel.length,
                     itemBuilder: ((context, index) {
                       return Padding(
                         padding: const EdgeInsets.all(12.0),
@@ -231,10 +231,11 @@ class _CompletedOrdersPageState extends State<CompletedOrdersPage> {
                           color: Colors.transparent,
                           child: InkWell(
                             onTap: () {
-                              glb.orderid = ongoingModel[index].orderID;
+                              glb.orderid = completeOrdersModel[index].orderID;
                               glb.hideControls = true;
                               glb.showPayOption = false;
-                              glb.customerID = ongoingModel[index].customerID;
+                              glb.customerID =
+                                  completeOrdersModel[index].customerID;
                               Navigator.pushNamed(context, OrderDetailsRoute);
                             },
                             borderRadius: BorderRadius.circular(8.0),
@@ -267,13 +268,13 @@ class _CompletedOrdersPageState extends State<CompletedOrdersPage> {
                                           Text(
                                             'Order Status:',
                                             style: nunitoStyle.copyWith(
-                                                color: AppColors.whiteColor,
+                                                color: AppColors.backColor,
                                                 fontSize: 14),
                                           ),
                                           Text(
-                                            '${ongoingModel[index].order_status}',
+                                            '${completeOrdersModel[index].order_status}',
                                             style: nunitoStyle.copyWith(
-                                              color: AppColors.btnColor,
+                                              color: AppColors.blueColor,
                                               fontSize: 14,
                                               fontWeight: FontWeight.bold,
                                             ),
@@ -290,13 +291,13 @@ class _CompletedOrdersPageState extends State<CompletedOrdersPage> {
                                           Text(
                                             'Order ID:',
                                             style: nunitoStyle.copyWith(
-                                                color: AppColors.whiteColor,
+                                                color: AppColors.backColor,
                                                 fontSize: 14),
                                           ),
                                           Text(
-                                            '#${ongoingModel[index].orderID}',
+                                            '#${completeOrdersModel[index].orderID}',
                                             style: nunitoStyle.copyWith(
-                                              color: AppColors.whiteColor,
+                                              color: AppColors.backColor,
                                               fontSize: 14,
                                               fontWeight: FontWeight.bold,
                                             ),
@@ -313,14 +314,14 @@ class _CompletedOrdersPageState extends State<CompletedOrdersPage> {
                                           Text(
                                             'Order Date:',
                                             style: nunitoStyle.copyWith(
-                                                color: AppColors.whiteColor,
+                                                color: AppColors.backColor,
                                                 fontSize: 14),
                                           ),
                                           Text(
-                                            ongoingModel[index]
+                                            completeOrdersModel[index]
                                                 .order_taken_epoch,
                                             style: nunitoStyle.copyWith(
-                                              color: AppColors.whiteColor,
+                                              color: AppColors.backColor,
                                               fontSize: 14,
                                             ),
                                           ),
@@ -336,13 +337,14 @@ class _CompletedOrdersPageState extends State<CompletedOrdersPage> {
                                           Text(
                                             'Delivered Date:',
                                             style: nunitoStyle.copyWith(
-                                                color: AppColors.whiteColor,
+                                                color: AppColors.backColor,
                                                 fontSize: 14),
                                           ),
                                           Text(
-                                            ongoingModel[index].delivery_epoch,
+                                            completeOrdersModel[index]
+                                                .delivery_epoch,
                                             style: nunitoStyle.copyWith(
-                                              color: AppColors.whiteColor,
+                                              color: AppColors.backColor,
                                               fontSize: 14,
                                             ),
                                           ),
@@ -358,13 +360,13 @@ class _CompletedOrdersPageState extends State<CompletedOrdersPage> {
                                           Text(
                                             'Pick Up:',
                                             style: nunitoStyle.copyWith(
-                                                color: AppColors.whiteColor,
+                                                color: AppColors.backColor,
                                                 fontSize: 14),
                                           ),
                                           Text(
-                                            ongoingModel[index].address,
+                                            completeOrdersModel[index].address,
                                             style: nunitoStyle.copyWith(
-                                              color: AppColors.whiteColor,
+                                              color: AppColors.backColor,
                                               fontSize: 14,
                                             ),
                                           ),
@@ -380,13 +382,13 @@ class _CompletedOrdersPageState extends State<CompletedOrdersPage> {
                                           Text(
                                             'Total Amount:',
                                             style: nunitoStyle.copyWith(
-                                                color: AppColors.whiteColor,
+                                                color: AppColors.backColor,
                                                 fontSize: 14),
                                           ),
                                           Text(
-                                            '₹ ${ongoingModel[index].totalPrice}/-',
+                                            '₹ ${completeOrdersModel[index].totalPrice}/-',
                                             style: nunitoStyle.copyWith(
-                                              color: AppColors.neonColor,
+                                              color: AppColors.blueColor,
                                               fontSize: 14,
                                               fontWeight: FontWeight.bold,
                                             ),
@@ -404,5 +406,4 @@ class _CompletedOrdersPageState extends State<CompletedOrdersPage> {
                     })),
               );
   }
-
 }
