@@ -1101,29 +1101,32 @@ class _DashboardPageState extends State<DashboardPage> {
                                                                           ),
                                                                         ),
                                                                       ),
-                                                                      Material(
-                                                                        color: Colors
-                                                                            .transparent,
-                                                                        child:
-                                                                            InkWell(
-                                                                          onTap:
-                                                                              () {
-                                                                            var bookingStatus =
-                                                                                "Rejected";
-                                                                            accept_or_rejectOrder(bookingStatus);
-                                                                          },
-                                                                          borderRadius:
-                                                                              BorderRadius.circular(12.0),
+                                                                      Visibility(
+                                                                        visible: false,
+                                                                        child: Material(
+                                                                          color: Colors
+                                                                              .transparent,
                                                                           child:
-                                                                              Ink(
-                                                                            decoration:
-                                                                                BoxDecoration(color: Colors.red, borderRadius: BorderRadius.circular(12.0)),
+                                                                              InkWell(
+                                                                            onTap:
+                                                                                () {
+                                                                              var bookingStatus =
+                                                                                  "Rejected";
+                                                                              accept_or_rejectOrder(bookingStatus);
+                                                                            },
+                                                                            borderRadius:
+                                                                                BorderRadius.circular(12.0),
                                                                             child:
-                                                                                Padding(
-                                                                              padding: const EdgeInsets.symmetric(horizontal: 26.0, vertical: 12.0),
-                                                                              child: Text(
-                                                                                'Reject',
-                                                                                style: nunitoStyle.copyWith(fontWeight: FontWeight.bold, color: Colors.white),
+                                                                                Ink(
+                                                                              decoration:
+                                                                                  BoxDecoration(color: Colors.red, borderRadius: BorderRadius.circular(12.0)),
+                                                                              child:
+                                                                                  Padding(
+                                                                                padding: const EdgeInsets.symmetric(horizontal: 26.0, vertical: 12.0),
+                                                                                child: Text(
+                                                                                  'Reject',
+                                                                                  style: nunitoStyle.copyWith(fontWeight: FontWeight.bold, color: Colors.white),
+                                                                                ),
                                                                               ),
                                                                             ),
                                                                           ),

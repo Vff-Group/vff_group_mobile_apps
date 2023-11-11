@@ -66,8 +66,7 @@
 	<string>Older devices need location for better pickup and delivery service.</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
 	<string>We Need Location Permission While the App is in Use To provide Better Service by knowing your exact location for better pickup and drop.</string>
-	<key>NSUserTrackingUsageDescription</key>
-	<string>appTrackingTransparency</string>
+
 	<key>UIApplicationSupportsIndirectInputEvents</key>
 	<true/>
 	<key>UIBackgroundModes</key>

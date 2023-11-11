@@ -7,6 +7,7 @@ import 'package:get/get.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:vff_group/animation/fade_animation.dart';
 import 'package:vff_group/animation/slide_bottom_animation.dart';
+import 'package:vff_group/pages/main_pages/bottom_bar.dart';
 import 'package:vff_group/routings/route_names.dart';
 import 'package:vff_group/utils/app_colors.dart';
 import 'package:vff_group/utils/app_styles.dart';
@@ -186,6 +187,12 @@ class _DeliveryAddressPageState extends State<DeliveryAddressPage> {
             showSuccess = true;
           });
           Navigator.pop(context);
+           Navigator.pushReplacement(
+                                        context,
+                                        MaterialPageRoute(
+                                            builder: (context) =>
+                                                const BottomBarScreen(
+                                                    pageIndex: 0)));
           //showSuccessPopup(context);
         }
       }
