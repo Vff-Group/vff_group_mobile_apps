@@ -736,12 +736,12 @@ class _HomePageState extends State<HomePage> {
             slivers: [
               SliverToBoxAdapter(
                 child: SizedBox(
-                  height: MediaQuery.of(context).size.height,
+                  height: MediaQuery.of(context).size.height + 150,
                   child: Stack(
                     children: [
                       SizedBox(
                         width: MediaQuery.of(context).size.width,
-                        height: MediaQuery.of(context).size.height,
+                        height: MediaQuery.of(context).size.height + 150,
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
@@ -900,6 +900,215 @@ class _HomePageState extends State<HomePage> {
                             SizedBox(
                               height: width * 0.05,
                             ),
+                              Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: [
+                                Text(activeBookingsText,
+                                    style: nunitoStyle.copyWith(
+                                        fontSize: 20.0,
+                                        color: AppColors.backColor,
+                                        fontWeight: FontWeight.bold,
+                                        letterSpacing: 1)),
+                              ],
+                            ),
+                            SizedBox(
+                              height: width * 0.02,
+                            ),
+                            activeBookingsLoading
+                                ? const LinearProgressIndicator(
+                                    color: Colors.blue,
+                                  )
+                                : SizedBox(
+                                    height: 105,
+                                    child: noBookings
+                                        ? Padding(
+                                            padding: const EdgeInsets.all(26.0),
+                                            child: Center(
+                                              child: Text(
+                                                'No Bookings Found',
+                                                style: nunitoStyle.copyWith(
+                                                    fontSize: 12.0,
+                                                    fontWeight: FontWeight.bold,
+                                                    color: AppColors.backColor),
+                                                textAlign: TextAlign.center,
+                                              ),
+                                            ),
+                                          )
+                                        : ListView.builder(
+                                            scrollDirection: Axis.horizontal,
+                                            itemCount:
+                                                activeBookingsModel.length,
+                                            itemBuilder: (context, index) {
+                                              // Generate a random gradient for each item
+                                              //LinearGradient randomGradient = generateRandomGradient();
+                                              return Padding(
+                                                padding:
+                                                    const EdgeInsets.all(8.0),
+                                                child: Material(
+                                                  color: Colors.transparent,
+                                                  child: InkWell(
+                                                    onTap: () {
+                                                      //Send to Order detail Screen
+                                                      glb.orderid = "";
+                                                      glb.booking_id = "";
+                                                      glb.branch_id = "";
+                                                      glb.order_status = "0";
+                                                      glb.hideControls = false;
+                                                      glb.showPayOption = true;
+                                                      glb.showDeliveryBoy =
+                                                          true;
+                                        
+                                                      if (activeBookingsModel
+                                                          .isNotEmpty) {
+                                                        if (activeBookingsModel[
+                                                                    index]
+                                                                .bookingStatus ==
+                                                            "NA") {
+                                                          glb.showSnackBar(
+                                                              context,
+                                                              'Alert',
+                                                              "Please wait until a Delivery Boy is Assigned To You.\nThank You");
+                                                          return;
+                                                        }
+                                                        glb.booking_id =
+                                                            activeBookingsModel[
+                                                                    index]
+                                                                .bookingID;
+                                                        glb.branch_id = activeBookingsModel[index].branchID;
+                                                        glb.deliveryBoyID = activeBookingsModel[index].deliveryBoyID;
+                                                        Navigator.pushNamed(
+                                                            context,
+                                                            BookingDetailsRoute);
+                                                      }
+                                                    },
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            12.0),
+                                                    child: Ink(
+                                                        width: width - 100,
+                                                        decoration:
+                                                            BoxDecoration(
+                                                          color: AppColors
+                                                              .secondaryBackColor,
+                                                          borderRadius:
+                                                              BorderRadius
+                                                                  .circular(
+                                                                      16.0),
+                                                          boxShadow: [
+                                                            BoxShadow(
+                                                              color: Colors
+                                                                  .white
+                                                                  .withOpacity(
+                                                                      0.2), // Shadow color
+                                                              spreadRadius:
+                                                                  1, // Spread radius
+                                                              blurRadius:
+                                                                  5, // Blur radius
+                                                              offset: const Offset(
+                                                                  0,
+                                                                  1), // Offset to control shadow position
+                                                            ),
+                                                          ],
+                                                        ),
+                                                        child: Padding(
+                                                          padding:
+                                                              const EdgeInsets
+                                                                  .all(8.0),
+                                                          child: Row(
+                                                            crossAxisAlignment:
+                                                                CrossAxisAlignment
+                                                                    .center,
+                                                            children: [
+                                                              Container(
+                                                                decoration: const BoxDecoration(
+                                                                    shape: BoxShape
+                                                                        .circle,
+                                                                    color: Colors
+                                                                        .deepPurple),
+                                                                child: Padding(
+                                                                  padding:
+                                                                      const EdgeInsets
+                                                                          .all(
+                                                                          2.0),
+                                                                  child: Container(
+                                                                      decoration: const BoxDecoration(shape: BoxShape.circle, color: AppColors.lightBlackColor),
+                                                                      child: const Padding(
+                                                                        padding:
+                                                                            EdgeInsets.all(8.0),
+                                                                        child:
+                                                                            Icon(
+                                                                          Icons
+                                                                              .delivery_dining_sharp,
+                                                                          color:
+                                                                              Colors.deepOrange,
+                                                                        ),
+                                                                      )),
+                                                                ),
+                                                              ),
+                                                              Padding(
+                                                                padding:
+                                                                    const EdgeInsets
+                                                                        .only(
+                                                                        left:
+                                                                            20.0),
+                                                                child: Column(
+                                                                  mainAxisAlignment:
+                                                                      MainAxisAlignment
+                                                                          .center,
+                                                                  crossAxisAlignment:
+                                                                      CrossAxisAlignment
+                                                                          .start,
+                                                                  children: [
+                                                                    SizedBox(
+                                                                      child:
+                                                                          Text(
+                                                                        'Booking ID: #${activeBookingsModel[index].bookingID}',
+                                                                        style: nunitoStyle.copyWith(
+                                                                            fontSize:
+                                                                                16.0,
+                                                                            color:
+                                                                                AppColors.backColor,
+                                                                            fontWeight: FontWeight.bold,
+                                                                            letterSpacing: 1),
+                                                                        overflow:
+                                                                            TextOverflow.ellipsis,
+                                                                        softWrap:
+                                                                            true,
+                                                                      ),
+                                                                    ),
+                                                                    Padding(
+                                                                      padding: const EdgeInsets
+                                                                          .only(
+                                                                          top:
+                                                                              6.0),
+                                                                      child: Text(
+                                                                          activeBookingsModel[index].bookingStatus == "NA"
+                                                                              ? "Assiging Delivery Boy"
+                                                                              : activeBookingsModel[index]
+                                                                                  .bookingStatus,
+                                                                          style: nunitoStyle.copyWith(
+                                                                              fontSize: 14.0,
+                                                                              color: AppColors.blueColor,
+                                                                              fontWeight: FontWeight.w500,
+                                                                              letterSpacing: 1)),
+                                                                    ),
+                                                                  ],
+                                                                ),
+                                                              ),
+                                                            ],
+                                                          ),
+                                                        )),
+                                                  ),
+                                                ),
+                                              );
+                                            }),
+                                
+                                  ),
+                          
+                            SizedBox(
+                              height: width * 0.05,
+                            ),
                             Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               crossAxisAlignment: CrossAxisAlignment.center,
@@ -945,7 +1154,7 @@ class _HomePageState extends State<HomePage> {
                                             padding: const EdgeInsets.all(26.0),
                                             child: Center(
                                               child: Text(
-                                                'No Active Order Found\nIf you have Requested a Pickup Request please check below your booking status.',
+                                                'No Active Order Found\nIf you have Requested a Pickup Request please check your booking status above.',
                                                 style: nunitoStyle.copyWith(
                                                     fontSize: 12.0,
                                                     fontWeight: FontWeight.bold,
@@ -1107,212 +1316,7 @@ class _HomePageState extends State<HomePage> {
                                               );
                                             }),
                                   ),
-                            SizedBox(
-                              height: width * 0.05,
-                            ),
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              children: [
-                                Text(activeBookingsText,
-                                    style: nunitoStyle.copyWith(
-                                        fontSize: 20.0,
-                                        color: AppColors.backColor,
-                                        fontWeight: FontWeight.bold,
-                                        letterSpacing: 1)),
-                              ],
-                            ),
-                            SizedBox(
-                              height: width * 0.02,
-                            ),
-                            activeBookingsLoading
-                                ? const LinearProgressIndicator(
-                                    color: Colors.blue,
-                                  )
-                                : SizedBox(
-                                    height: 105,
-                                    child: noBookings
-                                        ? Padding(
-                                            padding: const EdgeInsets.all(26.0),
-                                            child: Center(
-                                              child: Text(
-                                                'No Bookings Found',
-                                                style: nunitoStyle.copyWith(
-                                                    fontSize: 12.0,
-                                                    fontWeight: FontWeight.bold,
-                                                    color: AppColors.backColor),
-                                                textAlign: TextAlign.center,
-                                              ),
-                                            ),
-                                          )
-                                        : ListView.builder(
-                                            scrollDirection: Axis.horizontal,
-                                            itemCount:
-                                                activeBookingsModel.length,
-                                            itemBuilder: (context, index) {
-                                              // Generate a random gradient for each item
-                                              //LinearGradient randomGradient = generateRandomGradient();
-                                              return Padding(
-                                                padding:
-                                                    const EdgeInsets.all(8.0),
-                                                child: Material(
-                                                  color: Colors.transparent,
-                                                  child: InkWell(
-                                                    onTap: () {
-                                                      //Send to Order detail Screen
-                                                      glb.orderid = "";
-                                                      glb.booking_id = "";
-                                                      glb.branch_id = "";
-                                                      glb.order_status = "0";
-                                                      glb.hideControls = false;
-                                                      glb.showPayOption = true;
-                                                      glb.showDeliveryBoy =
-                                                          true;
-
-                                                      if (activeBookingsModel
-                                                          .isNotEmpty) {
-                                                        if (activeBookingsModel[
-                                                                    index]
-                                                                .bookingStatus ==
-                                                            "NA") {
-                                                          glb.showSnackBar(
-                                                              context,
-                                                              'Alert',
-                                                              "Please wait until a Delivery Boy is Assigned To You.\nThank You");
-                                                          return;
-                                                        }
-                                                        glb.booking_id =
-                                                            activeBookingsModel[
-                                                                    index]
-                                                                .bookingID;
-                                                        glb.branch_id = activeBookingsModel[index].branchID;
-                                                        Navigator.pushNamed(
-                                                            context,
-                                                            BookingDetailsRoute);
-                                                      }
-                                                    },
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                            12.0),
-                                                    child: Ink(
-                                                        width: width - 100,
-                                                        decoration:
-                                                            BoxDecoration(
-                                                          color: AppColors
-                                                              .secondaryBackColor,
-                                                          borderRadius:
-                                                              BorderRadius
-                                                                  .circular(
-                                                                      16.0),
-                                                          boxShadow: [
-                                                            BoxShadow(
-                                                              color: Colors
-                                                                  .white
-                                                                  .withOpacity(
-                                                                      0.2), // Shadow color
-                                                              spreadRadius:
-                                                                  1, // Spread radius
-                                                              blurRadius:
-                                                                  5, // Blur radius
-                                                              offset: const Offset(
-                                                                  0,
-                                                                  1), // Offset to control shadow position
-                                                            ),
-                                                          ],
-                                                        ),
-                                                        child: Padding(
-                                                          padding:
-                                                              const EdgeInsets
-                                                                  .all(8.0),
-                                                          child: Row(
-                                                            crossAxisAlignment:
-                                                                CrossAxisAlignment
-                                                                    .center,
-                                                            children: [
-                                                              Container(
-                                                                decoration: const BoxDecoration(
-                                                                    shape: BoxShape
-                                                                        .circle,
-                                                                    color: Colors
-                                                                        .deepPurple),
-                                                                child: Padding(
-                                                                  padding:
-                                                                      const EdgeInsets
-                                                                          .all(
-                                                                          2.0),
-                                                                  child: Container(
-                                                                      decoration: const BoxDecoration(shape: BoxShape.circle, color: AppColors.lightBlackColor),
-                                                                      child: const Padding(
-                                                                        padding:
-                                                                            EdgeInsets.all(8.0),
-                                                                        child:
-                                                                            Icon(
-                                                                          Icons
-                                                                              .delivery_dining_sharp,
-                                                                          color:
-                                                                              Colors.deepOrange,
-                                                                        ),
-                                                                      )),
-                                                                ),
-                                                              ),
-                                                              Padding(
-                                                                padding:
-                                                                    const EdgeInsets
-                                                                        .only(
-                                                                        left:
-                                                                            20.0),
-                                                                child: Column(
-                                                                  mainAxisAlignment:
-                                                                      MainAxisAlignment
-                                                                          .center,
-                                                                  crossAxisAlignment:
-                                                                      CrossAxisAlignment
-                                                                          .start,
-                                                                  children: [
-                                                                    SizedBox(
-                                                                      child:
-                                                                          Text(
-                                                                        'Booking ID: #${activeBookingsModel[index].bookingID}',
-                                                                        style: nunitoStyle.copyWith(
-                                                                            fontSize:
-                                                                                16.0,
-                                                                            color:
-                                                                                AppColors.backColor,
-                                                                            fontWeight: FontWeight.bold,
-                                                                            letterSpacing: 1),
-                                                                        overflow:
-                                                                            TextOverflow.ellipsis,
-                                                                        softWrap:
-                                                                            true,
-                                                                      ),
-                                                                    ),
-                                                                    Padding(
-                                                                      padding: const EdgeInsets
-                                                                          .only(
-                                                                          top:
-                                                                              6.0),
-                                                                      child: Text(
-                                                                          activeBookingsModel[index].bookingStatus == "NA"
-                                                                              ? "Assiging Delivery Boy"
-                                                                              : activeBookingsModel[index]
-                                                                                  .bookingStatus,
-                                                                          style: nunitoStyle.copyWith(
-                                                                              fontSize: 14.0,
-                                                                              color: AppColors.blueColor,
-                                                                              fontWeight: FontWeight.w500,
-                                                                              letterSpacing: 1)),
-                                                                    ),
-                                                                  ],
-                                                                ),
-                                                              ),
-                                                            ],
-                                                          ),
-                                                        )),
-                                                  ),
-                                                ),
-                                              );
-                                            }),
-                                  ),
+                          
                           ],
                         ),
                       )

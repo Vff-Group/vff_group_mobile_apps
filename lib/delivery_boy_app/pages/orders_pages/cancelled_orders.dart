@@ -64,6 +64,7 @@ class _CancelledOrderPageState extends State<CancelledOrderPage> {
         } else if (res.contains("ErrorCode#8")) {
           setState(() {
             showLoading = false;
+            showError = true;
           });
           glb.showSnackBar(context, 'Error', 'Something Went Wrong');
           return;

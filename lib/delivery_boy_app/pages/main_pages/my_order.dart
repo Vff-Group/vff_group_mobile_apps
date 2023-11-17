@@ -75,7 +75,7 @@ class _MyOrdersPageState extends State<MyOrdersPage> {
                       padding: const EdgeInsets.all(4.0),
                       child: Icon(Icons.done),
                     ),
-                    text: "Completed",
+                    text: "Dropped Orders",
                   ),
                   Tab(
                     icon: Padding(

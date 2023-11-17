@@ -490,7 +490,7 @@ class _OrderDetailsPageState extends State<OrderDetailsPage> {
                                                                         .spaceBetween,
                                                                 children: [
                                                                   Text(
-                                                                    'Cancel Order',
+                                                                    'Cancel Booking',
                                                                     style: nunitoStyle
                                                                         .copyWith(
                                                                       fontWeight:

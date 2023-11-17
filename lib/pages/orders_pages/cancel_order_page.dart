@@ -43,19 +43,13 @@ class _CancelOrderPageState extends State<CancelOrderPage> {
     }
     final prefs = await SharedPreferences.getInstance();
     var customerid = prefs.getString('customerid');
-    if (glb.orderid.isEmpty) {
-      glb.showSnackBar(context, 'Alert!', 'Please Select the Active Order');
-      setState(() {
-        showLoading = false;
-      });
-      return;
-    }
+    
 
     try {
       var url = glb.endPoint;
       final Map dictMap = {};
 
-      dictMap['order_id'] = glb.orderid;
+      dictMap['booking_id'] = glb.booking_id;
       dictMap['customer_id'] = customerid;
       dictMap['delivery_boy_id'] = glb.deliveryBoyID;
       dictMap['reason'] = reasonTxt;
@@ -118,7 +112,7 @@ class _CancelOrderPageState extends State<CancelOrderPage> {
               elevation: 0,
               title: FadeAnimation(
                 delay: 0.3,
-                child: Text('Cancel Order ',
+                child: Text('Cancel Booking ',
                     style: nunitoStyle.copyWith(
                         fontSize: 20.0,
                         color: AppColors.whiteColor,
