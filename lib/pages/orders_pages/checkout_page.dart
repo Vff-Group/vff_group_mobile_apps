@@ -40,6 +40,7 @@ class _CheckOutScreenState extends State<CheckOutScreen> {
   var totalQuantity = 0;
   var selectedIndex = 0;
   var deliveryPrice = 0.0;
+  var deliveryGlbPrice = 0.0;
   var extraItemPrices = "";
   var razor_pay_id = "";
   var razor_pay_status = "";
@@ -119,17 +120,27 @@ class _CheckOutScreenState extends State<CheckOutScreen> {
 
             if (totalPrice < rangeDelivery) {
               deliveryPrice = deliveryDPrice; //To add delivery Price
+              deliveryGlbPrice = deliveryDPrice;
               // totalPrice += deliveryPrice;
               // print('totalPrice after delivery price::$totalPrice');
             } else {
               deliveryPrice = 0;
             }
             print('deliveryPrice::::$deliveryPrice');
+            
+            // Parsing the string to double
+            double totalQuantityDouble = double.tryParse(total_quantity) ?? 0.0;
 
-            totalQuantity = int.parse(total_quantity);
+            // Casting double to int
+            int totalQuantityInt = totalQuantityDouble.toInt();
+
+            // print('Total Quantity as Integer: $totalQuantityInt');
+            // totalQuantity = int.parse(total_quantity);
+            totalQuantity = totalQuantityInt;
 
             itemIDLst = glb.strToLst2(itemID);
             itemNameLst = glb.strToLst2(itemName);
+            print('itemNameLst::$itemNameLst');
             priceLst = glb.strToLst2(price);
 
             setState(() {
@@ -181,6 +192,9 @@ class _CheckOutScreenState extends State<CheckOutScreen> {
                   print("price:$price");
                   setState(() {
                     totalPrice += price;
+                    if (totalPrice > rangeDelivery){
+                      deliveryPrice = 0.0;
+                    }
                   });
                   print("totalPrice+:$totalPrice");
                 });
@@ -191,6 +205,9 @@ class _CheckOutScreenState extends State<CheckOutScreen> {
                   print("price:$price");
                   setState(() {
                     totalPrice -= price;
+                    if (totalPrice < rangeDelivery){
+                      deliveryPrice = deliveryGlbPrice;
+                    }
                   });
 
                   print("totalPrice-:$totalPrice");
@@ -267,8 +284,8 @@ class _CheckOutScreenState extends State<CheckOutScreen> {
       additionalInstruction = "NA";
     }
     var gstamount = 0.0;
-    if(payment_type != "Cash"){
-      gstamount = ((totalPrice * 18) /100);
+    if (payment_type != "Cash") {
+      gstamount = ((totalPrice * 18) / 100);
     }
     print('TotalCost::$totalPrice');
     print('deliveryPrice::$deliveryPrice');
@@ -916,8 +933,9 @@ class _CheckOutScreenState extends State<CheckOutScreen> {
                                       color: Colors.transparent,
                                       child: InkWell(
                                         onTap: () {
-                                          if(glb.paymentType.isEmpty){
-                                            glb.showSnackBar(context, 'Alert', 'Please Select Payment Type Above');
+                                          if (glb.paymentType.isEmpty) {
+                                            glb.showSnackBar(context, 'Alert',
+                                                'Please Select Payment Type Above');
                                             return;
                                           }
                                           setState(() {
@@ -931,7 +949,8 @@ class _CheckOutScreenState extends State<CheckOutScreen> {
                                                       deliveryPrice) *
                                                   100, //in the smallest currency sub-unit.
                                               'name': 'VFF Group',
-                                              'image': 'https://vff-group.com/static/images/logo.png',
+                                              'image':
+                                                  'https://vff-group.com/static/images/logo.png',
                                               'description':
                                                   'Laundry service charge',
                                               'timeout': 100, // in seconds

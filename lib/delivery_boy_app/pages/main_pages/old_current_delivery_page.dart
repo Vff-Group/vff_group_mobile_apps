@@ -1,5 +1,4 @@
-//select usrname,mobile_no,profile_img,device_token from vff.usertbl,vff.laundry_delivery_boytbl,vff.laundry_ordertbl where laundry_delivery_boytbl.usrid=usertbl.usrid and laundry_ordertbl.delivery_boyid=laundry_delivery_boytbl.delivery_boy_id and orderid='81';
-//select usrname,mobile_no,profile_img,device_token from vff.usertbl,vff.laundry_customertbl,vff.laundry_ordertbl where laundry_customertbl.usrid=usertbl.usrid and laundry_ordertbl.customerid=laundry_customertbl.consmrid and orderid='81';
+
 import 'dart:convert';
 
 import 'package:flutter/foundation.dart';
@@ -24,14 +23,14 @@ import 'package:vff_group/global/vffglb.dart' as glb;
 import 'package:http/http.dart' as http;
 import 'package:widget_circular_animator/widget_circular_animator.dart';
 
-class CurrentDeliveryPage extends StatefulWidget {
-  const CurrentDeliveryPage({super.key});
+class OldCurrentDeliveryPage extends StatefulWidget {
+  const OldCurrentDeliveryPage({super.key});
 
   @override
-  State<CurrentDeliveryPage> createState() => _CurrentDeliveryPageState();
+  State<OldCurrentDeliveryPage> createState() => _OldCurrentDeliveryPageState();
 }
 
-class _CurrentDeliveryPageState extends State<CurrentDeliveryPage> {
+class _OldCurrentDeliveryPageState extends State<OldCurrentDeliveryPage> {
   bool isOrderDelivered = false,
       isOrderPickup = false,
       isOrderProcessing = false;
@@ -73,11 +72,8 @@ class _CurrentDeliveryPageState extends State<CurrentDeliveryPage> {
         var url = glb.endPoint;
         final Map dictMap = {};
 
-        dictMap['pktType'] = "32";
+        dictMap['pktType'] = "25";
         dictMap['delivery_boy_id'] = delivery_boy_id;
-        dictMap['order_id'] = glb.orderid_or_bookingid;
-        dictMap['order_type'] = glb.orderType;
-        dictMap['booking_to_order_id'] = glb.booking_to_order_id;
         dictMap['token'] = "vff";
         dictMap['uid'] = "-1";
         final response = await http.post(Uri.parse(url),
@@ -107,7 +103,7 @@ class _CurrentDeliveryPageState extends State<CurrentDeliveryPage> {
           } else {
             try {
               Map<String, dynamic> currentOrderMap = json.decode(response.body);
-              print('currentOrderMap::$currentOrderMap');
+
               var orderid = currentOrderMap['orderid'];
               var customer_name = currentOrderMap['customer_name'];
               var pickup_dt = currentOrderMap['pickup_dt'];
@@ -204,7 +200,7 @@ class _CurrentDeliveryPageState extends State<CurrentDeliveryPage> {
                   orderStatus == "Pick Up Done"
               ? InkWell(
                   onTap: () {
-                    _showPopup(context, orderID, orderStatus,deviceToken);
+                    _showPopup(context, orderID, orderStatus);
                   },
                   child: Padding(
                     padding: const EdgeInsets.all(8.0),
@@ -314,7 +310,7 @@ class _CurrentDeliveryPageState extends State<CurrentDeliveryPage> {
     );
   }
 
-  void _showPopup(BuildContext context, String orderID, String orderStatus,String deviceToken) {
+  void _showPopup(BuildContext context, String orderID, String orderStatus) {
     var updateToStatus = "";
     if (orderStatus == "Accepted") {
       updateToStatus = "Pick Up Done";
@@ -332,7 +328,124 @@ class _CurrentDeliveryPageState extends State<CurrentDeliveryPage> {
         );
       },
     );
-  
+    // showDialog(
+    //   context: context,
+    //   builder: (BuildContext context) {
+    //     return AlertDialog(
+    //       shape: RoundedRectangleBorder(
+    //         borderRadius: BorderRadius.circular(16.0),
+    //       ),
+    //       elevation: 5,
+    //       backgroundColor: AppColors.whiteColor,
+    //       content: StatefulBuilder(
+    //         builder: (context, setState) {
+    //           return Container(
+    //             width: 200,
+    //             height: 200,
+    //             child: Column(
+    //               children: [
+    //                 Text(
+    //                   'Update Order Status',
+    //                   style: nunitoStyle.copyWith(
+    //                       fontWeight: FontWeight.bold,
+    //                       fontSize: 20.0,
+    //                       color: AppColors.whiteColor),
+    //                 ),
+    //                 Container(
+    //                   child: Padding(
+    //                     padding: const EdgeInsets.all(20.0),
+    //                     child: Column(
+    //                       crossAxisAlignment: CrossAxisAlignment.start,
+    //                       children: [
+    //                         Row(
+    //                           children: [
+    //                             Container(
+    //                               width: 50,
+    //                               height: 50,
+    //                               decoration: BoxDecoration(
+    //                                   color: Colors.green[50],
+    //                                   borderRadius:
+    //                                       BorderRadius.circular(16.0)),
+    //                               child: Padding(
+    //                                 padding: const EdgeInsets.all(16.0),
+    //                                 child: Radio(
+    //                                   value: 'Pick Up Done',
+    //                                   groupValue: selectedValue,
+    //                                   onChanged: (value) {
+    //                                     // Implement radio button selection logic here
+    //                                     selectedValue = value!;
+    //                                   },
+    //                                 ),
+    //                               ),
+    //                             ),
+    //                             Padding(
+    //                               padding: const EdgeInsets.all(8.0),
+    //                               child: Column(
+    //                                 crossAxisAlignment:
+    //                                     CrossAxisAlignment.start,
+    //                                 children: [
+    //                                   Text(
+    //                                     updateToStatus,
+    //                                     style: nunitoStyle.copyWith(
+    //                                         fontWeight: FontWeight.bold,
+    //                                         color: AppColors.whiteColor),
+    //                                   ),
+    //                                   const SizedBox(
+    //                                     height: 2.0,
+    //                                   ),
+    //                                 ],
+    //                               ),
+    //                             ),
+    //                           ],
+    //                         ),
+    //                         SlideFromBottomAnimation(
+    //                           delay: 0.5,
+    //                           child: Padding(
+    //                             padding: const EdgeInsets.all(20.0),
+    //                             child: Center(
+    //                               child: Material(
+    //                                 color: Colors.transparent,
+    //                                 child: InkWell(
+    //                                   borderRadius: BorderRadius.circular(12.0),
+    //                                   onTap: () {
+    //                                     print(
+    //                                         "updateToStatus::$updateToStatus");
+    //                                     print("orderID::$orderID");
+    //                                   },
+    //                                   child: Ink(
+    //                                     decoration: BoxDecoration(
+    //                                         borderRadius:
+    //                                             BorderRadius.circular(12.0),
+    //                                         color: Colors.deepOrange),
+    //                                     child: Padding(
+    //                                       padding: const EdgeInsets.all(12.0),
+    //                                       child: Text(
+    //                                         'Update Status',
+    //                                         style: nunitoStyle.copyWith(
+    //                                             fontSize: 16.0,
+    //                                             fontWeight: FontWeight.bold,
+    //                                             color: Colors.white),
+    //                                       ),
+    //                                     ),
+    //                                   ),
+    //                                 ),
+    //                               ),
+    //                             ),
+    //                           ),
+    //                         )
+    //                       ],
+    //                     ),
+    //                   ),
+    //                 ),
+    //               ],
+    //             ),
+    //           );
+
+    //         },
+    //       ),
+    //     );
+    //   },
+    // );
   }
 }
 

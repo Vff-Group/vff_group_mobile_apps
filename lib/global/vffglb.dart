@@ -21,6 +21,9 @@ String account_created_date = "",
     deliveryBoyID = "",
     order_status = "0",
     customerID = "",
+    orderid_or_bookingid = "",
+    orderType = "",
+    booking_to_order_id = "",
     customer_mobno = "",
     customer_name = "";
 bool addItems = false,
@@ -155,7 +158,7 @@ handleErrors(Object e, BuildContext context) {
     showSnackBar(context, 'Network Error', 'Connection timeout');
     return;
   } else {
-    showSnackBar(context, 'Network Error', 'Connection timeout');
+    //showSnackBar(context, 'Network Error', 'Connection timeout');
     return;
   }
 }

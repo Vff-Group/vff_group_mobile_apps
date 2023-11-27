@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:math';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
@@ -16,17 +17,68 @@ import 'package:widget_circular_animator/widget_circular_animator.dart';
 
 class UpdateOrderStatusPopup extends StatefulWidget {
   const UpdateOrderStatusPopup(
-      {super.key, required this.orderID, required this.orderStatus});
+      {super.key,
+      required this.orderID,
+      required this.orderStatus,
+      required this.deviceToken});
   final String orderID;
   final String orderStatus;
+  final String deviceToken;
   @override
   State<UpdateOrderStatusPopup> createState() => _UpdateOrderStatusPopupState();
 }
 
 class _UpdateOrderStatusPopupState extends State<UpdateOrderStatusPopup> {
+  Future<void> sendFMCMsg(String deviceToken, String msg, String title,
+      Map<String, dynamic> data) async {
+    String serverToken =
+        'AAAApZY1ur0:APA91bHsk-e3OC5R2vqO7dD0WZp7ifULNzqrUPnQu07et7RLFMWWcwOqY9Bl-9YQWkuXUP5nM7bVMgMP-qKISf9Jcf2ix9j7oOkScq9-3BH0hfCH3nIWgkn4hbnmSLyw4pmq66rMZz8R'; // Replace with your FCM server token
+
+    deviceToken = deviceToken.replaceAll('__colon__', ':');
+
+    final headers = {
+      'Content-Type': 'application/json',
+      'Authorization': 'key=$serverToken',
+    };
+
+    final body = {
+      'notification': {
+        'title': title,
+        'body': msg,
+      },
+      'data': data,
+      'to': deviceToken,
+      'priority': 'high',
+    };
+
+    final response = await http.post(
+      Uri.parse('https://fcm.googleapis.com/fcm/send'),
+      headers: headers,
+      body: json.encode(body),
+    );
+
+    print(response.body);
+    print(response.statusCode);
+    // Check the response status code
+    if (response.statusCode == 200) {
+      glb.showSnackBar(context, 'Otp Alert', 'OTP Sent Successfully');
+      setState(() {
+        send_otp_text = 'Verify';
+        showOTPinput = true;
+      });
+      print('Notification sent successfully');
+    } else {
+      print('Failed to send notification. Status code: ${response.statusCode}');
+      print('Response body: ${response.body}');
+    }
+  }
+
   String selectedValue = "";
   var updateToStatus = "";
-
+  var generatedOTP;
+  var showOTPinput = false;
+  bool hideUpdateBtn = false;
+  var send_otp_text = "Send Otp", otp_number = '';
   bool showLoading = false;
   Future updateOrderStatus() async {
     //norder_id
@@ -42,6 +94,12 @@ class _UpdateOrderStatusPopupState extends State<UpdateOrderStatusPopup> {
         dictMap['order_status'] = updateToStatus;
         dictMap['order_id'] = widget.orderID;
         dictMap['delivery_boy_id'] = delivery_boy_id;
+        if (updateToStatus == 'Reached Store') {
+          dictMap['pickup_completed'] = '1';
+          print('updateToStatus:::' + updateToStatus);
+        } else if (updateToStatus == 'Completed') {
+          dictMap['delivery_completed'] = '1';
+        }
         dictMap['pktType'] = "26";
         dictMap['token'] = "vff";
         dictMap['uid'] = "-1";
@@ -91,6 +149,35 @@ class _UpdateOrderStatusPopupState extends State<UpdateOrderStatusPopup> {
     }
   }
 
+  TextEditingController otpController = TextEditingController();
+  void verifyOTP() {
+    // Check if the entered OTP matches the generated OTP
+    if (otpController.text.isNotEmpty &&
+        int.tryParse(otpController.text) == generatedOTP) {
+      print('Correct OTP entered');
+      glb.showSnackBar(context, 'Success',
+          'OTP Verified Successfully now you can Update the Order Status');
+      setState(() {
+        hideUpdateBtn = false;
+      });
+    } else {
+      // Incorrect OTP entered, show a toast or perform any other action
+
+      glb.showSnackBar(context, 'Error OTP', 'Invalid OTP Number');
+    }
+  }
+
+  void sendOTP() {
+    // Generate a random 4-digit number
+    generatedOTP = Random().nextInt(9000) + 1000;
+
+    // Call the function to send the FCM message with the generated OTP
+    sendFMCMsg(
+        widget.deviceToken,
+        'Please Share the OTP with Delivery Boy only if the Laundry parcel has arrived at your DoorStep.\nYour OTP is: $generatedOTP',
+        'OTP Verification', {});
+  }
+
   @override
   void initState() {
     // TODO: implement initState
@@ -103,6 +190,9 @@ class _UpdateOrderStatusPopupState extends State<UpdateOrderStatusPopup> {
         updateToStatus = "Reached Store";
       } else if (widget.orderStatus == "Out for Delivery") {
         updateToStatus = "Completed";
+        setState(() {
+          hideUpdateBtn = true;
+        });
       }
       selectedValue = updateToStatus;
     });
@@ -362,43 +452,133 @@ class _UpdateOrderStatusPopupState extends State<UpdateOrderStatusPopup> {
                     ),
                   ),
                 ),
-                showLoading
-                    ? Center(child: CircularProgressIndicator())
-                    : SlideFromBottomAnimation(
-                        delay: 0.5,
-                        child: Padding(
-                          padding: const EdgeInsets.all(20.0),
-                          child: Center(
-                            child: Material(
-                              color: Colors.transparent,
-                              child: InkWell(
-                                borderRadius: BorderRadius.circular(12.0),
-                                onTap: () {
-                                  print(
-                                      "updateToStatus::$widget.updateToStatus");
-                                  print("orderID::$widget.orderID");
-                                  updateOrderStatus();
-                                },
-                                child: Ink(
+                updateToStatus == "Completed" && hideUpdateBtn == true
+                    ? Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          showOTPinput
+                              ? Container(
+                                  height: 50.0,
+                                  width: height / 5,
                                   decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(12.0),
-                                      color: Colors.deepOrange),
-                                  child: Padding(
-                                    padding: const EdgeInsets.all(12.0),
-                                    child: Text(
-                                      'Update Status',
-                                      style: nunitoStyle.copyWith(
-                                          fontSize: 16.0,
-                                          fontWeight: FontWeight.bold,
-                                          color: Colors.white),
+                                    borderRadius: BorderRadius.circular(8.0),
+                                    border: Border.all(
+                                      color:
+                                          AppColors.blueColor, // Border color
+                                      width: 0.2, // Border width
+                                    ),
+                                  ),
+                                  child: TextFormField(
+                                    controller: otpController,
+                                    style: nunitoStyle.copyWith(
+                                        fontWeight: FontWeight.w400,
+                                        color: AppColors.backColor,
+                                        fontSize: 14.0),
+                                    keyboardType: TextInputType.number,
+                                    onChanged: (value) {},
+                                    decoration: InputDecoration(
+                                        border: InputBorder.none,
+                                        prefixIcon: IconButton(
+                                          onPressed: () {},
+                                          icon: const Icon(
+                                            Icons.verified,
+                                            color: AppColors.blueColor,
+                                          ),
+                                        ),
+                                        contentPadding:
+                                            const EdgeInsets.only(top: 16.0),
+                                        hintText: 'Enter OTP Number',
+                                        hintStyle: nunitoStyle.copyWith(
+                                            fontWeight: FontWeight.w400,
+                                            color: AppColors.backColor
+                                                .withOpacity(0.5),
+                                            fontSize: 12.0)),
+                                  ),
+                                )
+                              : Container(),
+                          SlideFromBottomAnimation(
+                            delay: 0.5,
+                            child: Padding(
+                              padding: const EdgeInsets.all(20.0),
+                              child: Center(
+                                child: Material(
+                                  color: Colors.transparent,
+                                  child: InkWell(
+                                    borderRadius: BorderRadius.circular(12.0),
+                                    onTap: () {
+                                      //TODO: send notification with random generated OTP 4 digit number and check if the otp number is correct entered inside otpController
+                                      // sendFMCMsg(deviceToken, msg, title, data)
+                                      if (send_otp_text == 'Send Otp') {
+                                        sendOTP();
+                                      } else {
+                                        verifyOTP();
+                                      }
+                                    },
+                                    child: Ink(
+                                      decoration: BoxDecoration(
+                                          borderRadius:
+                                              BorderRadius.circular(12.0),
+                                          color: Colors.deepOrange),
+                                      child: Padding(
+                                        padding: const EdgeInsets.all(12.0),
+                                        child: Text(
+                                          send_otp_text,
+                                          style: nunitoStyle.copyWith(
+                                              fontSize: 16.0,
+                                              fontWeight: FontWeight.bold,
+                                              color: Colors.white),
+                                        ),
+                                      ),
                                     ),
                                   ),
                                 ),
                               ),
                             ),
                           ),
-                        ),
-                      ),
+                        ],
+                      )
+                    : Container(),
+                showLoading
+                    ? Center(child: CircularProgressIndicator())
+                    : hideUpdateBtn
+                        ? SizedBox():
+                        SlideFromBottomAnimation(
+                            delay: 0.5,
+                            child: Padding(
+                              padding: const EdgeInsets.all(20.0),
+                              child: Center(
+                                child: Material(
+                                  color: Colors.transparent,
+                                  child: InkWell(
+                                    borderRadius: BorderRadius.circular(12.0),
+                                    onTap: () {
+                                      print(
+                                          "updateToStatus::$widget.updateToStatus");
+                                      print("orderID::$widget.orderID");
+                                      updateOrderStatus();
+                                    },
+                                    child: Ink(
+                                      decoration: BoxDecoration(
+                                          borderRadius:
+                                              BorderRadius.circular(12.0),
+                                          color: Colors.deepOrange),
+                                      child: Padding(
+                                        padding: const EdgeInsets.all(12.0),
+                                        child: Text(
+                                          'Update Status',
+                                          style: nunitoStyle.copyWith(
+                                              fontSize: 16.0,
+                                              fontWeight: FontWeight.bold,
+                                              color: Colors.white),
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ),
+                        
                 SizedBox(
                   height: width * 4,
                 ),

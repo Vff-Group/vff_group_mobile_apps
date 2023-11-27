@@ -31,3 +31,4 @@ const String AllBranchesRoute = "all_branches_page";
 // Delivery_boy Routes
 const String DeliveryLoginRoute = "delivery_login";
 const String DMainRoute = "delivery_welcome";
+const String CurrentOrderDeliveryRoute = "current_delivery";

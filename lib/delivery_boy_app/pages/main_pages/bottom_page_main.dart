@@ -3,6 +3,7 @@ import 'package:google_nav_bar/google_nav_bar.dart';
 import 'package:line_icons/line_icons.dart';
 import 'package:vff_group/delivery_boy_app/pages/main_pages/current_delivery.dart';
 import 'package:vff_group/delivery_boy_app/pages/main_pages/dashboard.dart';
+import 'package:vff_group/delivery_boy_app/pages/main_pages/my_assigned_order.dart';
 import 'package:vff_group/delivery_boy_app/pages/main_pages/my_order.dart';
 import 'package:vff_group/delivery_boy_app/pages/main_pages/my_profile.dart';
 import 'package:vff_group/global/vffglb.dart' as glb;
@@ -24,7 +25,7 @@ class _BottomBarDeliveryBoyState extends State<BottomBarDeliveryBoy> {
 
   List pages = [
     const DashboardPage(),
-    const CurrentDeliveryPage(),
+    const MyAssignedOrdersPage(),
     const MyOrdersPage(),
     const MyProfilePage(),
   ];

@@ -287,6 +287,7 @@ class _AllBranchesPageState extends State<AllBranchesPage> {
                               ),
                             );
                           })),
+                   
                     ),
                   )
           ],

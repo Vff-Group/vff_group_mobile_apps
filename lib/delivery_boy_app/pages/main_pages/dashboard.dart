@@ -543,6 +543,7 @@ class _DashboardPageState extends State<DashboardPage> {
       backgroundColor: AppColors.whiteColor,
       extendBodyBehindAppBar: true,
       appBar: AppBar(
+        backgroundColor: Colors.deepOrange,
         automaticallyImplyLeading: false,
         elevation: 0,
         centerTitle: true,
@@ -955,7 +956,7 @@ class _DashboardPageState extends State<DashboardPage> {
                                                               const EdgeInsets
                                                                   .all(4.0),
                                                           child: Container(
-                                                            width: width - 50,
+                                                            width: width - 20,
                                                             decoration:
                                                                 BoxDecoration(
                                                               color: AppColors
@@ -1032,11 +1033,14 @@ class _DashboardPageState extends State<DashboardPage> {
                                                                                     size: 18,
                                                                                   ),
                                                                                 ),
-                                                                                Text(
-                                                                                  "${newOrdersModel[index].Address}-${newOrdersModel[index].Pincode}\n${newOrdersModel[index].Landmark}",
-                                                                                  style: nunitoStyle.copyWith(
-                                                                                    fontSize: 12.0,
-                                                                                    color: AppColors.backColor,
+                                                                                SizedBox(
+                                                                                  width: width - 180,
+                                                                                  child: Text(
+                                                                                    "${newOrdersModel[index].Address}-${newOrdersModel[index].Pincode}\n${newOrdersModel[index].Landmark}",
+                                                                                    style: nunitoStyle.copyWith(
+                                                                                      fontSize: 12.0,
+                                                                                      color: AppColors.backColor,
+                                                                                    ),
                                                                                   ),
                                                                                 ),
                                                                               ],

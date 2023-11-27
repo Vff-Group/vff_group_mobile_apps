@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:vff_group/delivery_boy_app/pages/main_pages/bottom_page_main.dart';
+import 'package:vff_group/delivery_boy_app/pages/main_pages/current_delivery.dart';
 import 'package:vff_group/delivery_boy_app/pages/main_pages/delivery_boy_notification.dart';
 import 'package:vff_group/delivery_boy_app/pages/main_pages/delivery_login.dart';
 import 'package:vff_group/pages/booking_pages/booking_details_page.dart';
@@ -94,6 +95,8 @@ Route<dynamic> generateRoute(RouteSettings settings) {
       return _getPageRoute(const DeliveryLoginScreen());
     case DeliveryBoyNotificationRoute:
       return _getPageRoute(const DeliveryBoyNotificationsPage());
+    case CurrentOrderDeliveryRoute:
+      return _getPageRoute(const CurrentDeliveryPage());
 
     default:
       return _getPageRoute(const SplashScreen());
