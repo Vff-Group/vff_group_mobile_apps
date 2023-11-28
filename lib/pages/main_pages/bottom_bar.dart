@@ -31,7 +31,7 @@ class _BottomBarScreenState extends State<BottomBarScreen> {
 
   List pages = [
     const HomePage(),
-    const OffersPage(),
+    // const OffersPage(),
     const OrdersPage(),
     const SettingsPage(),
   ];
@@ -76,10 +76,10 @@ class _BottomBarScreenState extends State<BottomBarScreen> {
                   icon: LineIcons.home,
                   text: 'Home',
                 ),
-                GButton(
-                  icon: LineIcons.bomb,
-                  text: 'Offers',
-                ),
+                // GButton(
+                //   icon: LineIcons.bomb,
+                //   text: 'Offers',
+                // ),
                 GButton(
                   icon: LineIcons.moon,
                   text: 'Orders',

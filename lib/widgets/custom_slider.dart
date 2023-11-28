@@ -57,8 +57,10 @@ class _AutoSliderState extends State<AutoSlider> {
 
   @override
   Widget build(BuildContext context) {
+    double width = MediaQuery.of(context).size.width;
     return Container(
       height: 200,
+      width: width,
       child: Column(
         children: [
           Expanded(

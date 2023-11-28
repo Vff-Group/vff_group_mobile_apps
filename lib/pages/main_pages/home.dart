@@ -32,6 +32,7 @@ import 'package:vff_group/animation/slide_left_animation.dart';
 import 'package:vff_group/global/vffglb.dart' as glb;
 import 'package:vff_group/modals/active_orders_model.dart';
 import 'package:vff_group/modals/main_category_model.dart';
+import 'package:vff_group/modals/slider_offers_model.dart';
 import 'package:vff_group/notification_services.dart';
 import 'package:vff_group/pages/main_pages/bottom_bar.dart';
 import 'package:vff_group/routings/route_names.dart';
@@ -106,12 +107,95 @@ class _HomePageState extends State<HomePage> {
     //Checking Location permission
     getDefaultData();
     _getCurrentPosition();
-
+    allOffersAsync();
     allCategoryAsync();
     loadMyActiveCurrentOrder();
     loadMyBookingsCurrentOrder();
     //Set default app
     SharedPreferenceUtils.save_val('AppPreference', 'MainRoute');
+  }
+
+  List<SliderOffersModel> offersModel = [];
+  Future allOffersAsync() async {
+    setState(() {
+      offersModel = [];
+    });
+    try {
+      var url = glb.endPoint;
+      final Map dictMap = {};
+
+      dictMap['pktType'] = "33";
+      dictMap['token'] = "vff";
+      dictMap['uid'] = "-1";
+
+      final response = await http.post(Uri.parse(url),
+          headers: <String, String>{
+            "Accept": "application/json",
+            'Content-Type': 'application/json; charset=UTF-8',
+          },
+          body: jsonEncode(dictMap));
+
+      if (response.statusCode == 200) {
+        var res = response.body;
+        if (res.contains("ErrorCode#2")) {
+          glb.showSnackBar(context, 'Error', 'No Categories Found');
+          return;
+        } else if (res.contains("ErrorCode#8")) {
+          glb.showSnackBar(context, 'Error', 'Something Went Wrong');
+          return;
+        } else {
+          try {
+            Map<String, dynamic> offersMap = json.decode(response.body);
+            if (kDebugMode) {
+              print("offersMap:$offersMap");
+            }
+            var offer_id = offersMap['offer_id'];
+            var ftitle = offersMap['ftitle'];
+            var fdesc = offersMap['fdesc'];
+            var fimage = offersMap['fimage'];
+            var epoch = offersMap['epoch'];
+            var date = offersMap['date'];
+
+            List<String> offer_idLst = glb.strToLst2(offer_id);
+            List<String> ftitleLst = glb.strToLst2(ftitle);
+            List<String> fdescLst = glb.strToLst2(fdesc);
+            List<String> fimagelst = glb.strToLst2(fimage);
+            List<String> epochlst = glb.strToLst2(epoch);
+            List<String> datelst = glb.strToLst2(date);
+
+            for (int i = 0; i < offer_idLst.length; i++) {
+              var offerID = offer_idLst.elementAt(i).toString();
+              var title = ftitleLst.elementAt(i).toString();
+              var desc = fdescLst.elementAt(i).toString();
+              var image = fimagelst.elementAt(i).toString();
+              var time = epochlst.elementAt(i).toString();
+              var date_at = datelst.elementAt(i).toString();
+
+              offersModel.add(SliderOffersModel(
+                  offerID: offerID,
+                  title: title,
+                  description: desc,
+                  date: date_at,
+                  bg_img: image));
+            }
+
+            setState(() {
+              showLoading = false;
+            });
+          } catch (e) {
+            if (kDebugMode) {
+              print(e);
+            }
+            return "Failed";
+          }
+        }
+      }
+    } catch (e) {
+      if (kDebugMode) {
+        print(e);
+      }
+      glb.handleErrors(e, context);
+    }
   }
 
   Future allCategoryAsync() async {
@@ -652,7 +736,7 @@ class _HomePageState extends State<HomePage> {
     //Checking Location permission
     getDefaultData();
     _getCurrentPosition();
-
+    allOffersAsync();
     allCategoryAsync();
     loadMyActiveCurrentOrder();
     loadMyBookingsCurrentOrder();
@@ -712,7 +796,9 @@ class _HomePageState extends State<HomePage> {
             child: Container(
                 decoration: BoxDecoration(
                     shape: BoxShape.circle, color: Colors.grey[200]),
-                child: profile_img.isEmpty == false && profile_img != 'NA' && profile_img.isNotEmpty
+                child: profile_img.isEmpty == false &&
+                        profile_img != 'NA' &&
+                        profile_img.isNotEmpty
                     ? CircleAvatar(
                         radius: 25.0,
                         backgroundImage: NetworkImage(profile_img),
@@ -725,7 +811,6 @@ class _HomePageState extends State<HomePage> {
           ),
         ),
       ),
-     
       backgroundColor: AppColors.whiteColor,
       body: Padding(
         padding: const EdgeInsets.all(8.0),
@@ -776,7 +861,8 @@ class _HomePageState extends State<HomePage> {
                                 SizedBox(
                                   height: width * 0.05,
                                 ),
-                                _SliderLayout(width: width),
+                                _SliderLayout(
+                                    width: width, modelOffer: offersModel),
                               ],
                             ),
                             SizedBox(
@@ -900,7 +986,7 @@ class _HomePageState extends State<HomePage> {
                             SizedBox(
                               height: width * 0.05,
                             ),
-                              Row(
+                            Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               crossAxisAlignment: CrossAxisAlignment.center,
                               children: [
@@ -958,7 +1044,7 @@ class _HomePageState extends State<HomePage> {
                                                       glb.showPayOption = true;
                                                       glb.showDeliveryBoy =
                                                           true;
-                                        
+
                                                       if (activeBookingsModel
                                                           .isNotEmpty) {
                                                         if (activeBookingsModel[
@@ -975,8 +1061,14 @@ class _HomePageState extends State<HomePage> {
                                                             activeBookingsModel[
                                                                     index]
                                                                 .bookingID;
-                                                        glb.branch_id = activeBookingsModel[index].branchID;
-                                                        glb.deliveryBoyID = activeBookingsModel[index].deliveryBoyID;
+                                                        glb.branch_id =
+                                                            activeBookingsModel[
+                                                                    index]
+                                                                .branchID;
+                                                        glb.deliveryBoyID =
+                                                            activeBookingsModel[
+                                                                    index]
+                                                                .deliveryBoyID;
                                                         Navigator.pushNamed(
                                                             context,
                                                             BookingDetailsRoute);
@@ -1103,9 +1195,7 @@ class _HomePageState extends State<HomePage> {
                                                 ),
                                               );
                                             }),
-                                
                                   ),
-                          
                             SizedBox(
                               height: width * 0.05,
                             ),
@@ -1316,7 +1406,6 @@ class _HomePageState extends State<HomePage> {
                                               );
                                             }),
                                   ),
-                          
                           ],
                         ),
                       )
@@ -1383,126 +1472,215 @@ class CustomClipperForProgress extends CustomClipper<Path> {
   }
 }
 
+// class _SliderLayout extends StatelessWidget {
+//   const _SliderLayout({
+//     super.key,
+//     required this.width, required this.modelOffer,
+//   });
+
+//   final double width;
+//   final List<SliderOffersModel> modelOffer;
+//   @override
+//   Widget build(BuildContext context) {
+//     return AutoSlider(
+//       slides: [
+//         Container(
+//           decoration: BoxDecoration(
+//             borderRadius: BorderRadius.circular(16.0),
+//             image: const DecorationImage(
+//               image: NetworkImage(
+//                 'https://images.unsplash.com/photo-1517677208171-0bc6725a3e60?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2940&q=80',
+//               ),
+//               fit: BoxFit
+//                   .fitWidth, // Fit the image to the width of the container
+//             ),
+//           ),
+//           child: Stack(
+//             children: [
+//               Positioned(
+//                 bottom: 50,
+//                 left: 20,
+//                 child: Container(
+//                     decoration: BoxDecoration(
+//                         borderRadius: BorderRadius.circular(8.0),
+//                         color: AppColors.blueColor),
+//                     child: Padding(
+//                       padding: const EdgeInsets.symmetric(
+//                           horizontal: 10.0, vertical: 6.0),
+//                       child: Text(
+//                         'Top Offers',
+//                         style: nunitoStyle.copyWith(
+//                             fontSize: 14.0,
+//                             fontWeight: FontWeight.bold,
+//                             letterSpacing: 0.5,
+//                             color: AppColors.whiteColor),
+//                       ),
+//                     )),
+//               ),
+//               Positioned(
+//                 bottom: 15,
+//                 left: 20,
+//                 child: SizedBox(
+//                   width: width - 50,
+//                   child: Text(
+//                     '20% OFF on Dry Cleaning ',
+//                     style: nunitoStyle.copyWith(
+//                         fontSize: 25.0,
+//                         fontWeight: FontWeight.bold,
+//                         letterSpacing: 0.5,
+//                         color: AppColors.whiteColor),
+//                     overflow: TextOverflow.ellipsis,
+//                     softWrap: true,
+//                   ),
+//                 ),
+//               ),
+//             ],
+//           ),
+//         ),
+//         Container(
+//           decoration: BoxDecoration(
+//             borderRadius: BorderRadius.circular(16.0),
+//             image: const DecorationImage(
+//               image: NetworkImage(
+//                 'https://images.unsplash.com/photo-1638949493140-edb10b7be2f3?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2772&q=80',
+//               ),
+//               fit: BoxFit
+//                   .fitWidth, // Fit the image to the width of the container
+//             ),
+//           ),
+//           child: Stack(
+//             children: [
+//               Positioned(
+//                 bottom: 50,
+//                 left: 20,
+//                 child: Container(
+//                     decoration: BoxDecoration(
+//                         borderRadius: BorderRadius.circular(8.0),
+//                         color: AppColors.blueColor),
+//                     child: Padding(
+//                       padding: const EdgeInsets.symmetric(
+//                           horizontal: 10.0, vertical: 6.0),
+//                       child: Text(
+//                         '10% Offers',
+//                         style: nunitoStyle.copyWith(
+//                             fontSize: 14.0,
+//                             fontWeight: FontWeight.bold,
+//                             letterSpacing: 0.5,
+//                             color: AppColors.whiteColor),
+//                       ),
+//                     )),
+//               ),
+//               Positioned(
+//                 bottom: 15,
+//                 left: 20,
+//                 child: SizedBox(
+//                   width: width - 50,
+//                   child: Text(
+//                     'Wash and Fold',
+//                     style: nunitoStyle.copyWith(
+//                         fontSize: 25.0,
+//                         fontWeight: FontWeight.bold,
+//                         letterSpacing: 0.5,
+//                         color: AppColors.whiteColor),
+//                     overflow: TextOverflow.ellipsis,
+//                     softWrap: true,
+//                   ),
+//                 ),
+//               ),
+//             ],
+//           ),
+//         ),
+//       ],
+//     );
+//   }
+// }
+
 class _SliderLayout extends StatelessWidget {
   const _SliderLayout({
     super.key,
     required this.width,
+    required this.modelOffer,
   });
 
   final double width;
+  final List<SliderOffersModel> modelOffer;
 
   @override
   Widget build(BuildContext context) {
-    return AutoSlider(
-      slides: [
-        Container(
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(16.0),
-            image: const DecorationImage(
-              image: NetworkImage(
-                'https://images.unsplash.com/photo-1517677208171-0bc6725a3e60?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2940&q=80',
+  return AutoSlider(
+  slides: List.generate(
+    modelOffer.length,
+    (slideIndex) {
+      final offer = modelOffer[slideIndex];
+      return Container(
+        child: Padding(
+          padding: const EdgeInsets.only(left: 8.0, right: 8.0),
+          child: Container(
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(16.0),
+              image: DecorationImage(
+                image: NetworkImage(offer.bg_img),
+                fit: BoxFit.cover,
               ),
-              fit: BoxFit
-                  .fitWidth, // Fit the image to the width of the container
             ),
-          ),
-          child: Stack(
-            children: [
-              Positioned(
-                bottom: 50,
-                left: 20,
-                child: Container(
-                    decoration: BoxDecoration(
+            child: SizedBox(
+              width: width - 20,
+              height: 180,
+              child: Stack(
+                children: [
+                  Positioned(
+                    bottom: 50,
+                    left: 20,
+                    child: Container(
+                      decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(8.0),
-                        color: AppColors.blueColor),
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 10.0, vertical: 6.0),
-                      child: Text(
-                        'Top Offers',
-                        style: nunitoStyle.copyWith(
+                        color: AppColors.blueColor,
+                      ),
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 10.0,
+                          vertical: 6.0,
+                        ),
+                        child: Text(
+                          offer.title,
+                          style: nunitoStyle.copyWith(
                             fontSize: 14.0,
                             fontWeight: FontWeight.bold,
                             letterSpacing: 0.5,
-                            color: AppColors.whiteColor),
+                            color: AppColors.whiteColor,
+                          ),
+                        ),
                       ),
-                    )),
-              ),
-              Positioned(
-                bottom: 15,
-                left: 20,
-                child: SizedBox(
-                  width: width - 50,
-                  child: Text(
-                    '20% OFF on Dry Cleaning ',
-                    style: nunitoStyle.copyWith(
-                        fontSize: 25.0,
-                        fontWeight: FontWeight.bold,
-                        letterSpacing: 0.5,
-                        color: AppColors.whiteColor),
-                    overflow: TextOverflow.ellipsis,
-                    softWrap: true,
+                    ),
                   ),
-                ),
+                  Positioned(
+                    bottom: 15,
+                    left: 20,
+                    child: SizedBox(
+                      width: width - 50,
+                      child: Text(
+                        offer.description,
+                        style: nunitoStyle.copyWith(
+                          fontSize: 25.0,
+                          fontWeight: FontWeight.bold,
+                          letterSpacing: 0.5,
+                          color: AppColors.whiteColor,
+                        ),
+                        overflow: TextOverflow.ellipsis,
+                        softWrap: true,
+                      ),
+                    ),
+                  ),
+                ],
               ),
-            ],
-          ),
-        ),
-        Container(
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(16.0),
-            image: const DecorationImage(
-              image: NetworkImage(
-                'https://images.unsplash.com/photo-1638949493140-edb10b7be2f3?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2772&q=80',
-              ),
-              fit: BoxFit
-                  .fitWidth, // Fit the image to the width of the container
             ),
           ),
-          child: Stack(
-            children: [
-              Positioned(
-                bottom: 50,
-                left: 20,
-                child: Container(
-                    decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(8.0),
-                        color: AppColors.blueColor),
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 10.0, vertical: 6.0),
-                      child: Text(
-                        '10% Offers',
-                        style: nunitoStyle.copyWith(
-                            fontSize: 14.0,
-                            fontWeight: FontWeight.bold,
-                            letterSpacing: 0.5,
-                            color: AppColors.whiteColor),
-                      ),
-                    )),
-              ),
-              Positioned(
-                bottom: 15,
-                left: 20,
-                child: SizedBox(
-                  width: width - 50,
-                  child: Text(
-                    'Wash and Fold',
-                    style: nunitoStyle.copyWith(
-                        fontSize: 25.0,
-                        fontWeight: FontWeight.bold,
-                        letterSpacing: 0.5,
-                        color: AppColors.whiteColor),
-                    overflow: TextOverflow.ellipsis,
-                    softWrap: true,
-                  ),
-                ),
-              ),
-            ],
-          ),
         ),
-      ],
-    );
+      );
+    },
+  ),
+);
+
   }
 }
 

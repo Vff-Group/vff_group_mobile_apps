@@ -41,8 +41,9 @@ String cartQuantity = "",
 
 void showSnackBar(BuildContext context, String alertTxt, String text) {
   Get.snackbar(alertTxt, text,
-      snackPosition: SnackPosition.TOP,
+      snackPosition: SnackPosition.BOTTOM,
       colorText: Colors.black,
+      backgroundGradient:RadialGradient(colors: [Colors.blue,Colors.blue]),
       icon: Image.asset('assets/logo/logo.png'));
 }
 

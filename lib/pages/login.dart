@@ -162,11 +162,16 @@ class _LoginScreenState extends State<LoginScreen> {
                                   'Please provide your valid mobile number');
                               return;
                             }
+                            if(phoneNo.length < 10 || phoneNo.length > 10){
+                              glb.showSnackBar(context, 'Alert',
+                                  'Please provide your valid 10 Digits mobile number.\nThank You');
+                              return;
+                            }
                             FocusManager.instance.primaryFocus?.unfocus();
                             setState(() {
                               showLoading = true;
                             });
-                            typeLogin = 'Google';
+                            typeLogin = '';//
                             loginAsync(phoneNo,name);
                           },
                           borderRadius: BorderRadius.circular(26.0),
@@ -233,22 +238,25 @@ class _LoginScreenState extends State<LoginScreen> {
                             left: 0,
                             right: 0,
                             child: LinearProgressIndicator())
-                        : Positioned(
-                            top: 390,
-                            left: 0,
-                            right: 0,
-                            child: Material(
-                              color: Colors.transparent,
-                              child: Text(
-                                'Or',
-                                style: nunitoStyle.copyWith(
-                                    fontWeight: FontWeight.w400,
-                                    color: AppColors.backColor,
-                                    fontSize: 16.0),
-                                textAlign: TextAlign.center,
+                        : Visibility(
+                          visible: false,
+                          child: Positioned(
+                              top: 390,
+                              left: 0,
+                              right: 0,
+                              child: Material(
+                                color: Colors.transparent,
+                                child: Text(
+                                  'Or',
+                                  style: nunitoStyle.copyWith(
+                                      fontWeight: FontWeight.w400,
+                                      color: AppColors.backColor,
+                                      fontSize: 16.0),
+                                  textAlign: TextAlign.center,
+                                ),
                               ),
                             ),
-                          ),
+                        ),
 
                     Positioned(
                       top: 420,
@@ -258,14 +266,19 @@ class _LoginScreenState extends State<LoginScreen> {
                           onTap: () {
                             var phoneNo = phoneController.text.trim();
                             var name = nameController.text.trim();
-                            if (name.isEmpty) {
-                              glb.showSnackBar(context, 'Alert',
-                                  'Please provide the Display Name first');
-                              return;
-                            }
+                            // if (name.isEmpty) {
+                            //   glb.showSnackBar(context, 'Alert',
+                            //       'Please provide the Display Name first');
+                            //   return;
+                            // }
                             if (phoneNo.isEmpty) {
                               glb.showSnackBar(context, 'Alert',
-                                  'Please provide your valid mobile number');
+                                  'Please provide your valid mobile number to provide you better service even if you are using Google Sign In.');
+                              return;
+                            }
+                            if(phoneNo.length < 10 || phoneNo.length > 10){
+                              glb.showSnackBar(context, 'Alert',
+                                  'Please provide your valid 10 Digits mobile number.\nThank You');
                               return;
                             }
                             FocusManager.instance.primaryFocus?.unfocus();
@@ -331,12 +344,17 @@ class _LoginScreenState extends State<LoginScreen> {
                             var name = nameController.text.trim();
                             if (name.isEmpty) {
                               glb.showSnackBar(context, 'Alert',
-                                  'Please provide the Display Name first');
+                                  'Please provide the Display Name first to have Correct Name By which we can address you');
                               return;
                             }
                             if (phoneNo.isEmpty) {
                               glb.showSnackBar(context, 'Alert',
-                                  'Please provide your valid mobile number');
+                                  'Please provide your valid mobile number to provide you a better service. Even though you are using Apple ID to Login.\nThank You');
+                              return;
+                            }
+                            if(phoneNo.length < 10 || phoneNo.length > 10){
+                              glb.showSnackBar(context, 'Alert',
+                                  'Please provide your valid 10 Digits mobile number.\nThank You');
                               return;
                             }
                             FocusManager.instance.primaryFocus?.unfocus();
@@ -446,7 +464,7 @@ class _LoginScreenState extends State<LoginScreen> {
   Future loginAsync(String phoneNo,String displayName) async {
     var emailStr = '';
     var name = '';
-    var photoUrl = '';
+    var photoUrl = 'https://vff-group.com/static/img/demouser.jpeg';
     setState(() {
       showLoading = true;
     });
@@ -457,7 +475,7 @@ class _LoginScreenState extends State<LoginScreen> {
         name = 'demo';
         emailStr = 'demo@gmail.com';
         photoUrl =
-            "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ-UMsxiLO-Otwj6WQczDUlyIa8LpchsSfY-nkzQdJ5TA&s";
+            "https://vff-group.com/static/img/demouser.jpeg";
       }else{
         if (typeLogin == 'Google') {
         final googleUser = await googleSignIn.signIn();
@@ -495,7 +513,7 @@ class _LoginScreenState extends State<LoginScreen> {
         print(name);
         print(emailStr);
         print(photoUrl);
-      }else{
+      }else if(typeLogin == 'Apple'){
         var auth = await signInWithApple();
         if (auth.user == null){
           setState(() {
@@ -510,7 +528,7 @@ class _LoginScreenState extends State<LoginScreen> {
           print('auth.user::${auth.user}');
           name = displayName;
           emailStr = "appleid@icloud.com";
-          photoUrl = "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ-UMsxiLO-Otwj6WQczDUlyIa8LpchsSfY-nkzQdJ5TA&s";
+          photoUrl = "https://vff-group.com/static/img/demouser.jpeg";
         }
       }
       }

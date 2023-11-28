@@ -1351,8 +1351,9 @@ class _OrderDetails extends StatelessWidget {
                   Text(
                     '#${orderID}',
                     style: nunitoStyle.copyWith(
-                      color: AppColors.mainBlueColor,
+                      color: AppColors.blueColor,
                       fontSize: 14,
+                      fontWeight: FontWeight.bold
                     ),
                   ),
                 ],
