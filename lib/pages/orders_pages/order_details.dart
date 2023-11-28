@@ -1135,9 +1135,9 @@ class _DeliveryBoyDetails extends StatelessWidget {
                       child: InkWell(
                         onTap: () {
                           if (orderStatus == "Accepted" ||
-                              orderStatus == "Payment Done") {
+                              orderStatus == "Payment Done" || orderStatus == "Out for Delivery") {
                             _makePhoneCall(deliveryMobno);
-                          } else if (orderStatus == "Delivered") {
+                          } else if (orderStatus == "Completed") {
                             glb.showSnackBar(context, 'Alert',
                                 "Order is Delivered so you can't call this delivery boy");
                             return;
@@ -1147,7 +1147,7 @@ class _DeliveryBoyDetails extends StatelessWidget {
                             return;
                           } else {
                             glb.showSnackBar(context, 'Alert',
-                                "Order is not yet assigned to Delivery agent");
+                                "Can't Call Right Now");
                             return;
                           }
                         },
