@@ -1158,18 +1158,26 @@ class _DashboardPageState extends State<DashboardPage> {
           ],
         ),
       ),
-      floatingActionButton: SlideFromLeftAnimation(
-        delay: 1.2,
-        child: AnimatedFloatingActionButton(
-            //Fab list
-            // fabButtons: <Widget>[float1(), float2(), float3()],
-            fabButtons: <Widget>[float2()],
-            key: key,
-            colorStartAnimation: Colors.orange,
-            colorEndAnimation: Colors.deepOrange,
-            animatedIconData: AnimatedIcons.list_view //To principal button
-            ),
-      ),
+      floatingActionButton: FloatingActionButton(
+          onPressed: () {
+          Navigator.pop(context);
+          Navigator.pushNamed(context, MainRoute);
+          },
+          child: Icon(Icons.local_laundry_service), // Icon inside the FAB
+        ),
+      // floatingActionButton: SlideFromLeftAnimation(
+      //   delay: 1.2,
+      //   child: AnimatedFloatingActionButton(
+      //       //Fab list
+      //       // fabButtons: <Widget>[float1(), float2(), float3()],
+      //       fabButtons: <Widget>[float2()],
+      //       key: key,
+      //       colorStartAnimation: Colors.orange,
+      //       colorEndAnimation: Colors.deepOrange,
+      //       animatedIconData: AnimatedIcons.list_view //To principal button
+      //       ),
+      // ),
+    
     );
   }
 }

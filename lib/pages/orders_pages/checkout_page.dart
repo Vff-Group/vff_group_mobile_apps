@@ -944,7 +944,7 @@ class _CheckOutScreenState extends State<CheckOutScreen> {
                                           //Razor Pay Code
                                           if (glb.paymentType == "Online") {
                                             var options = {
-                                              'key': 'rzp_test_qtHIWapeUEAAZO',
+                                              'key': 'rzp_live_SeGnLgb5JnY8Id',
                                               'amount': (totalPrice +
                                                       deliveryPrice) *
                                                   100, //in the smallest currency sub-unit.
