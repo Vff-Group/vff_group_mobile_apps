@@ -671,20 +671,20 @@ class _HomePageState extends State<HomePage> {
       GlobalKey<AnimatedFloatingActionButtonState>();
 
   /// and then assign it to the our widget library
-  Widget float1() {
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 8.0),
-      child: FloatingActionButton(
-        onPressed: () {},
-        backgroundColor: Colors.deepPurple,
-        heroTag: "btn1",
-        tooltip: 'VFF Gym',
-        child: const Icon(
-          Icons.fitness_center,
-        ),
-      ),
-    );
-  }
+  // Widget float1() {
+  //   return Padding(
+  //     padding: const EdgeInsets.only(bottom: 8.0),
+  //     child: FloatingActionButton(
+  //       onPressed: () {},
+  //       backgroundColor: Colors.deepPurple,
+  //       heroTag: "btn1",
+  //       tooltip: 'VFF Gym',
+  //       child: const Icon(
+  //         Icons.fitness_center,
+  //       ),
+  //     ),
+  //   );
+  // }
 
   Widget float2() {
     return Padding(
@@ -704,21 +704,21 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  Widget float3() {
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 8.0),
-      child: FloatingActionButton(
-        onPressed: () {},
-        backgroundColor: Colors.green,
-        heroTag: "btn3",
-        tooltip: 'Coming Soon',
-        child: const Icon(
-          LineIcons.tShirt,
-          color: Colors.white,
-        ),
-      ),
-    );
-  }
+  // Widget float3() {
+  //   return Padding(
+  //     padding: const EdgeInsets.only(bottom: 8.0),
+  //     child: FloatingActionButton(
+  //       onPressed: () {},
+  //       backgroundColor: Colors.green,
+  //       heroTag: "btn3",
+  //       tooltip: 'Coming Soon',
+  //       child: const Icon(
+  //         LineIcons.tShirt,
+  //         color: Colors.white,
+  //       ),
+  //     ),
+  //   );
+  // }
 
   final _advancedDrawerController = AdvancedDrawerController();
 
@@ -1421,7 +1421,8 @@ class _HomePageState extends State<HomePage> {
         delay: 1.2,
         child: AnimatedFloatingActionButton(
             //Fab list
-            fabButtons: <Widget>[float1(), float2(), float3()],
+            // fabButtons: <Widget>[float1(), float2(), float3()],
+            fabButtons: <Widget>[ float2()],
             key: key,
             colorStartAnimation: Colors.blue,
             colorEndAnimation: Colors.red,
