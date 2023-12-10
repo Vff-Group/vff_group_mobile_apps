@@ -39,8 +39,12 @@ import 'package:vff_group/pages/set_delivery_location.dart';
 import 'package:vff_group/pages/splash_screen.dart';
 import 'package:vff_group/pages/verification_code_page.dart';
 import 'package:vff_group/routings/route_names.dart';
+import 'package:vff_group/united_armor_app/views/cart/cart_page.dart';
+import 'package:vff_group/united_armor_app/views/checkout/delivery_address_page.dart';
 import 'package:vff_group/united_armor_app/views/dashboard/cloth_dashboard.dart';
 import 'package:vff_group/united_armor_app/views/login/login.dart';
+import 'package:vff_group/united_armor_app/views/payment/payment_page.dart';
+import 'package:vff_group/united_armor_app/views/payment/payment_success.dart';
 import 'package:vff_group/united_armor_app/views/product_details/product_details.dart';
 import 'package:vff_group/united_armor_app/views/signup/signup.dart';
 
@@ -135,6 +139,14 @@ Route<dynamic> generateRoute(RouteSettings settings) {
       return _getPageRoute(const ClothingDashboard());    
     case ProductDetailsRoute:
       return _getPageRoute(const ProductDetailsPage());    
+    case CartItemsClothingRoute:
+      return _getPageRoute(const CartItemsClothingPage());    
+    case ClothingDeliveryAddressRoute:
+      return _getPageRoute(const ClothingDeliveryAddressPage());    
+    case PaymentClothingRoute:
+      return _getPageRoute(const PaymentPageClothing());    
+    case PaymentSuccessRoute:
+      return _getPageRoute(const PaymentSuccessPage());    
 
     default:
       return _getPageRoute(const SplashScreen());

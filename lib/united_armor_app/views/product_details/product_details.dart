@@ -1,7 +1,9 @@
+import 'package:dots_indicator/dots_indicator.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:readmore/readmore.dart';
+import 'package:vff_group/routings/route_names.dart';
 import 'package:vff_group/united_armor_app/common/app_styles.dart';
 import 'package:vff_group/united_armor_app/common/size_config.dart';
 import 'package:vff_group/united_armor_app/utils/counter.dart';
@@ -29,7 +31,16 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
     });
   }
 
-  
+  List<String> imagePaths = [
+    'assets/images/image-01.png',
+    'assets/images/image-02.png',
+    'assets/images/image-03.png',
+    // Add more image paths as needed
+  ];
+
+  // Current page index for the PageView
+  int currentPageIndex = 0;
+
   @override
   void initState() {
     // TODO: implement initState
@@ -45,7 +56,8 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
       floatingActionButton: GestureDetector(
         onTap: () {
-          debugPrint('Add to Cart button pressed!');
+          //debugPrint('Add to Cart button pressed!');
+          Navigator.pushNamed(context, CartItemsClothingRoute);
         },
         child: Container(
           padding: const EdgeInsets.symmetric(horizontal: 8),
@@ -101,81 +113,110 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
           child: Column(
             children: [
               SizedBox(
-                height: SizeConfig.blockSizeVertical! * 50,
-                child: Stack(
-                  children: [
-                    ClipRRect(
-                      borderRadius: BorderRadius.circular(24),
-                      child: Image.asset(
-                        glb.imagePath,
-                        height: SizeConfig.blockSizeVertical! * 50,
-                        width: double.infinity,
-                        fit: BoxFit.cover,
+      height: SizeConfig.blockSizeVertical! * 50,
+      child: Stack(
+        children: [
+          PageView.builder(
+            itemCount: imagePaths.length,
+            onPageChanged: (index) {
+              setState(() {
+                currentPageIndex = index;
+              });
+            },
+            itemBuilder: (context, index) {
+              return ClipRRect(
+                borderRadius: BorderRadius.circular(24),
+                child: Image.asset(
+                  imagePaths[index],
+                  height: SizeConfig.blockSizeVertical! * 50,
+                  width: double.infinity,
+                  fit: BoxFit.cover,
+                ),
+              );
+            },
+          ),
+          Align(
+            alignment: Alignment.topCenter,
+            child: Padding(
+              padding: const EdgeInsets.symmetric(
+                horizontal: 12,
+                vertical: 12,
+              ),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Container(
+                    height: SizeConfig.blockSizeVertical! * 4,
+                    width: SizeConfig.blockSizeVertical! * 4,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      color: kWhite,
+                      boxShadow: [
+                        BoxShadow(
+                          color: kBrown.withOpacity(0.11),
+                          spreadRadius: 0.0,
+                          blurRadius: 12,
+                          offset: const Offset(0, 5),
+                        )
+                      ],
+                    ),
+                    padding: const EdgeInsets.all(8),
+                    child: InkWell(
+                      onTap: () {
+                        Navigator.pop(context);
+                      },
+                      child: SvgPicture.asset(
+                        'assets/arrow_back_icon.svg',
                       ),
                     ),
-                    Align(
-                      alignment: Alignment.topCenter,
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 12,
-                          vertical: 12,
-                        ),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Container(
-                              height: SizeConfig.blockSizeVertical! * 4,
-                              width: SizeConfig.blockSizeVertical! * 4,
-                              decoration: BoxDecoration(
-                                shape: BoxShape.circle,
-                                color: kWhite,
-                                boxShadow: [
-                                  BoxShadow(
-                                    color: kBrown.withOpacity(0.11),
-                                    spreadRadius: 0.0,
-                                    blurRadius: 12,
-                                    offset: const Offset(0, 5),
-                                  )
-                                ],
-                              ),
-                              padding: const EdgeInsets.all(8),
-                              child: InkWell(
-                                onTap: () {
-                                  Navigator.pop(context);
-                                },
-                                child: SvgPicture.asset(
-                                  'assets/arrow_back_icon.svg',
-                                ),
-                              ),
-                            ),
-                            Container(
-                              height: SizeConfig.blockSizeVertical! * 4,
-                              width: SizeConfig.blockSizeVertical! * 4,
-                              decoration: BoxDecoration(
-                                shape: BoxShape.circle,
-                                color: kWhite,
-                                boxShadow: [
-                                  BoxShadow(
-                                    color: kBrown.withOpacity(0.11),
-                                    spreadRadius: 0.0,
-                                    blurRadius: 12,
-                                    offset: const Offset(0, 5),
-                                  )
-                                ],
-                              ),
-                              padding: const EdgeInsets.all(8),
-                              child: SvgPicture.asset(
-                                'assets/favorite_black_icon.svg',
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    )
-                  ],
+                  ),
+                  Container(
+                    height: SizeConfig.blockSizeVertical! * 4,
+                    width: SizeConfig.blockSizeVertical! * 4,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      color: kWhite,
+                      boxShadow: [
+                        BoxShadow(
+                          color: kBrown.withOpacity(0.11),
+                          spreadRadius: 0.0,
+                          blurRadius: 12,
+                          offset: const Offset(0, 5),
+                        )
+                      ],
+                    ),
+                    padding: const EdgeInsets.all(8),
+                    child: SvgPicture.asset(
+                      'assets/favorite_black_icon.svg',
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+          Align(
+            alignment: Alignment.bottomCenter,
+            child: Padding(
+              padding: const EdgeInsets.only(bottom: 16.0),
+              child: DotsIndicator(
+                dotsCount: imagePaths.length,
+                position: currentPageIndex,
+                decorator: DotsDecorator(
+                  color: Colors.grey, // Inactive dot color
+                  activeColor: Colors.white, // Active dot color
+                  size: const Size.square(8.0),
+                  activeSize: const Size(20.0, 8.0),
+                  spacing: const EdgeInsets.symmetric(horizontal: 4.0),
+                  activeShape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(5.0),
+                  ),
                 ),
               ),
-              const SizedBox(
+            ),
+          ),
+        ],
+      ),
+    ),const SizedBox(
                 height: 24,
               ),
               Row(

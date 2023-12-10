@@ -88,6 +88,7 @@ dependencies:
   custom_navigation_bar: ^0.8.2
   flutter_rating_bar: ^4.0.1
   equatable: ^2.0.5
+  dots_indicator: ^3.0.0
   
   
   

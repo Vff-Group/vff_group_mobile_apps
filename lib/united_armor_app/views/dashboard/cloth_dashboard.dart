@@ -11,6 +11,9 @@ import 'package:vff_group/united_armor_app/common/app_styles.dart';
 import 'package:vff_group/united_armor_app/common/size_config.dart';
 import 'package:vff_group/global/vffglb.dart' as glb;
 import 'package:vff_group/united_armor_app/views/home/home.dart';
+import 'package:vff_group/united_armor_app/views/home/my_cart_page.dart';
+import 'package:vff_group/united_armor_app/views/home/my_wishlist_page.dart';
+import 'package:vff_group/united_armor_app/views/settings/settings_page.dart';
 
 class ClothingDashboard extends StatefulWidget {
   const ClothingDashboard({super.key});
@@ -23,9 +26,9 @@ class _ClothingDashboardState extends State<ClothingDashboard> {
   int _currentIndex = 0;
   List pages = [
     const HomeScreen(),
-    const AllGymPlansScreen(),
-    const DietPlanScreen(),
-    const SettingsGym()
+    const MyClothingCartPage(),
+    const MyClothingWishListPage(),
+    const ClothingSettingsPage()
   ];
   void changeTab(int index) {
     setState(() {
