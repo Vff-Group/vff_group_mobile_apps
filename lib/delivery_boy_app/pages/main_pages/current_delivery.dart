@@ -195,7 +195,7 @@ class _CurrentDeliveryPageState extends State<CurrentDeliveryPage> {
       appBar: AppBar(
         automaticallyImplyLeading: false,
         elevation: 0,
-        backgroundColor: Colors.deepOrange,
+        backgroundColor: Colors.deepPurple,
         systemOverlayStyle:
             SystemUiOverlayStyle(statusBarBrightness: Brightness.dark),
         actions: [
@@ -699,7 +699,7 @@ class _OrderDetails extends StatelessWidget {
                   Text(
                     orderID == '-1' ? '#${bookingID}' : '#${orderID}',
                     style: nunitoStyle.copyWith(
-                      color: Colors.deepOrange,
+                      color: Colors.deepPurple,
                       fontSize: 14,
                     ),
                   ),
@@ -812,7 +812,7 @@ class _OldUI extends StatelessWidget {
                     width: 20,
                     height: 20,
                     decoration: BoxDecoration(
-                        color: Colors.deepOrange,
+                        color: Colors.deepPurple,
                         borderRadius: BorderRadius.circular(25.0)),
                   ),
                 ),

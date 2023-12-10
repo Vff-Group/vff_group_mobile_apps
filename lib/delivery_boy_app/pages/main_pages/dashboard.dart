@@ -502,7 +502,7 @@ class _DashboardPageState extends State<DashboardPage> {
           Navigator.pop(context);
           Navigator.pushNamed(context, MainRoute);
         },
-        backgroundColor: Colors.blue,
+        backgroundColor: Colors.deepPurple,
         heroTag: "btn2",
         tooltip: 'Laundry',
         child: const Icon(Icons.local_laundry_service),
@@ -543,10 +543,10 @@ class _DashboardPageState extends State<DashboardPage> {
       backgroundColor: AppColors.whiteColor,
       extendBodyBehindAppBar: true,
       appBar: AppBar(
-        backgroundColor: Colors.deepOrange,
+        backgroundColor: Colors.deepPurple,
         automaticallyImplyLeading: false,
         elevation: 0,
-        centerTitle: true,
+        centerTitle: false,
         actions: [
           // Positioned(
           //                       left: 20,
@@ -559,48 +559,51 @@ class _DashboardPageState extends State<DashboardPage> {
           //                         ),
           //                       ),
           //                     ),
-          InkWell(
-            onTap: () {
-              Navigator.pushNamed(context, DeliveryBoyNotificationRoute);
-            },
-            child: Icon(
-              Icons.notifications_none_outlined,
-              color: AppColors.whiteColor,
-              size: 30,
-            ),
-          )
+           IconButton(
+                        onPressed: () {
+                          Navigator.pushNamed(context, DeliveryBoyNotificationRoute);
+                        },
+                        icon: Image.asset(
+                          "assets/icons/notification_icon.png",
+                          width: 25,
+                          height: 25,
+                          color: Colors.white,
+                          fit: BoxFit.fitHeight,
+                        ))
+         
         ],
         title: Image.asset(
           'assets/logo/velvet_2.png',
           width: 150,
         ),
-        leading: InkWell(
-          onTap: () {},
-          child: WidgetCircularAnimator(
-            size: 40,
-            innerIconsSize: 3,
-            outerIconsSize: 3,
-            innerAnimation: Curves.easeInOutBack,
-            outerAnimation: Curves.easeInOutBack,
-            innerColor: Colors.deepPurple,
-            outerColor: Colors.orangeAccent,
-            innerAnimationSeconds: 10,
-            outerAnimationSeconds: 10,
-            child: Container(
-                decoration: BoxDecoration(
-                    shape: BoxShape.circle, color: Colors.grey[200]),
-                child: profile_img.isEmpty == false
-                    ? CircleAvatar(
-                        radius: 25.0,
-                        backgroundImage: NetworkImage(profile_img),
-                        backgroundColor: Colors.transparent,
-                      )
-                    : const Icon(Icons.person)),
-          ),
-        ),
+        // leading: InkWell(
+        //   onTap: () {},
+        //   child: WidgetCircularAnimator(
+        //     size: 40,
+        //     innerIconsSize: 3,
+        //     outerIconsSize: 3,
+        //     innerAnimation: Curves.easeInOutBack,
+        //     outerAnimation: Curves.easeInOutBack,
+        //     innerColor: Colors.deepPurple,
+        //     outerColor: Colors.orangeAccent,
+        //     innerAnimationSeconds: 10,
+        //     outerAnimationSeconds: 10,
+        //     child: Container(
+        //         decoration: BoxDecoration(
+        //             shape: BoxShape.circle, color: Colors.grey[200]),
+        //         child: profile_img.isEmpty == false
+        //             ? CircleAvatar(
+        //                 radius: 25.0,
+        //                 backgroundImage: NetworkImage(profile_img),
+        //                 backgroundColor: Colors.transparent,
+        //               )
+        //             : const Icon(Icons.person)),
+        //   ),
+        // ),
+     
       ),
       body: Padding(
-        padding: const EdgeInsets.fromLTRB(20, 1.8 * kToolbarHeight, 20, 20),
+        padding: const EdgeInsets.fromLTRB(20, 2.2 * kToolbarHeight, 20, 20),
         child: Stack(
           children: [
             RefreshIndicator(
@@ -1159,6 +1162,7 @@ class _DashboardPageState extends State<DashboardPage> {
         ),
       ),
       floatingActionButton: FloatingActionButton(
+        backgroundColor: Colors.deepPurple,
           onPressed: () {
           Navigator.pop(context);
           Navigator.pushNamed(context, MainRoute);

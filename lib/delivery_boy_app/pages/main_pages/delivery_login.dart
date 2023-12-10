@@ -61,7 +61,7 @@ class _DeliveryLoginScreenState extends State<DeliveryLoginScreen> {
                   Text(
                     'DELIVERY BOY',
                     style: nunitoStyle.copyWith(
-                      color: Colors.deepOrangeAccent,
+                      color: Colors.deepPurpleAccent,
                       fontSize: 20.0,
                       fontWeight: FontWeight.bold,
                     ),
@@ -88,7 +88,7 @@ class _DeliveryLoginScreenState extends State<DeliveryLoginScreen> {
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(8.0),
                         border: Border.all(
-                          color: Colors.deepOrange, // Border color
+                          color: Colors.deepPurple, // Border color
                           width: 0.2, // Border width
                         ),
                       ),
@@ -105,7 +105,7 @@ class _DeliveryLoginScreenState extends State<DeliveryLoginScreen> {
                               onPressed: () {},
                               icon: const Icon(
                                 Icons.person,
-                                color: Colors.deepOrange,
+                                color: Colors.deepPurple,
                               ),
                             ),
                             contentPadding: const EdgeInsets.only(top: 16.0),
@@ -131,7 +131,7 @@ class _DeliveryLoginScreenState extends State<DeliveryLoginScreen> {
                                 width: 0.4, // Border width
                               )
                             : Border.all(
-                                color: Colors.deepOrange, // Border color
+                                color: Colors.deepPurple, // Border color
                                 width: 0.2, // Border width
                               ),
                       ),
@@ -160,18 +160,18 @@ class _DeliveryLoginScreenState extends State<DeliveryLoginScreen> {
                                 icon: _showPassword
                                     ? const Icon(
                                         Icons.remove_red_eye,
-                                        color: Colors.deepOrange,
+                                        color: Colors.deepPurple,
                                       )
                                     : const Icon(
                                         Icons
                                             .no_encryption_gmailerrorred_outlined,
-                                        color: Colors.deepOrange,
+                                        color: Colors.deepPurple,
                                       )),
                             prefixIcon: IconButton(
                               onPressed: () {},
                               icon: const Icon(
                                 Icons.security,
-                                color: Colors.deepOrange,
+                                color: Colors.deepPurple,
                               ),
                             ),
                             contentPadding: const EdgeInsets.only(top: 16.0),
@@ -218,7 +218,7 @@ class _DeliveryLoginScreenState extends State<DeliveryLoginScreen> {
                         'Terms and Conditions',
                         style: nunitoStyle.copyWith(
                             fontSize: 14.0,
-                            color: Colors.deepOrange,
+                            color: Colors.deepPurple,
                             fontWeight: FontWeight.normal),
                       ),
                     ),
@@ -253,7 +253,7 @@ class _DeliveryLoginScreenState extends State<DeliveryLoginScreen> {
                                     horizontal: 70.0, vertical: 18.0),
                                 decoration: BoxDecoration(
                                     borderRadius: BorderRadius.circular(16.0),
-                                    color: Colors.deepOrange),
+                                    color: Colors.deepPurple),
                                 child: Text(
                                   'Login',
                                   style: nunitoStyle.copyWith(

@@ -4,6 +4,13 @@ import 'package:vff_group/delivery_boy_app/pages/main_pages/bottom_page_main.dar
 import 'package:vff_group/delivery_boy_app/pages/main_pages/current_delivery.dart';
 import 'package:vff_group/delivery_boy_app/pages/main_pages/delivery_boy_notification.dart';
 import 'package:vff_group/delivery_boy_app/pages/main_pages/delivery_login.dart';
+import 'package:vff_group/gym_app/views/dashboard/dashboard_gym.dart';
+import 'package:vff_group/gym_app/views/login/login_screen.dart';
+import 'package:vff_group/gym_app/views/notification/notification_screen.dart';
+import 'package:vff_group/gym_app/views/profile/complete_profile.dart';
+import 'package:vff_group/gym_app/views/signup/signup.dart';
+import 'package:vff_group/gym_app/views/welcome/welcome_screen.dart';
+import 'package:vff_group/gym_app/views/your_goals/your_goals.dart';
 import 'package:vff_group/pages/booking_pages/booking_details_page.dart';
 import 'package:vff_group/pages/cart/cart_items_page.dart';
 import 'package:vff_group/pages/categories/dry_clean_home.dart';
@@ -32,6 +39,10 @@ import 'package:vff_group/pages/set_delivery_location.dart';
 import 'package:vff_group/pages/splash_screen.dart';
 import 'package:vff_group/pages/verification_code_page.dart';
 import 'package:vff_group/routings/route_names.dart';
+import 'package:vff_group/united_armor_app/views/dashboard/cloth_dashboard.dart';
+import 'package:vff_group/united_armor_app/views/login/login.dart';
+import 'package:vff_group/united_armor_app/views/product_details/product_details.dart';
+import 'package:vff_group/united_armor_app/views/signup/signup.dart';
 
 Route<dynamic> generateRoute(RouteSettings settings) {
   // print('generateRoute: ${settings.name}');
@@ -78,7 +89,7 @@ Route<dynamic> generateRoute(RouteSettings settings) {
       return _getPageRoute(const AddToCartItem());
     case CheckOutRoute:
       return _getPageRoute(const CheckOutScreen());
-  
+
     case FeedbackRoute:
       return _getPageRoute(const FeedBackPage());
     case CancelOrderRoute:
@@ -97,6 +108,33 @@ Route<dynamic> generateRoute(RouteSettings settings) {
       return _getPageRoute(const DeliveryBoyNotificationsPage());
     case CurrentOrderDeliveryRoute:
       return _getPageRoute(const CurrentDeliveryPage());
+
+//GYM Routes
+    case GymLoginRoute:
+      return _getPageRoute(const LoginScreenGym());
+    case SignupScreenRoute:
+      return _getPageRoute(const SignUpScreen());
+    case CompleteProfileScreenRoute:
+      return _getPageRoute(const CompleteGymProfile());
+    case YourGoalScreenRoute:
+      return _getPageRoute(const YourFitnessGoalsScreen());
+    case WelcomeScreenGymRoute:
+      return _getPageRoute(const WelcomeScreenGymScreen());
+    case DashboardScreenGymRoute:
+      return _getPageRoute(const DashboardGymScreen(pageIndex: 0));
+    case NotificationScreenRoute:
+      return _getPageRoute(const GymNotificationScreen());
+
+
+//United Armor Clothing
+    case ClothingLoginRoute:
+      return _getPageRoute(const LoginClothingScreen());    
+    case ClothingRegisterRoute:
+      return _getPageRoute(const SignUpClothingScreen());    
+    case ClothingDashboardRoute:
+      return _getPageRoute(const ClothingDashboard());    
+    case ProductDetailsRoute:
+      return _getPageRoute(const ProductDetailsPage());    
 
     default:
       return _getPageRoute(const SplashScreen());

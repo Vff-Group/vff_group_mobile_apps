@@ -59,12 +59,12 @@ class _BottomBarDeliveryBoyState extends State<BottomBarDeliveryBoy> {
               rippleColor: Colors.grey[300]!,
               hoverColor: Colors.grey[100]!,
               gap: 4,
-              activeColor: Colors.deepOrange,
+              activeColor: Colors.deepPurple,
               iconSize: 24,
               padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
               duration: const Duration(milliseconds: 400),
               tabBackgroundColor: AppColors.lightBlackColor,
-              color: Colors.deepOrange[300],
+              color: Colors.deepPurple[300],
               tabs: const [
                 GButton(
                   icon: LineIcons.home,

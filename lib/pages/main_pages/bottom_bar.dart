@@ -98,5 +98,6 @@ class _BottomBarScreenState extends State<BottomBarScreen> {
         ),
       ),
     );
+  
   }
 }

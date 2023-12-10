@@ -32,3 +32,19 @@ const String AllBranchesRoute = "all_branches_page";
 const String DeliveryLoginRoute = "delivery_login";
 const String DMainRoute = "delivery_welcome";
 const String CurrentOrderDeliveryRoute = "current_delivery";
+
+//Gym Routes
+const String SignupScreenRoute = "gym_signup";
+const String GymLoginRoute = "gym_login";
+const String CompleteProfileScreenRoute = "complete_gym_profile";
+const String YourGoalScreenRoute = "your_goals";
+const String WelcomeScreenGymRoute = "welcome_gym";
+const String DashboardScreenGymRoute = "gym_dashboard_bottom";
+const String NotificationScreenRoute = "gym_notification";
+
+
+//United Armor Clothing
+const String ClothingLoginRoute = "clothing_login";
+const String ClothingRegisterRoute = "clothing_register";
+const String ClothingDashboardRoute = "clothing_dashboard";
+const String ProductDetailsRoute = "product_details";

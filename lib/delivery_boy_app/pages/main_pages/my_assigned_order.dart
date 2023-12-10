@@ -36,7 +36,7 @@ class _MyAssignedOrdersPageState extends State<MyAssignedOrdersPage> {
       backgroundColor: AppColors.whiteColor,
       appBar: AppBar(
         automaticallyImplyLeading: false,
-        backgroundColor: Colors.deepOrange,
+        backgroundColor: Colors.deepPurple,
         title: Text(
           'Assigned Orders',
           style: nunitoStyle.copyWith(
@@ -56,7 +56,7 @@ class _MyAssignedOrdersPageState extends State<MyAssignedOrdersPage> {
                 height: width * 0.03,
               ),
               ButtonsTabBar(
-                backgroundColor: Colors.deepOrange,
+                backgroundColor: Colors.deepPurple,
                 unselectedBackgroundColor: AppColors.lightBlackColor,
                 unselectedLabelStyle: TextStyle(color: AppColors.textColor),
                 labelStyle:

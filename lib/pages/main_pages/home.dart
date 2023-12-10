@@ -671,20 +671,22 @@ class _HomePageState extends State<HomePage> {
       GlobalKey<AnimatedFloatingActionButtonState>();
 
   /// and then assign it to the our widget library
-  // Widget float1() {
-  //   return Padding(
-  //     padding: const EdgeInsets.only(bottom: 8.0),
-  //     child: FloatingActionButton(
-  //       onPressed: () {},
-  //       backgroundColor: Colors.deepPurple,
-  //       heroTag: "btn1",
-  //       tooltip: 'VFF Gym',
-  //       child: const Icon(
-  //         Icons.fitness_center,
-  //       ),
-  //     ),
-  //   );
-  // }
+  Widget float1() {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 8.0),
+      child: FloatingActionButton(
+        onPressed: () {
+          goToGymPage();
+        },
+        backgroundColor: Colors.deepPurple,
+        heroTag: "btn1",
+        tooltip: 'VFF Gym',
+        child: const Icon(
+          Icons.fitness_center,
+        ),
+      ),
+    );
+  }
 
   Widget float2() {
     return Padding(
@@ -704,21 +706,23 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  // Widget float3() {
-  //   return Padding(
-  //     padding: const EdgeInsets.only(bottom: 8.0),
-  //     child: FloatingActionButton(
-  //       onPressed: () {},
-  //       backgroundColor: Colors.green,
-  //       heroTag: "btn3",
-  //       tooltip: 'Coming Soon',
-  //       child: const Icon(
-  //         LineIcons.tShirt,
-  //         color: Colors.white,
-  //       ),
-  //     ),
-  //   );
-  // }
+  Widget float3() {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 8.0),
+      child: FloatingActionButton(
+        onPressed: () {
+          Navigator.pushNamed(context, ClothingLoginRoute);
+        },
+        backgroundColor: Colors.green,
+        heroTag: "btn3",
+        
+        child: const Icon(
+          LineIcons.tShirt,
+          color: Colors.white,
+        ),
+      ),
+    );
+  }
 
   final _advancedDrawerController = AdvancedDrawerController();
 
@@ -750,7 +754,7 @@ class _HomePageState extends State<HomePage> {
       key: _scaffoldKey,
       appBar: AppBar(
         automaticallyImplyLeading: false,
-        centerTitle: true,
+        centerTitle: false,
         elevation: 0,
         actions: [
           // Positioned(
@@ -764,16 +768,27 @@ class _HomePageState extends State<HomePage> {
           //                         ),
           //                       ),
           //                     ),
-          InkWell(
-            onTap: () {
-              Navigator.pushNamed(context, CustomerNotificationRoute);
-            },
-            child: Icon(
-              Icons.notifications_none_outlined,
-              color: AppColors.whiteColor,
-              size: 30,
-            ),
-          )
+          IconButton(
+              onPressed: () {
+                Navigator.pushNamed(context, CustomerNotificationRoute);
+              },
+              icon: Image.asset(
+                "assets/icons/notification_icon.png",
+                width: 25,
+                height: 25,
+                color: Colors.white,
+                fit: BoxFit.fitHeight,
+              ))
+          // InkWell(
+          //   onTap: () {
+          //     Navigator.pushNamed(context, CustomerNotificationRoute);
+          //   },
+          //   child: Icon(
+          //     Icons.notifications_none_outlined,
+          //     color: AppColors.whiteColor,
+          //     size: 30,
+          //   ),
+          // )
         ],
         title: Image.asset(
           'assets/logo/velvet_2.png',
@@ -781,35 +796,35 @@ class _HomePageState extends State<HomePage> {
         ),
         systemOverlayStyle:
             const SystemUiOverlayStyle(statusBarBrightness: Brightness.dark),
-        leading: InkWell(
-          onTap: () {},
-          child: WidgetCircularAnimator(
-            size: 40,
-            innerIconsSize: 3,
-            outerIconsSize: 3,
-            innerAnimation: Curves.easeInOutBack,
-            outerAnimation: Curves.easeInOutBack,
-            innerColor: Colors.deepPurple,
-            outerColor: Colors.orangeAccent,
-            innerAnimationSeconds: 10,
-            outerAnimationSeconds: 10,
-            child: Container(
-                decoration: BoxDecoration(
-                    shape: BoxShape.circle, color: Colors.grey[200]),
-                child: profile_img.isEmpty == false &&
-                        profile_img != 'NA' &&
-                        profile_img.isNotEmpty
-                    ? CircleAvatar(
-                        radius: 25.0,
-                        backgroundImage: NetworkImage(profile_img),
-                        backgroundColor: Colors.transparent,
-                      )
-                    : const Icon(
-                        Icons.person,
-                        color: AppColors.blueColor,
-                      )),
-          ),
-        ),
+        // leading: InkWell(
+        //   onTap: () {},
+        //   child: WidgetCircularAnimator(
+        //     size: 40,
+        //     innerIconsSize: 3,
+        //     outerIconsSize: 3,
+        //     innerAnimation: Curves.easeInOutBack,
+        //     outerAnimation: Curves.easeInOutBack,
+        //     innerColor: Colors.deepPurple,
+        //     outerColor: Colors.orangeAccent,
+        //     innerAnimationSeconds: 10,
+        //     outerAnimationSeconds: 10,
+        //     child: Container(
+        //         decoration: BoxDecoration(
+        //             shape: BoxShape.circle, color: Colors.grey[200]),
+        //         child: profile_img.isEmpty == false &&
+        //                 profile_img != 'NA' &&
+        //                 profile_img.isNotEmpty
+        //             ? CircleAvatar(
+        //                 radius: 25.0,
+        //                 backgroundImage: NetworkImage(profile_img),
+        //                 backgroundColor: Colors.transparent,
+        //               )
+        //             : const Icon(
+        //                 Icons.person,
+        //                 color: AppColors.blueColor,
+        //               )),
+        //   ),
+        // ),
       ),
       backgroundColor: AppColors.whiteColor,
       body: Padding(
@@ -861,8 +876,14 @@ class _HomePageState extends State<HomePage> {
                                 SizedBox(
                                   height: width * 0.05,
                                 ),
-                                _SliderLayout(
-                                    width: width, modelOffer: offersModel),
+                                InkWell(
+                                  onTap: () {
+                                    Navigator.pushNamed(
+                                        context, AllBranchesRoute);
+                                  },
+                                  child: _SliderLayout(
+                                      width: width, modelOffer: offersModel),
+                                ),
                               ],
                             ),
                             SizedBox(
@@ -1417,25 +1438,25 @@ class _HomePageState extends State<HomePage> {
           ),
         ),
       ),
-      floatingActionButton: FloatingActionButton(
-          onPressed: () {
-          goToDeliveryBoyPage();
-          },
-          child: Icon(Icons.delivery_dining), // Icon inside the FAB
-        ),
-      // floatingActionButton: SlideFromLeftAnimation(
-      //   delay: 1.2,
-      //   child: AnimatedFloatingActionButton(
-      //       //Fab list
-      //       // fabButtons: <Widget>[float1(), float2(), float3()],
-      //       fabButtons: <Widget>[ float2()],
-      //       key: key,
-      //       colorStartAnimation: Colors.blue,
-      //       colorEndAnimation: Colors.red,
-      //       animatedIconData: AnimatedIcons.list_view //To principal button
-      //       ),
+      // floatingActionButton: FloatingActionButton(
+      //   onPressed: () {
+      //     goToDeliveryBoyPage();
+      //   },
+      //   child: Icon(Icons.delivery_dining), // Icon inside the FAB
       // ),
-   
+
+      floatingActionButton: SlideFromLeftAnimation(
+        delay: 1.2,
+        child: AnimatedFloatingActionButton(
+            //Fab list
+            fabButtons: <Widget>[float1(), float2(),float3()],
+            // fabButtons: <Widget>[ float2()],
+            key: key,
+            colorStartAnimation: Colors.blue,
+            colorEndAnimation: Colors.red,
+            animatedIconData: AnimatedIcons.list_view //To principal button
+            ),
+      ),
     );
   }
 
@@ -1443,6 +1464,28 @@ class _HomePageState extends State<HomePage> {
     // NOTICE: Manage Advanced Drawer state through the Controller.
     // _advancedDrawerController.value = AdvancedDrawerValue.visible();
     _advancedDrawerController.showDrawer();
+  }
+
+  Future goToGymPage() async {
+    glb.prefs = await SharedPreferences.getInstance();
+    
+    var gym_usrid = glb.prefs?.getString('gym_usrid');
+    var my_weight = glb.prefs?.getString('my_weight');
+    var my_gym_goal = glb.prefs?.getString('my_gym_goal');
+    var welcome_done = glb.prefs?.getString('welcome_done');
+    var gym_profile_completed = glb.prefs?.getString('gym_profile_completed');
+    if (gym_usrid != null && gym_profile_completed == null) {
+      Navigator.pushNamed(context, CompleteProfileScreenRoute);
+    } else if (gym_usrid != null && gym_profile_completed != null) {
+      Navigator.pushNamed(context, YourGoalScreenRoute);
+    } else if (gym_usrid != null && gym_profile_completed != null && my_gym_goal!=null) {
+      Navigator.pushNamed(context, WelcomeScreenGymRoute);
+    } else if (gym_usrid != null && gym_profile_completed != null && my_gym_goal!=null && welcome_done !=null) {
+      Navigator.pushNamed(context, DashboardScreenGymRoute);
+    } 
+    else {
+      Navigator.pushNamed(context, GymLoginRoute);
+    }
   }
 
   Future goToDeliveryBoyPage() async {
@@ -1615,80 +1658,79 @@ class _SliderLayout extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-  return AutoSlider(
-  slides: List.generate(
-    modelOffer.length,
-    (slideIndex) {
-      final offer = modelOffer[slideIndex];
-      return Container(
-        child: Padding(
-          padding: const EdgeInsets.only(left: 8.0, right: 8.0),
-          child: Container(
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(16.0),
-              image: DecorationImage(
-                image: NetworkImage(offer.bg_img),
-                fit: BoxFit.cover,
-              ),
-            ),
-            child: SizedBox(
-              width: width - 20,
-              height: 180,
-              child: Stack(
-                children: [
-                  Positioned(
-                    bottom: 50,
-                    left: 20,
-                    child: Container(
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(8.0),
-                        color: AppColors.blueColor,
-                      ),
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 10.0,
-                          vertical: 6.0,
-                        ),
-                        child: Text(
-                          offer.title,
-                          style: nunitoStyle.copyWith(
-                            fontSize: 14.0,
-                            fontWeight: FontWeight.bold,
-                            letterSpacing: 0.5,
-                            color: AppColors.whiteColor,
+    return AutoSlider(
+      slides: List.generate(
+        modelOffer.length,
+        (slideIndex) {
+          final offer = modelOffer[slideIndex];
+          return Container(
+            child: Padding(
+              padding: const EdgeInsets.only(left: 8.0, right: 8.0),
+              child: Container(
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(16.0),
+                  image: DecorationImage(
+                    image: NetworkImage(offer.bg_img),
+                    fit: BoxFit.cover,
+                  ),
+                ),
+                child: SizedBox(
+                  width: width - 20,
+                  height: 180,
+                  child: Stack(
+                    children: [
+                      Positioned(
+                        bottom: 50,
+                        left: 20,
+                        child: Container(
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(8.0),
+                            color: AppColors.blueColor,
+                          ),
+                          child: Padding(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 10.0,
+                              vertical: 6.0,
+                            ),
+                            child: Text(
+                              offer.title,
+                              style: nunitoStyle.copyWith(
+                                fontSize: 14.0,
+                                fontWeight: FontWeight.bold,
+                                letterSpacing: 0.5,
+                                color: AppColors.whiteColor,
+                              ),
+                            ),
                           ),
                         ),
                       ),
-                    ),
-                  ),
-                  Positioned(
-                    bottom: 15,
-                    left: 20,
-                    child: SizedBox(
-                      width: width - 50,
-                      child: Text(
-                        offer.description,
-                        style: nunitoStyle.copyWith(
-                          fontSize: 25.0,
-                          fontWeight: FontWeight.bold,
-                          letterSpacing: 0.5,
-                          color: AppColors.whiteColor,
+                      Positioned(
+                        bottom: 15,
+                        left: 20,
+                        child: SizedBox(
+                          width: width - 50,
+                          child: Text(
+                            offer.description,
+                            style: nunitoStyle.copyWith(
+                              fontSize: 25.0,
+                              fontWeight: FontWeight.bold,
+                              letterSpacing: 0.5,
+                              color: AppColors.whiteColor,
+                            ),
+                            overflow: TextOverflow.ellipsis,
+                            softWrap: true,
+                          ),
                         ),
-                        overflow: TextOverflow.ellipsis,
-                        softWrap: true,
                       ),
-                    ),
+                    ],
                   ),
-                ],
+                ),
               ),
             ),
-          ),
-        ),
-      );
-    },
-  ),
-);
-
+          );
+        },
+      ),
+    );
   }
 }
 

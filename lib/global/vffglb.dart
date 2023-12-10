@@ -13,10 +13,16 @@ import 'package:intl/intl.dart';
 import 'package:location/location.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:vff_group/gym_app/utils/app_colors.dart';
 
 String endPoint = "http://62.72.57.222:8085/"; //8085,3000
+bool debugStatus = false;
+
+String endPointGym = "http://62.72.57.222:8000/gym_mobile_app/"; //8085,3000
+var gymPageIndex=0;
 String account_created_date = "",
     orderid = "",
+    
     booking_id = "",
     deliveryBoyID = "",
     order_status = "0",
@@ -37,13 +43,17 @@ String cartQuantity = "",
     delivery_boy_id = "",
     branch_id = "",
     clat = "",
-    clng = "";
+    clng = "",
+    imagePath = "";
 
 void showSnackBar(BuildContext context, String alertTxt, String text) {
   Get.snackbar(alertTxt, text,
-      snackPosition: SnackPosition.BOTTOM,
+      snackPosition: SnackPosition.TOP,
       colorText: Colors.black,
-      backgroundGradient:RadialGradient(colors: [Colors.blue,Colors.blue]),
+      backgroundGradient: alertTxt == "Error"
+          ? RadialGradient(colors: [Colors.redAccent, Colors.red])
+          : RadialGradient(
+              colors: [AppColors.primaryColor1, AppColors.primaryColor2]),
       icon: Image.asset('assets/logo/logo.png'));
 }
 
@@ -196,6 +206,12 @@ String getDate() {
   var formatter = DateFormat('dd MMM yyyy');
   String formattedDate = formatter.format(now);
   return formattedDate;
+}
+
+//2023-12-10
+String getTodaysDate() {
+  String todaysDate = DateFormat('yyyy-MM-dd').format(DateTime.now());
+  return todaysDate;
 }
 
 //18/10/2023
