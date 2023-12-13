@@ -11,6 +11,8 @@ import 'package:vff_group/gym_app/views/profile/complete_profile.dart';
 import 'package:vff_group/gym_app/views/signup/signup.dart';
 import 'package:vff_group/gym_app/views/welcome/welcome_screen.dart';
 import 'package:vff_group/gym_app/views/your_goals/your_goals.dart';
+import 'package:vff_group/new_views/views/booking_details/booking_details.dart';
+import 'package:vff_group/new_views/views/order_details/new_order_details_page.dart';
 import 'package:vff_group/pages/booking_pages/booking_details_page.dart';
 import 'package:vff_group/pages/cart/cart_items_page.dart';
 import 'package:vff_group/pages/categories/dry_clean_home.dart';
@@ -62,7 +64,8 @@ Route<dynamic> generateRoute(RouteSettings settings) {
     case SetDeliveryLocationRoute:
       return _getPageRoute(const SetDeliveryLocationPage());
     case BookingDetailsRoute:
-      return _getPageRoute(const BookingDetailsPage());
+      return _getPageRoute(const NewBookingsDetails());
+      // return _getPageRoute(const BookingDetailsPage());
     case SplashRoute:
       return _getPageRoute(const SplashScreen());
     case OnBoardRoute:
@@ -78,7 +81,8 @@ Route<dynamic> generateRoute(RouteSettings settings) {
     case OrderTabRoute:
       return _getPageRoute(const OrdersPage());
     case OrderDetailsRoute:
-      return _getPageRoute(const OrderDetailsPage());
+      return _getPageRoute(const NewOrderDetailsPage());
+      // return _getPageRoute(const OrderDetailsPage());
     // case PlaceOrderRoute:
     //   return _getPageRoute(const PlaceOrderPage());
     case DeliveryAddressRoute:

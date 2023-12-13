@@ -18,7 +18,8 @@ import 'package:vff_group/gym_app/utils/app_colors.dart';
 String endPoint = "http://62.72.57.222:8085/"; //8085,3000
 bool debugStatus = false;
 
-String endPointGym = "http://62.72.57.222:8000/gym_mobile_app/"; //8085,3000
+// String endPointGym = "http://62.72.57.222:8000/gym_mobile_app/"; //8085,3000
+String endPointGym = "https://www.vffgroup.in/gym_mobile_app/"; //8085,3000
 var gymPageIndex=0;
 String account_created_date = "",
     orderid = "",

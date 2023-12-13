@@ -1468,19 +1468,20 @@ class _HomePageState extends State<HomePage> {
 
   Future goToGymPage() async {
     glb.prefs = await SharedPreferences.getInstance();
-    
+    // SharedPreferenceUtils.save_val("gym_usrid", "");
     var gym_usrid = glb.prefs?.getString('gym_usrid');
+    print("gym_gym_usrid::$gym_usrid");
     var my_weight = glb.prefs?.getString('my_weight');
     var my_gym_goal = glb.prefs?.getString('my_gym_goal');
     var welcome_done = glb.prefs?.getString('welcome_done');
     var gym_profile_completed = glb.prefs?.getString('gym_profile_completed');
-    if (gym_usrid != null && gym_profile_completed == null) {
+    if (gym_usrid != null && gym_usrid.isNotEmpty && gym_profile_completed == null || gym_profile_completed!.isEmpty) {
       Navigator.pushNamed(context, CompleteProfileScreenRoute);
-    } else if (gym_usrid != null && gym_profile_completed != null) {
+    } else if (gym_usrid != null && gym_usrid.isNotEmpty && gym_profile_completed.isNotEmpty && my_gym_goal!.isEmpty) {
       Navigator.pushNamed(context, YourGoalScreenRoute);
-    } else if (gym_usrid != null && gym_profile_completed != null && my_gym_goal!=null) {
+    } else if (gym_usrid != null && gym_usrid.isNotEmpty && gym_profile_completed.isNotEmpty && my_gym_goal!.isNotEmpty && welcome_done!.isEmpty) {
       Navigator.pushNamed(context, WelcomeScreenGymRoute);
-    } else if (gym_usrid != null && gym_profile_completed != null && my_gym_goal!=null && welcome_done !=null) {
+    } else if (gym_usrid != null && gym_usrid.isNotEmpty  && gym_profile_completed.isNotEmpty && my_gym_goal!.isNotEmpty && welcome_done!.isNotEmpty) {
       Navigator.pushNamed(context, DashboardScreenGymRoute);
     } 
     else {

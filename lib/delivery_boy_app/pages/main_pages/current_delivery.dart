@@ -199,11 +199,16 @@ class _CurrentDeliveryPageState extends State<CurrentDeliveryPage> {
         systemOverlayStyle:
             SystemUiOverlayStyle(statusBarBrightness: Brightness.dark),
         actions: [
+          orderStatus == "Accepted" ||
+          orderStatus == "Reached Pickup Location" ||
           orderStatus == "Payment Done" ||
                   orderStatus == "Out for Delivery" ||
                   orderStatus == "Pick Up Done"
               ? InkWell(
                   onTap: () {
+                    if(orderID == '-1'){
+                      orderID = bookingID;
+                    }
                     _showPopup(context, orderID, orderStatus,deviceToken);
                   },
                   child: Padding(
@@ -285,23 +290,7 @@ class _CurrentDeliveryPageState extends State<CurrentDeliveryPage> {
                                           color: AppColors.backColor,
                                         ),
                                       ),
-                                      InkWell(
-                                        onTap: () {
-                                          glb.addItems = true;
-                                          glb.showPayOption = false;
-                                          glb.booking_id = bookingID;
-                                          glb.branch_id = branchID;
-                                          Navigator.pushNamed(
-                                              context, MyBagRoute);
-                                        },
-                                        child: Text(
-                                          'Add Item',
-                                          style: nunitoStyle.copyWith(
-                                              fontSize: 15.0,
-                                              fontWeight: FontWeight.w600,
-                                              color: AppColors.blueColor),
-                                        ),
-                                      )
+                                      
                                     ],
                                   ),
                                 )
@@ -315,13 +304,7 @@ class _CurrentDeliveryPageState extends State<CurrentDeliveryPage> {
   }
 
   void _showPopup(BuildContext context, String orderID, String orderStatus,String deviceToken) {
-    var updateToStatus = "";
-    if (orderStatus == "Accepted") {
-      updateToStatus = "Pick Up Done";
-    } else if (orderStatus == "Out for Delivery") {
-      updateToStatus = "Completed";
-    }
-    String selectedValue = updateToStatus;
+    
     showModalBottomSheet(
       context: context,
       builder: (BuildContext context) {

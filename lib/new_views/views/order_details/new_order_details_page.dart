@@ -19,15 +19,15 @@ import 'package:widget_circular_animator/widget_circular_animator.dart';
 import 'package:http/http.dart' as http;
 import 'package:vff_group/global/vffglb.dart' as glb;
 
-class OrderDetailsPage extends StatefulWidget {
-  const OrderDetailsPage({super.key});
+class NewOrderDetailsPage extends StatefulWidget {
+  const NewOrderDetailsPage({super.key});
 
   @override
-  State<OrderDetailsPage> createState() => _OrderDetailsPageState();
+  State<NewOrderDetailsPage> createState() => _NewOrderDetailsPageState();
 }
 
-class _OrderDetailsPageState extends State<OrderDetailsPage> {
-  bool showLoading = true,
+class _NewOrderDetailsPageState extends State<NewOrderDetailsPage> {
+   bool showLoading = true,
       isItemAdded = true,
       showItemsLoading = true,
       itemsNotFound = true;
@@ -357,22 +357,7 @@ class _OrderDetailsPageState extends State<OrderDetailsPage> {
           elevation: 0,
           systemOverlayStyle:
               const SystemUiOverlayStyle(statusBarBrightness: Brightness.dark),
-          actions: [
-            orderStatus == "Accepted"
-                ? Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: InkWell(
-                        onTap: () {
-                          //Navigator.pushNamed(context, CheckOutRoute);
-                          Navigator.pushNamed(context, MyCartRoute);
-                        },
-                        child: const Icon(
-                          Icons.card_giftcard,
-                          color: Colors.blue,
-                        )),
-                  )
-                : Container()
-          ],
+        
         ),
         body: Padding(
           padding: const EdgeInsets.fromLTRB(20, 1.2 * kToolbarHeight, 20, 20),
@@ -625,22 +610,29 @@ class _OrderDetailsPageState extends State<OrderDetailsPage> {
                                                                           )
                                                                         : Row(
                                                                             children: [
-                                                                              Text(
-                                                                                orderItemModel[index].subCategoryName.toCapitalized(),
+                                                                              Column(
+                                                                                crossAxisAlignment: CrossAxisAlignment.start,
+                                                                                children: [
+                                                                                  Text(
+                                                                                    orderItemModel[index].subCategoryName.toCapitalized(),
+                                                                                    style: nunitoStyle.copyWith(
+                                                                                      fontSize: 14.0,
+                                                                                      fontWeight: FontWeight.normal,
+                                                                                      color: AppColors.backColor,
+                                                                                    ),
+                                                                                  ),
+                                                                                  Text(
+                                                                                '[${orderItemModel[index].sectionType.toCapitalized()}]',
                                                                                 style: nunitoStyle.copyWith(
                                                                                   fontSize: 14.0,
                                                                                   fontWeight: FontWeight.normal,
                                                                                   color: AppColors.backColor,
                                                                                 ),
+                                                                                textAlign: TextAlign.left,
                                                                               ),
-                                                                              Text(
-                                                                                ' - ${orderItemModel[index].sectionType.toCapitalized()}',
-                                                                                style: nunitoStyle.copyWith(
-                                                                                  fontSize: 14.0,
-                                                                                  fontWeight: FontWeight.normal,
-                                                                                  color: AppColors.backColor,
-                                                                                ),
+                                                                                ],
                                                                               ),
+                                                                              
                                                                             ],
                                                                           ),
                                                                     SizedBox(
@@ -752,31 +744,7 @@ class _TotalClothesCount extends StatelessWidget {
               color: AppColors.backColor,
             ),
           ),
-          showItemsLoading
-              ? const LinearProgressIndicator()
-              : isItemAdded &&
-                      glb.hideControls == false &&
-                      orderStatus == "Accepted"
-                  ? InkWell(
-                      onTap: () {
-                        glb.addItems = true;
-                        Navigator.pushNamed(context, MyBagRoute);
-                      },
-                      child: Text(
-                        'Add Item',
-                        style: nunitoStyle.copyWith(
-                            fontSize: 15.0,
-                            fontWeight: FontWeight.w600,
-                            color: AppColors.blueColor),
-                      ),
-                    )
-                  : Text(
-                      '$totalQuantity items',
-                      style: nunitoStyle.copyWith(
-                          fontSize: 14.0,
-                          fontWeight: FontWeight.w600,
-                          color: AppColors.blueColor),
-                    )
+          
         ],
       ),
     );

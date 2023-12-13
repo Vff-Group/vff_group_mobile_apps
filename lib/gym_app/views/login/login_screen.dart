@@ -30,150 +30,152 @@ class _LoginScreenGymState extends State<LoginScreenGym> {
     return Scaffold(
       backgroundColor: AppColors.whiteColor,
       body: SafeArea(
-        child: Container(
-          padding: const EdgeInsets.symmetric(vertical: 15, horizontal: 25),
-          child: Column(
-            children: [
-              SizedBox(
-                width: media.width,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    SizedBox(
-                      height: media.width * 0.03,
-                    ),
-                    const Text(
-                      "Hey there,",
-                      textAlign: TextAlign.center,
-                      style: TextStyle(
-                        color: AppColors.blackColor,
-                        fontSize: 16,
-                        fontWeight: FontWeight.w400,
+        child: SingleChildScrollView(
+          child: Padding(
+            padding: const EdgeInsets.only(right: 15, left: 15),
+            child: Column(
+              children: [
+                SizedBox(
+                  width: media.width,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      SizedBox(
+                        height: media.width * 0.03,
                       ),
-                    ),
-                    SizedBox(height: media.width * 0.01),
-                    const Text(
-                      "Welcome Back",
-                      textAlign: TextAlign.center,
-                      style: TextStyle(
-                        color: AppColors.blackColor,
-                        fontSize: 20,
-                        fontFamily: "Poppins",
-                        fontWeight: FontWeight.w700,
+                      const Text(
+                        "Hey there,",
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          color: AppColors.blackColor,
+                          fontSize: 16,
+                          fontWeight: FontWeight.w400,
+                        ),
                       ),
-                    ),
-                    Image.asset(
-                      'assets/images/detail_top.png',
-                      height: media.width * 0.5,
-                    ),
-                  ],
+                      SizedBox(height: media.width * 0.01),
+                      const Text(
+                        "Welcome Back",
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          color: AppColors.blackColor,
+                          fontSize: 20,
+                          fontFamily: "Poppins",
+                          fontWeight: FontWeight.w700,
+                        ),
+                      ),
+                      Image.asset(
+                        'assets/images/detail_top.png',
+                        height: media.width * 0.5,
+                      ),
+                    ],
+                  ),
                 ),
-              ),
-              SizedBox(height: media.width * 0.05),
-
-              RoundTextField(
-                  textEditingController: emailController,
-                  hintText: "Email",
-                  icon: "assets/icons/message_icon.png",
-                  textInputType: TextInputType.emailAddress),
-              SizedBox(height: media.width * 0.05),
-              RoundTextField(
-                textEditingController: passwordController,
-                hintText: "Password",
-                icon: "assets/icons/lock_icon.png",
-                textInputType: TextInputType.text,
-                isObscureText: passwordToggle,
-                rightIcon: TextButton(
-                    onPressed: () {
-                      setState(() {
-                        if (passwordToggle) {
-                          passwordToggle = false;
-                        } else {
-                          passwordToggle = true;
-                        }
-                      });
-                    },
-                    child: Container(
-                        alignment: Alignment.center,
-                        width: 20,
-                        height: 20,
-                        child: passwordToggle
-                            ? Image.asset(
-                                "assets/icons/hide_pwd_icon.png",
-                                width: 20,
-                                height: 20,
-                                fit: BoxFit.contain,
-                                color: AppColors.grayColor,
-                              )
-                            : Icon(
-                                Icons.remove_red_eye,
-                                color: AppColors.grayColor,
-                                size: 20,
-                              ))),
-              ),
-              SizedBox(height: media.width * 0.3),
-              // const Text("Forgot your password?",
-              //     style: TextStyle(
-              //       color: AppColors.grayColor,
-              //       fontSize: 10,
-              //     )),
-              // SizedBox(height: media.width*0.01),
-              Spacer(),
-             showLoading ? CircularProgressIndicator(color: AppColors.primaryColor1,)
-              :RoundGradientButton(
-                title: "Login",
-                onPressed: () {
-                  var email = emailController.text.trim();
-                  var password = passwordController.text.trim();
-                  if (email.isEmpty) {
-                    glb.showSnackBar(
-                        context, 'Alert', 'Please Provide Your Email ID');
-                    return;
-                  }
-                  if (email.contains('@') == false) {
-                    glb.showSnackBar(
-                        context, 'Alert', 'Please Provide a Valid Email ID');
-                    return;
-                  }
-                  if (password.isEmpty) {
-                    glb.showSnackBar(
-                        context, 'Alert', 'Please Provide Your Password');
-                    return;
-                  }
-                  loginAsync(email,password);
-                  //Navigator.pushNamed(context, CompleteProfileScreenRoute);
-                },
-              ),
-              SizedBox(height: media.width * 0.01),
-
-              const SizedBox(
-                height: 20,
-              ),
-              // TextButton(
-              //     onPressed: () {
-              //       Navigator.pushNamed(context, SignupScreenRoute);
-              //     },
-              //     child: RichText(
-              //       textAlign: TextAlign.center,
-              //       text: TextSpan(
-              //           style: TextStyle(
-              //               color: AppColors.blackColor,
-              //               fontSize: 14,
-              //               fontWeight: FontWeight.w400),
-              //           children: [
-              //             const TextSpan(
-              //               text: "Don’t have an account yet? ",
-              //             ),
-              //             TextSpan(
-              //                 text: "Register",
-              //                 style: TextStyle(
-              //                     color: AppColors.secondaryColor1,
-              //                     fontSize: 14,
-              //                     fontWeight: FontWeight.w500)),
-              //           ]),
-              //     )),
-            
-            ],
+                SizedBox(height: media.width * 0.05),
+        
+                RoundTextField(
+                    textEditingController: emailController,
+                    hintText: "Email",
+                    icon: "assets/icons/message_icon.png",
+                    textInputType: TextInputType.emailAddress),
+                SizedBox(height: media.width * 0.05),
+                RoundTextField(
+                  textEditingController: passwordController,
+                  hintText: "Password",
+                  icon: "assets/icons/lock_icon.png",
+                  textInputType: TextInputType.text,
+                  isObscureText: passwordToggle,
+                  rightIcon: TextButton(
+                      onPressed: () {
+                        setState(() {
+                          if (passwordToggle) {
+                            passwordToggle = false;
+                          } else {
+                            passwordToggle = true;
+                          }
+                        });
+                      },
+                      child: Container(
+                          alignment: Alignment.center,
+                          width: 20,
+                          height: 20,
+                          child: passwordToggle
+                              ? Image.asset(
+                                  "assets/icons/hide_pwd_icon.png",
+                                  width: 20,
+                                  height: 20,
+                                  fit: BoxFit.contain,
+                                  color: AppColors.grayColor,
+                                )
+                              : Icon(
+                                  Icons.remove_red_eye,
+                                  color: AppColors.grayColor,
+                                  size: 20,
+                                ))),
+                ),
+                SizedBox(height: media.width * 0.3),
+                // const Text("Forgot your password?",
+                //     style: TextStyle(
+                //       color: AppColors.grayColor,
+                //       fontSize: 10,
+                //     )),
+                // SizedBox(height: media.width*0.01),
+                
+               showLoading ? CircularProgressIndicator(color: AppColors.primaryColor1,)
+                :RoundGradientButton(
+                  title: "Login",
+                  onPressed: () {
+                    var email = emailController.text.trim();
+                    var password = passwordController.text.trim();
+                    if (email.isEmpty) {
+                      glb.showSnackBar(
+                          context, 'Alert', 'Please Provide Your Email ID');
+                      return;
+                    }
+                    if (email.contains('@') == false) {
+                      glb.showSnackBar(
+                          context, 'Alert', 'Please Provide a Valid Email ID');
+                      return;
+                    }
+                    if (password.isEmpty) {
+                      glb.showSnackBar(
+                          context, 'Alert', 'Please Provide Your Password');
+                      return;
+                    }
+                    loginAsync(email,password);
+                    //Navigator.pushNamed(context, CompleteProfileScreenRoute);
+                  },
+                ),
+                SizedBox(height: media.width * 0.01),
+        
+                const SizedBox(
+                  height: 20,
+                ),
+                // TextButton(
+                //     onPressed: () {
+                //       Navigator.pushNamed(context, SignupScreenRoute);
+                //     },
+                //     child: RichText(
+                //       textAlign: TextAlign.center,
+                //       text: TextSpan(
+                //           style: TextStyle(
+                //               color: AppColors.blackColor,
+                //               fontSize: 14,
+                //               fontWeight: FontWeight.w400),
+                //           children: [
+                //             const TextSpan(
+                //               text: "Don’t have an account yet? ",
+                //             ),
+                //             TextSpan(
+                //                 text: "Register",
+                //                 style: TextStyle(
+                //                     color: AppColors.secondaryColor1,
+                //                     fontSize: 14,
+                //                     fontWeight: FontWeight.w500)),
+                //           ]),
+                //     )),
+              
+              ],
+            ),
           ),
         ),
       ),

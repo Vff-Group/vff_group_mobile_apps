@@ -149,6 +149,75 @@ class _UpdateOrderStatusPopupState extends State<UpdateOrderStatusPopup> {
     }
   }
 
+  Future updateBookingStatus() async {
+    //norder_id
+    setState(() {
+      showLoading = true;
+    });
+    final prefs = await SharedPreferences.getInstance();
+    var delivery_boy_id = prefs.getString('delivery_boy_id');
+    if (true) {
+      try {
+        var url = glb.endPoint;
+        final Map dictMap = {};
+        dictMap['booking_status'] = updateToStatus;
+        dictMap['booking_id'] = widget.orderID;
+        dictMap['delivery_boy_id'] = delivery_boy_id;
+        if (updateToStatus == 'Reached Store') {
+          dictMap['pickup_completed'] = '1';
+          print('updateToStatus:::' + updateToStatus);
+        } else if (updateToStatus == 'Completed') {
+          dictMap['delivery_completed'] = '1';
+        }
+        dictMap['pktType'] = "34";
+        dictMap['token'] = "vff";
+        dictMap['uid'] = "-1";
+        final response = await http.post(Uri.parse(url),
+            headers: <String, String>{
+              "Accept": "application/json",
+              'Content-Type': 'application/json; charset=UTF-8',
+            },
+            body: jsonEncode(dictMap));
+
+        if (response.statusCode == 200) {
+          var res = response.body;
+          if (res.contains("ErrorCode#2")) {
+            //  glb.showSnackBar(context, 'Error', 'No New Orders Found');
+            setState(() {
+              showLoading = false;
+            });
+            return;
+          } else if (res.contains("ErrorCode#8")) {
+            glb.showSnackBar(context, 'Error', 'Something Went Wrong');
+            setState(() {
+              showLoading = false;
+            });
+            return;
+          } else {
+            //Order Updated Successfully
+            setState(() {
+              showLoading = false;
+            });
+            glb.showSnackBar(context, 'Success', 'Order Updated Successfully');
+            Navigator.pop(context);
+            Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (context) => BottomBarDeliveryBoy(pageDIndex: 0)));
+          }
+        }
+      } catch (e) {
+        if (kDebugMode) {
+          print(e);
+        }
+        glb.handleErrors(e, context);
+        setState(() {
+          showLoading = false;
+        });
+      }
+    }
+  }
+
   TextEditingController otpController = TextEditingController();
   void verifyOTP() {
     // Check if the entered OTP matches the generated OTP
@@ -184,7 +253,11 @@ class _UpdateOrderStatusPopupState extends State<UpdateOrderStatusPopup> {
     super.initState();
     print('widget.orderStatus::${widget.orderStatus}');
     setState(() {
-      if (widget.orderStatus == "Payment Done") {
+      if (widget.orderStatus == "Accepted") {
+        updateToStatus = "Reached Pickup Location";
+      } else if (widget.orderStatus == "Reached Pickup Location") {
+        updateToStatus = "Pick Up Done";
+      } else if (widget.orderStatus == "Payment Done") {
         updateToStatus = "Pick Up Done";
       } else if (widget.orderStatus == "Pick Up Done") {
         updateToStatus = "Reached Store";
@@ -454,7 +527,7 @@ class _UpdateOrderStatusPopupState extends State<UpdateOrderStatusPopup> {
                 ),
                 updateToStatus == "Completed" && hideUpdateBtn == true
                     ? Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
+                        mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           showOTPinput
                               ? Container(
@@ -541,8 +614,8 @@ class _UpdateOrderStatusPopupState extends State<UpdateOrderStatusPopup> {
                 showLoading
                     ? Center(child: CircularProgressIndicator())
                     : hideUpdateBtn
-                        ? SizedBox():
-                        SlideFromBottomAnimation(
+                        ? SizedBox()
+                        : SlideFromBottomAnimation(
                             delay: 0.5,
                             child: Padding(
                               padding: const EdgeInsets.all(20.0),
@@ -555,7 +628,19 @@ class _UpdateOrderStatusPopupState extends State<UpdateOrderStatusPopup> {
                                       print(
                                           "updateToStatus::$widget.updateToStatus");
                                       print("orderID::$widget.orderID");
-                                      updateOrderStatus();
+                                      if (widget.orderStatus == "Accepted" ||
+                                          widget.orderStatus ==
+                                              "Reached Pickup Location" ||
+                                          widget.orderStatus ==
+                                              "Reached Store" ||
+                                          widget.orderStatus ==
+                                              "Pick Up Done") {
+                                        updateBookingStatus();
+                                      } else {
+                                        updateOrderStatus();
+                                      }
+
+                                      //updateOrderStatus();
                                     },
                                     child: Ink(
                                       decoration: BoxDecoration(
@@ -578,7 +663,6 @@ class _UpdateOrderStatusPopupState extends State<UpdateOrderStatusPopup> {
                               ),
                             ),
                           ),
-                        
                 SizedBox(
                   height: width * 4,
                 ),
