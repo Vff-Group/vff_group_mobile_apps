@@ -6,11 +6,14 @@ import 'package:line_icons/line_icons.dart';
 import 'package:vff_group/gym_app/views/diet_plans/diet_plans.dart';
 import 'package:vff_group/gym_app/views/gym_fees_plans/gym_fees_plans.dart';
 import 'package:vff_group/gym_app/views/setttings/settings.dart';
+import 'package:vff_group/pages/main_pages/home.dart';
 import 'package:vff_group/routings/route_names.dart';
 import 'package:vff_group/united_armor_app/common/app_styles.dart';
 import 'package:vff_group/united_armor_app/common/size_config.dart';
 import 'package:vff_group/global/vffglb.dart' as glb;
 import 'package:vff_group/united_armor_app/views/home/home.dart';
+import 'package:vff_group/united_armor_app/views/home/home_latest.dart';
+
 import 'package:vff_group/united_armor_app/views/home/my_cart_page.dart';
 import 'package:vff_group/united_armor_app/views/home/my_wishlist_page.dart';
 import 'package:vff_group/united_armor_app/views/settings/settings_page.dart';
@@ -25,7 +28,7 @@ class ClothingDashboard extends StatefulWidget {
 class _ClothingDashboardState extends State<ClothingDashboard> {
   int _currentIndex = 0;
   List pages = [
-    const HomeScreen(),
+    const HOmeLatestPage(),
     const MyClothingCartPage(),
     const MyClothingWishListPage(),
     const ClothingSettingsPage()

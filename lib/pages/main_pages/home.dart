@@ -1237,7 +1237,7 @@ class _HomePageState extends State<HomePage> {
                                         MaterialPageRoute(
                                             builder: (context) =>
                                                 const BottomBarScreen(
-                                                    pageIndex: 2)));
+                                                    pageIndex: 1)));
                                     //widget.changeTabBar();
                                     // Provider.of<TabProvider>(context, listen: false).changeTab(1);
                                     //Navigator.pushNamed(context, OrderTabRoute);
@@ -1457,6 +1457,7 @@ class _HomePageState extends State<HomePage> {
             animatedIconData: AnimatedIcons.list_view //To principal button
             ),
       ),
+    
     );
   }
 

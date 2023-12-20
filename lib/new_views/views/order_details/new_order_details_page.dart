@@ -419,7 +419,7 @@ class _NewOrderDetailsPageState extends State<NewOrderDetailsPage> {
                                         child: Column(
                                           children: [
                                             Text(
-                                              'NO LAUNDRY ITEMS FOUND\n Please Add Items',
+                                              'NO LAUNDRY ITEMS FOUND\n',
                                               style: ralewayStyle.copyWith(
                                                   color: AppColors.backColor,
                                                   fontSize: 12.0,
@@ -428,7 +428,9 @@ class _NewOrderDetailsPageState extends State<NewOrderDetailsPage> {
                                             ),
                                             cancelReason == "NA" &&
                                                     glb.hideControls == false &&
-                                                    glb.showPayOption == true
+                                                    glb.showPayOption == true &&
+                                                    orderStatus !=
+                                                        "Payment Done"
                                                 ? Padding(
                                                     padding:
                                                         const EdgeInsets.only(

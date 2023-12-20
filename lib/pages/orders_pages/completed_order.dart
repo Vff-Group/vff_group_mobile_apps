@@ -230,7 +230,7 @@ print("response.statusCode::${response.statusCode}");
                           child: InkWell(
                             onTap: () {
                               glb.orderid = ongoingModel[index].orderID;
-                              glb.hideControls = true;
+                              glb.hideControls = false;
                               glb.showDeliveryBoy = true;
 
                               Navigator.pushNamed(context, OrderDetailsRoute);

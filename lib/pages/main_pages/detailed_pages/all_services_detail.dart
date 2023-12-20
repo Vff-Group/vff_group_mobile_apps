@@ -62,9 +62,9 @@ class _AllServicesPageState extends State<AllServicesPage> {
         } else {
           try {
             Map<String, dynamic> catMap = json.decode(response.body);
-            // if (kDebugMode) {
-            //   print("categoryMap:$catMap");
-            // }
+            if (kDebugMode) {
+              print("serviceMap:$catMap");
+            }
             var catid = catMap['catid'];
             var catname = catMap['catname'];
             var catimg = catMap['catimg'];
