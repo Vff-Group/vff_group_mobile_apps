@@ -191,6 +191,7 @@ class _AllProductsPageState extends State<AllProductsPage> {
             );
           },
         ),
+      
       ],
     );
   

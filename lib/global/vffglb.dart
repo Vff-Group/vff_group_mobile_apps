@@ -14,6 +14,7 @@ import 'package:location/location.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:vff_group/gym_app/utils/app_colors.dart';
+import 'package:vff_group/utils/app_styles.dart';
 
 String endPoint = "http://62.72.57.222:8085/"; //8085,3000
 bool debugStatus = false;
@@ -48,16 +49,27 @@ String cartQuantity = "",
     clat = "",
     clng = "",
     imagePath = "";
+  
+String currentSubCatID = "", currentCategoryID = "", currentMainCatId = "", currentMainCategoryName = "",currentCategorySelectedName = "",currentSubCategoryName = "",currentSelectedType="";
+
+// void showSnackBar(BuildContext context, String alertTxt, String text) {
+//   Get.snackbar(alertTxt, text,
+//       snackPosition: SnackPosition.TOP,
+//       colorText: Colors.black,
+//       backgroundGradient: alertTxt == "Error"
+//           ? RadialGradient(colors: [Colors.redAccent, Colors.red])
+//           : RadialGradient(
+//               colors: [AppColors.primaryColor1, AppColors.primaryColor2]),
+//       icon: Image.asset('assets/logo/logo.png'));
+// }
 
 void showSnackBar(BuildContext context, String alertTxt, String text) {
-  Get.snackbar(alertTxt, text,
-      snackPosition: SnackPosition.TOP,
-      colorText: Colors.black,
-      backgroundGradient: alertTxt == "Error"
-          ? RadialGradient(colors: [Colors.redAccent, Colors.red])
-          : RadialGradient(
-              colors: [AppColors.primaryColor1, AppColors.primaryColor2]),
-      icon: Image.asset('assets/logo/logo.png'));
+  ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+      content: Text(
+    text,
+    style: ralewayStyle.copyWith(fontSize: 14.0, fontWeight: FontWeight.bold),
+    textAlign: TextAlign.center,
+  )));
 }
 
 String makeCommaSepatedList(subCategoryNameList) {

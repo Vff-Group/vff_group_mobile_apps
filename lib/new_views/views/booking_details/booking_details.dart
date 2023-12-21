@@ -202,7 +202,7 @@ dictMap['key'] = 2;
           
         ),
         body: Padding(
-          padding: const EdgeInsets.fromLTRB(20, 1.2 * kToolbarHeight, 20, 20),
+          padding: const EdgeInsets.fromLTRB(20, 1.4 * kToolbarHeight, 20, 20),
           child: RefreshIndicator(
             onRefresh: _handleRefresh,
             child: CustomScrollView(

@@ -83,7 +83,7 @@ class _PaymentSuccessPageState extends State<PaymentSuccessPage> {
                     children: [
                       RoundDarkButton(
                           title: "Continue Shopping", onPressed: () {
-                            Navigator.pushReplacementNamed(context, ClothingDashboardRoute);
+                            //Navigator.pushReplacementNamed(context, ClothingDashboardRoute);
                           })
                     ],
                   ),

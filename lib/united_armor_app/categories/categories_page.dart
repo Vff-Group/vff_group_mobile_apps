@@ -1,31 +1,35 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
-import 'package:vff_group/united_armor_app/categories/categories_page.dart';
-import 'package:vff_group/united_armor_app/common/app_styles.dart';
+import 'package:vff_group/routings/route_names.dart';
 import 'package:vff_group/united_armor_app/views/sub_categories/sub_categories_page.dart';
 import 'package:vff_group/utils/app_colors.dart';
 import 'package:vff_group/utils/app_styles.dart';
 import 'package:vff_group/global/vffglb.dart' as glb;
 import 'package:http/http.dart' as http;
 
-class MainCategoryPage extends StatefulWidget {
-  const MainCategoryPage({super.key});
-
+class CategoriesPage extends StatefulWidget {
+  const CategoriesPage(
+      {super.key, required this.main_cat_id, required this.main_cat_name});
+  final String main_cat_id;
+  final String main_cat_name;
   @override
-  State<MainCategoryPage> createState() => _MainCategoryPageState();
+  State<CategoriesPage> createState() => _CategoriesPageState();
 }
 
-class _MainCategoryPageState extends State<MainCategoryPage> {
-  List mainCategories = [];
-  List mainCategoriesID = [];
+class _CategoriesPageState extends State<CategoriesPage> {
+  List categories = [];
+  List categoriesID = [];
+
+  bool showCategoryLoading = false;
 
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
-    loadAllMainCategoriesAsync();
+    loadAllCategoriesAsync();
   }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -39,10 +43,16 @@ class _MainCategoryPageState extends State<MainCategoryPage> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              Icon(
-                Icons.abc,
-                color: Colors.white,
-              ),
+              Padding(
+                  padding: const EdgeInsets.only(left: 2.0),
+                  child: IconButton(
+                    onPressed: () {
+                      Navigator.pop(context);
+                    },
+                    icon: Icon(
+                      Icons.arrow_back_ios_new,
+                    ),
+                  )),
               Padding(
                 padding: const EdgeInsets.only(left: 12.0),
                 child: IconButton(
@@ -64,13 +74,42 @@ class _MainCategoryPageState extends State<MainCategoryPage> {
           Divider(
             color: AppColors.greyColor,
           ),
+          InkWell(
+            onTap: () {
+              glb.currentSelectedType = widget.main_cat_name;
+              glb.currentMainCatId = widget.main_cat_id;
+              glb.currentCategoryID = "";
+              glb.currentSubCatID = "";
+              glb.currentSubCategoryName = "";
+              glb.currentCategorySelectedName = "";
+              Navigator.pop(context);
+              Navigator.pop(context);
+              Navigator.pushNamed(context, AllProductsRoute);
+            },
+            child: Ink(
+              color: AppColors.lightGreyColor,
+              child: Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    Text(
+                      'All ${widget.main_cat_name}',
+                      textAlign: TextAlign.center,
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
           SizedBox(
             height: 20,
           ),
           ListView.builder(
               physics: const BouncingScrollPhysics(),
               shrinkWrap: true,
-              itemCount: mainCategoriesID.length,
+              itemCount: categoriesID.length,
               itemBuilder: (context, index) {
                 return Padding(
                   padding: const EdgeInsets.only(left: 16.0, right: 8.0),
@@ -78,15 +117,18 @@ class _MainCategoryPageState extends State<MainCategoryPage> {
                     color: Colors.transparent,
                     child: InkWell(
                       onTap: () {
-                        glb.currentMainCatId = mainCategoriesID[index];
-                        glb.currentMainCategoryName = mainCategories[index];
+                        glb.currentSelectedType = categories[index];
+                        glb.currentMainCatId = widget.main_cat_id;
+                        glb.currentCategoryID = categoriesID[index];
+                        glb.currentSubCatID = "";
+                        glb.currentSubCategoryName = "";
+                        glb.currentCategorySelectedName = categories[index];
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                            builder: (context) => CategoriesPage(
-                              main_cat_id: mainCategoriesID[index],
-                              main_cat_name: mainCategories[index],
-                            ),
+                            builder: (context) => SubCategoryPage(
+                                cat_id: categoriesID[index],
+                                cat_name: categories[index]),
                           ),
                         );
                       },
@@ -101,7 +143,7 @@ class _MainCategoryPageState extends State<MainCategoryPage> {
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
                                 Text(
-                                  mainCategories[index],
+                                  categories[index],
                                   style: nunitoStyle.copyWith(
                                       fontWeight: FontWeight.bold),
                                 ),
@@ -121,16 +163,19 @@ class _MainCategoryPageState extends State<MainCategoryPage> {
     );
   }
 
-  bool showLoading = false;
-  Future loadAllMainCategoriesAsync() async {
+  Future loadAllCategoriesAsync() async {
     setState(() {
-      showLoading = true;
+      showCategoryLoading = true;
+      categories = [];
+      categoriesID = [];
     });
     try {
       var url = glb.endPointClothing;
-      url += "get_main_categories/"; // Route Name
-      final Map dictMap = {};
+      url += "get_categories/"; // Route Name
 
+      final Map dictMap = {
+        'main_cat_id': widget.main_cat_id,
+      };
       final response = await http.post(
         Uri.parse(url),
         headers: {
@@ -146,30 +191,30 @@ class _MainCategoryPageState extends State<MainCategoryPage> {
         if (res.contains("ErrorCode#2")) {
           glb.showSnackBar(context, 'Error', 'No Data Found');
           setState(() {
-            showLoading = false;
+            showCategoryLoading = false;
           });
           return;
         } else if (res.contains("ErrorCode#8")) {
           glb.showSnackBar(context, 'Error', 'Something Went Wrong');
           setState(() {
-            showLoading = false;
+            showCategoryLoading = false;
           });
           return;
         } else {
           try {
-            Map<String, dynamic> MainCategoryMap = json.decode(res);
-            // print("MainCategoryMap:$MainCategoryMap");
-            List<dynamic> queryResult = MainCategoryMap['query_result'];
+            Map<String, dynamic> CategoryMap = json.decode(res);
+            print("CategoryMap:$CategoryMap");
+            List<dynamic> queryResult = CategoryMap['query_result'];
             for (var feeDetail in queryResult) {
-              var main_title_name = feeDetail['main_title_name'].toString();
-              var main_cat_id = feeDetail['main_cat_id'].toString();
-              mainCategories.add(main_title_name);
-              mainCategoriesID.add(main_cat_id);
+              var catid = feeDetail['catid'].toString();
+              var cat_name = feeDetail['cat_name'].toString();
+              categories.add(cat_name);
+              categoriesID.add(catid);
             }
-
             setState(() {
-              showLoading = false;
+              showCategoryLoading = false;
             });
+
             return;
           } catch (e) {
             print(e);
@@ -180,17 +225,16 @@ class _MainCategoryPageState extends State<MainCategoryPage> {
         // Handle error response
         print('Error: ${response.statusCode}');
         setState(() {
-          showLoading = false;
+          showCategoryLoading = false;
         });
       }
     } catch (e) {
       print(e);
       glb.handleErrors(e, context);
       setState(() {
-        showLoading = false;
+        showCategoryLoading = false;
       });
       return;
     }
   }
-
 }

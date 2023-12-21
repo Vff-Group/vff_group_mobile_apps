@@ -410,6 +410,8 @@ class _AllGymPlansScreenState extends State<AllGymPlansScreen> {
     "assets/images/what_1.png",
     "assets/images/what_2.png",
     "assets/images/what_3.png",
+    "assets/images/welcome_promo.png",
+    
   ];
   Future getFeesPlansDetails() async {
     setState(() {

@@ -5,6 +5,7 @@ import 'package:vff_group/gym_app/utils/app_colors.dart';
 import 'package:vff_group/gym_app/views/setttings/widgets/setting_row.dart';
 import 'package:vff_group/gym_app/views/setttings/widgets/title_subtitle_cell.dart';
 import 'package:animated_toggle_switch/animated_toggle_switch.dart';
+import 'package:vff_group/routings/route_names.dart';
 import '../../common_widgets/round_button.dart';
 
 class SettingsGym extends StatefulWidget {
@@ -127,7 +128,9 @@ class _SettingsGymState extends State<SettingsGym> {
                     child: RoundButton(
                       title: "Edit",
                       type: RoundButtonType.primaryBG,
-                      onPressed: () {},
+                      onPressed: () {
+                        Navigator.pushNamed(context, CompleteProfileScreenRoute);
+                      },
                     ),
                   )
                 ],
@@ -166,45 +169,46 @@ class _SettingsGymState extends State<SettingsGym> {
               const SizedBox(
                 height: 25,
               ),
-              Container(
-                padding:
-                    const EdgeInsets.symmetric(vertical: 15, horizontal: 15),
-                decoration: BoxDecoration(
-                  color: AppColors.primaryColor2.withOpacity(0.3),
-                  borderRadius: BorderRadius.circular(15),
-                ),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Row(
-                      children: [
-                        Icon(
-                          Icons.verified,
-                          color: AppColors.primaryColor1,
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.only(left: 8.0),
-                          child: Text(
-                            "Current Diet Plan",
-                            style: TextStyle(
-                                color: AppColors.blackColor,
-                                fontSize: 14,
-                                fontWeight: FontWeight.w700),
-                          ),
-                        ),
-                      ],
-                    ),
-                    SizedBox(
-                      width: 100,
-                      height: 35,
-                      child: RoundButton(
-                        title: "View",
-                        onPressed: () {},
-                      ),
-                    )
-                  ],
-                ),
-              ),
+              // Container(
+              //   padding:
+              //       const EdgeInsets.symmetric(vertical: 15, horizontal: 15),
+              //   decoration: BoxDecoration(
+              //     color: AppColors.primaryColor2.withOpacity(0.3),
+              //     borderRadius: BorderRadius.circular(15),
+              //   ),
+              //   child: Row(
+              //     mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              //     children: [
+              //       Row(
+              //         children: [
+              //           Icon(
+              //             Icons.verified,
+              //             color: AppColors.primaryColor1,
+              //           ),
+              //           Padding(
+              //             padding: const EdgeInsets.only(left: 8.0),
+              //             child: Text(
+              //               "Current Diet Plan",
+              //               style: TextStyle(
+              //                   color: AppColors.blackColor,
+              //                   fontSize: 14,
+              //                   fontWeight: FontWeight.w700),
+              //             ),
+              //           ),
+              //         ],
+              //       ),
+              //       SizedBox(
+              //         width: 100,
+              //         height: 35,
+              //         child: RoundButton(
+              //           title: "View",
+              //           onPressed: () {},
+              //         ),
+              //       )
+              //     ],
+              //   ),
+              // ),
+              
               const SizedBox(
                 height: 25,
               ),

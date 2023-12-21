@@ -46,9 +46,12 @@ const String NotificationScreenRoute = "gym_notification";
 //United Armor Clothing
 const String ClothingLoginRoute = "clothing_login";
 const String ClothingRegisterRoute = "clothing_register";
-const String ClothingDashboardRoute = "clothing_dashboard";
+// const String ClothingDashboardRoute = "clothing_dashboard";
+const String ClothingMainHomeRoute = "clothing_main_home";
 const String ProductDetailsRoute = "product_details";
 const String CartItemsClothingRoute = "product_cart_items";
 const String ClothingDeliveryAddressRoute = "delivery_clothing_address";
 const String PaymentClothingRoute = "checkout_clothing_page";
 const String PaymentSuccessRoute = "payment_success_page";
+const String MenuRoute = "menu_route";
+const String AllProductsRoute = "all_products";

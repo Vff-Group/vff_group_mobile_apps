@@ -107,7 +107,7 @@ class _LoginClothingScreenState extends State<LoginClothingScreen> {
               RoundGradientButton(
                 title: "Login",
                 onPressed: () {
-                  Navigator.pushNamed(context, ClothingDashboardRoute);
+                  Navigator.pushNamed(context, ClothingMainHomeRoute);
                 },
               ),
               SizedBox(height: media.width * 0.01),
