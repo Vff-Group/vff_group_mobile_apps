@@ -5,6 +5,7 @@ import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:vff_group/gym_app/utils/app_colors.dart';
 import 'package:vff_group/routings/route_names.dart';
+import 'package:vff_group/routings/router.dart';
 import 'package:vff_group/united_armor_app/categories/categories_page.dart';
 import 'package:vff_group/united_armor_app/common/app_styles.dart';
 import 'package:vff_group/united_armor_app/common/common_app_car.dart';
@@ -12,6 +13,7 @@ import 'package:vff_group/united_armor_app/common/footer_widget.dart';
 import 'package:vff_group/united_armor_app/common/rounded_button.dart';
 import 'package:vff_group/united_armor_app/common/size_config.dart';
 import 'package:vff_group/united_armor_app/views/all_products/models/all_product_item.dart';
+import 'package:vff_group/united_armor_app/views/product_details/product_details.dart';
 import 'package:vff_group/united_armor_app/views/sub_categories/sub_categories_page.dart';
 import 'package:vff_group/utils/app_styles.dart';
 import 'package:vff_group/global/vffglb.dart' as glb;
@@ -26,31 +28,7 @@ class AllNewProductsPage extends StatefulWidget {
 
 class _AllNewProductsPageState extends State<AllNewProductsPage> {
 String pathName = "", categorySelected = "";
-  List images = [
-    "https://underarmour.scene7.com/is/image/Underarmour/V5-1388408-390_FC?rp=standard-0pad%7CgridTileDesktop&scl=1&fmt=jpg&qlt=30&resMode=sharp2&cache=on%2Con&bgc=F0F0F0&wid=512&hei=640&size=512%2C640",
-    "https://underarmour.scene7.com/is/image/Underarmour/V5-1373880-012_FC?rp=standard-0pad%7CgridTileDesktop&scl=1&fmt=jpg&qlt=30&resMode=sharp2&cache=on%2Con&bgc=F0F0F0&wid=512&hei=640&size=512%2C640",
-    "https://underarmour.scene7.com/is/image/Underarmour/V5-1373359-001_FC?rp=standard-0pad%7CgridTileDesktop&scl=1&fmt=jpg&qlt=30&resMode=sharp2&cache=on%2Con&bgc=F0F0F0&wid=512&hei=640&size=512%2C640",
-    "https://underarmour.scene7.com/is/image/Underarmour/V5-1373357-014_FC?rp=standard-0pad%7CgridTileDesktop&scl=1&fmt=jpg&qlt=30&resMode=sharp2&cache=on%2Con&bgc=F0F0F0&wid=512&hei=640&size=512%2C640",
-    "https://underarmour.scene7.com/is/image/Underarmour/V5-1366072-100_FC?rp=standard-0pad%7CgridTileDesktop&scl=1&fmt=jpg&qlt=30&resMode=sharp2&cache=on%2Con&bgc=F0F0F0&wid=512&hei=640&size=512%2C640"
-  ];
-
-  List item_names = [
-    "Men's UA Icon Charged Cotton® Short Sleeve",
-    "Men's UA Essential Fleece Hoodie",
-    "Men's Armour Fleece® Twist ¼ Zip",
-    "Men's Armour Fleece® Full-Zip Hoodie",
-    "Men's ColdGear® Compression Mock"
-  ];
-
-  List item_prices = [
-    "₹6,999",
-    "₹3,799",
-    "₹2,499",
-    "₹3,499",
-    "₹4,299",
-  ];
-
-  List item_rating = ["4", "5", "4.5", "4.3", "5"];
+  
 
   Map<String, bool> _filterOptions = {
     'Clothing': false,
@@ -95,9 +73,8 @@ String pathName = "", categorySelected = "";
   @override
   Widget build(BuildContext context) {
     SizeConfig().init(context);
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      home: Scaffold(
+    return Material(
+      child: Scaffold(
         key: _scaffoldKey,
         appBar: AppBar(
           backgroundColor: kDarkBrown,
@@ -436,7 +413,11 @@ String pathName = "", categorySelected = "";
                   fontWeight: FontWeight.bold,fontSize: 18.0,color: Colors.black
                 ),),
                 SizedBox(height: 5.0,),
-                    Text("(${productItems.length} items)"),
+                    InkWell(
+                        onTap: () {
+                          Navigator.pushNamed(context, ProductDetailedRoute);
+                        },
+                        child: Text("(${productItems.length} items)")),
                     SizedBox(
                       height: 5.0,
                     ),
@@ -459,122 +440,131 @@ String pathName = "", categorySelected = "";
                 horizontal: kPaddingHorizontal,
               ),
               itemBuilder: (context, index) {
-                return InkWell(
-                  onTap: () {
-                    // glb.imagePath = 'assets/images/${images[index]}';
-                    //Navigator.pushNamed(context, ProductDetailsRoute);
-                  },
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Stack(
-                        children: [
-                          Positioned(
-                            child: ClipRRect(
-                              borderRadius:
-                                  BorderRadius.circular(kBorderRadius),
-                              child: Image.network(
-                                    productItems[index].productImage,
-                              ),
-                            ),
-                          ),
-                          // Positioned(
-                          //   right: 12,
-                          //   top: 12,
-                          //   child: GestureDetector(
-                          //     onTap: () {},
-                          //         child: SvgPicture.asset(
-                          //           isFavorite
-                          //               ? 'assets/favorite_cloth_icon_selected.svg' // Path to selected icon
-                          //               : 'assets/favorite_cloth_icon_unselected.svg', // Path to unselected icon
-                          //         ),
-                          //   ),
-                          // )
-                        ],
-                      ),
-                      const SizedBox(
-                        height: 8,
-                      ),
-                      Text(
-                            productItems[index].productName,
-                        maxLines: 2,
-                        overflow: TextOverflow.ellipsis,
-                        style: kEncodeSansSemibold.copyWith(
-                              color: kDarkBrown,
-                          fontSize: SizeConfig.blockSizeHorizontal! * 3.5,
-                        ),
-                      ),
-                      // Text(
-                      //   'Dress modern',
-                      //   maxLines: 1,
-                      //   overflow: TextOverflow.ellipsis,
-                      //   style: kEncodeSansRagular.copyWith(
-                      //     color: kGrey,
-                      //     fontSize: SizeConfig.blockSizeHorizontal! * 2.5,
-                      //   ),
-                      // ),
-                      const SizedBox(
-                        height: 8,
-                      ),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                              Column(
+                    return Builder(builder: (context) {
+                      return InkWell(
+                        onTap: () {
+                          glb.productID = productItems[index].productID;
+                          print('productID::${glb.productID}');
+                          Navigator.pushNamed(context, ProductDetailedRoute);
+                        },
+                        child: Ink(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Stack(
                                 children: [
-                                  Text.rich(
-                                    TextSpan(
-                                      text:
-                                          '₹${productItems[index].productPrice}',
-                                      style: kEncodeSansSemibold.copyWith(
-                                        color: AppColors.grayColor,
-                                        fontSize:
-                                            SizeConfig.blockSizeHorizontal! *
-                                                3.0,
-                                        decoration: TextDecoration
-                                            .lineThrough, // Add strike-through decoration
-                                        decorationColor: Colors
-                                            .red, // Color for the strike-through line
-                                        decorationThickness:
-                                            5, // Adjust thickness of the strike-through line
+                                  Positioned(
+                                    child: ClipRRect(
+                                      borderRadius:
+                                          BorderRadius.circular(kBorderRadius),
+                                      child: Image.network(
+                                        productItems[index].productImage,
                                       ),
                                     ),
                                   ),
-
-                                  Text(
-                                    '₹${productItems[index].productOfferPrice}',
-                                    style: kEncodeSansSemibold.copyWith(
-                                      color: kDarkBrown,
-                                      fontSize:
-                                          SizeConfig.blockSizeHorizontal! * 3.0,
-                                    ),
-                                  ),
+                                  // Positioned(
+                                  //   right: 12,
+                                  //   top: 12,
+                                  //   child: GestureDetector(
+                                  //     onTap: () {},
+                                  //         child: SvgPicture.asset(
+                                  //           isFavorite
+                                  //               ? 'assets/favorite_cloth_icon_selected.svg' // Path to selected icon
+                                  //               : 'assets/favorite_cloth_icon_unselected.svg', // Path to unselected icon
+                                  //         ),
+                                  //   ),
+                                  // )
                                 ],
-                          ),
-                          Row(
-                            children: [
-                              const Icon(
-                                Icons.star,
-                                color: kYellow,
-                                size: 16,
                               ),
                               const SizedBox(
-                                width: 8,
+                                height: 8,
                               ),
                               Text(
-                                    productItems[index].productRating,
-                                style: kEncodeSansRagular.copyWith(
+                                productItems[index].productName,
+                                maxLines: 2,
+                                overflow: TextOverflow.ellipsis,
+                                style: kEncodeSansSemibold.copyWith(
                                   color: kDarkBrown,
                                   fontSize:
-                                      SizeConfig.blockSizeHorizontal! * 3,
+                                      SizeConfig.blockSizeHorizontal! * 3.5,
                                 ),
                               ),
+                              // Text(
+                              //   'Dress modern',
+                              //   maxLines: 1,
+                              //   overflow: TextOverflow.ellipsis,
+                              //   style: kEncodeSansRagular.copyWith(
+                              //     color: kGrey,
+                              //     fontSize: SizeConfig.blockSizeHorizontal! * 2.5,
+                              //   ),
+                              // ),
+                              const SizedBox(
+                                height: 8,
+                              ),
+                              Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                children: [
+                                  Column(
+                                    children: [
+                                      Text.rich(
+                                        TextSpan(
+                                          text:
+                                              '₹${productItems[index].productPrice}',
+                                          style: kEncodeSansSemibold.copyWith(
+                                            color: AppColors.grayColor,
+                                            fontSize: SizeConfig
+                                                    .blockSizeHorizontal! *
+                                                3.0,
+                                            decoration: TextDecoration
+                                                .lineThrough, // Add strike-through decoration
+                                            decorationColor: Colors
+                                                .red, // Color for the strike-through line
+                                            decorationThickness:
+                                                5, // Adjust thickness of the strike-through line
+                                          ),
+                                        ),
+                                      ),
+                                      Text(
+                                        '₹${productItems[index].productOfferPrice}',
+                                        style: kEncodeSansSemibold.copyWith(
+                                          color: kDarkBrown,
+                                          fontSize:
+                                              SizeConfig.blockSizeHorizontal! *
+                                                  3.0,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                  Row(
+                                    children: [
+                                      const Icon(
+                                        Icons.star,
+                                        color: kYellow,
+                                        size: 16,
+                                      ),
+                                      const SizedBox(
+                                        width: 8,
+                                      ),
+                                      Text(
+                                        productItems[index].productRating,
+                                        style: kEncodeSansRagular.copyWith(
+                                          color: kDarkBrown,
+                                          fontSize:
+                                              SizeConfig.blockSizeHorizontal! *
+                                                  3,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ],
+                              )
                             ],
                           ),
-                        ],
-                      )
-                    ],
-                  ),
+                        ),
+                      );
+                    }
                 );
               },
             ),

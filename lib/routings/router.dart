@@ -41,7 +41,7 @@ import 'package:vff_group/pages/set_delivery_location.dart';
 import 'package:vff_group/pages/splash_screen.dart';
 import 'package:vff_group/pages/verification_code_page.dart';
 import 'package:vff_group/routings/route_names.dart';
-import 'package:vff_group/united_armor_app/views/all_products/all_products.dart';
+
 import 'package:vff_group/united_armor_app/views/all_products/all_products_new.dart';
 import 'package:vff_group/united_armor_app/views/cart/cart_page.dart';
 import 'package:vff_group/united_armor_app/views/checkout/delivery_address_page.dart';
@@ -147,7 +147,7 @@ Route<dynamic> generateRoute(RouteSettings settings) {
     //   return _getPageRoute(const ClothingDashboard());    
     case ClothingMainHomeRoute:
       return _getPageRoute(const HOmeLatestPage());    
-    case ProductDetailsRoute:
+    case ProductDetailedRoute:
       return _getPageRoute(const ProductDetailsPage());    
     case CartItemsClothingRoute:
       return _getPageRoute(const CartItemsClothingPage());    

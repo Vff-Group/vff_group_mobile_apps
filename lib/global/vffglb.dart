@@ -51,7 +51,7 @@ String cartQuantity = "",
     clng = "",
     imagePath = "";
   
-String currentSubCatID = "", currentCategoryID = "", currentMainCatId = "", currentMainCategoryName = "",currentCategorySelectedName = "",currentSubCategoryName = "",currentSelectedType="";
+String currentSubCatID = "", currentCategoryID = "", currentMainCatId = "", currentMainCategoryName = "",currentCategorySelectedName = "",currentSubCategoryName = "",currentSelectedType="",productID="";
 
 // void showSnackBar(BuildContext context, String alertTxt, String text) {
 //   Get.snackbar(alertTxt, text,

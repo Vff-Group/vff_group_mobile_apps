@@ -11,7 +11,7 @@ import 'package:vff_group/routings/route_names.dart';
 import 'package:vff_group/united_armor_app/common/app_styles.dart';
 import 'package:vff_group/united_armor_app/common/size_config.dart';
 import 'package:vff_group/global/vffglb.dart' as glb;
-import 'package:vff_group/united_armor_app/views/home/home.dart';
+
 import 'package:vff_group/united_armor_app/views/home/home_latest.dart';
 
 import 'package:vff_group/united_armor_app/views/home/my_cart_page.dart';
