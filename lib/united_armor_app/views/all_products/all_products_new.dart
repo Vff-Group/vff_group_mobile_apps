@@ -478,18 +478,18 @@ String pathName = "", categorySelected = "";
                               ),
                             ),
                           ),
-                          Positioned(
-                            right: 12,
-                            top: 12,
-                            child: GestureDetector(
-                              onTap: () {},
-                                  child: SvgPicture.asset(
-                                    isFavorite
-                                        ? 'assets/favorite_cloth_icon_selected.svg' // Path to selected icon
-                                        : 'assets/favorite_cloth_icon_unselected.svg', // Path to unselected icon
-                                  ),
-                            ),
-                          )
+                          // Positioned(
+                          //   right: 12,
+                          //   top: 12,
+                          //   child: GestureDetector(
+                          //     onTap: () {},
+                          //         child: SvgPicture.asset(
+                          //           isFavorite
+                          //               ? 'assets/favorite_cloth_icon_selected.svg' // Path to selected icon
+                          //               : 'assets/favorite_cloth_icon_unselected.svg', // Path to unselected icon
+                          //         ),
+                          //   ),
+                          // )
                         ],
                       ),
                       const SizedBox(
