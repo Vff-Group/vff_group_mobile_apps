@@ -286,7 +286,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                     selectedSubCatID = sub_categoriesID[index];
                                     print(
                                         "selectedSubCatID::$selectedSubCatID");
-                                    loadProductDetailsAsync();
+                                    
                                   });
                                 },
                                 child: Container(
@@ -761,7 +761,7 @@ class _HomeScreenState extends State<HomeScreen> {
             setState(() {
               showSubCategoryLoading = false;
             });
-            loadProductDetailsAsync();
+            
             return;
           } catch (e) {
             print(e);
@@ -785,87 +785,5 @@ class _HomeScreenState extends State<HomeScreen> {
     }
   }
 
-  Future loadProductDetailsAsync() async {
-    setState(() {
-      showProductsLoading = true;
-      productItems = [];
-    });
-    try {
-      var url = glb.endPointClothing;
-      url += "load_all_product_details/"; // Route Name
-      if (selectedSubCatID.isEmpty) {
-        selectedSubCatID = sub_categoriesID[0];
-      }
-      final Map dictMap = {
-        'sub_cat_id': selectedSubCatID,
-      };
-
-      final response = await http.post(
-        Uri.parse(url),
-        headers: {
-          'Accept': 'application/json',
-          'Content-Type': 'application/json; charset=UTF-8',
-        },
-        body: jsonEncode(dictMap),
-      );
-
-      if (response.statusCode == 200) {
-        // Handle successful response here
-        var res = response.body;
-        if (res.contains("ErrorCode#2")) {
-          glb.showSnackBar(context, 'Error', 'No Data Found');
-          setState(() {
-            showProductsLoading = false;
-          });
-          return;
-        } else if (res.contains("ErrorCode#8")) {
-          glb.showSnackBar(context, 'Error', 'Something Went Wrong');
-          setState(() {
-            showProductsLoading = false;
-          });
-          return;
-        } else {
-          try {
-            Map<String, dynamic> Products_Map = json.decode(res);
-            print("Products_Map:$Products_Map");
-            List<dynamic> queryResult = Products_Map['query_result'];
-            for (var row in queryResult) {
-              var productid = row['productid'].toString();
-              var product_name = row['product_name'].toString();
-              var price = row['price'].toString();
-              var image = row['image'].toString();
-              var ratings = row['ratings'].toString();
-              productItems.add(AllProductItems(
-                  productID: productid,
-                  productImage: image,
-                  productName: product_name,
-                  productPrice: price,
-                  productRating: ratings));
-            }
-            setState(() {
-              showProductsLoading = false;
-            });
-            return;
-          } catch (e) {
-            print(e);
-            return "Failed";
-          }
-        }
-      } else {
-        // Handle error response
-        print('Error: ${response.statusCode}');
-        setState(() {
-          showProductsLoading = false;
-        });
-      }
-    } catch (e) {
-      print(e);
-      glb.handleErrors(e, context);
-      setState(() {
-        showProductsLoading = false;
-      });
-      return;
-    }
-  }
-
+  
 }

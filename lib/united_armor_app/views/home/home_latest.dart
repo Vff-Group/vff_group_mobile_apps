@@ -188,21 +188,21 @@ class _HOmeLatestPageState extends State<HOmeLatestPage> {
                 height: 15,
               ),
               Text(
-                'UA Phantom 3 SE Storm',
+                'UA Ghost 3 SE Tempest',
                 style: poppinsStyle.copyWith(fontSize: 14),
               ),
               const SizedBox(
                 height: 10,
               ),
               Text(
-                'FEEL FRESH. STAY HYDRATED',
+                'REVITALIZE. HYDRATE. ACTIVATE.',
                 style: poppinsStyle.copyWith(
                     fontWeight: FontWeight.bold, fontSize: 25),
               ),
               Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: Text(
-                  'The sink-in feel of UA HOVR cushioning for comfort and water-resistance for any weather.',
+                  "Fantastic! What’s the description you have in mind? I’d be happy to help tailor it to highlight the unique features of your active wear line under United Armor.",
                   style: poppinsStyle.copyWith(fontSize: 10),
                   textAlign: TextAlign.center,
                 ),
@@ -221,7 +221,7 @@ class _HOmeLatestPageState extends State<HOmeLatestPage> {
                     height: 10,
                   ),
                   Text(
-                    'Put our Newest Gears',
+                    'Unveil Our Freshest Attire',
                     style: poppinsStyle.copyWith(
                         fontWeight: FontWeight.bold, fontSize: 18),
                   ),
@@ -257,8 +257,8 @@ class _HOmeLatestPageState extends State<HOmeLatestPage> {
                             return InkWell(
                               onTap: () {
                                 // glb.imagePath = 'assets/images/${images[index]}';
-                          
-                                glb.currentSelectedType =
+                                glb.currentSelectedType = mainCategoriesName[index];
+                                glb.currentMainCategoryName =
                                     mainCategoriesName[index];
                                 glb.currentMainCatId = mainCategoriesID[index];
                                 glb.currentSubCatID = "";
