@@ -1,6 +1,8 @@
+import 'package:dots_indicator/dots_indicator.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:vff_group/united_armor_app/common/app_styles.dart';
+import 'package:vff_group/united_armor_app/common/size_config.dart';
 
 class ShimmerCardLayout extends StatelessWidget {
   const ShimmerCardLayout({
@@ -121,5 +123,49 @@ class ShimmerCardLayout2 extends StatelessWidget {
         },
       ),
     );
+  }
+}
+
+class ShimmerPaginationLayout extends StatelessWidget {
+  const ShimmerPaginationLayout({
+    Key? key,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+        height: SizeConfig.blockSizeVertical! * 50,
+        child: Stack(
+          children: [
+            Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Container(
+                    color: Colors.white,
+                    height: SizeConfig.blockSizeVertical! * 50,
+                    width: double.infinity,
+                  ),
+                ),
+            Align(
+              alignment: Alignment.bottomCenter,
+              child: Padding(
+                padding: const EdgeInsets.only(bottom: 16.0),
+                child: DotsIndicator(
+                  dotsCount: 3,
+                  position: 1,
+                  decorator: DotsDecorator(
+                    color: Colors.purple, // Inactive dot color
+                    activeColor: Colors.purple, // Active dot color
+                    size: const Size.square(8.0),
+                    activeSize: const Size(20.0, 8.0),
+                    spacing: const EdgeInsets.symmetric(horizontal: 4.0),
+                    activeShape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(5.0),
+                    ),
+                  ),
+                ),
+              ),
+            )
+          ],
+        ));
   }
 }

@@ -90,6 +90,7 @@ class _HomePageState extends State<HomePage> {
       noBookings = false,
       activeOrdersLoading = true,
       activeBookingsLoading = true;
+  bool hideControls = false;
   var deviceToken = "";
 
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
@@ -596,6 +597,9 @@ class _HomePageState extends State<HomePage> {
 
       setState(() {
         userName = split[0];
+        if (userName == "demo") {
+          hideControls = false; // to hide the floating button when demo user login's
+        }
       });
     }
 
@@ -711,7 +715,7 @@ class _HomePageState extends State<HomePage> {
       padding: const EdgeInsets.only(bottom: 8.0),
       child: FloatingActionButton(
         onPressed: () {
-          Navigator.pushNamed(context, ClothingLoginRoute);
+          goToClothingApp();
         },
         backgroundColor: Colors.green,
         heroTag: "btn3",
@@ -1445,7 +1449,9 @@ class _HomePageState extends State<HomePage> {
       //   child: Icon(Icons.delivery_dining), // Icon inside the FAB
       // ),
 
-      floatingActionButton: SlideFromLeftAnimation(
+      floatingActionButton: hideControls
+          ? null
+          : SlideFromLeftAnimation(
         delay: 1.2,
         child: AnimatedFloatingActionButton(
             //Fab list
@@ -1501,6 +1507,16 @@ class _HomePageState extends State<HomePage> {
       Navigator.pushReplacementNamed(context, DMainRoute);
     } else {
       Navigator.pushNamed(context, DeliveryLoginRoute);
+    }
+  }
+  Future goToClothingApp() async {
+    glb.prefs = await SharedPreferences.getInstance();
+
+    var cusrid = glb.prefs?.getString('clothing_customer_id');
+    if (cusrid != null && cusrid.isNotEmpty) {
+      Navigator.pushReplacementNamed(context, ClothingMainHomeRoute);
+    } else {
+      Navigator.pushNamed(context, ClothingLoginRoute);
     }
   }
 }

@@ -27,6 +27,7 @@ class RoundTextField extends StatelessWidget {
           color: AppColors.lightGrayColor,
           borderRadius: BorderRadius.circular(15)),
       child: TextField(
+        textInputAction: TextInputAction.done,
         controller: textEditingController,
         keyboardType: textInputType,
         obscureText: isObscureText,

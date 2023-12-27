@@ -22,7 +22,7 @@ bool debugStatus = false;
 // String endPointGym = "http://62.72.57.222:8000/gym_mobile_app/"; //8085,3000
 String endPointClothing = "http://62.72.57.222:8000/clothing_mobile_app/"; 
 // String endPointClothing = "https://www.vffgroup.in/clothing_mobile_app/"; 
-String endPointGym = "https://www.vffgroup.in/gym_mobile_app/"; //8085,3000
+String endPointGym = "https://www.vffgroup.in/gym_mobile_app/"; 
 
 var gymPageIndex=0;
 String account_created_date = "",

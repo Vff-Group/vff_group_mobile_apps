@@ -203,7 +203,7 @@ class _CategoriesPageState extends State<CategoriesPage> {
         } else {
           try {
             Map<String, dynamic> CategoryMap = json.decode(res);
-            print("CategoryMap:$CategoryMap");
+            // print("CategoryMap:$CategoryMap");
             List<dynamic> queryResult = CategoryMap['query_result'];
             for (var feeDetail in queryResult) {
               var catid = feeDetail['catid'].toString();

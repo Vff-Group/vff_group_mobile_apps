@@ -41,6 +41,8 @@ import 'package:vff_group/pages/set_delivery_location.dart';
 import 'package:vff_group/pages/splash_screen.dart';
 import 'package:vff_group/pages/verification_code_page.dart';
 import 'package:vff_group/routings/route_names.dart';
+import 'package:vff_group/united_armor_app/views/checkout/checkout_clothing_page.dart';
+import 'package:vff_group/united_armor_app/views/complete_profile/complete_profile.dart';
 
 import 'package:vff_group/united_armor_app/views/all_products/all_products_new.dart';
 import 'package:vff_group/united_armor_app/views/cart/cart_page.dart';
@@ -143,6 +145,8 @@ Route<dynamic> generateRoute(RouteSettings settings) {
       return _getPageRoute(const LoginClothingScreen());    
     case ClothingRegisterRoute:
       return _getPageRoute(const SignUpClothingScreen());    
+    case ClothingCompleteProfileRoute:
+      return _getPageRoute(const CompleteClothingProfilePage());    
     // case ClothingDashboardRoute:
     //   return _getPageRoute(const ClothingDashboard());    
     case ClothingMainHomeRoute:
@@ -161,6 +165,8 @@ Route<dynamic> generateRoute(RouteSettings settings) {
       return _getPageRoute(const MainCategoryPage());    
     case AllProductsRoute:
       return _getPageRoute(const AllNewProductsPage());    
+    case ClothingCheckoutPageRoute:
+      return _getPageRoute(const CheckOutClothingPage());    
 
     default:
       return _getPageRoute(const SplashScreen());

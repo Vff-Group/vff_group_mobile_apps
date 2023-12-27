@@ -5,8 +5,12 @@ import 'package:vff_group/gym_app/common_widgets/round_textfield.dart';
 import 'package:vff_group/gym_app/utils/app_colors.dart';
 import 'package:vff_group/routings/route_names.dart';
 import 'package:vff_group/united_armor_app/common/app_styles.dart';
+import 'package:vff_group/united_armor_app/common/footer_widget.dart';
+import 'package:vff_group/united_armor_app/common/google_textfield_phone.dart';
+import 'package:vff_group/united_armor_app/common/google_textformfield.dart';
 import 'package:vff_group/united_armor_app/common/rounded_button.dart';
 import 'package:vff_group/united_armor_app/common/size_config.dart';
+import 'package:vff_group/utils/app_colors.dart' as AppColor2;
 
 class ClothingDeliveryAddressPage extends StatefulWidget {
   const ClothingDeliveryAddressPage({super.key});
@@ -18,167 +22,292 @@ class ClothingDeliveryAddressPage extends StatefulWidget {
 
 class _ClothingDeliveryAddressPageState
     extends State<ClothingDeliveryAddressPage> {
+  
   @override
   Widget build(BuildContext context) {
     var media = MediaQuery.of(context).size;
-    return Container(
-      decoration: BoxDecoration(color: kDarkBrown),
-      child: NestedScrollView(
-        headerSliverBuilder: (context, innerBoxIsScrolled) {
-          return [
-            SliverAppBar(
-              backgroundColor: Colors.transparent,
-              centerTitle: true,
-              elevation: 0,
-              leading: InkWell(
-                onTap: () {
+    return Scaffold(
+      appBar: AppBar(
+          actions: [
+            IconButton(
+                onPressed: () {
                   Navigator.pop(context);
+                  Navigator.pushNamed(context, CartItemsClothingRoute);
                 },
-                child: Align(
-                  alignment: Alignment.topCenter,
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 12,
-                      vertical: 12,
+                icon: SvgPicture.asset('assets/cart_icon_unselected.svg')),
+          ],
+          
+          backgroundColor: kDarkBrown,
+          centerTitle: true,
+          title: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              IconButton(
+                  onPressed: () {
+                    // Navigator.pop(context);
+                    // Navigator.pushNamed(context, ClothingMainHomeRoute);
+                  },
+                  icon: Image.asset(
+                    "assets/logo/logo_united_armor.png",
+                    fit: BoxFit.fitHeight,
+                  )),
+            ],
+          )),
+      body: Scaffold(
+        backgroundColor: Colors.transparent,
+        body: Stack(
+          children: [
+            SingleChildScrollView(
+              child: Column(
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 15.0),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        SizedBox(
+                          height: media.width * 0.1,
+                        ),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text(
+                              'Shipping',
+                              style: kEncodeSansBold.copyWith(fontSize: 14.0),
+                            ),
+                            Text(
+                              '1/2',
+                              style: kEncodeSansBold.copyWith(fontSize: 14.0),
+                            )
+                          ],
+                        ),
+                        SizedBox(
+                          height: 10,
+                        ),
+                        Divider(
+                          color: kGrey,
+                        ),
+                        Text(
+                          'Shipping Address',
+                          style: kEncodeSansBold.copyWith(fontSize: 14.0),
+                        ),
+                        SizedBox(
+                          height: media.width * 0.08,
+                        ),
+                        GoogleTextFormField(
+                            textEditingController: fullNameController,
+                            hintText: '',
+                            textInputType: TextInputType.text,
+                            labelText: "Full Name *"),
+                        SizedBox(
+                          height: media.width * 0.05,
+                        ),
+                        GoogleTextFormFieldPhone(
+                            textEditingController: mobileNoController,
+                            hintText: '',
+                            textInputType: TextInputType.phone,
+                            labelText: "Mobile Number *"),
+                        SizedBox(
+                          height: media.width * 0.08,
+                        ),
+                        GoogleTextFormField(
+                            textEditingController: pinCodeController,
+                            hintText: '',
+                            textInputType: TextInputType.text,
+                            labelText: "Pin Code *"),
+                        SizedBox(
+                          height: media.width * 0.08,
+                        ),
+                        GoogleTextFormField(
+                            textEditingController: addressOneController,
+                            hintText: '',
+                            textInputType: TextInputType.text,
+                            labelText: "Address One *"),
+                        SizedBox(
+                          height: media.width * 0.08,
+                        ),
+                        GoogleTextFormField(
+                            textEditingController: addressTwoController,
+                            hintText: '',
+                            textInputType: TextInputType.text,
+                            labelText: "Address Two "),
+                        SizedBox(
+                          height: media.width * 0.08,
+                        ),
+                        Container(
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(2),
+                            border: Border.all(
+                              width: 0.8, // Adjust the border width here
+                              color:
+                                  Colors.grey, // Set the desired border color
+                            ),
+                          ),
+                          child: DropdownButtonHideUnderline(
+                            child: DropdownButton<String>(
+                              isExpanded: true,
+                              icon: Icon(Icons.arrow_drop_down),
+                              iconSize: 24,
+                              elevation: 16,
+                              style: TextStyle(
+                                color: kDarkBrown, // Text color
+                                fontSize: 14,
+                              ),
+                              hint: Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: Text('Choose State'),
+                              ), // Placeholder text
+                              value: selectedState, // Currently selected state
+                              onChanged: (String? newValue) {
+                                setState(() {
+                                  selectedState =
+                                      newValue; // Update selected state on change
+                                });
+                              },
+                              items: [
+                                for (String state in indianStates)
+                                  DropdownMenuItem(
+                                    value: state,
+                                    child: Padding(
+                                      padding: const EdgeInsets.all(8.0),
+                                      child: Text(state),
+                                    ),
+                                  ),
+                              ],
+                            ),
+                          ),
+),
+                        SizedBox(
+                          height: media.width * 0.08,
+                        ),
+                        GoogleTextFormField(
+                            textEditingController: cityNameController,
+                            hintText: '',
+                            textInputType: TextInputType.text,
+                            labelText: "City / District / Town *"),
+                        SizedBox(
+                          height: media.width * 0.08,
+                        ),
+
+                      ],
                     ),
-                    child: Container(
-                      height: SizeConfig.blockSizeVertical! * 4,
-                      width: SizeConfig.blockSizeVertical! * 4,
-                      decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        color: kWhite,
-                        boxShadow: [
-                          BoxShadow(
-                            color: kBrown.withOpacity(0.11),
-                            spreadRadius: 0.0,
-                            blurRadius: 12,
-                            offset: const Offset(0, 5),
+                  ),
+                  Footer_Part(),
+                  SizedBox(
+                    height: media.width * 0.5,
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+        floatingActionButton: Container(
+          color: kWhite,
+          child: Wrap(
+            children: [
+              SizedBox(
+                height: media.width * 0.05,
+              ),
+              Divider(
+                color: kGrey,
+              ),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 15.0),
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      'Total:',
+                      style: kEncodeSansBold.copyWith(fontSize: 16.0),
+                    ),
+                    Text(
+                      '2345',
+                      style: kEncodeSansBold.copyWith(fontSize: 16.0),
+                    )
+                  ],
+                ),
+              ),
+              SizedBox(
+                height: media.width * 0.05,
+              ),
+              Divider(
+                color: kGrey,
+              ),
+              Padding(
+                padding: const EdgeInsets.all(18.0),
+                child: GestureDetector(
+                  onTap: () {
+                    Navigator.pushNamed(context, ClothingCheckoutPageRoute);
+                  },
+                  child: Container(
+                    decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(12.0),
+                        color: AppColor2.AppColors.redColor),
+                    child: Padding(
+                      padding: const EdgeInsets.all(16.0),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Text(
+                            'Checkout',
+                            style: kEncodeSansBold.copyWith(
+                                fontWeight: FontWeight.bold,
+                                color: AppColors.whiteColor),
+                            textAlign: TextAlign.center,
                           )
                         ],
                       ),
-                      padding: const EdgeInsets.all(8),
-                      child: InkWell(
-                        onTap: () {
-                          Navigator.pop(context);
-                        },
-                        child: SvgPicture.asset(
-                          'assets/arrow_back_icon.svg',
-                        ),
-                      ),
                     ),
                   ),
                 ),
               ),
-              title: Text(
-                "Delivery Information",
-                style: TextStyle(
-                    color: AppColors.whiteColor,
-                    fontSize: 20,
-                    fontFamily: "Poppins",
-                    fontWeight: FontWeight.w700),
-              ),
-            ),
-          ];
-        },
-        body: Container(
-          padding: const EdgeInsets.symmetric(horizontal: 15),
-          decoration: BoxDecoration(
-              color: AppColors.whiteColor,
-              borderRadius: const BorderRadius.only(
-                  topLeft: Radius.circular(25), topRight: Radius.circular(25))),
-          child: Scaffold(
-            backgroundColor: Colors.transparent,
-            body: Stack(
-              children: [
-                SingleChildScrollView(
-                  child: Column(
-                    children: [
-                      const SizedBox(
-                        height: 10,
-                      ),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Container(
-                            width: 50,
-                            height: 4,
-                            decoration: BoxDecoration(
-                                color: AppColors.grayColor.withOpacity(0.3),
-                                borderRadius: BorderRadius.circular(3)),
-                          ),
-                        ],
-                      ),
-                      SizedBox(
-                        height: media.width * 0.05,
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 20),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          children: [
-                            SizedBox(
-                              height: 15,
-                            ),
-                            Text(
-                              "Enable hassle-free deliveries by securely adding and managing your preferred delivery addresses with our intuitive address management feature",
-                              style: TextStyle(
-                                color: AppColors.blackColor,
-                                fontSize: 12,
-                              ),
-                              textAlign: TextAlign.center,
-                            ),
-                            SizedBox(
-                              height: 25,
-                            ),
-                            RoundTextField(
-                              hintText: "First Name",
-                              icon: "assets/icons/profile_icon.png",
-                              textInputType: TextInputType.name,
-                            ),
-                            SizedBox(
-                              height: 15,
-                            ),
-                            RoundTextField(
-                                hintText: "Last Name",
-                                icon: "assets/icons/profile_icon.png",
-                                textInputType: TextInputType.name),
-                            SizedBox(
-                              height: 15,
-                            ),
-                            RoundTextField(
-                                hintText: "Email",
-                                icon: "assets/icons/message_icon.png",
-                                textInputType: TextInputType.emailAddress),
-                            SizedBox(
-                              height: 15,
-                            ),
-                          ],
-                        ),
-                      ),
-                      SizedBox(
-                        height: media.width * 0.1,
-                      ),
-                    ],
-                  ),
-                ),
-                SafeArea(
-                  child: Column(
-                    mainAxisSize: MainAxisSize.max,
-                    mainAxisAlignment: MainAxisAlignment.end,
-                    children: [
-                      RoundDarkButton(title: "CHECKOUT", onPressed: () {
-                        Navigator.pushNamed(context, PaymentClothingRoute);
-                      })
-                    ],
-                  ),
-                )
-              ],
-            ),
+            ],
           ),
         ),
+        floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
       ),
     );
+ 
   }
+
+TextEditingController fullNameController = TextEditingController();
+  TextEditingController mobileNoController = TextEditingController();
+  TextEditingController pinCodeController = TextEditingController();
+  TextEditingController addressOneController = TextEditingController();
+  TextEditingController addressTwoController = TextEditingController();
+  TextEditingController cityNameController = TextEditingController();
+  String? selectedState;
+  List<String> indianStates = [
+    'Choose State',
+    'Andhra Pradesh',
+    'Arunachal Pradesh',
+    'Assam',
+    'Bihar',
+    'Chhattisgarh',
+    'Goa',
+    'Gujarat',
+    'Haryana',
+    'Himachal Pradesh',
+    'Jharkhand',
+    'Karnataka',
+    'Kerala',
+    'Madhya Pradesh',
+    'Maharashtra',
+    'Manipur',
+    'Meghalaya',
+    'Mizoram',
+    'Nagaland',
+    'Odisha',
+    'Punjab',
+    'Rajasthan',
+    'Sikkim',
+    'Tamil Nadu',
+    'Telangana',
+    'Tripura',
+    'Uttar Pradesh',
+    'Uttarakhand',
+    'West Bengal',
+  ];
 
 }

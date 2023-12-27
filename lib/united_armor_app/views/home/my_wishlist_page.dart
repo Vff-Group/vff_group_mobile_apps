@@ -179,6 +179,7 @@ class _MyClothingWishListPageState extends State<MyClothingWishListPage> {
             ),
           ),
         ),
+      
       ),
     );
   }

@@ -8,28 +8,28 @@ class Footer_Part extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    var width = MediaQuery.of(context).size.width;
+    var height = MediaQuery.of(context).size.height;
     return Container(
       color: AppColors.greyLightColor,
       child: Padding(
         padding: const EdgeInsets.all(30.0),
         child: Column(
           children: [
-            Row(
-              children: [
-                Text(
-                  'Accepted Payment Methods',
-                  style: poppinsStyle.copyWith(
-                      fontSize: 12, fontWeight: FontWeight.bold),
-                ),
-              ],
-            ),
-            const SizedBox(
-              height: 15,
-            ),
-            Image.asset('assets/icons/payment_modes.jpeg'),
-            const SizedBox(
-              height: 15,
-            ),
+            // Row(
+            //   children: [
+            //     Text(
+            //       'Accepted Payment Methods',
+            //       style: poppinsStyle.copyWith(
+            //           fontSize: 12, fontWeight: FontWeight.bold),
+            //     ),
+            //   ],
+            // ),
+            // const SizedBox(
+            //   height: 15,
+            // ),
+            
+            
             Row(
               children: [
                 const Icon(
@@ -124,7 +124,20 @@ class Footer_Part extends StatelessWidget {
                 ],
               ),
             ),
-        
+        const SizedBox(
+              height: 15,
+            ),
+            Image.asset('assets/icons/razor_pay.png'),
+            const SizedBox(
+              height: 15,
+            ),
+            Text(
+                  'Copyright © United Armor',
+                  style: nunitoStyle.copyWith(
+                      color: AppColors.greyColor,
+                      fontSize: 14,
+                      decoration: TextDecoration.none),
+                ),
           ],
         ),
       ),

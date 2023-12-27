@@ -117,6 +117,14 @@ class NotificationServices {
     });
   }
 
+  void isTokenRefreshedClothingApp() async {
+    messaging.onTokenRefresh.listen((event) {
+      event.toString();
+      print('Firebase Clothing App Token Refreshed');
+      SharedPreferenceUtils.save_val('clothingAPPNotificationToken', '');
+    });
+  }
+
   Future<void> setupInteractMessage(BuildContext context) async {
     //When app is killed/Terminated
     RemoteMessage? initialMessage =

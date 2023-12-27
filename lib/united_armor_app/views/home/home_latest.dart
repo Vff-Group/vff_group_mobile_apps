@@ -3,13 +3,16 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:shimmer/shimmer.dart';
 import 'package:vff_group/gym_app/common_widgets/round_gradient_button.dart';
+import 'package:vff_group/notification_services.dart';
 import 'package:vff_group/routings/route_names.dart';
 import 'package:vff_group/united_armor_app/common/app_styles.dart';
 import 'package:vff_group/united_armor_app/common/footer_widget.dart';
 import 'package:vff_group/united_armor_app/common/rounded_button.dart';
 import 'package:vff_group/united_armor_app/common/size_config.dart';
+import 'package:vff_group/utils/SharedPreferencesUtils.dart';
 import 'package:vff_group/utils/app_colors.dart';
 import 'package:vff_group/utils/app_styles.dart';
 import 'package:vff_group/global/vffglb.dart' as glb;
@@ -37,6 +40,33 @@ class _HOmeLatestPageState extends State<HOmeLatestPage> {
   List mainCategoriesID = [];
   List mainCategoriesImages = [];
   bool showLoading = false;
+  
+  NotificationServices notificationServices = NotificationServices();
+  String deviceToken = "";
+
+  void getDefaultData() async {
+    notificationServices.requestNotificationPermissions();
+    notificationServices.foregroundMessage();
+    notificationServices.firebaseInit(context);
+    notificationServices.setupInteractMessage(context);
+    notificationServices.isTokenRefreshedClothingApp();
+
+    glb.prefs = await SharedPreferences.getInstance();
+    var notificationToken =
+        glb.prefs?.getString('clothingAPPNotificationToken');
+    print('clothingNotificationToken::$notificationToken');
+    if (notificationToken == null || notificationToken.isEmpty) {
+      notificationServices.getDeviceToken().then((value) => {
+            deviceToken = value.toString().replaceAll(':', '__colon__'),
+            SharedPreferenceUtils.save_val(
+                'clothingAPPNotificationToken', deviceToken),
+            print('DeviceToken:$value')
+          });
+    }
+  }
+
+  
+
   Future loadAllMainCategoriesAsync() async {
     setState(() {
       showLoading = true;
@@ -117,8 +147,11 @@ class _HOmeLatestPageState extends State<HOmeLatestPage> {
   void initState() {
     // TODO: implement initState
     super.initState();
+    getDefaultData();
     loadAllMainCategoriesAsync();
   }
+
+
 
   Future<void> _handleRefresh() async {
     loadAllMainCategoriesAsync();
@@ -130,9 +163,13 @@ class _HOmeLatestPageState extends State<HOmeLatestPage> {
     double width = MediaQuery.of(context).size.width;
     return Scaffold(
       appBar: AppBar(
+          automaticallyImplyLeading: false,
         backgroundColor: kDarkBrown,
         centerTitle: true,
-        leading: IconButton(
+          title: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              IconButton(
             onPressed: () {
               Navigator.pushNamed(context, MenuRoute);
             },
@@ -140,8 +177,9 @@ class _HOmeLatestPageState extends State<HOmeLatestPage> {
               Icons.menu,
               color: Colors.white,
             )),
-        actions: [
-          IconButton(
+           
+
+              IconButton(
               onPressed: () {
                 // Navigator.pushNamed(context, NotificationScreenRoute);
                   },
@@ -152,6 +190,16 @@ class _HOmeLatestPageState extends State<HOmeLatestPage> {
                 color: Colors.white,
                 fit: BoxFit.fitHeight,
               )),
+
+              IconButton(
+                  onPressed: () {
+                    Navigator.pop(context);
+                    Navigator.pushNamed(context, ClothingMainHomeRoute);
+                  },
+                  icon: Image.asset(
+                    "assets/logo/logo_united_armor.png",
+                    fit: BoxFit.fitHeight,
+                  )),
           IconButton(
               onPressed: () {
                 // Navigator.pushNamed(context, NotificationScreenRoute);
@@ -162,18 +210,11 @@ class _HOmeLatestPageState extends State<HOmeLatestPage> {
                 // Navigator.pushNamed(context, NotificationScreenRoute);
               },
               icon: SvgPicture.asset('assets/cart_icon_unselected.svg')),
-        ],
-        title: IconButton(
-            onPressed: () {
-              Navigator.pop(context);
-              Navigator.pushNamed(context, ClothingMainHomeRoute);
-            },
-                  icon: Image.asset(
-              "assets/logo/logo_united_armor.png",
-                    
-                    fit: BoxFit.fitHeight,
-            )),
+            ],
+          )
+     
       ),
+      
       body: CustomScrollView(
         slivers: [
           SliverToBoxAdapter(

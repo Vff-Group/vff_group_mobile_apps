@@ -23,6 +23,7 @@ class AppColors {
   static const Color greyBGColor = Color(0xffFAFAFA);
   static const Color dangerColor = Color(0xffEB5757);
   static const Color orangeColor = Color(0xffF2994A);
+  static const Color redColor = Color(0xffDC0119);
   static const Color blueColor = Color(0xff0E78F0);
   static const Color iconColor = Color(0xffF2F7FB);
   static const Color hisColor = Color(0xff7699F6);
