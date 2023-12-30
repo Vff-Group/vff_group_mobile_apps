@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:dots_indicator/dots_indicator.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:lottie/lottie.dart';
 import 'package:shimmer/shimmer.dart';
 import 'package:vff_group/gym_app/common_widgets/round_textfield.dart';
 import 'package:vff_group/routings/route_names.dart';
@@ -57,14 +58,30 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
   Widget build(BuildContext context) {
     double height = MediaQuery.of(context).size.height;
     double width = MediaQuery.of(context).size.width;
-    return Scaffold(
+    return showLoading
+        ? Scaffold(
+            body: Center(
+              child: Lottie.asset('assets/images/loading_animation.json'),
+            ),
+          )
+        : Scaffold(
       
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
       floatingActionButton: Padding(
         padding: const EdgeInsets.all(18.0),
         child: GestureDetector(
           onTap: (){
-            Navigator.pushNamed(context, CartItemsClothingRoute);
+                  //Navigator.pushNamed(context, CartItemsClothingRoute);
+                  //TODO:Async to add it to cart table
+                  setState(() {
+                    showLoading = true;
+                  });
+                  // Adding a delay of 2 seconds before setting showLoading back to false
+                  Future.delayed(Duration(seconds: 2), () {
+                    setState(() {
+                      showLoading = false;
+                    });
+                  });
           },
           child: Container(
             decoration: BoxDecoration(

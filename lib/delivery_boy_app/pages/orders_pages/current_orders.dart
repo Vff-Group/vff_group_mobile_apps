@@ -185,6 +185,18 @@ class _CurrentOrdersPageState extends State<CurrentOrdersPage> {
   }
 
   @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+
+    if (glb.refreshOrdersPage) {
+      _handleRefresh();
+      setState(() {
+        glb.refreshOrdersPage = false;
+      });
+    }
+  }
+
+  @override
   void initState() {
     // TODO: implement initState
     super.initState();

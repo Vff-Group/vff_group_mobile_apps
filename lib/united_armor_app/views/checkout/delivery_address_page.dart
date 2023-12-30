@@ -6,6 +6,7 @@ import 'package:vff_group/gym_app/utils/app_colors.dart';
 import 'package:vff_group/routings/route_names.dart';
 import 'package:vff_group/united_armor_app/common/app_styles.dart';
 import 'package:vff_group/united_armor_app/common/footer_widget.dart';
+import 'package:vff_group/united_armor_app/common/google_dropdown_textfield.dart';
 import 'package:vff_group/united_armor_app/common/google_textfield_phone.dart';
 import 'package:vff_group/united_armor_app/common/google_textformfield.dart';
 import 'package:vff_group/united_armor_app/common/rounded_button.dart';
@@ -134,49 +135,23 @@ class _ClothingDeliveryAddressPageState
                         SizedBox(
                           height: media.width * 0.08,
                         ),
-                        Container(
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(2),
-                            border: Border.all(
-                              width: 0.8, // Adjust the border width here
-                              color:
-                                  Colors.grey, // Set the desired border color
-                            ),
-                          ),
-                          child: DropdownButtonHideUnderline(
-                            child: DropdownButton<String>(
-                              isExpanded: true,
-                              icon: Icon(Icons.arrow_drop_down),
-                              iconSize: 24,
-                              elevation: 16,
-                              style: TextStyle(
-                                color: kDarkBrown, // Text color
-                                fontSize: 14,
+                        GoogleDropDownTextFormField(
+                          value: selectedState,
+                          items: [
+                            for (String state in indianStates)
+                              DropdownMenuItem(
+                                value: state,
+                                child: Text(state),
                               ),
-                              hint: Padding(
-                                padding: const EdgeInsets.all(8.0),
-                                child: Text('Choose State'),
-                              ), // Placeholder text
-                              value: selectedState, // Currently selected state
-                              onChanged: (String? newValue) {
-                                setState(() {
-                                  selectedState =
-                                      newValue; // Update selected state on change
-                                });
-                              },
-                              items: [
-                                for (String state in indianStates)
-                                  DropdownMenuItem(
-                                    value: state,
-                                    child: Padding(
-                                      padding: const EdgeInsets.all(8.0),
-                                      child: Text(state),
-                                    ),
-                                  ),
-                              ],
-                            ),
-                          ),
-),
+                          ],
+                          onChanged: (newValue) {
+                            // Handle dropdown value change here
+                            setState(() {
+                              selectedState = newValue;
+                            });
+                          },
+                          labelText: 'Choose State',
+                        ),
                         SizedBox(
                           height: media.width * 0.08,
                         ),

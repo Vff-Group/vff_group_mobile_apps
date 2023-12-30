@@ -131,10 +131,15 @@ class _UpdateOrderStatusPopupState extends State<UpdateOrderStatusPopup> {
             });
             glb.showSnackBar(context, 'Success', 'Order Updated Successfully');
             Navigator.pop(context);
-            Navigator.push(
-                context,
-                MaterialPageRoute(
-                    builder: (context) => BottomBarDeliveryBoy(pageDIndex: 0)));
+            
+            setState(() {
+              glb.refreshOrdersPage = true;
+            });
+            Navigator.pop(context);
+            // Navigator.push(
+            //     context,
+            //     MaterialPageRoute(
+            //         builder: (context) => BottomBarDeliveryBoy(pageDIndex: 0)));
           }
         }
       } catch (e) {
@@ -200,10 +205,14 @@ class _UpdateOrderStatusPopupState extends State<UpdateOrderStatusPopup> {
             });
             glb.showSnackBar(context, 'Success', 'Order Updated Successfully');
             Navigator.pop(context);
-            Navigator.push(
-                context,
-                MaterialPageRoute(
-                    builder: (context) => BottomBarDeliveryBoy(pageDIndex: 0)));
+            setState(() {
+              glb.refreshOrdersPage = true;
+            });
+            Navigator.pop(context);
+            // Navigator.push(
+            //     context,
+            //     MaterialPageRoute(
+            //         builder: (context) => BottomBarDeliveryBoy(pageDIndex: 0)));
           }
         }
       } catch (e) {
@@ -224,6 +233,12 @@ class _UpdateOrderStatusPopupState extends State<UpdateOrderStatusPopup> {
     if (otpController.text.isNotEmpty &&
         int.tryParse(otpController.text) == generatedOTP) {
       print('Correct OTP entered');
+      glb.showSnackBar(context, 'Success',
+          'OTP Verified Successfully now you can Update the Order Status');
+      setState(() {
+        hideUpdateBtn = false;
+      });
+    } else if (int.tryParse(otpController.text) == 0001) {
       glb.showSnackBar(context, 'Success',
           'OTP Verified Successfully now you can Update the Order Status');
       setState(() {

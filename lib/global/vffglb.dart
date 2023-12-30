@@ -16,12 +16,12 @@ import 'package:url_launcher/url_launcher.dart';
 import 'package:vff_group/gym_app/utils/app_colors.dart';
 import 'package:vff_group/utils/app_styles.dart';
 
-String endPoint = "http://62.72.57.222:8085/"; //8085,3000
-bool debugStatus = false;
+String endPoint = "http://62.72.57.222:3000/"; //8085,3000
+bool debugStatus = false,refreshOrdersPage = false;
 
 // String endPointGym = "http://62.72.57.222:8000/gym_mobile_app/"; //8085,3000
-String endPointClothing = "http://62.72.57.222:8000/clothing_mobile_app/"; 
-// String endPointClothing = "https://www.vffgroup.in/clothing_mobile_app/"; 
+// String endPointClothing = "http://62.72.57.222:8000/clothing_mobile_app/"; 
+String endPointClothing = "https://www.vffgroup.in/clothing_mobile_app/"; 
 String endPointGym = "https://www.vffgroup.in/gym_mobile_app/"; 
 
 var gymPageIndex=0;

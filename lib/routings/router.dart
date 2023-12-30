@@ -13,6 +13,7 @@ import 'package:vff_group/gym_app/views/welcome/welcome_screen.dart';
 import 'package:vff_group/gym_app/views/your_goals/your_goals.dart';
 import 'package:vff_group/new_views/views/booking_details/booking_details.dart';
 import 'package:vff_group/new_views/views/order_details/new_order_details_page.dart';
+import 'package:vff_group/new_views/views/order_details/payment_screen.dart';
 import 'package:vff_group/pages/booking_pages/booking_details_page.dart';
 import 'package:vff_group/pages/cart/cart_items_page.dart';
 import 'package:vff_group/pages/categories/dry_clean_home.dart';

@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:lottie/lottie.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:shimmer/shimmer.dart';
 import 'package:vff_group/gym_app/common_widgets/round_gradient_button.dart';
@@ -161,7 +162,13 @@ class _HOmeLatestPageState extends State<HOmeLatestPage> {
     SizeConfig().init(context);
     double height = MediaQuery.of(context).size.height;
     double width = MediaQuery.of(context).size.width;
-    return Scaffold(
+    return showLoading
+        ? Scaffold(
+            body: Center(
+              child: Lottie.asset('assets/images/loading_animation.json'),
+            ),
+          )
+        : Scaffold(
       appBar: AppBar(
           automaticallyImplyLeading: false,
         backgroundColor: kDarkBrown,

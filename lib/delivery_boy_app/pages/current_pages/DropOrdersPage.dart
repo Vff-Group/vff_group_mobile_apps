@@ -85,6 +85,8 @@ class _DropOrdersPageState extends State<DropOrdersPage> {
             var city = onGoingOrdersMap["city"];
             var landmark = onGoingOrdersMap["landmark"];
             var pincode = onGoingOrdersMap["pincode"];
+            var branch_name = onGoingOrdersMap["branch_name"];
+            var branch_address = onGoingOrdersMap["branch_address"];
             
             
 
@@ -94,6 +96,8 @@ class _DropOrdersPageState extends State<DropOrdersPage> {
             List<String> landmarkLst = glb.strToLst2(landmark);
             List<String> pincodeLst = glb.strToLst2(pincode);
             List<String> addressLst = glb.strToLst2(address);
+            List<String> branch_nameLst = glb.strToLst2(branch_name);
+            List<String> branch_addressLst = glb.strToLst2(branch_address);
 
             for (int i = 0; i < orderidLst.length; i++) {
               var orderid = orderidLst.elementAt(i).toString();
@@ -102,9 +106,17 @@ class _DropOrdersPageState extends State<DropOrdersPage> {
               var landmark = landmarkLst.elementAt(i).toString();
               var pincode = pincodeLst.elementAt(i).toString();
               var address = addressLst.elementAt(i).toString();
+              var branch_name = branch_nameLst.elementAt(i).toString();
+              var branch_address = branch_addressLst.elementAt(i).toString();
+
               var addressDetails = '';
               addressDetails = address +' '+ city_name +' '+ landmark+'-'+pincode;
-              dropOrdersModel.add(DropOrdersModel(orderId: orderid, customerName: customer_name, addressDetails: addressDetails));
+              dropOrdersModel.add(DropOrdersModel(
+                  orderId: orderid,
+                  customerName: customer_name,
+                  addressDetails: addressDetails,
+                  branchName: branch_name,
+                  branchAddress: branch_address));
             }
 
             setState(() {
@@ -267,7 +279,44 @@ class _DropOrdersPageState extends State<DropOrdersPage> {
                                                                 letterSpacing:
                                                                     1)),
                                                       ),
-                                                    
+                                                Padding(
+                                                  padding:
+                                                      const EdgeInsets.only(
+                                                          top: 8.0),
+                                                  child: Text(
+                                                      'Branch Name: ${dropOrdersModel[index].branchName}',
+                                                      style:
+                                                          nunitoStyle.copyWith(
+                                                              fontSize: 10.0,
+                                                              color: Colors
+                                                                  .deepPurple,
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .bold,
+                                                              letterSpacing:
+                                                                  1)),
+                                                ),
+                                                Padding(
+                                                  padding:
+                                                      const EdgeInsets.only(
+                                                          top: 8.0),
+                                                  child: SizedBox(
+                                                    width: width - 50,
+                                                    child: Text(
+                                                        'Branch Address: [ ${dropOrdersModel[index].branchAddress} ]',
+                                                        style: nunitoStyle
+                                                            .copyWith(
+                                                                fontSize: 12.0,
+                                                                color:
+                                                                    Colors.blue,
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .bold,
+                                                                letterSpacing:
+                                                                    1)),
+                                                  ),
+                                                ),
+                                                   
                                                     ],
                                                   ),
                                                 ),

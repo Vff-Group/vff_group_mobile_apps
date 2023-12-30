@@ -4,6 +4,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
+import 'package:lottie/lottie.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:vff_group/animation/fade_animation.dart';
 import 'package:vff_group/animation/slide_bottom_animation.dart';
@@ -327,7 +328,13 @@ class _DeliveryAddressPageState extends State<DeliveryAddressPage> {
   Widget build(BuildContext context) {
     double height = MediaQuery.of(context).size.height;
     double width = MediaQuery.of(context).size.width;
-    return GestureDetector(
+    return showLoading || isLoading
+        ? Scaffold(
+            body: Center(
+              child: Lottie.asset('assets/images/laundry_loading.json'),
+            ),
+          )
+        :  GestureDetector(
       onTap: () {
         FocusManager.instance.primaryFocus?.unfocus();
       },

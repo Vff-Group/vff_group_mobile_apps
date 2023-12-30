@@ -4,6 +4,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:line_icons/line_icon.dart';
+import 'package:lottie/lottie.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:vff_group/animation/fade_animation.dart';
@@ -12,6 +13,7 @@ import 'package:vff_group/animation/slide_left_animation.dart';
 import 'package:vff_group/animation/slideright_animation.dart';
 import 'package:vff_group/modals/cart_item_model.dart';
 import 'package:vff_group/modals/order_detail_item_model.dart';
+import 'package:vff_group/new_views/views/order_details/payment_screen.dart';
 import 'package:vff_group/routings/route_names.dart';
 import 'package:vff_group/utils/app_colors.dart';
 import 'package:vff_group/utils/app_styles.dart';
@@ -27,6 +29,7 @@ class NewOrderDetailsPage extends StatefulWidget {
 }
 
 class _NewOrderDetailsPageState extends State<NewOrderDetailsPage> {
+  String payment_done = "", totalPrice = "";
    bool showLoading = true,
       isItemAdded = true,
       showItemsLoading = true,
@@ -124,6 +127,11 @@ class _NewOrderDetailsPageState extends State<NewOrderDetailsPage> {
             glb.customerID = orderMap['customer_id'];
             glb.customer_mobno = orderMap['customer_mobno'];
             glb.customer_name = orderMap['customer_name'];
+            
+            setState(() {
+              payment_done = orderMap['payment_done'];
+              totalPrice = orderMap['total_price'];
+            });
             
             glb.deliveryBoyID = deliveryBoyId;
             var formattedDateTime =
@@ -339,7 +347,13 @@ class _NewOrderDetailsPageState extends State<NewOrderDetailsPage> {
     double height = MediaQuery.of(context).size.height;
     double width = MediaQuery.of(context).size.width;
 
-    return Scaffold(
+    return showLoading
+        ? Scaffold(
+            body: Center(
+              child: Lottie.asset('assets/images/laundry_loading.json'),
+            ),
+          )
+        : Scaffold(
         extendBodyBehindAppBar: true,
         backgroundColor: AppColors.whiteColor,
         appBar: AppBar(
@@ -386,7 +400,9 @@ class _NewOrderDetailsPageState extends State<NewOrderDetailsPage> {
                                     deliveryDateTime: deliveryDateTime,
                                     addressClient: addressClient,
                                     width:width,
-                                    height:height),
+                                        height: height,
+                                        totalPrice: totalPrice,
+                                        paymentDone: payment_done),
                                 const Divider(
                                   color: AppColors.backColor,
                                   thickness: 0.5,
@@ -936,7 +952,11 @@ class _OrderDetails extends StatelessWidget {
     required this.orderID,
     required this.pickUpDateTime,
     required this.deliveryDateTime,
-    required this.addressClient, required this.width, required this.height,
+    required this.addressClient,
+    required this.width,
+    required this.height,
+    required this.totalPrice,
+    required this.paymentDone,
   });
   final String orderStatus;
   final String orderID;
@@ -945,6 +965,8 @@ class _OrderDetails extends StatelessWidget {
   final String addressClient;
   final double width;
   final double height;
+  final String totalPrice;
+  final String paymentDone;
 
   @override
   Widget build(BuildContext context) {
@@ -1172,6 +1194,68 @@ class _OrderDetails extends StatelessWidget {
                 ],
               ),
             ),
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    'Total Price:',
+                    style: nunitoStyle.copyWith(
+                      color: AppColors.backColor,
+                      fontWeight: FontWeight.normal,
+                      fontSize: 14,
+                    ),
+                  ),
+                  Text(
+                    '₹.$totalPrice/-',
+                    style: nunitoStyle.copyWith(
+                      color: AppColors.backColor,
+                      fontWeight: FontWeight.w500,
+                      fontSize: 14,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            // paymentDone == "0" && glb.hideControls
+            //     ? Padding(
+            //         padding: const EdgeInsets.all(8.0),
+            //         child: Row(
+            //           mainAxisAlignment: MainAxisAlignment.center,
+            //           children: [
+            //             InkWell(
+            //               onTap: () {
+            //                 Navigator.push(
+            //                   context,
+            //                   MaterialPageRoute(
+            //                     builder: (context) =>
+            //                         PaymentScreenNew(totalPrice: totalPrice),
+            //                   ),
+            //                 );
+            //               },
+            //               child: Ink(
+            //                 decoration: BoxDecoration(
+            //                   borderRadius: BorderRadius.circular(12.0),
+            //                   color: AppColors.blueColor,
+            //                 ),
+            //                 child: Padding(
+            //                   padding: const EdgeInsets.all(8.0),
+            //                   child: Text(
+            //                     'Pay Now',
+            //                     style: nunitoStyle.copyWith(
+            //                         fontSize: 14.0,
+            //                         color: AppColors.whiteColor,
+            //                         fontWeight: FontWeight.bold),
+            //                   ),
+            //                 ),
+            //               ),
+            //             )
+            //           ],
+            //         ),
+            //       )
+            //     : Container(),
+          
           ],
         ),
       ),

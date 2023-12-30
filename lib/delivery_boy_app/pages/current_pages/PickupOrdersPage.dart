@@ -85,6 +85,8 @@ class _PickupOrdersPageState extends State<PickupOrdersPage> {
             var landmark = onGoingOrdersMap["landmark"];
             var pincode = onGoingOrdersMap["pincode"];
             var order_id = onGoingOrdersMap["order_id"];
+            var branch_name = onGoingOrdersMap["branch_name"];
+            var branch_address = onGoingOrdersMap["branch_address"];
           
 
             List<String> booking_idLst = glb.strToLst2(booking_id);
@@ -94,6 +96,8 @@ class _PickupOrdersPageState extends State<PickupOrdersPage> {
             List<String> pincodeLst = glb.strToLst2(pincode);
             List<String> addressLst = glb.strToLst2(address);
             List<String> order_idLst = glb.strToLst2(order_id);
+            List<String> branch_nameLst = glb.strToLst2(branch_name);
+            List<String> branch_addressLst = glb.strToLst2(branch_address);
 
             for (int i = 0; i < booking_idLst.length; i++) {
               var booking_id = booking_idLst.elementAt(i).toString();
@@ -103,9 +107,17 @@ class _PickupOrdersPageState extends State<PickupOrdersPage> {
               var pincode = pincodeLst.elementAt(i).toString();
               var address = addressLst.elementAt(i).toString();
               var orderid = order_idLst.elementAt(i).toString();
+              var branch_name = branch_nameLst.elementAt(i).toString();
+              var branch_address = branch_addressLst.elementAt(i).toString();
               var addressDetails = '';
               addressDetails = address +' '+ city_name +' '+ landmark+'-'+pincode;
-              pickupModel.add(PickupOrdersModel(bookingId: booking_id, customerName: customer_name, addressDetails: addressDetails,orderID:orderid));
+              pickupModel.add(PickupOrdersModel(
+                  bookingId: booking_id,
+                  customerName: customer_name,
+                  addressDetails: addressDetails,
+                  orderID: orderid,
+                  branchName: branch_name,
+                  branchAddress: branch_address));
             }
 
             setState(() {
@@ -256,9 +268,8 @@ class _PickupOrdersPageState extends State<PickupOrdersPage> {
                                                                         .bold,
                                                                 letterSpacing:
                                                                     1)),
-                                                      ),
-                                                    
-                                                      Padding(
+                                                ),
+                                                Padding(
                                                         padding:
                                                             const EdgeInsets
                                                                 .only(top: 8.0),
@@ -277,7 +288,44 @@ class _PickupOrdersPageState extends State<PickupOrdersPage> {
                                                                       1)),
                                                         ),
                                                       ),
+                                                Padding(
+                                                  padding:
+                                                      const EdgeInsets.only(
+                                                          top: 8.0),
+                                                  child: Text(
+                                                      'Branch Name: ${pickupModel[index].branchName}',
+                                                      style:
+                                                          nunitoStyle.copyWith(
+                                                              fontSize: 10.0,
+                                                              color: Colors.deepPurple,
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .bold,
+                                                              letterSpacing:
+                                                                  1)),
+                                                ),
+                                                      
                                                     
+                                                Padding(
+                                                  padding:
+                                                      const EdgeInsets.only(
+                                                          top: 8.0),
+                                                  child: SizedBox(
+                                                    width: width - 50,
+                                                    child: Text(
+                                                        'Branch Address: [ ${pickupModel[index].branchAddress} ]',
+                                                        style: nunitoStyle
+                                                            .copyWith(
+                                                                fontSize: 12.0,
+                                                                color: Colors.blue,
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .bold,
+                                                                letterSpacing:
+                                                                    1)),
+                                                  ),
+                                                ),
+                                                   
                                                     ],
                                                   ),
                                                 ),

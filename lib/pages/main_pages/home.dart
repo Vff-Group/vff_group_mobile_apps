@@ -17,6 +17,7 @@ import 'package:intl/intl.dart';
 import 'package:flutter/material.dart';
 import 'package:line_icons/line_icons.dart';
 import 'package:location/location.dart';
+import 'package:lottie/lottie.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:geolocator_platform_interface/src/enums/location_accuracy.dart'
@@ -754,7 +755,13 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     double width = MediaQuery.of(context).size.width;
     double height = MediaQuery.of(context).size.height;
-    return Scaffold(
+    return activeBookingsLoading || activeOrdersLoading
+        ? Scaffold(
+            body: Center(
+              child: Lottie.asset('assets/images/laundry_loading.json'),
+            ),
+          )
+        :  Scaffold(
       key: _scaffoldKey,
       appBar: AppBar(
         automaticallyImplyLeading: false,

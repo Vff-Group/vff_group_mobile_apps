@@ -3,6 +3,8 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:lottie/lottie.dart';
+import 'package:vff_group/animation/slide_left_animation.dart';
 import 'package:vff_group/gym_app/utils/app_colors.dart';
 import 'package:vff_group/routings/route_names.dart';
 import 'package:vff_group/routings/router.dart';
@@ -52,12 +54,7 @@ List<String> selectedItems = []; // To store selected filters to show in badge
   //   // Add more filter categories here
   // };
   bool isFavorite = false;
-  @override
-  void dispose() {
-    // TODO: implement dispose
-    super.dispose();
-    Navigator.pop(context);
-  }
+  
   @override
   void initState() {
     // TODO: implement initState
@@ -118,7 +115,13 @@ List<String> selectedItems = []; // To store selected filters to show in badge
   @override
   Widget build(BuildContext context) {
     SizeConfig().init(context);
-    return Material(
+    return showLoading
+        ? Scaffold(
+            body: Center(
+              child: Lottie.asset('assets/images/loading_animation.json'),
+            ),
+          )
+        : Material(
       child: Scaffold(
         key: _scaffoldKey,
         appBar: AppBar(
@@ -373,6 +376,48 @@ List<String> selectedItems = []; // To store selected filters to show in badge
                         ],
                       ),
                
+                      ExpansionTile(
+                        title: const Text('Sizes'),
+                        children: [
+                          ListView.builder(
+                            shrinkWrap: true,
+                            itemCount: productSizeFilterModel.length,
+                            itemBuilder: (context, index) {
+                              String sizeID =
+                                  productSizeFilterModel[index].sizeID;
+                              String sizeValue =
+                                  productSizeFilterModel[index].sizeValue;
+                              return CheckboxListTile(
+                                activeColor: Colors.brown,
+                                title: Text(sizeValue),
+                                value: isSizesCheckedList[index],
+                                onChanged: (bool? value) {
+                                  setState(() {
+                                    isSizesCheckedList[index] = value ?? false;
+                                  });
+                                  if (value == true) {
+                                    // Store the selected Size name
+                                    setState(() {
+                                      if (!selectedItems.contains(sizeValue)) {
+                                        selectedItems.add(sizeValue);
+                                      }
+                                    });
+                                  } else {
+                                    // Remove the category name if unchecked
+                                    setState(() {
+                                      selectedItems.remove(sizeValue);
+                                    });
+                                  }
+                                  print("Selected items: $selectedItems");
+
+                            
+                                },
+                              );
+                            },
+                          ),
+                        ],
+                      ),
+               
                     ],
                   ),
                 ),
@@ -538,177 +583,180 @@ List<String> selectedItems = []; // To store selected filters to show in badge
                     horizontal: kPaddingHorizontal,
                   ),
                   itemBuilder: (context, index) {
-                    return Builder(builder: (context) {
-                      return InkWell(
-                        onTap: () {
-                          glb.productID = productItems[index].productID;
-                          print('productID::${glb.productID}');
-                          Navigator.pushNamed(context, ProductDetailedRoute);
-                        },
-                        child: Ink(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Stack(
-                                children: [
-                                  Positioned(
-                                    child: ClipRRect(
-                                      borderRadius:
-                                          BorderRadius.circular(kBorderRadius),
-                                      child: Image.network(
-                                        productItems[index].productImage,
+                    return SlideFromLeftAnimation(
+                      delay: 0.5,
+                      child: Builder(builder: (context) {
+                        return InkWell(
+                          onTap: () {
+                            glb.productID = productItems[index].productID;
+                            print('productID::${glb.productID}');
+                            Navigator.pushNamed(context, ProductDetailedRoute);
+                          },
+                          child: Ink(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Stack(
+                                  children: [
+                                    Positioned(
+                                      child: ClipRRect(
+                                        borderRadius:
+                                            BorderRadius.circular(kBorderRadius),
+                                        child: Image.network(
+                                          productItems[index].productImage,
+                                        ),
                                       ),
                                     ),
-                                  ),
-                                  Positioned(
-                                    right: 12,
-                                    top: 12,
-                                    child: GestureDetector(
-                                      onTap: () {
-                                        setState(() {
-                                          var productID =
-                                              productItems[index].productID;
-                                          isFavorite = !isFavorite;
-
-                                          if (isFavorite) {
-                                            addToWishlistAsync(productID);
-                                          } else {
-                                            removeFromWishlistAsync(productID);
-                                          }
-                                        });
-                                      },
-                                      child: Container(
-                                        height:
-                                            SizeConfig.blockSizeVertical! * 4,
-                                        width:
-                                            SizeConfig.blockSizeVertical! * 4,
-                                        decoration: BoxDecoration(
-                                          shape: BoxShape.circle,
-                                          color: kWhite,
-                                          boxShadow: [
-                                            BoxShadow(
-                                              color: kBrown.withOpacity(0.11),
-                                              spreadRadius: 0.0,
-                                              blurRadius: 12,
-                                              offset: const Offset(0, 5),
-                                            )
-                                          ],
-                                        ),
-                                        child: Center(
-                                          child: Icon(
-                                            isFavorite
-                                                ? Icons.favorite
-                                                : Icons
-                                                    .favorite_border_outlined,
-                                            color:
-                                                isFavorite ? Colors.red : null,
+                                    Positioned(
+                                      right: 12,
+                                      top: 12,
+                                      child: GestureDetector(
+                                        onTap: () {
+                                          setState(() {
+                                            var productID =
+                                                productItems[index].productID;
+                                            isFavorite = !isFavorite;
+                    
+                                            if (isFavorite) {
+                                              addToWishlistAsync(productID);
+                                            } else {
+                                              removeFromWishlistAsync(productID);
+                                            }
+                                          });
+                                        },
+                                        child: Container(
+                                          height:
+                                              SizeConfig.blockSizeVertical! * 4,
+                                          width:
+                                              SizeConfig.blockSizeVertical! * 4,
+                                          decoration: BoxDecoration(
+                                            shape: BoxShape.circle,
+                                            color: kWhite,
+                                            boxShadow: [
+                                              BoxShadow(
+                                                color: kBrown.withOpacity(0.11),
+                                                spreadRadius: 0.0,
+                                                blurRadius: 12,
+                                                offset: const Offset(0, 5),
+                                              )
+                                            ],
+                                          ),
+                                          child: Center(
+                                            child: Icon(
+                                              isFavorite
+                                                  ? Icons.favorite
+                                                  : Icons
+                                                      .favorite_border_outlined,
+                                              color:
+                                                  isFavorite ? Colors.red : null,
+                                            ),
                                           ),
                                         ),
                                       ),
                                     ),
-                                  ),
-                                  Positioned(
-                                    left: 0,
-                                    right: 0,
-                                    top: 0,
-                                    bottom: 0,
-                                    child: Visibility(
-                                      visible: isFavorite,
-                                      child: AnimatedHeart(),
+                                    Positioned(
+                                      left: 0,
+                                      right: 0,
+                                      top: 0,
+                                      bottom: 0,
+                                      child: Visibility(
+                                        visible: isFavorite,
+                                        child: AnimatedHeart(),
+                                      ),
                                     ),
-                                  ),
-                                ],
-                              ),
-
-                              const SizedBox(
-                                height: 8,
-                              ),
-                              Text(
-                                productItems[index].productName,
-                                maxLines: 2,
-                                overflow: TextOverflow.ellipsis,
-                                style: kEncodeSansSemibold.copyWith(
-                                  color: kDarkBrown,
-                                  fontSize:
-                                      SizeConfig.blockSizeHorizontal! * 3.5,
+                                  ],
                                 ),
-                              ),
-                              // Text(
-                              //   'Dress modern',
-                              //   maxLines: 1,
-                              //   overflow: TextOverflow.ellipsis,
-                              //   style: kEncodeSansRagular.copyWith(
-                              //     color: kGrey,
-                              //     fontSize: SizeConfig.blockSizeHorizontal! * 2.5,
-                              //   ),
-                              // ),
-                              const SizedBox(
-                                height: 8,
-                              ),
-                              Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                crossAxisAlignment: CrossAxisAlignment.center,
-                                children: [
-                                  Column(
-                                    children: [
-                                      Text.rich(
-                                        TextSpan(
-                                          text:
-                                              '₹${productItems[index].productPrice}',
-                                          style: kEncodeSansSemibold.copyWith(
-                                            color: Colors.redAccent,
-                                            fontSize: SizeConfig
-                                                    .blockSizeHorizontal! *
-                                                3.0,
-                                            decoration: TextDecoration
-                                                .lineThrough, // Add strike-through decoration
-                                            decorationColor: Colors
-                                                .red, // Color for the strike-through line
-                                            decorationThickness:
-                                                5, // Adjust thickness of the strike-through line
+                    
+                                const SizedBox(
+                                  height: 8,
+                                ),
+                                Text(
+                                  productItems[index].productName,
+                                  maxLines: 2,
+                                  overflow: TextOverflow.ellipsis,
+                                  style: kEncodeSansSemibold.copyWith(
+                                    color: kDarkBrown,
+                                    fontSize:
+                                        SizeConfig.blockSizeHorizontal! * 3.5,
+                                  ),
+                                ),
+                                // Text(
+                                //   'Dress modern',
+                                //   maxLines: 1,
+                                //   overflow: TextOverflow.ellipsis,
+                                //   style: kEncodeSansRagular.copyWith(
+                                //     color: kGrey,
+                                //     fontSize: SizeConfig.blockSizeHorizontal! * 2.5,
+                                //   ),
+                                // ),
+                                const SizedBox(
+                                  height: 8,
+                                ),
+                                Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  children: [
+                                    Column(
+                                      children: [
+                                        Text.rich(
+                                          TextSpan(
+                                            text:
+                                                '₹${productItems[index].productPrice}',
+                                            style: kEncodeSansSemibold.copyWith(
+                                              color: Colors.redAccent,
+                                              fontSize: SizeConfig
+                                                      .blockSizeHorizontal! *
+                                                  3.0,
+                                              decoration: TextDecoration
+                                                  .lineThrough, // Add strike-through decoration
+                                              decorationColor: Colors
+                                                  .red, // Color for the strike-through line
+                                              decorationThickness:
+                                                  5, // Adjust thickness of the strike-through line
+                                            ),
                                           ),
                                         ),
-                                      ),
-                                      Text(
-                                        '₹${productItems[index].productOfferPrice}',
-                                        style: kEncodeSansSemibold.copyWith(
-                                          color: kDarkBrown,
-                                          fontSize:
-                                              SizeConfig.blockSizeHorizontal! *
-                                                  3.0,
+                                        Text(
+                                          '₹${productItems[index].productOfferPrice}',
+                                          style: kEncodeSansSemibold.copyWith(
+                                            color: kDarkBrown,
+                                            fontSize:
+                                                SizeConfig.blockSizeHorizontal! *
+                                                    3.0,
+                                          ),
                                         ),
-                                      ),
-                                    ],
-                                  ),
-                                  Row(
-                                    children: [
-                                      const Icon(
-                                        Icons.star,
-                                        color: kYellow,
-                                        size: 16,
-                                      ),
-                                      const SizedBox(
-                                        width: 8,
-                                      ),
-                                      Text(
-                                        productItems[index].productRating,
-                                        style: kEncodeSansRagular.copyWith(
-                                          color: kDarkBrown,
-                                          fontSize:
-                                              SizeConfig.blockSizeHorizontal! *
-                                                  3,
+                                      ],
+                                    ),
+                                    Row(
+                                      children: [
+                                        const Icon(
+                                          Icons.star,
+                                          color: kYellow,
+                                          size: 16,
                                         ),
-                                      ),
-                                    ],
-                                  ),
-                                ],
-                              )
-                            ],
+                                        const SizedBox(
+                                          width: 8,
+                                        ),
+                                        Text(
+                                          productItems[index].productRating,
+                                          style: kEncodeSansRagular.copyWith(
+                                            color: kDarkBrown,
+                                            fontSize:
+                                                SizeConfig.blockSizeHorizontal! *
+                                                    3,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ],
+                                )
+                              ],
+                            ),
                           ),
-                        ),
-                      );
-                    });
+                        );
+                      }),
+                    );
                   },
                 ),
               ),
@@ -955,7 +1003,7 @@ bool showLoading = false;
   }
 
   Future getAllFiltersAsync() async {
-    setState(() {});
+    
     try {
       var url = glb.endPointClothing;
       url += "get_all_filters/"; // Route Name

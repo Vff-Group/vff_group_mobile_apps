@@ -4,6 +4,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:line_icons/line_icon.dart';
+import 'package:lottie/lottie.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:vff_group/animation/fade_animation.dart';
@@ -181,7 +182,13 @@ dictMap['key'] = 2;
     double height = MediaQuery.of(context).size.height;
     double width = MediaQuery.of(context).size.width;
 
-    return Scaffold(
+    return showLoading
+        ? Scaffold(
+            body: Center(
+              child: Lottie.asset('assets/images/laundry_loading.json'),
+            ),
+          )
+        :  Scaffold(
         extendBodyBehindAppBar: true,
         backgroundColor: AppColors.whiteColor,
         appBar: AppBar(

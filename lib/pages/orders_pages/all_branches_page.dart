@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:lottie/lottie.dart';
 import 'package:shimmer/shimmer.dart';
 import 'package:vff_group/animation/fade_animation.dart';
 import 'package:vff_group/animation/slide_left_animation.dart';
@@ -125,7 +126,13 @@ class _AllBranchesPageState extends State<AllBranchesPage> {
   Widget build(BuildContext context) {
     double height = MediaQuery.of(context).size.height;
     double width = MediaQuery.of(context).size.width;
-    return Scaffold(
+    return showLoading
+        ? Scaffold(
+            body: Center(
+              child: Lottie.asset('assets/images/laundry_loading.json'),
+            ),
+          )
+        :  Scaffold(
       backgroundColor: AppColors.whiteColor,
       appBar: AppBar(
           backgroundColor: Colors.blue,
