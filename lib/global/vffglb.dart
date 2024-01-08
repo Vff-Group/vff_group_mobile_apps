@@ -16,13 +16,15 @@ import 'package:url_launcher/url_launcher.dart';
 import 'package:vff_group/gym_app/utils/app_colors.dart';
 import 'package:vff_group/utils/app_styles.dart';
 
-String endPoint = "http://62.72.57.222:3000/"; //8085,3000
+// String endPoint = "http://62.72.57.222:3000/"; //8085,3000
 bool debugStatus = false,refreshOrdersPage = false;
 
-// String endPointGym = "http://62.72.57.222:8000/gym_mobile_app/"; //8085,3000
+// String endPoint = "http://62.72.57.222:8000/laundry_mobile_app/"; //8000
+// String endPointGym = "http://62.72.57.222:8000/gym_mobile_app/"; //8000
 // String endPointClothing = "http://62.72.57.222:8000/clothing_mobile_app/"; 
-String endPointClothing = "https://www.vffgroup.in/clothing_mobile_app/"; 
-String endPointGym = "https://www.vffgroup.in/gym_mobile_app/"; 
+String endPoint = "https://www.vffgroup.in/laundry_mobile_app/"; //8000
+String endPointClothing = "https://www.vff-group.com/clothing_mobile_app/"; 
+String endPointGym = "https://www.vff-group.com/gym_mobile_app/"; 
 
 var gymPageIndex=0;
 String account_created_date = "",
@@ -53,16 +55,16 @@ String cartQuantity = "",
   
 String currentSubCatID = "", currentCategoryID = "", currentMainCatId = "", currentMainCategoryName = "",currentCategorySelectedName = "",currentSubCategoryName = "",currentSelectedType="",productID="";
 
-// void showSnackBar(BuildContext context, String alertTxt, String text) {
-//   Get.snackbar(alertTxt, text,
-//       snackPosition: SnackPosition.TOP,
-//       colorText: Colors.black,
-//       backgroundGradient: alertTxt == "Error"
-//           ? RadialGradient(colors: [Colors.redAccent, Colors.red])
-//           : RadialGradient(
-//               colors: [AppColors.primaryColor1, AppColors.primaryColor2]),
-//       icon: Image.asset('assets/logo/logo.png'));
-// }
+void showSnackBarLogin(BuildContext context, String alertTxt, String text) {
+  Get.snackbar(alertTxt, text,
+      snackPosition: SnackPosition.TOP,
+      colorText: Colors.black,
+      backgroundGradient: alertTxt == "Error"
+          ? RadialGradient(colors: [Colors.redAccent, Colors.red])
+          : RadialGradient(
+              colors: [Colors.white, Colors.white]),
+      icon: Image.asset('assets/logo/logo.png'));
+}
 
 void showSnackBar(BuildContext context, String alertTxt, String text) {
   ScaffoldMessenger.of(context).showSnackBar(SnackBar(
@@ -158,7 +160,7 @@ handleErrors(Object e, BuildContext context) {
         'No Internet Connection Found / Server is Down');
     return;
   }
-  print("handle Exception here::$e");
+  print("handle Exception here::${e.toString()}");
   if (e.toString().contains("XMLHttpRequest")) {
     showSnackBar(context, 'Network Error',
         'No Internet Connection Found / Server is Down');
@@ -185,7 +187,7 @@ handleErrors(Object e, BuildContext context) {
     showSnackBar(context, 'Network Error', 'Connection timeout');
     return;
   } else {
-    //showSnackBar(context, 'Network Error', 'Connection timeout');
+    showSnackBar(context, 'Network Error', 'Connection timeout');
     return;
   }
 }

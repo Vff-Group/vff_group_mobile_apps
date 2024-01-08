@@ -42,12 +42,13 @@ class _PickupOrdersPageState extends State<PickupOrdersPage> {
     glb.order_status = "0";
     try {
       var url = glb.endPoint;
+      url+="load_all_pickup_order/";
       final Map dictMap = {};
       dictMap['delivery_boy_id'] = delivery_boy_id;
       dictMap['branch_id'] = branch_id;
-      dictMap['pktType'] = "30";
-      dictMap['token'] = "vff";
-      dictMap['uid'] = "-1";
+      // dictMap['pktType'] = "30";
+      // dictMap['token'] = "vff";
+      // dictMap['uid'] = "-1";
 
       final response = await http.post(Uri.parse(url),
           headers: <String, String>{
@@ -102,6 +103,9 @@ class _PickupOrdersPageState extends State<PickupOrdersPage> {
             for (int i = 0; i < booking_idLst.length; i++) {
               var booking_id = booking_idLst.elementAt(i).toString();
               var customer_name = customer_nameLst.elementAt(i).toString();
+              if(customer_name.isEmpty){
+                customer_name = "NO Name Found";
+              }
               var city_name = cityLst.elementAt(i).toString();
               var landmark = landmarkLst.elementAt(i).toString();
               var pincode = pincodeLst.elementAt(i).toString();

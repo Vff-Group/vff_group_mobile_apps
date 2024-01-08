@@ -52,13 +52,7 @@ class _LoginScreenState extends State<LoginScreen> {
   Widget build(BuildContext context) {
     double height = MediaQuery.of(context).size.height;
     double width = MediaQuery.of(context).size.width;
-    return showLoading
-        ? Scaffold(
-            body: Center(
-              child: Lottie.asset('assets/images/laundry_loading.json'),
-            ),
-          )
-        :  SafeArea(
+    return SafeArea(
       left: false,
       right: false,
       top: false,
@@ -160,17 +154,17 @@ class _LoginScreenState extends State<LoginScreen> {
                             var phoneNo = phoneController.text.trim();
                             var name = nameController.text.trim();
                             if (name.isEmpty) {
-                              glb.showSnackBar(context, 'Alert',
-                                  'Please provide the Display Name first');
+                              glb.showSnackBarLogin(context, 'Alert',
+                                  'Please provide the Display Name first.\nFor Profile Completion.\nThank You');
                               return;
                             }
                             if (phoneNo.isEmpty) {
-                              glb.showSnackBar(context, 'Alert',
-                                  'Please provide your valid mobile number');
+                              glb.showSnackBarLogin(context, 'Alert',
+                                  'Please provide your valid mobile number.\nFor Profile Completion.\nThank You');
                               return;
                             }
                             if(phoneNo.length < 10 || phoneNo.length > 10){
-                              glb.showSnackBar(context, 'Alert',
+                              glb.showSnackBarLogin(context, 'Alert',
                                   'Please provide your valid 10 Digits mobile number.\nThank You');
                               return;
                             }
@@ -273,18 +267,18 @@ class _LoginScreenState extends State<LoginScreen> {
                           onTap: () {
                             var phoneNo = phoneController.text.trim();
                             var name = nameController.text.trim();
-                            // if (name.isEmpty) {
-                            //   glb.showSnackBar(context, 'Alert',
-                            //       'Please provide the Display Name first');
-                            //   return;
-                            // }
+                            if (name.isEmpty) {
+                              glb.showSnackBarLogin(context, 'Alert',
+                                  'Please provide the Display Name first.\nFor Profile Completion.\nThank You');
+                              return;
+                            }
                             if (phoneNo.isEmpty) {
-                              glb.showSnackBar(context, 'Alert',
-                                  'Please provide your valid mobile number to provide you better service even if you are using Google Sign In.');
+                              glb.showSnackBarLogin(context, 'Alert',
+                                  'Please provide your valid mobile number to provide you better service even if you are using Google Sign In.\nFor Profile Completion.\nThank You');
                               return;
                             }
                             if(phoneNo.length < 10 || phoneNo.length > 10){
-                              glb.showSnackBar(context, 'Alert',
+                              glb.showSnackBarLogin(context, 'Alert',
                                   'Please provide your valid 10 Digits mobile number.\nThank You');
                               return;
                             }
@@ -350,17 +344,17 @@ class _LoginScreenState extends State<LoginScreen> {
                             var phoneNo = phoneController.text.trim();
                             var name = nameController.text.trim();
                             if (name.isEmpty) {
-                              glb.showSnackBar(context, 'Alert',
-                                  'Please provide the Display Name first to have Correct Name By which we can address you');
+                              glb.showSnackBarLogin(context, 'Alert',
+                                  'Please provide the Display Name first to have Correct Name By which we can address you.\nFor Profile Completion.\nThank You');
                               return;
                             }
                             if (phoneNo.isEmpty) {
-                              glb.showSnackBar(context, 'Alert',
-                                  'Please provide your valid mobile number to provide you a better service. Even though you are using Apple ID to Login.\nThank You');
+                              glb.showSnackBarLogin(context, 'Alert',
+                                  'Please provide your valid mobile number to provide you a better service. Even though you are using Apple ID to Login..\nFor Profile Completion.\nThank You');
                               return;
                             }
                             if(phoneNo.length < 10 || phoneNo.length > 10){
-                              glb.showSnackBar(context, 'Alert',
+                              glb.showSnackBarLogin(context, 'Alert',
                                   'Please provide your valid 10 Digits mobile number.\nThank You');
                               return;
                             }
@@ -440,7 +434,7 @@ class _LoginScreenState extends State<LoginScreen> {
     try {
       await launchUrl(launchUri);
     } catch (e) {
-      glb.showSnackBar(context, 'Alert', 'Currently under maintenance');
+      glb.showSnackBarLogin(context, 'Alert', 'Currently under maintenance');
       print(e);
     }
   }
@@ -470,7 +464,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
   Future loginAsync(String phoneNo,String displayName) async {
     var emailStr = '';
-    var name = '';
+    var name = displayName;
     var photoUrl = 'https://vff-group.com/static/img/demouser.jpeg';
     setState(() {
       showLoading = true;
@@ -488,7 +482,7 @@ class _LoginScreenState extends State<LoginScreen> {
         final googleUser = await googleSignIn.signIn();
 
         if (googleUser == null) {
-          glb.showSnackBar(context, 'Invalid Credentials',
+          glb.showSnackBarLogin(context, 'Invalid Credentials',
               'Please login using your valid Email ID');
           setState(() {
             showLoading = false;
@@ -513,7 +507,7 @@ class _LoginScreenState extends State<LoginScreen> {
           setState(() {
             showLoading = false;
           });
-          glb.showSnackBar(context, 'Invalid Credentials',
+          glb.showSnackBarLogin(context, 'Invalid Credentials',
               'Please login using your valid Email ID');
           return;
         }
@@ -526,7 +520,7 @@ class _LoginScreenState extends State<LoginScreen> {
           setState(() {
             showLoading = false;
           });
-          glb.showSnackBar(context, 'Invalid Credentials',
+          glb.showSnackBarLogin(context, 'Invalid Credentials',
               'Please login using your valid Apple ID');
           return;
         }
@@ -543,6 +537,8 @@ class _LoginScreenState extends State<LoginScreen> {
      
 
       var url = glb.endPoint;
+      url += "login/"; // Route Name
+      print('loginEndPoint::'+url);
       final Map dictMap = {};
       // dictMap['mobno'] = "+91$phoneNo";
       dictMap['mobno'] = phoneNo;
@@ -552,9 +548,9 @@ class _LoginScreenState extends State<LoginScreen> {
       dictMap['lat'] = 0;
       dictMap['lng'] = 0;
       dictMap['profile_img'] = photoUrl;
-      dictMap['pktType'] = "1";
-      dictMap['token'] = "vff";
-      dictMap['uid'] = "-1";
+      // dictMap['pktType'] = "1";
+      // dictMap['token'] = "vff";
+      // dictMap['uid'] = "-1";
 
       final response = await http.post(Uri.parse(url),
           headers: <String, String>{
@@ -567,11 +563,11 @@ class _LoginScreenState extends State<LoginScreen> {
         var res = response.body;
         if (res.contains("ErrorCode#2")) {
           // Navigator.pop(context);
-          glb.showSnackBar(context, 'Error', 'You are not registered');
+          glb.showSnackBarLogin(context, 'Error', 'You are not registered');
           return;
         } else if (res.contains("ErrorCode#8")) {
           //Navigator.pop(context);
-          glb.showSnackBar(context, 'Error', 'Something Went Wrong');
+          glb.showSnackBarLogin(context, 'Error', 'Something Went Wrong');
           return;
         } else {
           try {

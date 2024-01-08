@@ -38,14 +38,15 @@ class _CompletedOrdersPageState extends State<CompletedOrdersPage> {
     glb.order_status = "1";
     try {
       var url = glb.endPoint;
+      url+="load_delivery_boy_all_orders_tab_details/";
       final Map dictMap = {};
 //select orderid,customerid,quantity,price,pickup_dt,delivery,clat,clng,order_status,delivery_epoch,laundry_ordertbl.epoch,cancel_reason,houseno,address from vff.usertbl,vff.laundry_delivery_boytbl,vff.laundry_ordertbl where usertbl.usrid=laundry_delivery_boytbl.usrid and laundry_delivery_boytbl.delivery_boy_id=laundry_ordertbl.delivery_boyid and delivery_boyid='3' and order_completed='1' and order_status='Accepted'  order by orderid desc
       dictMap['delivery_boy_id'] = delivery_boy_id;
       dictMap['order_completed'] = glb.order_status;
       dictMap['order_status'] = 'Completed';
-      dictMap['pktType'] = "24";
-      dictMap['token'] = "vff";
-      dictMap['uid'] = "-1";
+      // dictMap['pktType'] = "24";
+      // dictMap['token'] = "vff";
+      // dictMap['uid'] = "-1";
 
       final response = await http.post(Uri.parse(url),
           headers: <String, String>{

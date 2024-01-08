@@ -70,12 +70,13 @@ class _OldCurrentDeliveryPageState extends State<OldCurrentDeliveryPage> {
     if (true) {
       try {
         var url = glb.endPoint;
+        url+="delivery_boycurrent_active_order_details/";
         final Map dictMap = {};
 
-        dictMap['pktType'] = "25";
+        // dictMap['pktType'] = "25";
         dictMap['delivery_boy_id'] = delivery_boy_id;
-        dictMap['token'] = "vff";
-        dictMap['uid'] = "-1";
+        // dictMap['token'] = "vff";
+        // dictMap['uid'] = "-1";
         final response = await http.post(Uri.parse(url),
             headers: <String, String>{
               "Accept": "application/json",

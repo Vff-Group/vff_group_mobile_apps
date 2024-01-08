@@ -35,13 +35,14 @@ class _CancelledOrdersState extends State<CancelledOrders> {
     glb.order_status = "2";
     try {
       var url = glb.endPoint;
+      url+="load_all_orders_tab_details/";
       final Map dictMap = {};
 
       dictMap['customer_id'] = customerid;
       dictMap['order_status'] = glb.order_status;
-      dictMap['pktType'] = "22";
-      dictMap['token'] = "vff";
-      dictMap['uid'] = "-1";
+      // dictMap['pktType'] = "22";
+      // dictMap['token'] = "vff";
+      // dictMap['uid'] = "-1";
 
       final response = await http.post(Uri.parse(url),
           headers: <String, String>{

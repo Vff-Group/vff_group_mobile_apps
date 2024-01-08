@@ -275,6 +275,7 @@ class _DietPlanScreenState extends State<DietPlanScreen> {
       glb.handleErrors(e, context);
     }
   }
+
 }
 
 Container _dietCard(DietPlansModal wObj) {

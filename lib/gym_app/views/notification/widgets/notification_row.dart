@@ -9,17 +9,17 @@ class NotificationRow extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 8),
+      padding:  const EdgeInsets.symmetric(vertical: 8),
       child: Row(
         children: [
           ClipRRect(
             borderRadius: BorderRadius.circular(30),
-            child: Image.asset(
+            child: nObj["image"].toString() != "NA" ? Image.asset(
               nObj["image"].toString(),
               width: 40,
               height: 40,
               fit: BoxFit.cover,
-            ),
+            ) : Text('#${nObj["id"].toString()}',)
           ),
           const SizedBox(
             width: 15,

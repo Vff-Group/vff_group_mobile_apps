@@ -71,17 +71,17 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
         padding: const EdgeInsets.all(18.0),
         child: GestureDetector(
           onTap: (){
-                  //Navigator.pushNamed(context, CartItemsClothingRoute);
+                  Navigator.pushNamed(context, CartItemsClothingRoute);
                   //TODO:Async to add it to cart table
                   setState(() {
                     showLoading = true;
                   });
                   // Adding a delay of 2 seconds before setting showLoading back to false
-                  Future.delayed(Duration(seconds: 2), () {
-                    setState(() {
-                      showLoading = false;
-                    });
-                  });
+                  // Future.delayed(Duration(seconds: 2), () {
+                  //   setState(() {
+                  //     showLoading = false;
+                  //   });
+                  // });
           },
           child: Container(
             decoration: BoxDecoration(

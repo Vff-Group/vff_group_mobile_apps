@@ -36,14 +36,15 @@ class _CancelledOrderPageState extends State<CancelledOrderPage> {
     glb.order_status = "2";
     try {
       var url = glb.endPoint;
+      url+="load_delivery_boy_all_orders_tab_details/";
       final Map dictMap = {};
 //select orderid,customerid,quantity,price,pickup_dt,delivery,clat,clng,order_status,delivery_epoch,laundry_ordertbl.epoch,cancel_reason,houseno,address from vff.usertbl,vff.laundry_delivery_boytbl,vff.laundry_ordertbl where usertbl.usrid=laundry_delivery_boytbl.usrid and laundry_delivery_boytbl.delivery_boy_id=laundry_ordertbl.delivery_boyid and delivery_boyid='3' and order_completed='0' and order_status='Rejected'  order by orderid desc
       dictMap['delivery_boy_id'] = delivery_boy_id;
       dictMap['order_completed'] = glb.order_status;
       dictMap['order_status'] = 'Rejected';
-      dictMap['pktType'] = "24";
-      dictMap['token'] = "vff";
-      dictMap['uid'] = "-1";
+      // dictMap['pktType'] = "24";
+      // dictMap['token'] = "vff";
+      // dictMap['uid'] = "-1";
 
       final response = await http.post(Uri.parse(url),
           headers: <String, String>{

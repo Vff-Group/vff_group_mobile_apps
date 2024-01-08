@@ -124,11 +124,12 @@ class _HomePageState extends State<HomePage> {
     });
     try {
       var url = glb.endPoint;
+      url +="load_all_offers/";
       final Map dictMap = {};
 
-      dictMap['pktType'] = "33";
-      dictMap['token'] = "vff";
-      dictMap['uid'] = "-1";
+      // dictMap['pktType'] = "33";
+      // dictMap['token'] = "vff";
+      // dictMap['uid'] = "-1";
 
       final response = await http.post(Uri.parse(url),
           headers: <String, String>{
@@ -203,11 +204,12 @@ class _HomePageState extends State<HomePage> {
   Future allCategoryAsync() async {
     try {
       var url = glb.endPoint;
+      url+="load_laundry_all_categories/";
       final Map dictMap = {};
 
-      dictMap['pktType'] = "2";
-      dictMap['token'] = "vff";
-      dictMap['uid'] = "-1";
+      // dictMap['pktType'] = "2";
+      // dictMap['token'] = "vff";
+      // dictMap['uid'] = "-1";
 
       final response = await http.post(Uri.parse(url),
           headers: <String, String>{
@@ -317,13 +319,14 @@ class _HomePageState extends State<HomePage> {
     var todaysDate = glb.getDateTodays();
     try {
       var url = glb.endPoint;
+      url+="load_customer_new_orders/";
       final Map dictMap = {};
 
       dictMap['customer_id'] = customerid;
       dictMap['key'] = 2;
-      dictMap['pktType'] = "9";
-      dictMap['token'] = "vff";
-      dictMap['uid'] = "-1";
+      // dictMap['pktType'] = "9";
+      // dictMap['token'] = "vff";
+      // dictMap['uid'] = "-1";
 
       final response = await http.post(Uri.parse(url),
           headers: <String, String>{
@@ -426,14 +429,15 @@ class _HomePageState extends State<HomePage> {
     var todaysDate = glb.getDateTodays();
     try {
       var url = glb.endPoint;
+      url+="load_customer_new_orders/";
       final Map dictMap = {};
 
       dictMap['customer_id'] = customerid;
       dictMap['key'] = 1;
       dictMap['branch_id'] = "1";
-      dictMap['pktType'] = "9";
-      dictMap['token'] = "vff";
-      dictMap['uid'] = "-1";
+      // dictMap['pktType'] = "9";
+      // dictMap['token'] = "vff";
+      // dictMap['uid'] = "-1";
 
       final response = await http.post(Uri.parse(url),
           headers: <String, String>{
@@ -541,13 +545,14 @@ class _HomePageState extends State<HomePage> {
     }
     try {
       var url = glb.endPoint;
+      url+="update_user_device_token/";
       final Map dictMap = {};
 
       dictMap['usrid'] = usrid;
       dictMap['deviceToken'] = deviceToken;
-      dictMap['pktType'] = "5";
-      dictMap['token'] = "vff";
-      dictMap['uid'] = "-1";
+      // dictMap['pktType'] = "5";
+      // dictMap['token'] = "vff";
+      // dictMap['uid'] = "-1";
 
       final response = await http.post(Uri.parse(url),
           headers: <String, String>{
@@ -1483,7 +1488,7 @@ class _HomePageState extends State<HomePage> {
   Future goToGymPage() async {
     glb.prefs = await SharedPreferences.getInstance();
     // SharedPreferenceUtils.save_val("gym_usrid", "");
-    var gym_usrid = glb.prefs!.getString('gym_usrid');
+    var gym_usrid = glb.prefs!.getString('memberid');
     if(gym_usrid == null){
       Navigator.pushNamed(context, GymLoginRoute);
       return;

@@ -109,13 +109,14 @@ class _DashboardPageState extends State<DashboardPage> {
     }
     try {
       var url = glb.endPoint;
+      url+="update_user_device_token/";
       final Map dictMap = {};
 
       dictMap['clat'] = dclat;
       dictMap['deviceToken'] = deviceToken;
-      dictMap['pktType'] = "5";
-      dictMap['token'] = "vff";
-      dictMap['uid'] = "-1";
+      // dictMap['pktType'] = "5";
+      // dictMap['token'] = "vff";
+      // dictMap['uid'] = "-1";
 
       final response = await http.post(Uri.parse(url),
           headers: <String, String>{
@@ -154,12 +155,13 @@ class _DashboardPageState extends State<DashboardPage> {
     if (true) {
       try {
         var url = glb.endPoint;
+        url+="delivery_boy_stats/";
         final Map dictMap = {};
 
         dictMap['deliveryboyid'] = delivery_boy_id;
-        dictMap['pktType'] = "28";
-        dictMap['token'] = "vff";
-        dictMap['uid'] = "-1";
+        // dictMap['pktType'] = "28";
+        // dictMap['token'] = "vff";
+        // dictMap['uid'] = "-1";
         final response = await http.post(Uri.parse(url),
             headers: <String, String>{
               "Accept": "application/json",
@@ -234,13 +236,14 @@ class _DashboardPageState extends State<DashboardPage> {
     if (nbooking_id != null && nbooking_id.isNotEmpty) {
       try {
         var url = glb.endPoint;
+        url+="load_new_orders_requested_to_delivery_boy/";
         final Map dictMap = {};
 
         dictMap['booking_id'] = nbooking_id;
         dictMap['branch_id'] = delivery_boy_branch_id;
-        dictMap['pktType'] = "7";
-        dictMap['token'] = "vff";
-        dictMap['uid'] = "-1";
+        // dictMap['pktType'] = "7";
+        // dictMap['token'] = "vff";
+        // dictMap['uid'] = "-1";
         final response = await http.post(Uri.parse(url),
             headers: <String, String>{
               "Accept": "application/json",
@@ -355,13 +358,14 @@ class _DashboardPageState extends State<DashboardPage> {
     }
     try {
       var url = glb.endPoint;
+      url+="mark_delivery_boy_as_online/";
       final Map dictMap = {};
 
       dictMap['delivery_boy_id'] = deliveryBoyId;
       dictMap['set_free'] = mark_free;
-      dictMap['pktType'] = "23";
-      dictMap['token'] = "vff";
-      dictMap['uid'] = "-1";
+      // dictMap['pktType'] = "23";
+      // dictMap['token'] = "vff";
+      // dictMap['uid'] = "-1";
       final response = await http.post(Uri.parse(url),
           headers: <String, String>{
             "Accept": "application/json",
@@ -428,15 +432,16 @@ class _DashboardPageState extends State<DashboardPage> {
       print('Notification nbooking_id Dashboard::$nbooking_id');
       try {
         var url = glb.endPoint;
+        url+="accept_or_reject_order_delivery_boy/";
         final Map dictMap = {};
 
         dictMap['booking_id'] = nbooking_id;
         dictMap['delivery_boy_id'] = deliveryBoyId;
         dictMap['status'] = bookingStatus;
         dictMap['branch_id'] = delivery_boy_branch_id;
-        dictMap['pktType'] = "8";
-        dictMap['token'] = "vff";
-        dictMap['uid'] = "-1";
+        // dictMap['pktType'] = "8";
+        // dictMap['token'] = "vff";
+        // dictMap['uid'] = "-1";
         final response = await http.post(Uri.parse(url),
             headers: <String, String>{
               "Accept": "application/json",

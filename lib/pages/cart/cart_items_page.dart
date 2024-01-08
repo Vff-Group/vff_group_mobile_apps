@@ -36,13 +36,14 @@ class _AddToCartItemState extends State<AddToCartItem> {
     var todaysDate = glb.getDateTodays();
     try {
       var url = glb.endPoint;
+      url += "load_cart_items_selected/";
       final Map dictMap = {};
 
       dictMap['customer_id'] = glb.customerID;
       dictMap['booking_id'] = glb.booking_id;
-      dictMap['pktType'] = "15";
-      dictMap['token'] = "vff";
-      dictMap['uid'] = "-1";
+      // dictMap['pktType'] = "15";
+      // dictMap['token'] = "vff";
+      // dictMap['uid'] = "-1";
 
       final response = await http.post(Uri.parse(url),
           headers: <String, String>{
@@ -182,12 +183,13 @@ class _AddToCartItemState extends State<AddToCartItem> {
 
     try {
       var url = glb.endPoint;
+      url += "delete_laundry_cart_item/";
       final Map dictMap = {};
 
       dictMap['item_id'] = itemID;
-      dictMap['pktType'] = "16";
-      dictMap['token'] = "vff";
-      dictMap['uid'] = "-1";
+      // dictMap['pktType'] = "16";
+      // dictMap['token'] = "vff";
+      // dictMap['uid'] = "-1";
 
       final response = await http.post(Uri.parse(url),
           headers: <String, String>{

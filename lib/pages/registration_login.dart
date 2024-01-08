@@ -47,6 +47,7 @@ class _RegistrationLoginPageState extends State<RegistrationLoginPage> {
     });
     try {
       var url = glb.endPoint;
+      url+="login/";
       final Map dictMap = {};
       // dictMap['mobno'] = "+91$phoneNo";
       dictMap['mobno'] = phoneNo;
@@ -56,9 +57,9 @@ class _RegistrationLoginPageState extends State<RegistrationLoginPage> {
       dictMap['lat'] = 0;
       dictMap['lng'] = 0;
       dictMap['profile_img'] = "NA";
-      dictMap['pktType'] = "1";
-      dictMap['token'] = "vff";
-      dictMap['uid'] = "-1";
+      // dictMap['pktType'] = "1";
+      // dictMap['token'] = "vff";
+      // dictMap['uid'] = "-1";
 
       final response = await http.post(Uri.parse(url),
           headers: <String, String>{

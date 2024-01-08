@@ -1,12 +1,16 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:url_launcher/url_launcher.dart';
 import 'package:vff_group/gym_app/utils/app_colors.dart';
 import 'package:vff_group/gym_app/views/setttings/widgets/setting_row.dart';
 import 'package:vff_group/gym_app/views/setttings/widgets/title_subtitle_cell.dart';
 import 'package:animated_toggle_switch/animated_toggle_switch.dart';
 import 'package:vff_group/routings/route_names.dart';
+import 'package:vff_group/utils/SharedPreferencesUtils.dart';
 import '../../common_widgets/round_button.dart';
+import 'package:vff_group/global/vffglb.dart' as glb;
 
 class SettingsGym extends StatefulWidget {
   const SettingsGym({super.key});
@@ -38,13 +42,13 @@ class _SettingsGymState extends State<SettingsGym> {
   ];
 
   List otherArr = [
-    {"image": "assets/icons/p_contact.png", "name": "Contact Us", "tag": "5"},
+    {"image": "assets/icons/p_contact.png", "name": "Contact Us", "tag": "1"},
     {
       "image": "assets/icons/p_privacy.png",
       "name": "Privacy Policy",
-      "tag": "6"
+      "tag": "2"
     },
-    {"image": "assets/icons/p_setting.png", "name": "Setting", "tag": "7"},
+    {"image": "assets/icons/p_setting.png", "name": "Log Out", "tag": "3"},
   ];
 
   var memberID = "";
@@ -56,6 +60,7 @@ class _SettingsGymState extends State<SettingsGym> {
   var myWeight = "";
   var myAge = "";
   var myGymGoal = "";
+  var myGender = "";
 
   @override
   void initState() {
@@ -91,7 +96,7 @@ class _SettingsGymState extends State<SettingsGym> {
                   ClipRRect(
                     borderRadius: BorderRadius.circular(30),
                     child: Image.asset(
-                      "assets/images/user.png",
+                     myGender == "Male" ? "assets/icons/male_gym_icon.jpg" : "assets/icons/gym_girl_icon.jpg",
                       width: 50,
                       height: 50,
                       fit: BoxFit.cover,
@@ -212,52 +217,74 @@ class _SettingsGymState extends State<SettingsGym> {
               const SizedBox(
                 height: 25,
               ),
-              // Container(
-              //   padding:
-              //       const EdgeInsets.symmetric(vertical: 10, horizontal: 15),
-              //   decoration: BoxDecoration(
-              //       color: AppColors.whiteColor,
-              //       borderRadius: BorderRadius.circular(15),
-              //       boxShadow: const [
-              //         BoxShadow(color: Colors.black12, blurRadius: 2)
-              //       ]),
-              //   child: Column(
-              //     crossAxisAlignment: CrossAxisAlignment.start,
-              //     children: [
-              //       Text(
-              //         "Other",
-              //         style: TextStyle(
-              //           color: AppColors.blackColor,
-              //           fontSize: 16,
-              //           fontWeight: FontWeight.w700,
-              //         ),
-              //       ),
-              //       const SizedBox(
-              //         height: 8,
-              //       ),
-              //       // ListView.builder(
-              //       //   physics: const NeverScrollableScrollPhysics(),
-              //       //   padding: EdgeInsets.zero,
-              //       //   shrinkWrap: true,
-              //       //   itemCount: otherArr.length,
-              //       //   itemBuilder: (context, index) {
-              //       //     var iObj = otherArr[index] as Map? ?? {};
-              //       //     return SettingRow(
-              //       //       icon: iObj["image"].toString(),
-              //       //       title: iObj["name"].toString(),
-              //       //       onPressed: () {},
-              //       //     );
-              //       //   },
-              //       // )
-              //     ],
-              //   ),
-              // )
+              Container(
+                padding:
+                    const EdgeInsets.symmetric(vertical: 10, horizontal: 15),
+                decoration: BoxDecoration(
+                    color: AppColors.whiteColor,
+                    borderRadius: BorderRadius.circular(15),
+                    boxShadow: const [
+                      BoxShadow(color: Colors.black12, blurRadius: 2)
+                    ]),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      "Other",
+                      style: TextStyle(
+                        color: AppColors.blackColor,
+                        fontSize: 16,
+                        fontWeight: FontWeight.w700,
+                      ),
+                    ),
+                    const SizedBox(
+                      height: 8,
+                    ),
+                    ListView.builder(
+                      physics: const NeverScrollableScrollPhysics(),
+                      padding: EdgeInsets.zero,
+                      shrinkWrap: true,
+                      itemCount: otherArr.length,
+                      itemBuilder: (context, index) {
+                        var iObj = otherArr[index] as Map? ?? {};
+                        return SettingRow(
+                          icon: iObj["image"].toString(),
+                          title: iObj["name"].toString(),
+                          onPressed: () {
+                            var tag = iObj["tag"].toString();
+                            if (tag == "1") {
+                              var url = 'https://vff-group.com/contactus/';
+                              _OpenBrowser(url);
+                            } else if (tag == "2") {
+                              var url = 'https://vff-group.com/privacy_policy/';
+                              _OpenBrowser(url);
+                            } else if (tag == "3") {
+                              _showDialog(context);
+                            }
+                          },
+                        );
+                      },
+                    )
+                  ],
+                ),
+              )
            
             ],
           ),
         ),
       ),
     );
+    
+  }
+
+  Future<void> _OpenBrowser(String url) async {
+    final Uri launchUri = Uri.parse(url);
+    try {
+      await launchUrl(launchUri);
+    } catch (e) {
+      glb.showSnackBar(context, 'Alert', 'Currently under maintenance');
+      print(e);
+    }
   }
 
   Future getDefaultAsync() async {
@@ -271,6 +298,7 @@ class _SettingsGymState extends State<SettingsGym> {
     var my_weight = prefs.getString('my_weight');
     var my_gym_goal = prefs.getString('my_gym_goal');
     var my_date_of_birth = prefs.getString('my_date_of_birth');
+    var my_gender = prefs.getString('my_gender');
     print('my_date_of_birth::$my_date_of_birth');
     // Parsing the date string into DateTime object
     // Replace '/' with '-' in the date string
@@ -288,6 +316,7 @@ class _SettingsGymState extends State<SettingsGym> {
       myHeight = my_height! + " Ft";
       myWeight = my_weight! + " Kgs";
       myAge = '$age Yo';
+      myGender = my_gender!;
     });
   }
 
@@ -317,6 +346,34 @@ class _SettingsGymState extends State<SettingsGym> {
     }
     return age;
   }
+
+_showDialog(BuildContext context) {
+  return showDialog(
+      context: context,
+      builder: (context) => CupertinoAlertDialog(
+            title: Column(
+              children: <Widget>[
+                Text("Log Out"),
+              ],
+            ),
+            content: new Text("Alert!😕" + "Are you sure you want to Log Out"),
+            actions: <Widget>[
+              CupertinoDialogAction(
+                child: Text("Yes"),
+                onPressed: () {
+                  SharedPreferenceUtils.save_val("gym_usrid", "");
+                  Navigator.popAndPushNamed(context, GymLoginRoute);
+                },
+              ),
+              CupertinoDialogAction(
+                child: Text("CANCEL"),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+              ),
+            ],
+          ));
+}
 
 //  String calculateAge(DateTime birthDate) {
 //     DateTime currentDate = DateTime.now();

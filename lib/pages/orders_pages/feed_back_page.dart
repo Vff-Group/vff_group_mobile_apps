@@ -53,15 +53,16 @@ class _FeedBackPageState extends State<FeedBackPage> {
 
     try {
       var url = glb.endPoint;
+      url+="feedback_laundry_order/";
       final Map dictMap = {};
 
       dictMap['order_id'] = glb.orderid;
       dictMap['customer_id'] = customerid;
       dictMap['feedback'] = feedback;
 
-      dictMap['pktType'] = "21";
-      dictMap['token'] = "vff";
-      dictMap['uid'] = "-1";
+      // dictMap['pktType'] = "21";
+      // dictMap['token'] = "vff";
+      // dictMap['uid'] = "-1";
 
       final response = await http.post(Uri.parse(url),
           headers: <String, String>{

@@ -102,6 +102,7 @@ class _ItemDetailsBottomSheetState extends State<ItemDetailsBottomSheet> {
     total_quantity = adultCount + kidsCount;
     try {
       var url = glb.endPoint;
+      url+="add_laundry_items_to_cart/";
       final Map dictMap = {};
 
       dictMap['cat_id'] = cat_id;
@@ -120,9 +121,9 @@ class _ItemDetailsBottomSheetState extends State<ItemDetailsBottomSheet> {
       dictMap['sub_cat_name'] = sub_cat_name;
       dictMap['sub_cat_img'] = sub_cat_img;
       dictMap['actual_cost'] = actual_cost;
-      dictMap['pktType'] = "14";
-      dictMap['token'] = "vff";
-      dictMap['uid'] = "-1";
+      // dictMap['pktType'] = "14";
+      // dictMap['token'] = "vff";
+      // dictMap['uid'] = "-1";
 
       final response = await http.post(Uri.parse(url),
           headers: <String, String>{

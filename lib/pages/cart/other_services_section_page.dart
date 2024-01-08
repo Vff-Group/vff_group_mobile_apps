@@ -171,12 +171,13 @@ class _SectionPageOtherServiceState extends State<SectionPageOtherService> {
     var todaysDate = glb.getDateTodays();
     try {
       var url = glb.endPoint;
+      url+="load_category_wise_details/";
       final Map dictMap = {};
 
       dictMap['cat_id'] = widget.catId;
-      dictMap['pktType'] = "12";
-      dictMap['token'] = "vff";
-      dictMap['uid'] = "-1";
+      // dictMap['pktType'] = "12";
+      // dictMap['token'] = "vff";
+      // dictMap['uid'] = "-1";
 
       final response = await http.post(Uri.parse(url),
           headers: <String, String>{
@@ -302,6 +303,7 @@ class _SectionPageOtherServiceState extends State<SectionPageOtherService> {
     print("typeOf::$typeOf");
     try {
       var url = glb.endPoint;
+      url+="add_laundry_items_to_cart/";
       final Map dictMap = {};
 
       dictMap['cat_id'] = widget.catId;
@@ -321,9 +323,9 @@ class _SectionPageOtherServiceState extends State<SectionPageOtherService> {
       dictMap['sub_cat_img'] = subCategoryImage;
       dictMap['section_type'] = "All";
 
-      dictMap['pktType'] = "14";
-      dictMap['token'] = "vff";
-      dictMap['uid'] = "-1";
+      // dictMap['pktType'] = "14";
+      // dictMap['token'] = "vff";
+      // dictMap['uid'] = "-1";
 
       final response = await http.post(Uri.parse(url),
           headers: <String, String>{
@@ -371,12 +373,13 @@ class _SectionPageOtherServiceState extends State<SectionPageOtherService> {
     var todaysDate = glb.getDateTodays();
     try {
       var url = glb.endPoint;
+      url+="load_sub_category_section_wise_details/";
       final Map dictMap = {};
 
       dictMap['section_type'] = "All";
-      dictMap['pktType'] = "19";
-      dictMap['token'] = "vff";
-      dictMap['uid'] = "-1";
+      // dictMap['pktType'] = "19";
+      // dictMap['token'] = "vff";
+      // dictMap['uid'] = "-1";
 
       final response = await http.post(Uri.parse(url),
           headers: <String, String>{

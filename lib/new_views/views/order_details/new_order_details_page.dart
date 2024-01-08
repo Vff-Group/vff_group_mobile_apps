@@ -70,14 +70,15 @@ class _NewOrderDetailsPageState extends State<NewOrderDetailsPage> {
     var todaysDate = glb.getDateTodays();
     try {
       var url = glb.endPoint;
+      url+="load_customer_active_order_details/";
       final Map dictMap = {};
 //select orderid,customerid,quantity,price,pickup_dt,delivery,clat,clng,order_status,delivery_epoch,laundry_ordertbl.epoch,cancel_reason,houseno,address from vff.laundry_customertbl,vff.usertbl,vff.laundry_delivery_boytbl,vff.laundry_ordertbl where usertbl.usrid=laundry_customertbl.usrid and laundry_ordertbl.customerid=laundry_customertbl.consmrid and(delivery_boyid='3' or drop_delivery_boy_id='3') and order_completed='0' and order_status='Rejected'  order by orderid desc
       dictMap['order_id'] = glb.orderid;
       dictMap['order_status'] = glb.order_status;
       dictMap['key'] = 1;
-      dictMap['pktType'] = "10";
-      dictMap['token'] = "vff";
-      dictMap['uid'] = "-1";
+      // dictMap['pktType'] = "10";
+      // dictMap['token'] = "vff";
+      // dictMap['uid'] = "-1";
 
       final response = await http.post(Uri.parse(url),
           headers: <String, String>{
@@ -198,12 +199,13 @@ class _NewOrderDetailsPageState extends State<NewOrderDetailsPage> {
     var todaysDate = glb.getDateTodays();
     try {
       var url = glb.endPoint;
+      url+="load_selected_order_items_order_detail/";
       final Map dictMap = {};
 
       dictMap['order_id'] = glb.orderid;
-      dictMap['pktType'] = "11";
-      dictMap['token'] = "vff";
-      dictMap['uid'] = "-1";
+      // dictMap['pktType'] = "11";
+      // dictMap['token'] = "vff";
+      // dictMap['uid'] = "-1";
 
       final response = await http.post(Uri.parse(url),
           headers: <String, String>{

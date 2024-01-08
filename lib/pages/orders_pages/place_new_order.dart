@@ -74,12 +74,13 @@ class _PlaceOrderPageState extends State<PlaceOrderPage> {
     var todaysDate = glb.getDateTodays();
     try {
       var url = glb.endPoint;
+      url+="load_category_wise_details/";
       final Map dictMap = {};
 
       dictMap['cat_id'] = widget.catId;
-      dictMap['pktType'] = "12";
-      dictMap['token'] = "vff";
-      dictMap['uid'] = "-1";
+      // dictMap['pktType'] = "12";
+      // dictMap['token'] = "vff";
+      // dictMap['uid'] = "-1";
 
       final response = await http.post(Uri.parse(url),
           headers: <String, String>{
@@ -215,6 +216,7 @@ class _PlaceOrderPageState extends State<PlaceOrderPage> {
 
     try {
       var url = glb.endPoint;
+      url+="add_laundry_items_to_cart/";
       final Map dictMap = {};
 
       dictMap['cat_id'] = cat_id;
@@ -227,9 +229,9 @@ class _PlaceOrderPageState extends State<PlaceOrderPage> {
       dictMap['all_items'] = allItemsJson;
       dictMap['cat_img'] = categoryImage;
       dictMap['cat_name'] = categoryname;
-      dictMap['pktType'] = "14";
-      dictMap['token'] = "vff";
-      dictMap['uid'] = "-1";
+      // dictMap['pktType'] = "14";
+      // dictMap['token'] = "vff";
+      // dictMap['uid'] = "-1";
 
       final response = await http.post(Uri.parse(url),
           headers: <String, String>{

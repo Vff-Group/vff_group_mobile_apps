@@ -42,13 +42,14 @@ class _DropOrdersPageState extends State<DropOrdersPage> {
     glb.order_status = "0";
     try {
       var url = glb.endPoint;
+      url+="load_all_drop_order/";
       final Map dictMap = {};
 
       dictMap['delivery_boy_id'] = delivery_boy_id;
       dictMap['branch_id'] = branch_id;
-      dictMap['pktType'] = "31";
-      dictMap['token'] = "vff";
-      dictMap['uid'] = "-1";
+      // dictMap['pktType'] = "31";
+      // dictMap['token'] = "vff";
+      // dictMap['uid'] = "-1";
 
       final response = await http.post(Uri.parse(url),
           headers: <String, String>{

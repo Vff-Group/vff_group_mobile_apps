@@ -41,11 +41,12 @@ class _AllBranchesPageState extends State<AllBranchesPage> {
     });
     try {
       var url = glb.endPoint;
+      url+="load_all_branches/";
       final Map dictMap = {};
 
-      dictMap['pktType'] = "29";
-      dictMap['token'] = "vff";
-      dictMap['uid'] = "-1";
+      // dictMap['pktType'] = "29";
+      // dictMap['token'] = "vff";
+      // dictMap['uid'] = "-1";
 
       final response = await http.post(Uri.parse(url),
           headers: <String, String>{

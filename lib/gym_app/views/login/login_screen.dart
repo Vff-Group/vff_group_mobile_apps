@@ -207,7 +207,7 @@ class _LoginScreenGymState extends State<LoginScreenGym> {
         // Handle successful response here
         var res = response.body;
         if (res.contains("ErrorCode#2")) {
-          glb.showSnackBar(context, 'Error', 'You are not registered');
+          glb.showSnackBar(context, 'Error', 'You are not registered Gym Member');
           setState(() {
             showLoading = false;
           });
@@ -222,13 +222,13 @@ class _LoginScreenGymState extends State<LoginScreenGym> {
           try {
             Map<String, dynamic> loginMap = json.decode(res);
             print("loginMap:$loginMap");
-            var usrid = loginMap['usrid'].toString();
+            //var usrid = loginMap['usrid'].toString();
             var email_id = loginMap['email_id'].toString();
             var memberid = loginMap['memberid'].toString();
             var usrname = loginMap['usrname'].toString();
             var mobno = loginMap['mobno'].toString();
             var gymid = loginMap['gymid'].toString();
-            SharedPreferenceUtils.save_val("gym_usrid", usrid);
+            //SharedPreferenceUtils.save_val("gym_usrid", usrid);
             SharedPreferenceUtils.save_val("gym_email_id", email_id);
             SharedPreferenceUtils.save_val("memberid", memberid);
             SharedPreferenceUtils.save_val("gym_usrname", usrname);

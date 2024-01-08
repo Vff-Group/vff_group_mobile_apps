@@ -385,46 +385,49 @@ class _HomeScreenState extends State<HomeScreen> {
                     ],
                   ),
                 ),
-                SizedBox(height: media.width * 0.05),
-                Container(
-                  width: double.maxFinite,
-                  padding: const EdgeInsets.all(20),
-                  height: media.width * 0.4,
-                  decoration: BoxDecoration(
-                      gradient: LinearGradient(colors: [
-                        AppColors.primaryColor2.withOpacity(0.4),
-                        AppColors.primaryColor1.withOpacity(0.4)
-                      ]),
-                      borderRadius: BorderRadius.circular(20)),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            const SizedBox(
-                              height: 15,
-                            ),
-                            Text(
-                              "Track Your Diet Plan Each\nMonth",
-                              style: TextStyle(
-                                color: AppColors.blackColor,
-                                fontSize: 12,
+                //SizedBox(height: media.width * 0.05),
+                Visibility(
+                  visible: false,
+                  child: Container(
+                    width: double.maxFinite,
+                    padding: const EdgeInsets.all(20),
+                    height: media.width * 0.4,
+                    decoration: BoxDecoration(
+                        gradient: LinearGradient(colors: [
+                          AppColors.primaryColor2.withOpacity(0.4),
+                          AppColors.primaryColor1.withOpacity(0.4)
+                        ]),
+                        borderRadius: BorderRadius.circular(20)),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              const SizedBox(
+                                height: 15,
                               ),
-                            ),
-                            const Spacer(),
-                            SizedBox(
-                              width: 110,
-                              height: 35,
-                              child: RoundButton(
-                                  title: "View Now", onPressed: () {}),
-                            )
-                          ]),
-                      Image.asset(
-                        "assets/images/progress_each_photo.png",
-                        width: media.width * 0.35,
-                      )
-                    ],
+                              Text(
+                                "Track Your Diet Plan Each\nMonth",
+                                style: TextStyle(
+                                  color: AppColors.blackColor,
+                                  fontSize: 12,
+                                ),
+                              ),
+                              const Spacer(),
+                              SizedBox(
+                                width: 110,
+                                height: 35,
+                                child: RoundButton(
+                                    title: "View Now", onPressed: () {}),
+                              )
+                            ]),
+                        Image.asset(
+                          "assets/images/progress_each_photo.png",
+                          width: media.width * 0.35,
+                        )
+                      ],
+                    ),
                   ),
                 ),
                 SizedBox(

@@ -38,11 +38,12 @@ class _AllServicesPageState extends State<AllServicesPage> {
     });
     try {
       var url = glb.endPoint;
+      url += "load_laundry_all_categories/"; // Route Name
       final Map dictMap = {};
-
-      dictMap['pktType'] = "2";
-      dictMap['token'] = "vff";
-      dictMap['uid'] = "-1";
+      
+      // dictMap['pktType'] = "2";
+      // dictMap['token'] = "vff";
+      // dictMap['uid'] = "-1";
 
       final response = await http.post(Uri.parse(url),
           headers: <String, String>{
@@ -54,16 +55,18 @@ class _AllServicesPageState extends State<AllServicesPage> {
       if (response.statusCode == 200) {
         var res = response.body;
         if (res.contains("ErrorCode#2")) {
-          glb.showSnackBar(context, 'Error', 'No Categories Found');
+          glb.showSnackBar(context, 'Alert', 'No Categories Found');
           return;
         } else if (res.contains("ErrorCode#8")) {
           glb.showSnackBar(context, 'Error', 'Something Went Wrong');
           return;
         } else {
           try {
+            
+            
             Map<String, dynamic> catMap = json.decode(response.body);
             if (kDebugMode) {
-              print("serviceMap:$catMap");
+              // print("serviceMap:$catMap");
             }
             var catid = catMap['catid'];
             var catname = catMap['catname'];

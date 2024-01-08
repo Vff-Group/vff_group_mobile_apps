@@ -50,12 +50,13 @@ class _DeliveryAddressPageState extends State<DeliveryAddressPage> {
       final prefs = await SharedPreferences.getInstance();
       var usrid = prefs.getString('usrid');
       var url = glb.endPoint;
+      url += "load_laundry_customer_address/";
       final Map dictMap = {};
 
       dictMap['usrid'] = usrid;
-      dictMap['pktType'] = "3";
-      dictMap['token'] = "vff";
-      dictMap['uid'] = "-1";
+      // dictMap['pktType'] = "3";
+      // dictMap['token'] = "vff";
+      // dictMap['uid'] = "-1";
 
       final response = await http.post(Uri.parse(url),
           headers: <String, String>{
@@ -141,6 +142,7 @@ class _DeliveryAddressPageState extends State<DeliveryAddressPage> {
       var usrid = prefs.getString('usrid');
 
       var url = glb.endPoint;
+      url+="request_pickup_laundry_customer/";
       final Map dictMap = {};
 
       dictMap['buildingNo'] = buildingNo;
@@ -153,9 +155,9 @@ class _DeliveryAddressPageState extends State<DeliveryAddressPage> {
       dictMap['clat'] = latitude;
       dictMap['clng'] = longitude;
       dictMap['branch_id'] = glb.branch_id;
-      dictMap['pktType'] = "4";
-      dictMap['token'] = "vff";
-      dictMap['uid'] = "-1";
+      // dictMap['pktType'] = "4";
+      // dictMap['token'] = "vff";
+      // dictMap['uid'] = "-1";
 
       final response = await http.post(Uri.parse(url),
           headers: <String, String>{
@@ -574,7 +576,7 @@ class _DeliveryAddressPageState extends State<DeliveryAddressPage> {
                                                                       top:
                                                                           16.0),
                                                               hintText:
-                                                                  ' Street Address, Landmark etc.',
+                                                                  ' Street Address',
                                                               hintStyle: nunitoStyle.copyWith(
                                                                   fontWeight:
                                                                       FontWeight

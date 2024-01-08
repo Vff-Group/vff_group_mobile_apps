@@ -90,6 +90,7 @@ class _UpdateOrderStatusPopupState extends State<UpdateOrderStatusPopup> {
     if (true) {
       try {
         var url = glb.endPoint;
+        url+="update_current_order_status/";
         final Map dictMap = {};
         dictMap['order_status'] = updateToStatus;
         dictMap['order_id'] = widget.orderID;
@@ -100,9 +101,9 @@ class _UpdateOrderStatusPopupState extends State<UpdateOrderStatusPopup> {
         } else if (updateToStatus == 'Completed') {
           dictMap['delivery_completed'] = '1';
         }
-        dictMap['pktType'] = "26";
-        dictMap['token'] = "vff";
-        dictMap['uid'] = "-1";
+        // dictMap['pktType'] = "26";
+        // dictMap['token'] = "vff";
+        // dictMap['uid'] = "-1";
         final response = await http.post(Uri.parse(url),
             headers: <String, String>{
               "Accept": "application/json",
@@ -164,6 +165,7 @@ class _UpdateOrderStatusPopupState extends State<UpdateOrderStatusPopup> {
     if (true) {
       try {
         var url = glb.endPoint;
+        url+="update_current_new_booking_status/";
         final Map dictMap = {};
         dictMap['booking_status'] = updateToStatus;
         dictMap['booking_id'] = widget.orderID;
@@ -174,9 +176,9 @@ class _UpdateOrderStatusPopupState extends State<UpdateOrderStatusPopup> {
         } else if (updateToStatus == 'Completed') {
           dictMap['delivery_completed'] = '1';
         }
-        dictMap['pktType'] = "34";
-        dictMap['token'] = "vff";
-        dictMap['uid'] = "-1";
+        // dictMap['pktType'] = "34";
+        // dictMap['token'] = "vff";
+        // dictMap['uid'] = "-1";
         final response = await http.post(Uri.parse(url),
             headers: <String, String>{
               "Accept": "application/json",

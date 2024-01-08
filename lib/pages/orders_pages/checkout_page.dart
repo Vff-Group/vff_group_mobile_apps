@@ -68,12 +68,13 @@ class _CheckOutScreenState extends State<CheckOutScreen> {
     var todaysDate = glb.getDateTodays();
     try {
       var url = glb.endPoint;
+      url+="load_extra_items_details/";
       final Map dictMap = {};
 
       dictMap['booking_id'] = glb.booking_id;
-      dictMap['pktType'] = "17";
-      dictMap['token'] = "vff";
-      dictMap['uid'] = "-1";
+      // dictMap['pktType'] = "17";
+      // dictMap['token'] = "vff";
+      // dictMap['uid'] = "-1";
 
       final response = await http.post(Uri.parse(url),
           headers: <String, String>{
@@ -293,6 +294,7 @@ class _CheckOutScreenState extends State<CheckOutScreen> {
     totalPrice = totalPrice + deliveryPrice;
     try {
       var url = glb.endPoint;
+      url+="place_order_laundry/";
       final Map dictMap = {};
 
       dictMap['booking_id'] = glb.booking_id;
@@ -311,9 +313,9 @@ class _CheckOutScreenState extends State<CheckOutScreen> {
       dictMap['clat'] = glb.clat;
       dictMap['clng'] = glb.clng;
       dictMap['branch_id'] = glb.branch_id;
-      dictMap['pktType'] = "18";
-      dictMap['token'] = "vff";
-      dictMap['uid'] = "-1";
+      // dictMap['pktType'] = "18";
+      // dictMap['token'] = "vff";
+      // dictMap['uid'] = "-1";
 
       final response = await http.post(Uri.parse(url),
           headers: <String, String>{

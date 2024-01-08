@@ -47,6 +47,7 @@ class _CancelOrderPageState extends State<CancelOrderPage> {
 
     try {
       var url = glb.endPoint;
+      url+="cancel_laundry_order/";
       final Map dictMap = {};
 
       dictMap['booking_id'] = glb.booking_id;
@@ -54,9 +55,9 @@ class _CancelOrderPageState extends State<CancelOrderPage> {
       dictMap['delivery_boy_id'] = glb.deliveryBoyID;
       dictMap['reason'] = reasonTxt;
 
-      dictMap['pktType'] = "20";
-      dictMap['token'] = "vff";
-      dictMap['uid'] = "-1";
+      // dictMap['pktType'] = "20";
+      // dictMap['token'] = "vff";
+      // dictMap['uid'] = "-1";
 
       final response = await http.post(Uri.parse(url),
           headers: <String, String>{

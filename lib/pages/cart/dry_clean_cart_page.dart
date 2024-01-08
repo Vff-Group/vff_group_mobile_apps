@@ -61,12 +61,13 @@ class _DryCleaningCartState extends State<DryCleaningCart> {
 
     try {
       var url = glb.endPoint;
+      url+="load_sub_category_wise_details/";
       final Map dictMap = {};
 
       dictMap['cat_id'] = widget.catId;
-      dictMap['pktType'] = "13";
-      dictMap['token'] = "vff";
-      dictMap['uid'] = "-1";
+      // dictMap['pktType'] = "13";
+      // dictMap['token'] = "vff";
+      // dictMap['uid'] = "-1";
 
       final response = await http.post(Uri.parse(url),
           headers: <String, String>{

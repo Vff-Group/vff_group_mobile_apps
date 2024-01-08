@@ -71,15 +71,16 @@ class _CurrentDeliveryPageState extends State<CurrentDeliveryPage> {
     if (true) {
       try {
         var url = glb.endPoint;
+        url+="load_all_pickup_or_drop_booking_details/";
         final Map dictMap = {};
 
-        dictMap['pktType'] = "32";
+        // dictMap['pktType'] = "32";
         dictMap['delivery_boy_id'] = delivery_boy_id;
         dictMap['order_id'] = glb.orderid_or_bookingid;
         dictMap['order_type'] = glb.orderType;
         dictMap['booking_to_order_id'] = glb.booking_to_order_id;
-        dictMap['token'] = "vff";
-        dictMap['uid'] = "-1";
+        // dictMap['token'] = "vff";
+        // dictMap['uid'] = "-1";
         final response = await http.post(Uri.parse(url),
             headers: <String, String>{
               "Accept": "application/json",

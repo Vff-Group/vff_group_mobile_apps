@@ -146,6 +146,7 @@ class _SectionsPageDryCleanState extends State<SectionsPageDryClean> {
 
     try {
       var url = glb.endPoint;
+      url+="add_laundry_items_to_cart/";
       final Map dictMap = {};
 
       dictMap['cat_id'] = widget.catId;
@@ -156,9 +157,9 @@ class _SectionsPageDryCleanState extends State<SectionsPageDryClean> {
       dictMap['cat_name'] = widget.catName;
       dictMap['key'] = 1;
       dictMap['all_items'] = selectedItems;
-      dictMap['pktType'] = "14";
-      dictMap['token'] = "vff";
-      dictMap['uid'] = "-1";
+      // dictMap['pktType'] = "14";
+      // dictMap['token'] = "vff";
+      // dictMap['uid'] = "-1";
 
       final response = await http.post(Uri.parse(url),
           headers: <String, String>{
@@ -206,12 +207,13 @@ class _SectionsPageDryCleanState extends State<SectionsPageDryClean> {
     var todaysDate = glb.getDateTodays();
     try {
       var url = glb.endPoint;
+      url+="load_sub_category_section_wise_details/";
       final Map dictMap = {};
 
       dictMap['section_type'] = widget.sectionType;
-      dictMap['pktType'] = "19";
-      dictMap['token'] = "vff";
-      dictMap['uid'] = "-1";
+      // dictMap['pktType'] = "19";
+      // dictMap['token'] = "vff";
+      // dictMap['uid'] = "-1";
 
       final response = await http.post(Uri.parse(url),
           headers: <String, String>{

@@ -38,12 +38,13 @@ class _CustomerNotificationsState extends State<CustomerNotifications> {
     var todaysDate = glb.getDateTodays();
     try {
       var url = glb.endPoint;
+      url+="load_todays_notifications/";
       final Map dictMap = {};
 
       dictMap['customerordeliveryboyid'] = customerid;
-      dictMap['pktType'] = "27";
-      dictMap['token'] = "vff";
-      dictMap['uid'] = "-1";
+      // dictMap['pktType'] = "27";
+      // dictMap['token'] = "vff";
+      // dictMap['uid'] = "-1";
 
       final response = await http.post(Uri.parse(url),
           headers: <String, String>{

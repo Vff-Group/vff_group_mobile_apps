@@ -415,14 +415,15 @@ class _PaymentScreenNewState extends State<PaymentScreenNew> {
 
     try {
       var url = glb.endPoint;
+      url+="load_selected_order_items_order_detail/";
       final Map dictMap = {};
 
       dictMap['order_id'] = glb.orderid;
       dictMap['total_price'] = customerid;
 
-      dictMap['pktType'] = "35";
-      dictMap['token'] = "vff";
-      dictMap['uid'] = "-1";
+      // dictMap['pktType'] = "35";
+      // dictMap['token'] = "vff";
+      // dictMap['uid'] = "-1";
 
       final response = await http.post(Uri.parse(url),
           headers: <String, String>{
