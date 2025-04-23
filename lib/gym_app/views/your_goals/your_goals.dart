@@ -2,7 +2,7 @@
 
 import 'dart:convert';
 
-import 'package:carousel_slider/carousel_controller.dart';
+
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -42,7 +42,7 @@ class _YourFitnessGoalsScreenState extends State<YourFitnessGoalsScreen> {
       "image": "assets/images/goal_3.png"
     }
   ];
-  CarouselController carouselController = CarouselController();
+  CarouselSliderController carouselController = CarouselSliderController();
   int currentIndex = 0; // Variable to track the current index
   bool showLoading = false;
   @override

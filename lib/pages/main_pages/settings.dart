@@ -20,6 +20,17 @@ class SettingsPage extends StatefulWidget {
 
 class _SettingsPageState extends State<SettingsPage> {
   var userName = "", profile_img = "",mobNO="";
+  void checkWalletStatus() async {
+    var pref = await SharedPreferences.getInstance();
+    var isWalletActive = pref.getBool('isWalletActive');
+
+    if(isWalletActive != null && isWalletActive == true){
+      Navigator.pushNamed(context, WalletHomePageRoute);
+    }else{
+      // Navigator.pushNamed(context, WalletSignUpRoute);
+      Navigator.pushNamed(context, WalletHomePageRoute);
+    }
+  }
   void getDefaults() async {
     glb.prefs = await SharedPreferences.getInstance();
 
@@ -154,7 +165,7 @@ class _SettingsPageState extends State<SettingsPage> {
                         child: InkWell(
                           onTap: () {
                             //WalletPage
-                            //Navigator.pushNamed(context, DeliveryAddressRoute);
+                            checkWalletStatus();
                             //vff.laundry_wallettbl
                           },
                           child: Padding(

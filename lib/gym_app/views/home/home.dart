@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:dotted_dashed_line/dotted_dashed_line.dart';
 import 'package:fl_chart/fl_chart.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:razorpay_flutter/razorpay_flutter.dart';
@@ -11,6 +12,7 @@ import 'package:simple_circular_progress_bar/simple_circular_progress_bar.dart';
 import 'package:vff_group/gym_app/utils/app_colors.dart';
 import 'package:vff_group/gym_app/views/dashboard/dashboard_gym.dart';
 import 'package:vff_group/gym_app/views/home/calender_widget.dart';
+import 'package:vff_group/notification_services.dart';
 import 'package:vff_group/routings/route_names.dart';
 import 'package:vff_group/utils/SharedPreferencesUtils.dart';
 
@@ -171,12 +173,37 @@ class _HomeScreenState extends State<HomeScreen> {
     }
   }
 
+NotificationServices notificationServices = NotificationServices();
+  String deviceToken = "";
   @override
   void initState() {
     super.initState();
     
+    notificationServices.requestNotificationPermissions();
+    notificationServices.foregroundMessage();
+    notificationServices.firebaseInit(context);
+    notificationServices.setupInteractMessage(context);
+    notificationServices.isTokenRefreshedGymApp();
+    getDefaultData();
     getFeesDetailsAsync();
     // fetchCSRFToken();
+  }
+
+  void getDefaultData() async {
+    glb.prefs = await SharedPreferences.getInstance();
+
+    //  SharedPreferenceUtils.save_val("notificationToken", "");
+    var notificationToken = glb.prefs?.getString('gymAPPNotificationToken');
+    print('gymAPPNotificationToken::$notificationToken');
+    if (notificationToken == null || notificationToken.isEmpty) {
+      notificationServices.getDeviceToken().then((value) => {
+            deviceToken = value.toString().replaceAll(':', '__colon__'),
+            SharedPreferenceUtils.save_val(
+                'gymAPPNotificationToken', deviceToken),
+            updateDeviceToken(),
+            print('Gym DeviceToken:$value')
+          });
+    }
   }
 
   @override
@@ -978,5 +1005,47 @@ class _HomeScreenState extends State<HomeScreen> {
     }
   }
 
+  Future updateDeviceToken() async {
+    glb.prefs = await SharedPreferences.getInstance();
+
+    var member_id = glb.prefs?.getString('memberid');
+    if (deviceToken.isEmpty) {
+      print('DeviceToken is Empty');
+      return;
+    }
+    try {
+      var url = glb.endPointGym;
+      url += "update_notification_token/";
+      final Map dictMap = {};
+
+      dictMap['memberid'] = member_id;
+      dictMap['device_token'] = deviceToken;
+
+      final response = await http.post(Uri.parse(url),
+          headers: <String, String>{
+            "Accept": "application/json",
+            'Content-Type': 'application/json; charset=UTF-8',
+          },
+          body: jsonEncode(dictMap));
+
+      if (response.statusCode == 200) {
+        var res = response.body;
+        if (res.contains("ErrorCode#2")) {
+          //glb.showSnackBar(context, 'Error', 'No Categories Found');
+          return;
+        } else if (res.contains("ErrorCode#8")) {
+          glb.showSnackBar(context, 'Error', 'Something Went Wrong');
+          return;
+        } else {
+          print('Device Token Updated Successfully');
+        }
+      }
+    } catch (e) {
+      if (kDebugMode) {
+        print(e);
+      }
+      glb.handleErrors(e, context);
+    }
+  }
 
 }

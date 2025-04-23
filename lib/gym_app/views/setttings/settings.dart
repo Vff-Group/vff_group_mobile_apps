@@ -362,6 +362,7 @@ _showDialog(BuildContext context) {
                 child: Text("Yes"),
                 onPressed: () {
                   SharedPreferenceUtils.save_val("gym_usrid", "");
+                  SharedPreferenceUtils.save_val("gymAPPNotificationToken", "");
                   Navigator.popAndPushNamed(context, GymLoginRoute);
                 },
               ),

@@ -14,13 +14,13 @@ class MyOrdersPage extends StatefulWidget {
   State<MyOrdersPage> createState() => _MyOrdersPageState();
 }
 
-class _MyOrdersPageState extends State<MyOrdersPage> {
-  late final TabContainerController _controller;
+class _MyOrdersPageState extends State<MyOrdersPage> with TickerProviderStateMixin{
+  late final TabController _controller;
 
   @override
   void initState() {
     super.initState();
-    _controller = TabContainerController(length: 3);
+    _controller = TabController(vsync: this, length: 3);
   }
 
   @override

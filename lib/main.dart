@@ -53,6 +53,10 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
           primarySwatch: Colors.blue,
+          appBarTheme: AppBarTheme(
+        backgroundColor: AppColors.blueColor,
+        iconTheme: IconThemeData(color: Colors.white),
+      ),
           pageTransitionsTheme: const PageTransitionsTheme(builders: {
             TargetPlatform.android: CupertinoPageTransitionsBuilder(),
             TargetPlatform.iOS: CupertinoPageTransitionsBuilder(),

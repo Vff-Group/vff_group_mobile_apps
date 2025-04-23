@@ -27,6 +27,10 @@ const String DeliveryBoyNotificationRoute = "delivery_notifications";
 const String BookingDetailsRoute = "booking_details";
 const String PaymentPageRoute = "payment_page";
 const String AllBranchesRoute = "all_branches_page";
+const String DryCleanPrizeRoute = "dry_clean_price";
+const String AllBookingSequenceRoute = "list_of_sequence";
+const String WalletSignUpRoute = "wallet_sign_up";
+const String WalletHomePageRoute = "wallet_home_screen";
 
 
 // Delivery_boy Routes

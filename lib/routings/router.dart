@@ -20,6 +20,7 @@ import 'package:vff_group/pages/categories/dry_clean_home.dart';
 import 'package:vff_group/pages/categories/wash_fold_home.dart';
 import 'package:vff_group/pages/categories/wash_iron_home.dart';
 import 'package:vff_group/pages/google_verification.dart';
+import 'package:vff_group/pages/main_pages/all_booking_sequence_page.dart';
 import 'package:vff_group/pages/main_pages/bottom_bar.dart';
 import 'package:vff_group/pages/login.dart';
 import 'package:vff_group/pages/main_pages/detailed_pages/all_services_detail.dart';
@@ -37,10 +38,13 @@ import 'package:vff_group/pages/orders_pages/my_bag_page.dart';
 import 'package:vff_group/pages/orders_pages/order_details.dart';
 import 'package:vff_group/pages/orders_pages/payment_page.dart';
 import 'package:vff_group/pages/orders_pages/place_new_order.dart';
+import 'package:vff_group/pages/prize_pages/dry_cleaning_prize.dart';
 import 'package:vff_group/pages/registration_login.dart';
 import 'package:vff_group/pages/set_delivery_location.dart';
 import 'package:vff_group/pages/splash_screen.dart';
 import 'package:vff_group/pages/verification_code_page.dart';
+import 'package:vff_group/pages/wallet_pages/sign_up_wallet_page.dart';
+import 'package:vff_group/pages/wallet_pages/wallet_home_page.dart';
 import 'package:vff_group/routings/route_names.dart';
 import 'package:vff_group/united_armor_app/views/checkout/checkout_clothing_page.dart';
 import 'package:vff_group/united_armor_app/views/complete_profile/complete_profile.dart';
@@ -98,12 +102,21 @@ Route<dynamic> generateRoute(RouteSettings settings) {
       return _getPageRoute(const AllServicesPage());
     case AllBranchesRoute:
       return _getPageRoute(const AllBranchesPage());
+    case DryCleanPrizeRoute:
+      return _getPageRoute(const DryCleaningPrizePage());
+    case AllBookingSequenceRoute:
+      return _getPageRoute(const AllBookingSequencePage());
     case MyBagRoute:
       return _getPageRoute(const MyBagPage());
     case MyCartRoute:
       return _getPageRoute(const AddToCartItem());
     case CheckOutRoute:
       return _getPageRoute(const CheckOutScreen());
+
+    case WalletSignUpRoute:
+      return _getPageRoute(const WalletSignUpPage());
+    case WalletHomePageRoute:
+      return _getPageRoute(const WalletHomePage());
 
     case FeedbackRoute:
       return _getPageRoute(const FeedBackPage());

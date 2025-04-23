@@ -73,7 +73,7 @@ print("response.statusCode::${response.statusCode}");
           try {
             Map<String, dynamic> onGoingOrdersMap = json.decode(response.body);
             if (kDebugMode) {
-              print("completedOrdersMap:$onGoingOrdersMap");
+              // print("completedOrdersMap:$onGoingOrdersMap");
             }
 
             var orderid = onGoingOrdersMap["orderid"];

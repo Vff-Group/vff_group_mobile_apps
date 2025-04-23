@@ -108,7 +108,7 @@ class _CurrentDeliveryPageState extends State<CurrentDeliveryPage> {
           } else {
             try {
               Map<String, dynamic> currentOrderMap = json.decode(response.body);
-              print('currentOrderMap::$currentOrderMap');
+              // print('currentOrderMap::$currentOrderMap');
               var orderid = currentOrderMap['orderid'];
               var customer_name = currentOrderMap['customer_name'];
               var pickup_dt = currentOrderMap['pickup_dt'];

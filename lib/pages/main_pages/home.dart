@@ -1,6 +1,7 @@
 // ignore_for_file: use_build_context_synchronously
 
 import 'dart:convert';
+import 'dart:io';
 import 'dart:math';
 import 'dart:ui';
 import 'package:animated_floating_buttons/widgets/animated_floating_action_button.dart';
@@ -604,7 +605,7 @@ class _HomePageState extends State<HomePage> {
       setState(() {
         userName = split[0];
         if (userName == "demo") {
-          hideControls = false; // to hide the floating button when demo user login's
+          hideControls = true; // to hide the floating button when demo user login's
         }
       });
     }
@@ -693,6 +694,7 @@ class _HomePageState extends State<HomePage> {
         tooltip: 'VFF Gym',
         child: const Icon(
           Icons.fitness_center,
+          color: AppColors.whiteColor,
         ),
       ),
     );
@@ -895,7 +897,7 @@ class _HomePageState extends State<HomePage> {
                                 InkWell(
                                   onTap: () {
                                     Navigator.pushNamed(
-                                        context, AllBranchesRoute);
+                                              context, AllBookingSequenceRoute);
                                   },
                                   child: _SliderLayout(
                                       width: width, modelOffer: offersModel),
@@ -955,7 +957,8 @@ class _HomePageState extends State<HomePage> {
                                             child: InkWell(
                                               onTap: () {
                                                 Navigator.pushNamed(
-                                                    context, AllBranchesRoute);
+                                                          context,
+                                                          AllBookingSequenceRoute);
                                               },
                                               borderRadius:
                                                   BorderRadius.circular(12.0),
@@ -1461,13 +1464,23 @@ class _HomePageState extends State<HomePage> {
       //   child: Icon(Icons.delivery_dining), // Icon inside the FAB
       // ),
 
-      floatingActionButton: hideControls
+            floatingActionButton: hideControls && Platform.isAndroid
           ? null
           : SlideFromLeftAnimation(
         delay: 1.2,
-        child: AnimatedFloatingActionButton(
+                    child: hideControls && Platform.isIOS
+                        ? FloatingActionButton(
+                          backgroundColor: AppColors.blueColor,
+                            onPressed: () {
+                              goToDeliveryBoyPage();
+                            },
+                            child: const Icon(
+                                Icons.delivery_dining,
+                                color: AppColors.whiteColor,), // Icon inside the FAB
+                          )
+                        : AnimatedFloatingActionButton(
             //Fab list
-            fabButtons: <Widget>[float1(), float2(),float3()],
+            fabButtons: <Widget>[float1(), float2()],//,float3()
             // fabButtons: <Widget>[ float2()],
             key: key,
             colorStartAnimation: Colors.blue,

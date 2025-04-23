@@ -190,6 +190,7 @@ class _DeliveryAddressPageState extends State<DeliveryAddressPage> {
             showSuccess = true;
           });
           Navigator.pop(context);
+          Navigator.pop(context);
            Navigator.pushReplacement(
                                         context,
                                         MaterialPageRoute(
@@ -684,7 +685,7 @@ class _DeliveryAddressPageState extends State<DeliveryAddressPage> {
                                                                       Icons
                                                                           .numbers,
                                                                       color: Colors
-                                                                          .white,
+                                                                          .blue,
                                                                     ),
                                                                     border:
                                                                         InputBorder

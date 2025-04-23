@@ -76,7 +76,7 @@ class _PickupOrdersPageState extends State<PickupOrdersPage> {
           try {
             Map<String, dynamic> onGoingOrdersMap = json.decode(response.body);
             if (kDebugMode) {
-              print("onGoingOrdersMap:$onGoingOrdersMap");
+              // print("onGoingOrdersMap:$onGoingOrdersMap");
             }
 
             var booking_id = onGoingOrdersMap["booking_id"];

@@ -26,7 +26,7 @@ class _BottomBarDeliveryBoyState extends State<BottomBarDeliveryBoy> {
   List pages = [
     const DashboardPage(),
     const MyAssignedOrdersPage(),
-    const MyOrdersPage(),
+    // const MyOrdersPage(),
     const MyProfilePage(),
   ];
 
@@ -74,10 +74,10 @@ class _BottomBarDeliveryBoyState extends State<BottomBarDeliveryBoy> {
                   icon: LineIcons.truck,
                   text: 'Delivery',
                 ),
-                GButton(
-                  icon: LineIcons.clock,
-                  text: 'Orders',
-                ),
+                // GButton(
+                //   icon: LineIcons.clock,
+                //   text: 'Orders',
+                // ),
                 GButton(
                   icon: LineIcons.user,
                   text: 'Profile',

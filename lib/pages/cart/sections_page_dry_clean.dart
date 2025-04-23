@@ -403,207 +403,218 @@ class _SectionsPageDryCleanState extends State<SectionsPageDryClean> {
                                     padding: const EdgeInsets.all(8.0),
                                     child: Material(
                                       color: Colors.transparent,
-                                      child: Ink(
-                                        decoration: BoxDecoration(
-                                          borderRadius:
-                                              BorderRadius.circular(8.0),
-                                          // Container color
-                                        ),
-                                        child: Column(
-                                          children: [
-                                            Padding(
-                                              padding:
-                                                  const EdgeInsets.all(8.0),
-                                              child: Row(
-                                                mainAxisAlignment:
-                                                    MainAxisAlignment
-                                                        .spaceBetween,
-                                                children: [
-                                                  Row(
-                                                    children: [
-                                                      Container(
-                                                        decoration: BoxDecoration(
-                                                            color: AppColors
-                                                                .lightBlackColor,
-                                                            borderRadius:
-                                                                BorderRadius
-                                                                    .circular(
-                                                                        50.0)),
-                                                        child: Padding(
-                                                          padding:
-                                                              const EdgeInsets
-                                                                  .all(12.0),
-                                                          child: Image.network(
-                                                            dryCleanItemModel[
-                                                                    index]
-                                                                .subCategoryImage,
-                                                            width: 30,
-                                                            height: 30,
-                                                          ),
-                                                        ),
-                                                      ),
-                                                      Column(
-                                                        crossAxisAlignment:
-                                                            CrossAxisAlignment
-                                                                .start,
-                                                        children: [
-                                                          Padding(
+                                      child: InkWell(
+                                        borderRadius:
+                                                BorderRadius.circular(8.0),
+                                                onTap: (){
+                                                  Navigator.pushNamed(
+                                            context, AllBookingSequenceRoute);
+                                                },
+                                        child: Ink(
+                                          decoration: BoxDecoration(
+                                            borderRadius:
+                                                BorderRadius.circular(8.0),
+                                            // Container color
+                                          ),
+                                          child: Column(
+                                            children: [
+                                              Padding(
+                                                padding:
+                                                    const EdgeInsets.all(8.0),
+                                                child: Row(
+                                                  mainAxisAlignment:
+                                                      MainAxisAlignment
+                                                          .spaceBetween,
+                                                  children: [
+                                                    Row(
+                                                      children: [
+                                                        Container(
+                                                          decoration: BoxDecoration(
+                                                              color: AppColors
+                                                                  .lightBlackColor,
+                                                              borderRadius:
+                                                                  BorderRadius
+                                                                      .circular(
+                                                                          50.0)),
+                                                          child: Padding(
                                                             padding:
                                                                 const EdgeInsets
-                                                                    .only(
-                                                                    left: 10.0),
-                                                            child: Column(
-                                                              crossAxisAlignment:
-                                                                  CrossAxisAlignment
-                                                                      .start,
-                                                              children: [
-                                                                Text(
+                                                                    .all(12.0),
+                                                            child: Image.network(
+                                                              dryCleanItemModel[
+                                                                      index]
+                                                                  .subCategoryImage,
+                                                              width: 30,
+                                                              height: 30,
+                                                            ),
+                                                          ),
+                                                        ),
+                                                        Column(
+                                                          crossAxisAlignment:
+                                                              CrossAxisAlignment
+                                                                  .start,
+                                                          children: [
+                                                            Padding(
+                                                              padding:
+                                                                  const EdgeInsets
+                                                                      .only(
+                                                                      left: 10.0),
+                                                              child: Column(
+                                                                crossAxisAlignment:
+                                                                    CrossAxisAlignment
+                                                                        .start,
+                                                                children: [
+                                                                  Text(
+                                                                    dryCleanItemModel[
+                                                                            index]
+                                                                        .subCategoryName
+                                                                        .toCapitalized(),
+                                                                    style: nunitoStyle
+                                                                        .copyWith(
+                                                                      color: AppColors
+                                                                          .backColor,
+                                                                      fontSize:
+                                                                          14,
+                                                                      fontWeight:
+                                                                          FontWeight
+                                                                              .bold,
+                                                                    ),
+                                                                  ),
+                                                                  const SizedBox(
+                                                                    height: 10.0,
+                                                                  ),
+                                                                  Text(
+                                                                    '₹ ${dryCleanItemModel[index].cost} / ${dryCleanItemModel[index].typeOf}',
+                                                                    style: nunitoStyle
+                                                                        .copyWith(
+                                                                      color: AppColors
+                                                                          .blueColor,
+                                                                      fontSize:
+                                                                          12,
+                                                                      fontWeight:
+                                                                          FontWeight
+                                                                              .bold,
+                                                                    ),
+                                                                  ),
+                                                                ],
+                                                              ),
+                                                            ),
+                                                          ],
+                                                        ),
+                                                      ],
+                                                    ),
+                                                    Visibility(
+                                                      visible: false,
+                                                      child: Row(
+                                                        mainAxisAlignment:
+                                                            MainAxisAlignment
+                                                                .spaceAround,
+                                                        children: [
+                                                          Container(
+                                                            decoration:
+                                                                BoxDecoration(
+                                                              color: Colors.red,
+                                                              borderRadius:
+                                                                  BorderRadius
+                                                                      .circular(
+                                                                          25.0),
+                                                            ),
+                                                            child: InkWell(
+                                                              onTap: () {
+                                                                setState(() {
+                                                                  if (dryCleanItemModel[
+                                                                              index]
+                                                                          .itemCount >
+                                                                      0) {
+                                                                    dryCleanItemModel[
+                                                                            index]
+                                                                        .itemCount--;
+                                                                    updateSelectedItems(
+                                                                        index,
+                                                                        dryCleanItemModel[
+                                                                                index]
+                                                                            .itemCount);
+                                                                  }
+                                                                });
+                                                              },
+                                                              child: Icon(
+                                                                Icons.remove,
+                                                                color: Colors.white,
+                                                                size: 20.0,
+                                                              ),
+                                                            ),
+                                                          ),
+                                                          SizedBox(
+                                                            width: 10.0,
+                                                          ),
+                                                          //adultCount.toString()
+                                                          Text(
+                                                            dryCleanItemModel[index]
+                                                                .itemCount
+                                                                .toString(),
+                                                            style: nunitoStyle
+                                                                .copyWith(
+                                                              fontSize: 14.0,
+                                                              color: AppColors
+                                                                  .blueColor,
+                                                              fontWeight:
+                                                                  FontWeight.bold,
+                                                            ),
+                                                          ),
+                                                          SizedBox(
+                                                            width: 10.0,
+                                                          ),
+                                                          Container(
+                                                            decoration:
+                                                                BoxDecoration(
+                                                              color:
+                                                                  Colors.green[700],
+                                                              borderRadius:
+                                                                  BorderRadius
+                                                                      .circular(
+                                                                          25.0),
+                                                            ),
+                                                            child: InkWell(
+                                                              onTap: () {
+                                                                setState(() {
                                                                   dryCleanItemModel[
                                                                           index]
-                                                                      .subCategoryName
-                                                                      .toCapitalized(),
-                                                                  style: nunitoStyle
-                                                                      .copyWith(
-                                                                    color: AppColors
-                                                                        .backColor,
-                                                                    fontSize:
-                                                                        14,
-                                                                    fontWeight:
-                                                                        FontWeight
-                                                                            .bold,
-                                                                  ),
-                                                                ),
-                                                                const SizedBox(
-                                                                  height: 10.0,
-                                                                ),
-                                                                Text(
-                                                                  '₹ ${dryCleanItemModel[index].cost} / ${dryCleanItemModel[index].typeOf}',
-                                                                  style: nunitoStyle
-                                                                      .copyWith(
-                                                                    color: AppColors
-                                                                        .blueColor,
-                                                                    fontSize:
-                                                                        12,
-                                                                    fontWeight:
-                                                                        FontWeight
-                                                                            .bold,
-                                                                  ),
-                                                                ),
-                                                              ],
+                                                                      .itemCount++;
+                                                                  updateSelectedItems(
+                                                                      index,
+                                                                      dryCleanItemModel[
+                                                                              index]
+                                                                          .itemCount); // Increment adult count
+                                                                });
+                                                              },
+                                                              child: Icon(
+                                                                Icons.add,
+                                                                color: Colors.white,
+                                                                size: 20.0,
+                                                              ),
                                                             ),
                                                           ),
                                                         ],
                                                       ),
-                                                    ],
-                                                  ),
-                                                  Row(
-                                                    mainAxisAlignment:
-                                                        MainAxisAlignment
-                                                            .spaceAround,
-                                                    children: [
-                                                      Container(
-                                                        decoration:
-                                                            BoxDecoration(
-                                                          color: Colors.red,
-                                                          borderRadius:
-                                                              BorderRadius
-                                                                  .circular(
-                                                                      25.0),
-                                                        ),
-                                                        child: InkWell(
-                                                          onTap: () {
-                                                            setState(() {
-                                                              if (dryCleanItemModel[
-                                                                          index]
-                                                                      .itemCount >
-                                                                  0) {
-                                                                dryCleanItemModel[
-                                                                        index]
-                                                                    .itemCount--;
-                                                                updateSelectedItems(
-                                                                    index,
-                                                                    dryCleanItemModel[
-                                                                            index]
-                                                                        .itemCount);
-                                                              }
-                                                            });
-                                                          },
-                                                          child: Icon(
-                                                            Icons.remove,
-                                                            color: Colors.white,
-                                                            size: 20.0,
-                                                          ),
-                                                        ),
-                                                      ),
-                                                      SizedBox(
-                                                        width: 10.0,
-                                                      ),
-                                                      //adultCount.toString()
-                                                      Text(
-                                                        dryCleanItemModel[index]
-                                                            .itemCount
-                                                            .toString(),
-                                                        style: nunitoStyle
-                                                            .copyWith(
-                                                          fontSize: 14.0,
-                                                          color: AppColors
-                                                              .blueColor,
-                                                          fontWeight:
-                                                              FontWeight.bold,
-                                                        ),
-                                                      ),
-                                                      SizedBox(
-                                                        width: 10.0,
-                                                      ),
-                                                      Container(
-                                                        decoration:
-                                                            BoxDecoration(
-                                                          color:
-                                                              Colors.green[700],
-                                                          borderRadius:
-                                                              BorderRadius
-                                                                  .circular(
-                                                                      25.0),
-                                                        ),
-                                                        child: InkWell(
-                                                          onTap: () {
-                                                            setState(() {
-                                                              dryCleanItemModel[
-                                                                      index]
-                                                                  .itemCount++;
-                                                              updateSelectedItems(
-                                                                  index,
-                                                                  dryCleanItemModel[
-                                                                          index]
-                                                                      .itemCount); // Increment adult count
-                                                            });
-                                                          },
-                                                          child: Icon(
-                                                            Icons.add,
-                                                            color: Colors.white,
-                                                            size: 20.0,
-                                                          ),
-                                                        ),
-                                                      ),
-                                                    ],
-                                                  )
-                                                ],
-                                              ),
-                                            ),
-                                            Padding(
-                                              padding: const EdgeInsets.only(
-                                                  top: 8.0),
-                                              child: Container(
-                                                height: 0.2,
-                                                decoration: BoxDecoration(
-                                                  borderRadius:
-                                                      BorderRadius.circular(
-                                                          12.0),
-                                                  color: Colors.grey,
+                                                    )
+                                                  ],
                                                 ),
                                               ),
-                                            ),
-                                          ],
+                                              Padding(
+                                                padding: const EdgeInsets.only(
+                                                    top: 8.0),
+                                                child: Container(
+                                                  height: 0.2,
+                                                  decoration: BoxDecoration(
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            12.0),
+                                                    color: Colors.grey,
+                                                  ),
+                                                ),
+                                              ),
+                                            ],
+                                          ),
                                         ),
                                       ),
                                     ),
@@ -613,48 +624,52 @@ class _SectionsPageDryCleanState extends State<SectionsPageDryClean> {
                         ),
             ],
           ),
-          Align(
-            alignment: Alignment.bottomCenter,
-            child: Material(
-              color: Colors.transparent,
-              child: InkWell(
-                onTap: () {
-                  //  print('Added ${widget.item.subCategoryName} to cart.');
-                  if (selectedItemsJsonList.isEmpty) {
-                    glb.showSnackBar(context, 'Alert',
-                        'Please select the items first to Add to Cart');
-                    return;
-                  }
-                  print("selectedItemsJsonList--------->$selectedItems");
-
-                  // Close the bottom sheet
-                  addDryCleanItemToCart();
-                  // Navigator.pop(context);
-                },
-                borderRadius: BorderRadius.circular(12.0),
-                child: Ink(
-                  decoration: BoxDecoration(
-                    // gradient: LinearGradient(colors: [
-                    //   Colors.green,
-                    //   Colors.blue,
-                    // ]),
-                    color: AppColors.blueColor,
-                    borderRadius: BorderRadius.circular(12.0),
-                  ),
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 50.0, vertical: 10.0),
-                    child: Text(
-                      'Add To Cart',
-                      style: nunitoStyle.copyWith(
-                          fontSize: 16.0,
-                          color: AppColors.whiteColor,
-                          fontWeight: FontWeight.bold),
+          Visibility(
+            visible: false,
+            child: Align(
+              alignment: Alignment.bottomCenter,
+              child: Material(
+                color: Colors.transparent,
+                child: InkWell(
+                  onTap: () {
+                    //  print('Added ${widget.item.subCategoryName} to cart.');
+                    if (selectedItemsJsonList.isEmpty) {
+                      glb.showSnackBar(context, 'Alert',
+                          'Please select the items first to Add to Cart');
+                      return;
+                    }
+                    print("selectedItemsJsonList--------->$selectedItems");
+          
+                    // Close the bottom sheet
+                    addDryCleanItemToCart();
+                    // Navigator.pop(context);
+                  },
+                  borderRadius: BorderRadius.circular(12.0),
+                  child: Ink(
+                    decoration: BoxDecoration(
+                      // gradient: LinearGradient(colors: [
+                      //   Colors.green,
+                      //   Colors.blue,
+                      // ]),
+                      color: AppColors.blueColor,
+                      borderRadius: BorderRadius.circular(12.0),
+                    ),
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 50.0, vertical: 10.0),
+                      child: Text(
+                        'Add To Cart',
+                        style: nunitoStyle.copyWith(
+                            fontSize: 16.0,
+                            color: AppColors.whiteColor,
+                            fontWeight: FontWeight.bold),
+                      ),
                     ),
                   ),
                 ),
               ),
             ),
+          
           )
         ],
       ),

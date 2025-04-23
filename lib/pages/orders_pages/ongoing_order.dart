@@ -72,9 +72,9 @@ class _OngoingOrdersState extends State<OngoingOrders> {
         } else {
           try {
             Map<String, dynamic> onGoingOrdersMap = json.decode(response.body);
-            if (kDebugMode) {
-              print("onGoingOrdersMap:$onGoingOrdersMap");
-            }
+            // if (kDebugMode) {
+            //   print("onGoingOrdersMap:$onGoingOrdersMap");
+            //}
 
             var orderid = onGoingOrdersMap["orderid"];
             var delivery_boyid = onGoingOrdersMap["delivery_boyid"];

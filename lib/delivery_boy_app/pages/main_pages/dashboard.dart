@@ -46,7 +46,7 @@ class _DashboardPageState extends State<DashboardPage> {
     notificationServices.foregroundMessage();
     notificationServices.firebaseInit(context);
     notificationServices.setupInteractMessage(context);
-    notificationServices.isTokenRefreshed();
+    notificationServices.isTokenRefreshedDeliveryApp();
     loadStats();
     updateAsOnline();
     loadNewOrders();
@@ -79,12 +79,12 @@ class _DashboardPageState extends State<DashboardPage> {
         userName = split[0];
       });
     }
-    var notificationToken = glb.prefs?.getString('notificationToken');
+    var notificationToken = glb.prefs?.getString('delivery_notificationToken');
     print("DeliveryBoyNotificationToken::$notificationToken");
     if (notificationToken == null || notificationToken.isEmpty) {
       notificationServices.getDeviceToken().then((value) => {
             deviceToken = value.toString().replaceAll(':', '__colon__'),
-            SharedPreferenceUtils.save_val('notificationToken', deviceToken),
+            SharedPreferenceUtils.save_val('delivery_notificationToken', deviceToken),
             updateDeviceToken(),
             print('Delivery Boy DeviceToken:$value')
           });

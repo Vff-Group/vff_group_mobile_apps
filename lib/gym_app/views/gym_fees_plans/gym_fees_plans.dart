@@ -300,7 +300,7 @@ class _AllGymPlansScreenState extends State<AllGymPlansScreen> {
   LineTouchData get lineTouchData1 => LineTouchData(
         handleBuiltInTouches: true,
         touchTooltipData: LineTouchTooltipData(
-          tooltipBgColor: Colors.blueGrey.withOpacity(0.8),
+          // tooltipBgColor: Colors.blueGrey.withOpacity(0.8),
         ),
       );
 

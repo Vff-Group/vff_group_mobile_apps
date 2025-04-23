@@ -77,7 +77,7 @@ class _DropOrdersPageState extends State<DropOrdersPage> {
           try {
             Map<String, dynamic> onGoingOrdersMap = json.decode(response.body);
             if (kDebugMode) {
-              print("onGoingOrdersMap:$onGoingOrdersMap");
+              // print("onGoingOrdersMap:$onGoingOrdersMap");
             }
 
             var orderid = onGoingOrdersMap["order_id"];

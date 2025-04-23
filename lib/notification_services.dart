@@ -125,6 +125,21 @@ class NotificationServices {
     });
   }
 
+  void isTokenRefreshedGymApp() async {
+    messaging.onTokenRefresh.listen((event) {
+      event.toString();
+      print('Firebase GymApp Token Refreshed');
+      SharedPreferenceUtils.save_val('gymAPPNotificationToken', '');
+    });
+  }
+  void isTokenRefreshedDeliveryApp() async {
+    messaging.onTokenRefresh.listen((event) {
+      event.toString();
+      print('Firebase Delievry App Token Refreshed');
+      SharedPreferenceUtils.save_val('delivery_notificationToken', '');
+    });
+  }
+
   Future<void> setupInteractMessage(BuildContext context) async {
     //When app is killed/Terminated
     RemoteMessage? initialMessage =

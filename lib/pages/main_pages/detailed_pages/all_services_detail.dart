@@ -205,9 +205,15 @@ class _AllServicesPageState extends State<AllServicesPage> {
                                   child: InkWell(
                                     onTap: () {
                                       //Send to Request PickUp Page
-
-                                      Navigator.pushNamed(
-                                          context, AllBranchesRoute);
+                                      if (categoryModel[index].categoryName ==
+                                          "DRY CLEAN") {
+                                        Navigator.pushNamed(
+                                          context, DryCleanPrizeRoute);
+                                      } else {
+                                        Navigator.pushNamed(
+                                            context, AllBookingSequenceRoute);
+                                      }
+                                      
                                     },
                                     borderRadius: BorderRadius.circular(12.0),
                                     child: Ink(
@@ -287,7 +293,8 @@ class _AllServicesPageState extends State<AllServicesPage> {
                                               ],
                                             ),
                                           ),
-                                          Padding(
+                                           categoryModel[index].regularPrice ==
+                                          "0.0" ? Container() : Padding(
                                             padding: const EdgeInsets.symmetric(
                                                 horizontal: 8.0, vertical: 4.0),
                                             child: Container(
@@ -301,7 +308,8 @@ class _AllServicesPageState extends State<AllServicesPage> {
                                                       .withOpacity(0.5)),
                                             ),
                                           ),
-                                          Padding(
+                                         categoryModel[index].regularPrice ==
+                                          "0.0" ? Container() : Padding(
                                             padding: const EdgeInsets.all(8.0),
                                             child: Row(
                                               mainAxisAlignment:
